@@ -135,8 +135,7 @@
 - (void)performClose:(id)sender
 {
 	[NSMenu setMenuBarVisible:YES];
-	[super performClose:sender];
-	[self display];
+	[super close];
 }
 
 - (BOOL)performKeyEquivalent:(NSEvent *)anEvent
@@ -151,6 +150,10 @@
 		if (control) cMod += 2;
 		if (command) cMod += 4;
 		
+		if (cMod == 4 && [[anEvent charactersIgnoringModifiers] isEqualToString:@"w"]) {
+			[self performClose:self];
+			return YES;
+		}
 		if (cMod == 4 && [[anEvent charactersIgnoringModifiers] isEqualToString:@"m"] && ![NSMenu menuBarVisible]) {
 			[NSMenu setMenuBarVisible:YES];
 			[NSTimer scheduledTimerWithTimeInterval:0.0

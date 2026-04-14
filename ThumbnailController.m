@@ -1305,14 +1305,11 @@
 		NSEnumerator *enu = [keyArray objectEnumerator];
 		id dic;
 		
-		unsigned int cMod = 0;
-		BOOL shift = ([event modifierFlags] & NSShiftKeyMask) ? YES : NO;
-		BOOL option = ([event modifierFlags] & NSAlternateKeyMask) ? YES : NO;
-		BOOL control = ([event modifierFlags] & NSControlKeyMask) ? YES : NO;
-		
-		if (shift) cMod += 1;
-		if (option) cMod += 2;
-		if (control) cMod += 4;
+		unsigned int cMod = COKeyModifierMaskForEvent(event, character, NO);
+		if (cMod == COKeyModifierCommand && character == 'w') {
+			[panel performClose:self];
+			return;
+		}
 		
 		//0:nextpage	1:prevpage	4:lastpage	5:toppage	8:nextfolder	9:prevfolder	35:nextSubFolder 36:prevSubFolder
 		//18:showThumbnail 46:close

@@ -2444,29 +2444,21 @@ static const int DIALOG_CANCEL	= 129;
 	
 	
 	NSMutableString *tempKeyName = [NSMutableString string]; 
-	unsigned int cMod = 0;
-	BOOL shift = ([sender modifierFlags] & NSShiftKeyMask) ? YES : NO;
-	BOOL option = ([sender modifierFlags] & NSAlternateKeyMask) ? YES : NO;
-	BOOL control = ([sender modifierFlags] & NSControlKeyMask) ? YES : NO;
-	BOOL numeric = ([sender modifierFlags] & NSNumericPadKeyMask) ? YES : NO;
-	if (shift) {
-		cMod += 1;
+	unsigned int cMod = COKeyModifierMaskForEvent(sender, character, YES);
+	if (cMod & COKeyModifierShift) {
 		[tempKeyName appendString:@"shift+"];
 	}
-	if (option) {
-		cMod += 2;
+	if (cMod & COKeyModifierOption) {
 		[tempKeyName appendString:@"option+"];
 	}
-	if (control) {
-		cMod += 4;
+	if (cMod & COKeyModifierControl) {
 		[tempKeyName appendString:@"control+"];
 	}
-	if (numeric) {
-		if (character == NSLeftArrowFunctionKey||character == NSRightArrowFunctionKey||character == NSUpArrowFunctionKey||character == NSDownArrowFunctionKey) {
-		} else {
-			cMod += 8;
-			[tempKeyName appendString:@"num "];
-		}
+	if (cMod & COKeyModifierCommand) {
+		[tempKeyName appendString:@"command+"];
+	}
+	if (cMod & COKeyModifierNumeric) {
+		[tempKeyName appendString:@"num "];
 	}
 	keyName = [NSString stringWithFormat:@"%@%@",tempKeyName,keyName];
 	

@@ -5,3 +5,35 @@
 #ifdef __OBJC__
     #import <Cocoa/Cocoa.h>
 #endif
+
+enum {
+	COKeyModifierShift = 1,
+	COKeyModifierOption = 2,
+	COKeyModifierControl = 4,
+	COKeyModifierNumeric = 8,
+	COKeyModifierCommand = 16,
+};
+
+static inline BOOL COKeyCharacterIsArrow(unichar character)
+{
+	return character == NSLeftArrowFunctionKey ||
+		character == NSRightArrowFunctionKey ||
+		character == NSUpArrowFunctionKey ||
+		character == NSDownArrowFunctionKey;
+}
+
+static inline unsigned int COKeyModifierMaskForEvent(NSEvent *event, unichar character, BOOL includeNumericPad)
+{
+	unsigned int cMod = 0;
+	NSUInteger flags = [event modifierFlags];
+
+	if (flags & NSShiftKeyMask) cMod += COKeyModifierShift;
+	if (flags & NSAlternateKeyMask) cMod += COKeyModifierOption;
+	if (flags & NSControlKeyMask) cMod += COKeyModifierControl;
+	if (flags & NSCommandKeyMask) cMod += COKeyModifierCommand;
+	if (includeNumericPad && (flags & NSNumericPadKeyMask) && !COKeyCharacterIsArrow(character)) {
+		cMod += COKeyModifierNumeric;
+	}
+
+	return cMod;
+}

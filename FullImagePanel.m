@@ -111,14 +111,11 @@
 		NSEnumerator *enu = [keyArray objectEnumerator];
 		id dic;
 		
-		unsigned int cMod = 0;
-		BOOL shift = ([event modifierFlags] & NSShiftKeyMask) ? YES : NO;
-		BOOL option = ([event modifierFlags] & NSAlternateKeyMask) ? YES : NO;
-		BOOL control = ([event modifierFlags] & NSControlKeyMask) ? YES : NO;
-		
-		if (shift) cMod += 1;
-		if (option) cMod += 2;
-		if (control) cMod += 4;
+		unsigned int cMod = COKeyModifierMaskForEvent(event, character, NO);
+		if (cMod == COKeyModifierCommand && character == 'w') {
+			[self performClose:self];
+			return;
+		}
 		
 		while (dic = [enu nextObject]) {
 			if (character == [[dic objectForKey:@"key"] characterAtIndex:0] && cMod == [[dic objectForKey:@"modifier"] intValue]){

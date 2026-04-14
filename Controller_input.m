@@ -140,20 +140,10 @@ static BOOL appleRemoteHoldDown = NO;
 		}
 	} 
 	
-	unsigned int cMod = 0;
-	BOOL shift = ([sender modifierFlags] & NSShiftKeyMask) ? YES : NO;
-	BOOL option = ([sender modifierFlags] & NSAlternateKeyMask) ? YES : NO;
-	BOOL control = ([sender modifierFlags] & NSControlKeyMask) ? YES : NO;
-	BOOL numeric = ([sender modifierFlags] & NSNumericPadKeyMask) ? YES : NO;
-	
-	if (shift) cMod += 1;
-	if (option) cMod += 2;
-	if (control) cMod += 4;
-	if (numeric) {
-		if (character == NSLeftArrowFunctionKey||character == NSRightArrowFunctionKey||character == NSUpArrowFunctionKey||character == NSDownArrowFunctionKey) {
-		} else {
-			cMod += 8;
-		}
+	unsigned int cMod = COKeyModifierMaskForEvent(sender, character, YES);
+	if (cMod == COKeyModifierCommand && character == 'w') {
+		[window performClose:self];
+		return;
 	}
 	
 	if (fitScreenMode == 0) {
