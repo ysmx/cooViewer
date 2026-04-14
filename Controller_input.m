@@ -2561,7 +2561,8 @@ static BOOL appleRemoteHoldDown = NO;
 -(void)nextFolder
 {
 	if ([[[openSameFolderMenuItem submenu] itemArray] count] > 0) {
-		NSEnumerator *enumerator = [[[openSameFolderMenuItem submenu] itemArray] objectEnumerator];
+		NSArray *items = [[openSameFolderMenuItem submenu] itemArray];
+		NSEnumerator *enumerator = [items objectEnumerator];
 		id object;
 		while (object = [enumerator nextObject]) {
 			if ([object state] == NSOnState){
@@ -2578,6 +2579,16 @@ static BOOL appleRemoteHoldDown = NO;
 				break;
 			}
 		}
+		if (!object) {
+			enumerator = [items objectEnumerator];
+			while (object = [enumerator nextObject]) {
+				if ([object isEnabled]) {
+					[object setState:NSOnState];
+					break;
+				}
+			}
+		}
+		if (!object) return;
 		[self openFromSameDir:object];
 	}
 }
@@ -2585,7 +2596,8 @@ static BOOL appleRemoteHoldDown = NO;
 -(void)backFolder
 {
 	if ([[[openSameFolderMenuItem submenu] itemArray] count] > 0) {
-		NSEnumerator *enumerator = [[[openSameFolderMenuItem submenu] itemArray] reverseObjectEnumerator];
+		NSArray *items = [[openSameFolderMenuItem submenu] itemArray];
+		NSEnumerator *enumerator = [items reverseObjectEnumerator];
 		id object;
 		while (object = [enumerator nextObject]) {
 			if ([object state] == NSOnState){
@@ -2602,6 +2614,16 @@ static BOOL appleRemoteHoldDown = NO;
 				break;
 			}
 		}
+		if (!object) {
+			enumerator = [items reverseObjectEnumerator];
+			while (object = [enumerator nextObject]) {
+				if ([object isEnabled]) {
+					[object setState:NSOnState];
+					break;
+				}
+			}
+		}
+		if (!object) return;
 		[self openFromSameDir:object];
 	}
 }
@@ -2609,7 +2631,8 @@ static BOOL appleRemoteHoldDown = NO;
 -(void)backFolderLast
 {
 	if ([[[openSameFolderMenuItem submenu] itemArray] count] > 0) {
-		NSEnumerator *enumerator = [[[openSameFolderMenuItem submenu] itemArray] reverseObjectEnumerator];
+		NSArray *items = [[openSameFolderMenuItem submenu] itemArray];
+		NSEnumerator *enumerator = [items reverseObjectEnumerator];
 		id object;
 		while (object = [enumerator nextObject]) {
 			if ([object state] == NSOnState){
@@ -2626,6 +2649,16 @@ static BOOL appleRemoteHoldDown = NO;
 				break;
 			}
 		}
+		if (!object) {
+			enumerator = [items reverseObjectEnumerator];
+			while (object = [enumerator nextObject]) {
+				if ([object isEnabled]) {
+					[object setState:NSOnState];
+					break;
+				}
+			}
+		}
+		if (!object) return;
 		[self openFromSameDir:object last:YES];
 	}
 }

@@ -672,7 +672,12 @@ static const int DIALOG_CANCEL	= 129;
 
 -(void)openFromSameDir:(id)sender last:(BOOL)isLast
 {
-	[self setCurrentBookPathAndOldBookPath:[sender representedObject]];
+	NSString *path = [sender representedObject];
+	if (path == nil) {
+		NSBeep();
+		return;
+	}
+	[self setCurrentBookPathAndOldBookPath:path];
 	
 	[self openPage:0 last:isLast];
 }
@@ -3144,10 +3149,16 @@ static const int DIALOG_CANCEL	= 129;
 }
 - (NSData*)aliasDataFromPath:(NSString*)path
 {
+	if (path == nil) {
+		return nil;
+	}
 	return [self dataFromAlias:[self aliasFromPath:path]];
 }
 - (AliasHandle)aliasFromPath:(NSString *)fullPath
 {
+	if (fullPath == nil) {
+		return nil;
+	}
     OSStatus	anErr = noErr;
     FSRef		ref;
     
@@ -3473,6 +3484,12 @@ static const int DIALOG_CANCEL	= 129;
 @implementation Controller(private)
 -(void)setCurrentBookPath:(NSString *)new
 {	
+	if (new == nil) {
+		currentBookPath = nil;
+		currentBookName = nil;
+		currentBookAlias = nil;
+		return;
+	}
 	currentBookPath = [new retain];
 	currentBookName = [[currentBookPath lastPathComponent] retain];
 	currentBookAlias = [[self aliasDataFromPath:currentBookPath] retain];
