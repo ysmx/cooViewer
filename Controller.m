@@ -628,11 +628,12 @@ static const int DIALOG_CANCEL	= 129;
 		[timer invalidate];
 		timerSwitch=NO;
 	}
+	[theApplication activateIgnoringOtherApps:YES];
 	
 	[self setCurrentBookPathAndOldBookPath:filename];	
 	
 	[self openPage:0 last:NO];
-	return NO;
+	return YES;
 }
 
 
