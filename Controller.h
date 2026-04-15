@@ -159,6 +159,8 @@
 	int canScrollMode;
 	
 	NSDate *lastSameFolderMenuUpdate;
+	BOOL pendingViewerActivation;
+	BOOL restoreFullscreenDeactivateState;
 	
 }
 - (void)awakeFromNib;

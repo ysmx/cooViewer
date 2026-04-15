@@ -8,6 +8,51 @@
 static const int DIALOG_OK		= 128;
 static const int DIALOG_CANCEL	= 129;
 
+- (void)restoreViewerDeactivateBehavior
+{
+	if (!restoreFullscreenDeactivateState || window == nil) {
+		return;
+	}
+	restoreFullscreenDeactivateState = NO;
+	if ([window isFullScreen]) {
+		[window setHidesOnDeactivate:YES];
+	}
+}
+
+- (void)scheduleBringViewerToFront
+{
+	pendingViewerActivation = YES;
+	[NSObject cancelPreviousPerformRequestsWithTarget:self selector:@selector(bringViewerToFront) object:nil];
+	[self performSelector:@selector(bringViewerToFront) withObject:nil afterDelay:0.0];
+	[self performSelector:@selector(bringViewerToFront) withObject:nil afterDelay:0.15];
+}
+
+- (void)bringViewerToFront
+{
+	if (window == nil) {
+		return;
+	}
+	if ([window isFullScreen] && [window hidesOnDeactivate]) {
+		[window setHidesOnDeactivate:NO];
+		restoreFullscreenDeactivateState = YES;
+	}
+	[NSApp unhide:self];
+	if ([NSRunningApplication respondsToSelector:@selector(currentApplication)]) {
+		[[NSRunningApplication currentApplication] activateWithOptions:(NSApplicationActivateAllWindows | NSApplicationActivateIgnoringOtherApps)];
+	} else {
+		[NSApp activateIgnoringOtherApps:YES];
+	}
+	[window orderFrontRegardless];
+	[window makeKeyAndOrderFront:self];
+	[window makeMainWindow];
+	[window makeKeyWindow];
+	if ([NSApp isActive]) {
+		pendingViewerActivation = NO;
+		[NSObject cancelPreviousPerformRequestsWithTarget:self selector:@selector(restoreViewerDeactivateBehavior) object:nil];
+		[self performSelector:@selector(restoreViewerDeactivateBehavior) withObject:nil afterDelay:0.2];
+	}
+}
+
 /*
 	NSAutoreleasePool *pool = [[NSAutoreleasePool alloc] init];
 	[lock lock];
@@ -560,6 +605,9 @@ static const int DIALOG_CANCEL	= 129;
 			[self openTheLastPage:self];
 		}
 	}
+	if (currentBookPath != nil && [window isVisible]) {
+		[self scheduleBringViewerToFront];
+	}
  }
  
 #pragma mark appleRemote
@@ -628,11 +676,11 @@ static const int DIALOG_CANCEL	= 129;
 		[timer invalidate];
 		timerSwitch=NO;
 	}
-	[theApplication activateIgnoringOtherApps:YES];
 	
 	[self setCurrentBookPathAndOldBookPath:filename];	
 	
 	[self openPage:0 last:NO];
+	[self scheduleBringViewerToFront];
 	return YES;
 }
 
@@ -3002,6 +3050,9 @@ static const int DIALOG_CANCEL	= 129;
 }
 - (void)applicationDidBecomeActive:(NSNotification *)aNotification {
 	[self checkCurrentFolderUpdated];
+	if (pendingViewerActivation) {
+		[self scheduleBringViewerToFront];
+	}
 }
 
 
