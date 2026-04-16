@@ -606,14 +606,6 @@ static const int DIALOG_CANCEL	= 129;
     [keyPanelTextView setAction:@selector(keyConfigAction:)];
 	[keyPanelTextView setAlignment:NSCenterTextAlignment];
 	
-	NSRect oldFrame = [preferences frame];
-	NSRect newFrame = oldFrame;
-	/*
-	float y = oldFrame.size.height-(534+margin)+oldFrame.origin.y;
-	newFrame = NSMakeRect(oldFrame.origin.x,y, 484, (534+margin));
-	 */
-	newFrame.size.width = 484; 
-	[preferences setFrame:newFrame display:NO];
 }
 #pragma mark Table Delegate:
 
@@ -1760,46 +1752,6 @@ static const int DIALOG_CANCEL	= 129;
 }
 
 
-- (void)tabView:(NSTabView *)tabView willSelectTabViewItem:(NSTabViewItem *)tabViewItem
-{
-	NSRect oldFrame = [preferences frame];
-	NSRect newFrame = [preferences frame];
-	/*
-	//need + 67 = margin
-	if ([[tabViewItem label] isEqualToString:NSLocalizedString(@"Input",@"")] == YES) {
-		//555
-		float y = oldFrame.size.height-(555+margin)+oldFrame.origin.y;
-		newFrame = NSMakeRect(oldFrame.origin.x,y, 633, (555+margin));
-	} else if ([[tabViewItem label] isEqualToString:NSLocalizedString(@"Advanced",@"")] == YES) {
-		float y = oldFrame.size.height-(267+margin)+oldFrame.origin.y;
-		newFrame = NSMakeRect(oldFrame.origin.x,y, 484, (267+margin));
-	} else if ([[tabViewItem label] isEqualToString:NSLocalizedString(@"Appearance",@"")] == YES) {
-		//555
-		float y = oldFrame.size.height-(555+margin)+oldFrame.origin.y;
-		newFrame = NSMakeRect(oldFrame.origin.x,y, 484, (555+margin));
-	} else if ([[tabViewItem label] isEqualToString:NSLocalizedString(@"General",@"")] == YES) {
-		//534
-		float y = oldFrame.size.height-(534+margin)+oldFrame.origin.y;
-		newFrame = NSMakeRect(oldFrame.origin.x,y, 484, (534+margin));
-	} else {
-		float y = oldFrame.size.height-oldFrame.size.height+oldFrame.origin.y;
-		newFrame = NSMakeRect(oldFrame.origin.x,y, 484, oldFrame.size.height);
-	}*/
-	
-	if ([[tabViewItem label] isEqualToString:NSLocalizedString(@"Input",@"")] == YES) {
-		newFrame.size.width = 633; 
-	} else {
-		newFrame.size.width = 484; 
-	}
-	if (NSEqualRects(newFrame,oldFrame)) {
-		return;
-	}
-	[[[tabView selectedTabViewItem] view] setHidden:YES];
-	[preferences setFrame:newFrame
-			  display:YES
-				  animate:YES ];
-	[[[tabView selectedTabViewItem] view] setHidden:NO];	 
-}
 
 - (IBAction)dummyAction:(id)sender
 {
