@@ -4,6 +4,24 @@
 #import "AccessorySettingView.h"
 #import "NSDictionary_Adding.h"
 
+@interface PreferenceController ()
+{
+	BOOL didInstallAppearanceLayout;
+}
+- (void)co_installAppearanceLayoutIfNeeded;
+- (NSTextField *)co_labelForControl:(NSView *)control minimumGap:(CGFloat)minimumGap maximumGap:(CGFloat)maximumGap;
+- (NSTextField *)co_labelForControl:(NSView *)control maximumGap:(CGFloat)maximumGap;
+- (NSButton *)co_buttonToRightOfView:(NSView *)view maximumGap:(CGFloat)maximumGap;
+- (NSButton *)co_buttonToLeftOfView:(NSView *)view minimumGap:(CGFloat)minimumGap maximumGap:(CGFloat)maximumGap;
+- (NSButton *)co_buttonToLeftOfView:(NSView *)view maximumGap:(CGFloat)maximumGap;
+- (BOOL)co_isStaticLabel:(NSView *)view;
+- (void)co_sizeLabelToFit:(NSTextField *)label;
+- (void)co_centerView:(NSView *)view onReferenceView:(NSView *)referenceView;
+- (void)co_placeView:(NSView *)view afterView:(NSView *)previousView spacing:(CGFloat)spacing;
+- (void)co_resizeTextField:(NSTextField *)textField betweenLeftView:(NSView *)leftView rightView:(NSView *)rightView leftSpacing:(CGFloat)leftSpacing rightSpacing:(CGFloat)rightSpacing;
+- (void)co_expandStaticLabelsInView:(NSView *)container minimumY:(CGFloat)minimumY maximumY:(CGFloat)maximumY rightMargin:(CGFloat)rightMargin;
+@end
+
 
 @implementation PreferenceController
 
@@ -607,6 +625,431 @@ static const int DIALOG_CANCEL	= 129;
 	[keyPanelTextView setAlignment:NSCenterTextAlignment];
 	
 }
+
+- (BOOL)co_isStaticLabel:(NSView *)view
+{
+	if (![view isKindOfClass:[NSTextField class]]) {
+		return NO;
+	}
+
+	NSTextField *textField = (NSTextField*)view;
+	return ![textField isEditable] && ![textField isBezeled] && ![textField drawsBackground];
+}
+
+- (NSTextField *)co_labelForControl:(NSView *)control maximumGap:(CGFloat)maximumGap
+{
+	return [self co_labelForControl:control minimumGap:0.0 maximumGap:maximumGap];
+}
+
+- (NSTextField *)co_labelForControl:(NSView *)control minimumGap:(CGFloat)minimumGap maximumGap:(CGFloat)maximumGap
+{
+	NSView *container = [control superview];
+	NSRect controlFrame = [control frame];
+	CGFloat controlMidY = NSMidY(controlFrame);
+	NSTextField *bestLabel = nil;
+	CGFloat bestScore = CGFLOAT_MAX;
+
+	for (NSView *candidate in [container subviews]) {
+		if (![self co_isStaticLabel:candidate]) {
+			continue;
+		}
+
+		NSRect frame = [candidate frame];
+		CGFloat gap = NSMinX(controlFrame) - NSMaxX(frame);
+		CGFloat midDelta = fabs(NSMidY(frame) - controlMidY);
+		CGFloat score;
+
+		if (gap < minimumGap || gap > maximumGap || midDelta > 10.0) {
+			continue;
+		}
+
+		score = midDelta * 100.0 + gap;
+		if (score < bestScore) {
+			bestScore = score;
+			bestLabel = (NSTextField*)candidate;
+		}
+	}
+
+	return bestLabel;
+}
+
+- (NSButton *)co_buttonToRightOfView:(NSView *)view maximumGap:(CGFloat)maximumGap
+{
+	NSView *container = [view superview];
+	NSRect sourceFrame = [view frame];
+	CGFloat sourceMidY = NSMidY(sourceFrame);
+	NSButton *bestButton = nil;
+	CGFloat bestScore = CGFLOAT_MAX;
+
+	for (NSView *candidate in [container subviews]) {
+		if (![candidate isKindOfClass:[NSButton class]]) {
+			continue;
+		}
+		if ([candidate isKindOfClass:[NSPopUpButton class]]) {
+			continue;
+		}
+
+		NSButton *button = (NSButton*)candidate;
+		if ([[button title] length] == 0) {
+			continue;
+		}
+
+		NSRect frame = [candidate frame];
+		CGFloat gap = NSMinX(frame) - NSMaxX(sourceFrame);
+		CGFloat midDelta = fabs(NSMidY(frame) - sourceMidY);
+		CGFloat score;
+
+		if (gap < 0.0 || gap > maximumGap || midDelta > 10.0) {
+			continue;
+		}
+
+		score = midDelta * 100.0 + gap;
+		if (score < bestScore) {
+			bestScore = score;
+			bestButton = button;
+		}
+	}
+
+	return bestButton;
+}
+
+- (NSButton *)co_buttonToLeftOfView:(NSView *)view maximumGap:(CGFloat)maximumGap
+{
+	return [self co_buttonToLeftOfView:view minimumGap:0.0 maximumGap:maximumGap];
+}
+
+- (NSButton *)co_buttonToLeftOfView:(NSView *)view minimumGap:(CGFloat)minimumGap maximumGap:(CGFloat)maximumGap
+{
+	NSView *container = [view superview];
+	NSRect sourceFrame = [view frame];
+	CGFloat sourceMidY = NSMidY(sourceFrame);
+	NSButton *bestButton = nil;
+	CGFloat bestScore = CGFLOAT_MAX;
+
+	for (NSView *candidate in [container subviews]) {
+		NSRect frame;
+		CGFloat gap;
+		CGFloat midDelta;
+		CGFloat score;
+
+		if (![candidate isKindOfClass:[NSButton class]]) {
+			continue;
+		}
+		if ([candidate isKindOfClass:[NSPopUpButton class]]) {
+			continue;
+		}
+
+		frame = [candidate frame];
+		gap = NSMinX(sourceFrame) - NSMaxX(frame);
+		midDelta = fabs(NSMidY(frame) - sourceMidY);
+		if (gap < minimumGap || gap > maximumGap || midDelta > 10.0) {
+			continue;
+		}
+
+		score = midDelta * 100.0 + gap;
+		if (score < bestScore) {
+			bestScore = score;
+			bestButton = (NSButton*)candidate;
+		}
+	}
+
+	return bestButton;
+}
+
+- (void)co_sizeLabelToFit:(NSTextField *)label
+{
+	NSRect frame;
+	NSSize cellSize;
+
+	if (!label) {
+		return;
+	}
+
+	frame = [label frame];
+	cellSize = [[label cell] cellSize];
+	frame.size.width = ceil(cellSize.width);
+	frame.size.height = MAX(frame.size.height, ceil(cellSize.height));
+	[label setFrame:frame];
+}
+
+- (void)co_centerView:(NSView *)view onReferenceView:(NSView *)referenceView
+{
+	NSRect frame;
+	CGFloat referenceMidY;
+
+	if (!view || !referenceView) {
+		return;
+	}
+
+	frame = [view frame];
+	referenceMidY = NSMidY([referenceView frame]);
+	frame.origin.y = round(referenceMidY - (frame.size.height / 2.0));
+	[view setFrame:frame];
+}
+
+- (void)co_placeView:(NSView *)view afterView:(NSView *)previousView spacing:(CGFloat)spacing
+{
+	NSRect frame;
+
+	if (!view || !previousView) {
+		return;
+	}
+
+	frame = [view frame];
+	frame.origin.x = NSMaxX([previousView frame]) + spacing;
+	[view setFrame:frame];
+}
+
+- (void)co_resizeTextField:(NSTextField *)textField betweenLeftView:(NSView *)leftView rightView:(NSView *)rightView leftSpacing:(CGFloat)leftSpacing rightSpacing:(CGFloat)rightSpacing
+{
+	NSRect frame;
+	CGFloat minX;
+	CGFloat maxX;
+
+	if (!textField || !leftView || !rightView) {
+		return;
+	}
+
+	frame = [textField frame];
+	minX = NSMaxX([leftView frame]) + leftSpacing;
+	maxX = NSMinX([rightView frame]) - rightSpacing;
+	frame.origin.x = minX;
+	frame.size.width = MAX(40.0, maxX - minX);
+	[textField setFrame:frame];
+}
+
+- (void)co_expandStaticLabelsInView:(NSView *)container minimumY:(CGFloat)minimumY maximumY:(CGFloat)maximumY rightMargin:(CGFloat)rightMargin
+{
+	for (NSView *candidate in [container subviews]) {
+		NSRect frame;
+
+		if (![self co_isStaticLabel:candidate]) {
+			continue;
+		}
+
+		frame = [candidate frame];
+		if (NSMinY(frame) < minimumY || NSMinY(frame) > maximumY) {
+			continue;
+		}
+
+		frame.size.width = MAX(frame.size.width, NSWidth([container bounds]) - rightMargin - NSMinX(frame));
+		[candidate setFrame:frame];
+	}
+}
+
+- (void)co_installAppearanceLayoutIfNeeded
+{
+	NSTextField *viewBackgroundLabel;
+	NSTextField *pageNumberFontLabel;
+	NSTextField *pageNumberBorderLabel;
+	NSTextField *pageNumberBackgroundLabel;
+	NSTextField *pageBarFontLabel;
+	NSTextField *pageBarBorderLabel;
+	NSTextField *pageBarBackgroundLabel;
+	NSTextField *pageBarReadLabel;
+	NSTextField *loupeSizeLabel;
+	NSTextField *loupePowerLabel;
+	NSTextField *thumbnailRowLabel;
+	NSTextField *thumbnailColumnLabel;
+	NSTextField *advancedBufferingLabel;
+	NSTextField *advancedBufferingCacheLabel;
+	NSTextField *advancedUseCalayerLabel;
+	NSTextField *advancedInterpolationLabel;
+	NSTextField *advancedImageCacheLabel;
+	NSTextField *advancedThumbnailCacheLabel;
+	NSTextField *advancedOpenLinkLabel;
+	NSTextField *inputPrevPageActionLabel;
+	NSButton *pageNumberFontButton;
+	NSButton *pageBarFontButton;
+	NSButton *keyResetButton;
+	NSButton *mouseResetButton;
+	NSView *inputRootView;
+	NSView *keyboardInputView;
+	NSView *mouseInputView;
+
+	if (didInstallAppearanceLayout) {
+		return;
+	}
+
+	viewBackgroundLabel = [self co_labelForControl:viewBackGroundColor maximumGap:120.0];
+	pageNumberFontLabel = [self co_labelForControl:fontTextField maximumGap:120.0];
+	pageNumberBorderLabel = [self co_labelForControl:pageBorderColor maximumGap:120.0];
+	pageNumberBackgroundLabel = [self co_labelForControl:pageBGColor maximumGap:120.0];
+	pageBarFontLabel = [self co_labelForControl:pageBarFontTextField maximumGap:120.0];
+	pageBarBorderLabel = [self co_labelForControl:pageBarBorderColor maximumGap:120.0];
+	pageBarBackgroundLabel = [self co_labelForControl:pageBarBGColor maximumGap:120.0];
+	pageBarReadLabel = [self co_labelForControl:pageBarReadedColor maximumGap:120.0];
+	loupeSizeLabel = [self co_labelForControl:loupeSizeTextField maximumGap:80.0];
+	loupePowerLabel = [self co_labelForControl:loupeRateTextField maximumGap:80.0];
+	thumbnailRowLabel = [self co_labelForControl:thumbnailTextFieldRow maximumGap:80.0];
+	thumbnailColumnLabel = [self co_labelForControl:thumbnailTextFieldCol maximumGap:80.0];
+	advancedBufferingLabel = [self co_labelForControl:bufferingModePopUpButton maximumGap:140.0];
+	advancedBufferingCacheLabel = [self co_labelForControl:screenCacheTextField maximumGap:120.0];
+	advancedUseCalayerLabel = [self co_labelForControl:useCalayerCheck minimumGap:-12.0 maximumGap:140.0];
+	advancedInterpolationLabel = [self co_labelForControl:interpolationPopUpButton maximumGap:260.0];
+	advancedImageCacheLabel = [self co_labelForControl:imageCacheTextField minimumGap:-10.0 maximumGap:140.0];
+	advancedThumbnailCacheLabel = [self co_labelForControl:thumbnailCacheTextField minimumGap:-30.0 maximumGap:200.0];
+	advancedOpenLinkLabel = [self co_labelForControl:openLinkPopUpButton maximumGap:320.0];
+	inputPrevPageActionLabel = [self co_labelForControl:prevPageActionPopUpButton maximumGap:340.0];
+	pageNumberFontButton = [self co_buttonToRightOfView:fontTextField maximumGap:40.0];
+	pageBarFontButton = [self co_buttonToRightOfView:pageBarFontTextField maximumGap:40.0];
+	keyResetButton = [self co_buttonToLeftOfView:keyModePopUpButton minimumGap:-24.0 maximumGap:120.0];
+	mouseResetButton = [self co_buttonToLeftOfView:mouseModePopUpButton minimumGap:-24.0 maximumGap:120.0];
+	inputRootView = [inputTabView superview];
+	keyboardInputView = [[inputTabView tabViewItemAtIndex:0] view];
+	mouseInputView = [[inputTabView tabViewItemAtIndex:1] view];
+
+	if (viewBackgroundLabel) {
+		[self co_sizeLabelToFit:viewBackgroundLabel];
+		[self co_centerView:viewBackgroundLabel onReferenceView:viewBackGroundColor];
+		[self co_placeView:viewBackGroundColor afterView:viewBackgroundLabel spacing:6.0];
+	}
+
+	if (pageNumberFontLabel && pageNumberFontButton) {
+		[self co_sizeLabelToFit:pageNumberFontLabel];
+		[self co_centerView:pageNumberFontLabel onReferenceView:fontTextField];
+		[self co_resizeTextField:fontTextField betweenLeftView:pageNumberFontLabel rightView:pageNumberFontButton leftSpacing:6.0 rightSpacing:8.0];
+		[self co_centerView:pageNumberFontButton onReferenceView:fontTextField];
+		[self co_placeView:pageColor afterView:pageNumberFontButton spacing:8.0];
+	}
+
+	if (pageNumberBorderLabel && pageNumberBackgroundLabel) {
+		[self co_sizeLabelToFit:pageNumberBorderLabel];
+		[self co_centerView:pageNumberBorderLabel onReferenceView:pageBorderColor];
+		[self co_placeView:pageBorderColor afterView:pageNumberBorderLabel spacing:6.0];
+		[self co_sizeLabelToFit:pageNumberBackgroundLabel];
+		[self co_centerView:pageNumberBackgroundLabel onReferenceView:pageBorderColor];
+		[self co_placeView:pageNumberBackgroundLabel afterView:pageBorderColor spacing:10.0];
+		[self co_placeView:pageBGColor afterView:pageNumberBackgroundLabel spacing:6.0];
+		[self co_centerView:pageBGColor onReferenceView:pageBorderColor];
+	}
+
+	if (pageBarFontLabel && pageBarFontButton) {
+		[self co_sizeLabelToFit:pageBarFontLabel];
+		[self co_centerView:pageBarFontLabel onReferenceView:pageBarFontTextField];
+		[self co_resizeTextField:pageBarFontTextField betweenLeftView:pageBarFontLabel rightView:pageBarFontButton leftSpacing:6.0 rightSpacing:8.0];
+		[self co_centerView:pageBarFontButton onReferenceView:pageBarFontTextField];
+		[self co_placeView:pageBarFontColor afterView:pageBarFontButton spacing:8.0];
+	}
+
+	if (pageBarBorderLabel && pageBarBackgroundLabel && pageBarReadLabel) {
+		[self co_sizeLabelToFit:pageBarBorderLabel];
+		[self co_centerView:pageBarBorderLabel onReferenceView:pageBarBorderColor];
+		[self co_placeView:pageBarBorderColor afterView:pageBarBorderLabel spacing:6.0];
+		[self co_sizeLabelToFit:pageBarBackgroundLabel];
+		[self co_centerView:pageBarBackgroundLabel onReferenceView:pageBarBorderColor];
+		[self co_placeView:pageBarBackgroundLabel afterView:pageBarBorderColor spacing:10.0];
+		[self co_placeView:pageBarBGColor afterView:pageBarBackgroundLabel spacing:6.0];
+		[self co_centerView:pageBarBGColor onReferenceView:pageBarBorderColor];
+		[self co_sizeLabelToFit:pageBarReadLabel];
+		[self co_centerView:pageBarReadLabel onReferenceView:pageBarBorderColor];
+		[self co_placeView:pageBarReadLabel afterView:pageBarBGColor spacing:10.0];
+		[self co_placeView:pageBarReadedColor afterView:pageBarReadLabel spacing:6.0];
+		[self co_centerView:pageBarReadedColor onReferenceView:pageBarBorderColor];
+	}
+
+	if (loupeSizeLabel && loupePowerLabel) {
+		[self co_sizeLabelToFit:loupeSizeLabel];
+		[self co_centerView:loupeSizeLabel onReferenceView:loupeSizeTextField];
+		[self co_placeView:loupeSizeTextField afterView:loupeSizeLabel spacing:6.0];
+		[self co_sizeLabelToFit:loupePowerLabel];
+		[self co_centerView:loupePowerLabel onReferenceView:loupeSizeTextField];
+		[self co_placeView:loupePowerLabel afterView:loupeSizeTextField spacing:12.0];
+		[self co_placeView:loupeRateTextField afterView:loupePowerLabel spacing:6.0];
+		[self co_centerView:loupeRateTextField onReferenceView:loupeSizeTextField];
+	}
+
+	if (thumbnailRowLabel && thumbnailColumnLabel) {
+		[self co_sizeLabelToFit:thumbnailRowLabel];
+		[self co_centerView:thumbnailRowLabel onReferenceView:thumbnailTextFieldRow];
+		[self co_placeView:thumbnailTextFieldRow afterView:thumbnailRowLabel spacing:6.0];
+		[self co_sizeLabelToFit:thumbnailColumnLabel];
+		[self co_centerView:thumbnailColumnLabel onReferenceView:thumbnailTextFieldRow];
+		[self co_placeView:thumbnailColumnLabel afterView:thumbnailTextFieldRow spacing:12.0];
+		[self co_placeView:thumbnailTextFieldCol afterView:thumbnailColumnLabel spacing:6.0];
+		[self co_centerView:thumbnailTextFieldCol onReferenceView:thumbnailTextFieldRow];
+	}
+
+	if (advancedBufferingLabel && advancedBufferingCacheLabel) {
+		[self co_sizeLabelToFit:advancedBufferingLabel];
+		[self co_centerView:advancedBufferingLabel onReferenceView:bufferingModePopUpButton];
+		[self co_placeView:bufferingModePopUpButton afterView:advancedBufferingLabel spacing:6.0];
+		[self co_sizeLabelToFit:advancedBufferingCacheLabel];
+		[self co_centerView:advancedBufferingCacheLabel onReferenceView:bufferingModePopUpButton];
+		[self co_placeView:advancedBufferingCacheLabel afterView:bufferingModePopUpButton spacing:10.0];
+		[self co_placeView:screenCacheTextField afterView:advancedBufferingCacheLabel spacing:6.0];
+		[self co_centerView:screenCacheTextField onReferenceView:bufferingModePopUpButton];
+	}
+
+	if (advancedUseCalayerLabel) {
+		[self co_sizeLabelToFit:advancedUseCalayerLabel];
+		[self co_centerView:advancedUseCalayerLabel onReferenceView:useCalayerCheck];
+		[self co_placeView:useCalayerCheck afterView:advancedUseCalayerLabel spacing:6.0];
+	}
+
+	if (advancedInterpolationLabel) {
+		[self co_sizeLabelToFit:advancedInterpolationLabel];
+		[self co_centerView:advancedInterpolationLabel onReferenceView:interpolationPopUpButton];
+		[self co_placeView:interpolationPopUpButton afterView:advancedInterpolationLabel spacing:6.0];
+	}
+
+	if (advancedImageCacheLabel) {
+		[self co_sizeLabelToFit:advancedImageCacheLabel];
+		[self co_centerView:advancedImageCacheLabel onReferenceView:imageCacheTextField];
+		[self co_placeView:imageCacheTextField afterView:advancedImageCacheLabel spacing:6.0];
+		[self co_centerView:imageCacheTextField onReferenceView:imageCacheTextField];
+	}
+
+	if (advancedThumbnailCacheLabel) {
+		[self co_sizeLabelToFit:advancedThumbnailCacheLabel];
+		[self co_centerView:advancedThumbnailCacheLabel onReferenceView:thumbnailCacheTextField];
+		[self co_placeView:thumbnailCacheTextField afterView:advancedThumbnailCacheLabel spacing:6.0];
+		[self co_centerView:thumbnailCacheTextField onReferenceView:thumbnailCacheTextField];
+	}
+
+	if (advancedOpenLinkLabel) {
+		[self co_sizeLabelToFit:advancedOpenLinkLabel];
+		[self co_centerView:advancedOpenLinkLabel onReferenceView:openLinkPopUpButton];
+		[self co_placeView:openLinkPopUpButton afterView:advancedOpenLinkLabel spacing:6.0];
+	}
+
+	if (inputPrevPageActionLabel && inputRootView) {
+		NSRect popupFrame = [prevPageActionPopUpButton frame];
+
+		popupFrame.origin.x = NSWidth([inputRootView bounds]) - 17.0 - popupFrame.size.width;
+		[prevPageActionPopUpButton setFrame:popupFrame];
+		[self co_centerView:inputPrevPageActionLabel onReferenceView:prevPageActionPopUpButton];
+
+		popupFrame = [inputPrevPageActionLabel frame];
+		popupFrame.size.width = NSMinX([prevPageActionPopUpButton frame]) - 8.0 - NSMinX(popupFrame);
+		[inputPrevPageActionLabel setFrame:popupFrame];
+	}
+
+	if (keyResetButton) {
+		NSRect popupFrame = [keyModePopUpButton frame];
+		CGFloat minimumX = NSMaxX([keyResetButton frame]) + 8.0;
+		CGFloat maximumWidth = NSWidth([keyboardInputView bounds]) - 12.0 - minimumX;
+
+		popupFrame.origin.x = MAX(popupFrame.origin.x, minimumX);
+		popupFrame.size.width = MIN(popupFrame.size.width, maximumWidth);
+		[keyModePopUpButton setFrame:popupFrame];
+	}
+
+	if (mouseResetButton) {
+		NSRect popupFrame = [mouseModePopUpButton frame];
+		CGFloat minimumX = NSMaxX([mouseResetButton frame]) + 8.0;
+		CGFloat maximumWidth = NSWidth([mouseInputView bounds]) - 12.0 - minimumX;
+
+		popupFrame.origin.x = minimumX;
+		popupFrame.size.width = MIN(popupFrame.size.width, maximumWidth);
+		[mouseModePopUpButton setFrame:popupFrame];
+	}
+
+	[self co_expandStaticLabelsInView:keyboardInputView minimumY:20.0 maximumY:30.0 rightMargin:12.0];
+	[self co_expandStaticLabelsInView:mouseInputView minimumY:130.0 maximumY:150.0 rightMargin:12.0];
+
+	didInstallAppearanceLayout = YES;
+}
 #pragma mark Table Delegate:
 
 
@@ -901,6 +1344,7 @@ static const int DIALOG_CANCEL	= 129;
 - (void)preferences
 {	
 	[accessorySettingView setPreferences];
+	[self co_installAppearanceLayoutIfNeeded];
 	
 	keyArray = [[NSMutableArray alloc] initWithArray:[defaults arrayForKey:@"KeyArray"]];
 	keyArrayMode2 = [[NSMutableArray alloc] initWithArray:[defaults arrayForKey:@"KeyArrayMode2"]];
