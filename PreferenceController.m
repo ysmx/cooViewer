@@ -8,6 +8,7 @@
 {
 	BOOL didInstallAppearanceLayout;
 }
+- (void)co_updateSortDescendingControl;
 - (void)co_installAppearanceLayoutIfNeeded;
 - (NSTextField *)co_labelForControl:(NSView *)control minimumGap:(CGFloat)minimumGap maximumGap:(CGFloat)maximumGap;
 - (NSTextField *)co_labelForControl:(NSView *)control maximumGap:(CGFloat)maximumGap;
@@ -623,7 +624,33 @@ static const int DIALOG_CANCEL	= 129;
 	[keyPanelTextView setTarget:self];
     [keyPanelTextView setAction:@selector(keyConfigAction:)];
 	[keyPanelTextView setAlignment:NSCenterTextAlignment];
+	[sortModePopUpButton setTarget:self];
+	[sortModePopUpButton setAction:@selector(sortModeChanged:)];
 	
+	NSRect sortFrame = [sortModePopUpButton frame];
+	NSButton *button = [[[NSButton alloc] initWithFrame:NSMakeRect(sortFrame.origin.x, sortFrame.origin.y, 80, sortFrame.size.height)] autorelease];
+	[button setButtonType:NSSwitchButton];
+	[button setControlSize:NSSmallControlSize];
+	[button setTitle:NSLocalizedString(@"Descending", @"")];
+	[button sizeToFit];
+	NSRect buttonFrame = [button frame];
+	buttonFrame.origin.x = NSMaxX(sortFrame) + 6;
+	buttonFrame.origin.y = sortFrame.origin.y - 1;
+	[button setFrame:buttonFrame];
+	[[sortModePopUpButton superview] addSubview:button];
+	sortDescendingButton = button;
+	
+}
+
+- (IBAction)sortModeChanged:(id)sender
+{
+	[self co_updateSortDescendingControl];
+}
+
+- (void)co_updateSortDescendingControl
+{
+	BOOL enabled = [sortModePopUpButton indexOfSelectedItem] != 3;
+	[sortDescendingButton setEnabled:enabled];
 }
 
 - (BOOL)co_isStaticLabel:(NSView *)view
@@ -1459,6 +1486,8 @@ static const int DIALOG_CANCEL	= 129;
 			[sortModePopUpButton selectItemAtIndex:0];
 			break;
 	}
+	[sortDescendingButton setState:[defaults boolForKey:@"SortDescending"] ? NSOnState : NSOffState];
+	[self co_updateSortDescendingControl];
 	
 	if ([defaults boolForKey:@"DontHideMenuBar"]) {
 		[dontHideMenubarCheck setState:NSOnState];
@@ -1979,6 +2008,7 @@ static const int DIALOG_CANCEL	= 129;
 		default:
 			break;
 		}
+		[defaults setBool:([sortDescendingButton state] == NSOnState) forKey:@"SortDescending"];
 		
 		if ([dontHideMenubarCheck state]==NSOnState) {
 			[defaults setBool:YES forKey:@"DontHideMenuBar"];

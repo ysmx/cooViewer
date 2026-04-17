@@ -3,6 +3,11 @@
 #import "BookmarkController.h"
 #import "CustomImageView.h"
 #import "FullImagePanel.h"
+
+@interface Controller (SortPrivate)
+- (BOOL)co_sortModeSupportsDescending:(int)mode;
+@end
+
 @implementation Controller (Input)
 
 static BOOL appleRemoteHoldDown = NO;
@@ -2106,7 +2111,7 @@ static BOOL appleRemoteHoldDown = NO;
 		case 0:
 			//name
 			//[completeMutableArray sortUsingSelector:@selector(finderCompareS:)];
-			[imageView setInfoString:[NSString stringWithFormat:@"sort:name"]];
+			[imageView setInfoString:[NSString stringWithFormat:@"sort:name%@",sortDescending?@"(desc)":@"(asc)"]];
 			break;
 		case 1:
 			//random
@@ -2117,26 +2122,40 @@ static BOOL appleRemoteHoldDown = NO;
 			//creation
 			if ([imageLoader canSortByDate]) {
 				[completeMutableArray sortUsingSelector:@selector(fileCreationDateCompare:)];
-				[imageView setInfoString:[NSString stringWithFormat:@"sort:Creation Date"]];
+				[imageView setInfoString:[NSString stringWithFormat:@"sort:Creation Date%@",sortDescending?@"(desc)":@"(asc)"]];
 			}
 			break;
 		case 3:
 			//modification
 			if ([imageLoader canSortByDate]) {
 				[completeMutableArray sortUsingSelector:@selector(fileModificationDateCompare:)];
-				[imageView setInfoString:[NSString stringWithFormat:@"sort:Modification Date"]];
+				[imageView setInfoString:[NSString stringWithFormat:@"sort:Modification Date%@",sortDescending?@"(desc)":@"(asc)"]];
 			}
 			break;
 		default:
 			//[completeMutableArray sortUsingSelector:@selector(finderCompareS:)];
 			break;
 	}
+	if ([self co_sortModeSupportsDescending:sortMode] && sortDescending) {
+		NSArray *reversedArray = [[completeMutableArray reverseObjectEnumerator] allObjects];
+		[completeMutableArray setArray:reversedArray];
+	}
 	if (rememberBookSettings && p>-1) {
 		[currentBookSetting setObject:[NSNumber numberWithInt:mode] forKey:@"sortMode"];
+		[currentBookSetting setObject:[NSNumber numberWithBool:sortDescending] forKey:@"sortDescending"];
 	}
 	
 	if (p >= 0) [self goTo:p array:nil];
 	//}
+}
+
+- (void)setSortDescending:(BOOL)descending page:(int)p
+{
+	if (![self co_sortModeSupportsDescending:sortMode]) {
+		descending = NO;
+	}
+	sortDescending = descending;
+	[self setSortMode:sortMode page:p];
 }
 
 

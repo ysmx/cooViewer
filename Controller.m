@@ -4,6 +4,29 @@
 #import "CustomImageView.h"
 #import "FullImagePanel.h"
 
+static NSMenu *COFindSortMenu(NSMenu *menu)
+{
+	NSEnumerator *enu = [[menu itemArray] objectEnumerator];
+	NSMenuItem *item;
+	while (item = [enu nextObject]) {
+		if ([item action] == @selector(changeSortModeMenu:)) {
+			return menu;
+		}
+		if ([item submenu]) {
+			NSMenu *foundMenu = COFindSortMenu([item submenu]);
+			if (foundMenu) {
+				return foundMenu;
+			}
+		}
+	}
+	return nil;
+}
+
+@interface Controller ()
+- (BOOL)co_sortModeSupportsDescending:(int)mode;
+- (void)co_installSortMenuIfNeeded;
+@end
+
 @implementation Controller
 static const int DIALOG_OK		= 128;
 static const int DIALOG_CANCEL	= 129;
@@ -109,6 +132,7 @@ static const int DIALOG_CANCEL	= 129;
 	[appDefault setObject:[NSNumber numberWithBool:fullscreen] forKey:@"Fullscreen"];
 
 	[appDefault setObject:[NSNumber numberWithFloat:wheelSensitivity] forKey:@"WheelSensitivity"];
+	[appDefault setObject:[NSNumber numberWithBool:NO] forKey:@"SortDescending"];
 	
 	[appDefault setObject:[NSNumber numberWithInt:0] forKey:@"PrevPageMode"];
 	[appDefault setObject:[NSNumber numberWithInt:0] forKey:@"CanScrollMode"];
@@ -120,6 +144,7 @@ static const int DIALOG_CANCEL	= 129;
 	[appDefault setObject:[NSNumber numberWithInt:10] forKey:@"OpenRecentLimit"];
 	
 	[defaults registerDefaults:appDefault];
+	[self co_installSortMenuIfNeeded];
 	
 	fitScreenMode = 0;
 	rotateMode=0;
@@ -1006,12 +1031,18 @@ static const int DIALOG_CANCEL	= 129;
 	completeMutableArray = [[imageLoader pathArray] retain];
 	
 	sortMode = 0;
+	sortDescending = NO;
 	if ([currentBookSetting objectForKey:@"sortMode"]) {
 		sortMode = [[currentBookSetting objectForKey:@"sortMode"] intValue];
 	} else {
 		sortMode = (int)[defaults integerForKey:@"SortMode"];
 	}
-	if (sortMode!=0) {
+	if ([currentBookSetting objectForKey:@"sortDescending"]) {
+		sortDescending = [[currentBookSetting objectForKey:@"sortDescending"] boolValue];
+	} else {
+		sortDescending = [defaults boolForKey:@"SortDescending"];
+	}
+	if (sortMode!=0 || sortDescending) {
 		[self setSortMode:sortMode page:-1];
 	}
 	
@@ -1947,15 +1978,16 @@ static const int DIALOG_CANCEL	= 129;
 			}
 		}
 	}
-	if (sortMode != [defaults integerForKey:@"SortMode"]) {
+	if (sortMode != [defaults integerForKey:@"SortMode"] || sortDescending != [defaults boolForKey:@"SortDescending"]) {
 		if ([imageView image]) {
 			BOOL sortModeTemp = NO;
 			if (currentBookSetting) {
-				if ([currentBookSetting objectForKey:@"sortMode"]) {
+				if ([currentBookSetting objectForKey:@"sortMode"] || [currentBookSetting objectForKey:@"sortDescending"]) {
 					sortModeTemp = YES;
 				}
 			}
 			if (!sortModeTemp) {
+				sortDescending = [defaults boolForKey:@"SortDescending"];
 				[self setSortMode:(int)[defaults integerForKey:@"SortMode"] page:-1];
 				[self goTo:0 array:nil];
 			}
@@ -2310,6 +2342,18 @@ static const int DIALOG_CANCEL	= 129;
 		} else {
 			return NO;
 		} 
+	} else if ([[anItem title] isEqualToString:NSLocalizedString(@"Descending", @"")] == YES) {
+		if ([window isVisible]) {
+			if ([self co_sortModeSupportsDescending:sortMode]) {
+				[anItem setState:sortDescending ? NSOnState : NSOffState];
+				return YES;
+			} else {
+				[anItem setState:NSOffState];
+				return NO;
+			}
+		} else {
+			return NO;
+		}
 	} else {
 		/*contextMenu*/
 		NSRect left,right;
@@ -2628,7 +2672,8 @@ static const int DIALOG_CANCEL	= 129;
 		[self setSortMode:2 page:0];
 	} else if ([[sender title] isEqualToString:NSLocalizedString(@"Modification Date", @"")] == YES) {
 		[self setSortMode:3 page:0];
-		
+	} else if ([[sender title] isEqualToString:NSLocalizedString(@"Descending", @"")] == YES) {
+		[self setSortDescending:!sortDescending page:0];
 	}
 }
 
@@ -2670,9 +2715,11 @@ static const int DIALOG_CANCEL	= 129;
 	[currentBookSetting setObject:currentBookPath forKey:@"temppath"];
 	[currentBookSetting removeObjectForKey:@"readMode"];
 	[currentBookSetting removeObjectForKey:@"sortMode"];
+	[currentBookSetting removeObjectForKey:@"sortDescending"];
 	[currentBookSetting removeObjectForKey:@"marks"];
 	
 	[self changeReadMode:(int)[defaults integerForKey:@"ReadMode"]];
+	sortDescending = [defaults boolForKey:@"SortDescending"];
 	[self setSortMode:(int)[defaults integerForKey:@"SortMode"] page:-1];
 }
 
@@ -3183,6 +3230,36 @@ static const int DIALOG_CANCEL	= 129;
 - (int)sortMode
 {
 	return sortMode;
+}
+
+- (BOOL)sortDescending
+{
+	return sortDescending;
+}
+
+- (BOOL)co_sortModeSupportsDescending:(int)mode
+{
+	return mode != 1;
+}
+
+- (void)co_installSortMenuIfNeeded
+{
+	NSMenu *sortMenu = COFindSortMenu([NSApp mainMenu]);
+	if (!sortMenu) {
+		return;
+	}
+	NSString *descendingTitle = NSLocalizedString(@"Descending", @"");
+	if ([sortMenu itemWithTitle:descendingTitle]) {
+		return;
+	}
+	int insertIndex = (int)[sortMenu numberOfItems];
+	NSMenuItem *shuffleItem = [sortMenu itemWithTitle:NSLocalizedString(@"Shuffle", @"")];
+	if (shuffleItem) {
+		insertIndex = (int)[sortMenu indexOfItem:shuffleItem];
+	}
+	NSMenuItem *descendingItem = [[[NSMenuItem alloc] initWithTitle:descendingTitle action:@selector(changeSortModeMenu:) keyEquivalent:@""] autorelease];
+	[descendingItem setTarget:self];
+	[sortMenu insertItem:descendingItem atIndex:insertIndex];
 }
 
 - (int)openLinkMode

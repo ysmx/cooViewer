@@ -21,6 +21,7 @@
 	NSUserDefaults *defaults;
 	
 	IBOutlet id sortModePopUpButton;
+	NSButton *sortDescendingButton;
 	
 	
 	IBOutlet id changeOpenWithCheck;

@@ -46,6 +46,9 @@
 /* No comment provided by engineer.No comment provided by engineer.No comment provided by engineer.No comment provided by engineer.No comment provided by engineer.No comment provided by engineer. */
 "Creation Date" = "作成日";
 
+/* Sort order */
+"Descending" = "降順";
+
 /* No comment provided by engineer.No comment provided by engineer.No comment provided by engineer.No comment provided by engineer.No comment provided by engineer.No comment provided by engineer. */
 "Delete Settings" = "設定を削除";
 
@@ -405,4 +408,3 @@
 
 /* No comment provided by engineer.No comment provided by engineer.No comment provided by engineer.No comment provided by engineer.No comment provided by engineer.No comment provided by engineer. */
 "Window" = "ウインドウ";
-

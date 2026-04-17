@@ -27,6 +27,7 @@
 	int now;
 	int sortMode;
     IBOutlet id sortPopUpButton;
+	NSButton *sortDescendingButton;
     IBOutlet id stateTextField;
     IBOutlet id nameTextField;
     IBOutlet id onlyBookmarkButton;

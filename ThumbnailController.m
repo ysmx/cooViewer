@@ -38,6 +38,23 @@
     [matrix setPrototype:prototype];
 	[matrix setIntercellSpacing:NSMakeSize(3,3)];
 	
+	NSRect sortFrame = [sortPopUpButton frame];
+	NSButton *button = [[[NSButton alloc] initWithFrame:NSMakeRect(sortFrame.origin.x, sortFrame.origin.y, 80, sortFrame.size.height)] autorelease];
+	[button setButtonType:NSSwitchButton];
+	[button setControlSize:NSSmallControlSize];
+	[button setTitle:NSLocalizedString(@"Descending", @"")];
+	[button setTarget:self];
+	[button setAction:@selector(sortDescending:)];
+	[button sizeToFit];
+	NSRect buttonFrame = [button frame];
+	buttonFrame.origin.x = NSMaxX(sortFrame) - buttonFrame.size.width;
+	buttonFrame.origin.y = sortFrame.origin.y - 1;
+	[button setFrame:buttonFrame];
+	sortFrame.size.width = buttonFrame.origin.x - sortFrame.origin.x - 4;
+	[sortPopUpButton setFrame:sortFrame];
+	[[sortPopUpButton superview] addSubview:button];
+	sortDescendingButton = button;
+	
 	
 	NSSize max = [nameTextField frame].size;
 	max = NSMakeSize([[NSScreen mainScreen] frame].size.width-497-33,max.height);
@@ -52,6 +69,7 @@
 	sortMode = 0;
 	//mangaMode = NO;
 	[sortPopUpButton selectItemAtIndex:0];
+	[sortDescendingButton setState:NSOffState];
 	if (loader != imageLoader) [thumImageArray removeAllObjects];
 	pathArray = [loader pathArray];
 	imageLoader = loader;
@@ -488,7 +506,11 @@
 	} else if ([controller sortMode] == 3) {
 		sortMode = 2;
 		[sortPopUpButton selectItemAtIndex:2];
+	} else {
+		sortMode = 0;
+		[sortPopUpButton selectItemAtIndex:0];
 	}
+	[sortDescendingButton setState:[controller sortDescending] ? NSOnState : NSOffState];
 	
 	 if (bookmarkMode) {
 		 [self showBookmarkThumbnail];
@@ -1497,5 +1519,14 @@
 				break;
 		}
 	}
+}
+
+-(IBAction)sortDescending:(id)sender
+{
+	[thumImageArray removeAllObjects];
+	[controller setSortDescending:([sender state] == NSOnState) page:0];
+	now = 0;
+	nowBookmarkPage = 1;
+	[self showThumbnail:[controller nowPage]];
 }
 @end

@@ -28,6 +28,7 @@
 	
 	
 	int sortMode;
+	BOOL sortDescending;
 	BOOL threadStop;
 	int cacheSize;
 	NSMutableArray *cacheArray;
@@ -250,6 +251,7 @@
 - (NSArray*)bookmarkArray;
 - (id)openSameFolderMenuItem;
 - (int)sortMode;
+- (BOOL)sortDescending;
 - (int)openLinkMode;
 
 
@@ -302,6 +304,7 @@
 - (void)goToFirst;
 - (void)changeReadMode:(int)mode;
 - (void)setSortMode:(int)mode page:(int)p;
+- (void)setSortDescending:(BOOL)descending page:(int)p;
 - (IBAction)switchSingle:(id)sender;
 
 - (IBAction)viewAtOriginalSizeFirst:(id)sender;
