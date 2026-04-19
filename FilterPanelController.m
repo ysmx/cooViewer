@@ -9,18 +9,34 @@
 
 static const NSInteger kFilterLabelTag = 1001;
 static const NSInteger kFilterCloseButtonTag = 1002;
+static const NSInteger kFilterDisclosureButtonTag = 1003;
+static const NSInteger kFilterResetButtonTag = 1004;
 static const CGFloat kFilterLabelHeight = 20.0;
-static const CGFloat kFilterHeaderBottomSpacing = 8.0;
-static const CGFloat kFilterHeaderHorizontalPadding = 6.0;
-static const CGFloat kFilterCloseButtonRightInset = 8.0;
-static const CGFloat kFilterTitleToButtonSpacing = 8.0;
 static const CGFloat kFilterPanelDefaultContentWidth = 340.0;
 static const CGFloat kFilterItemSpacing = 12.0;
-static const CGFloat kFilterRowSpacing = 8.0;
-static const CGFloat kFilterBoxHorizontalPadding = 14.0;
-static const CGFloat kFilterBoxVerticalPadding = 10.0;
-static const CGFloat kNumericFieldWidth = 56.0;
-static const CGFloat kFieldHeight = 22.0;
+static const CGFloat kFilterPanelOuterPadding = 8.0;
+static const CGFloat kFilterTopBarHeight = 56.0;
+static const CGFloat kFilterTopBarInnerPadding = 10.0;
+static const CGFloat kFilterPanelChromeHeight = 78.0;
+static const CGFloat kFilterCardHorizontalPadding = 14.0;
+static const CGFloat kFilterCardVerticalPadding = 12.0;
+static const CGFloat kFilterCardHeaderHeight = 30.0;
+static const CGFloat kFilterCardButtonInset = 10.0;
+static const CGFloat kFilterCardContentSpacing = 10.0;
+static const CGFloat kFilterPickerWidth = 320.0;
+static const CGFloat kFilterPickerSearchHeight = 28.0;
+static const CGFloat kFilterPickerHorizontalInset = 16.0;
+static const CGFloat kFilterPickerVerticalInset = 16.0;
+static const CGFloat kFilterPickerTopGap = 10.0;
+static const CGFloat kFilterPickerMinVisibleRows = 5.0;
+static const CGFloat kFilterPickerMaxVisibleRows = 10.0;
+static NSString * const kFilterPickerSavedHeightDefaultsKey = @"FilterPickerPanelHeight";
+static const CGFloat kFilterPanelMinContentHeight = 160.0;
+static const CGFloat kFilterPickerRowHeight = 24.0;
+static const CGFloat kFilterPickerHeaderHeight = 18.0;
+static const CGFloat kFilterPickerSeparatorHeight = 8.0;
+
+static void *kFilterObserverContext = &kFilterObserverContext;
 
 @interface COVFilterBorderView : NSView
 @end
@@ -35,55 +51,35 @@ static const CGFloat kFieldHeight = 22.0;
     [super drawRect:dirtyRect];
     NSRect borderRect = NSInsetRect([self bounds], 0.5, 0.5);
     NSBezierPath *borderPath = [NSBezierPath bezierPathWithRoundedRect:borderRect xRadius:4.0 yRadius:4.0];
-    [[NSColor colorWithCalibratedWhite:1.0 alpha:0.35] setStroke];
+    [[NSColor colorWithCalibratedWhite:0.18 alpha:0.92] setFill];
+    [borderPath fill];
+    [[NSColor colorWithCalibratedWhite:1.0 alpha:0.14] setStroke];
     [borderPath stroke];
 }
 @end
 
-static NSString *COVControlIdentifier(NSString *filterKey, NSString *inputKey, NSString *kind, NSInteger index)
-{
-    return [NSString stringWithFormat:@"%@\t%@\t%@\t%ld", filterKey, inputKey, kind, (long)index];
-}
+@interface COVToolbarButton : NSButton
+@end
 
-static NSArray *COVControlIdentifierComponents(NSString *identifier)
+@implementation COVToolbarButton
+- (BOOL)isOpaque
 {
-    return [identifier componentsSeparatedByString:@"\t"];
-}
-
-static BOOL COVNumberIsIntegralType(NSDictionary *attribute)
-{
-    NSString *type = [attribute objectForKey:kCIAttributeType];
-    if ([type isEqualToString:kCIAttributeTypeInteger] ||
-        [type isEqualToString:kCIAttributeTypeCount] ||
-        [type isEqualToString:kCIAttributeTypeBoolean]) {
-        return YES;
-    }
     return NO;
 }
-
-static NSString *COVStringForNumber(NSNumber *number, BOOL integral)
+- (void)drawRect:(NSRect)dirtyRect
 {
-    if (integral) {
-        return [NSString stringWithFormat:@"%ld", (long)llround([number doubleValue])];
-    }
-    double value = [number doubleValue];
-    if (fabs(value) >= 1000.0 || floor(value) == value) {
-        return [NSString stringWithFormat:@"%.0f", value];
-    }
-    return [NSString stringWithFormat:@"%.3f", value];
+    NSRect bounds = NSInsetRect([self bounds], 0.5, 0.5);
+    NSBezierPath *path = [NSBezierPath bezierPathWithRoundedRect:bounds xRadius:9.0 yRadius:9.0];
+    NSColor *fillColor = ([self isHighlighted]
+                          ? [NSColor colorWithCalibratedRed:0.30 green:0.55 blue:1.0 alpha:0.92]
+                          : [NSColor colorWithCalibratedRed:0.24 green:0.48 blue:0.96 alpha:0.90]);
+    [fillColor setFill];
+    [path fill];
+    [[NSColor colorWithCalibratedWhite:1.0 alpha:0.14] setStroke];
+    [path stroke];
+    [super drawRect:dirtyRect];
 }
-
-static NSString *COVDisplayNameForInputKey(NSString *inputKey, NSDictionary *attribute)
-{
-    NSString *displayName = [attribute objectForKey:kCIAttributeDisplayName];
-    if ([displayName length] > 0) {
-        return displayName;
-    }
-    if ([inputKey hasPrefix:@"input"] && [inputKey length] > 5) {
-        return [inputKey substringFromIndex:5];
-    }
-    return inputKey;
-}
+@end
 
 static NSArray *COVDebugFilterNamesFromPresetString(NSString *preset)
 {
@@ -106,36 +102,22 @@ static NSArray *COVDebugFilterNamesFromPresetString(NSString *preset)
     return filters;
 }
 
-static NSInteger COVVectorComponentCount(CIVector *vector, NSDictionary *attribute)
+static NSDictionary *COVFilterLibraryEntry(NSString *filterName, NSString *displayName, NSString *categoryTitle)
 {
-    NSString *type = [attribute objectForKey:kCIAttributeType];
-    if ([type isEqualToString:kCIAttributeTypeOffset] ||
-        [type isEqualToString:kCIAttributeTypePosition]) {
-        return 2;
-    }
-    if ([type isEqualToString:kCIAttributeTypeRectangle]) {
-        return 4;
-    }
-    NSInteger count = [vector count];
-    if (count <= 0) {
-        count = 2;
-    }
-    return MIN(count, 4);
+    return [NSDictionary dictionaryWithObjectsAndKeys:
+            filterName, @"filterName",
+            displayName, @"displayName",
+            categoryTitle, @"categoryTitle",
+            nil];
 }
 
-static NSString *COVVectorComponentLabel(NSInteger index, NSInteger count, NSDictionary *attribute)
+static NSAttributedString *COVToolbarButtonTitle(NSString *title)
 {
-    NSString *type = [attribute objectForKey:kCIAttributeType];
-    if ([type isEqualToString:kCIAttributeTypeRectangle]) {
-        static NSString *labels[] = {@"X", @"Y", @"W", @"H"};
-        return labels[index];
-    }
-    if (count == 2) {
-        static NSString *labels[] = {@"X", @"Y"};
-        return labels[index];
-    }
-    static NSString *labels[] = {@"X", @"Y", @"Z", @"W"};
-    return labels[index];
+    NSDictionary *attributes = [NSDictionary dictionaryWithObjectsAndKeys:
+                                [NSFont systemFontOfSize:12.0 weight:NSFontWeightSemibold], NSFontAttributeName,
+                                [NSColor whiteColor], NSForegroundColorAttributeName,
+                                nil];
+    return [[[NSAttributedString alloc] initWithString:title attributes:attributes] autorelease];
 }
 
 @implementation FilterPanelController
@@ -148,288 +130,471 @@ static NSString *COVVectorComponentLabel(NSInteger index, NSInteger count, NSDic
     return MAX(contentWidth, kFilterPanelDefaultContentWidth);
 }
 
-- (void)registerControlView:(NSView *)control identifier:(NSString *)identifier
+- (NSArray *)filterLibraryCategories
 {
-    [control setIdentifier:identifier];
-    [controlViewsByIdentifier setObject:control forKey:identifier];
+    return [NSArray arrayWithObjects:
+            [NSDictionary dictionaryWithObjectsAndKeys:
+             @"カラー調整", @"title",
+             [NSArray arrayWithObjects:kCICategoryColorAdjustment, kCICategoryStillImage, nil], @"categories",
+             nil],
+            [NSDictionary dictionaryWithObjectsAndKeys:
+             @"カラー効果", @"title",
+             [NSArray arrayWithObjects:kCICategoryColorEffect, kCICategoryStillImage, nil], @"categories",
+             nil],
+            [NSDictionary dictionaryWithObjectsAndKeys:
+             @"シャープ", @"title",
+             [NSArray arrayWithObjects:kCICategorySharpen, kCICategoryStillImage, nil], @"categories",
+             nil],
+            [NSDictionary dictionaryWithObjectsAndKeys:
+             @"ぼかし", @"title",
+             [NSArray arrayWithObjects:kCICategoryBlur, kCICategoryStillImage, nil], @"categories",
+             nil],
+            nil];
 }
 
-- (NSArray *)editableInputKeysForFilter:(CIFilter *)filter
+- (void)configureToolbarViews
 {
-    NSMutableArray *keys = [NSMutableArray array];
+    if (toolbarView != nil) {
+        return;
+    }
+
+    NSView *panelContentView = [filterPanel contentView];
+
+    toolbarView = [[NSView alloc] initWithFrame:NSZeroRect];
+    [toolbarView setAutoresizingMask:NSViewWidthSizable|NSViewMinYMargin];
+
+    toolbarTitleLabel = [[NSTextField labelWithString:@"フィルター"] retain];
+    [toolbarTitleLabel setFont:[NSFont systemFontOfSize:13.0 weight:NSFontWeightSemibold]];
+    [toolbarView addSubview:toolbarTitleLabel];
+
+    toolbarHintLabel = [[NSTextField labelWithString:@"検索して追加し、カードごとに調整できます"] retain];
+    [toolbarHintLabel setTextColor:[NSColor colorWithCalibratedWhite:1.0 alpha:0.60]];
+    [toolbarHintLabel setFont:[NSFont systemFontOfSize:11.0]];
+    [toolbarView addSubview:toolbarHintLabel];
+
+    addFilterButton = [[COVToolbarButton alloc] initWithFrame:NSZeroRect];
+    [addFilterButton setTitle:@"フィルターを追加"];
+    [addFilterButton setAttributedTitle:COVToolbarButtonTitle(@"フィルターを追加")];
+    [addFilterButton setBezelStyle:NSBezelStyleTexturedRounded];
+    [addFilterButton setBordered:NO];
+    [addFilterButton setTarget:self];
+    [addFilterButton setAction:@selector(showFilterPicker:)];
+    [toolbarView addSubview:addFilterButton];
+
+    [panelContentView addSubview:toolbarView];
+    [popupButton setHidden:YES];
+}
+
+- (void)layoutToolbarAndScrollView
+{
+    NSView *panelContentView = [filterPanel contentView];
+    CGFloat contentWidth = NSWidth([panelContentView bounds]);
+    CGFloat contentHeight = NSHeight([panelContentView bounds]);
+
+    [toolbarView setFrame:NSMakeRect(kFilterPanelOuterPadding,
+                                     contentHeight - kFilterTopBarHeight - kFilterPanelOuterPadding,
+                                     MAX(0, contentWidth - (kFilterPanelOuterPadding * 2.0)),
+                                     kFilterTopBarHeight)];
+
+    CGFloat buttonWidth = 132.0;
+    CGFloat buttonHeight = 32.0;
+    [addFilterButton setFrame:NSMakeRect(NSWidth([toolbarView bounds]) - buttonWidth,
+                                         NSHeight([toolbarView bounds]) - buttonHeight - 2.0,
+                                         buttonWidth,
+                                         buttonHeight)];
+
+    CGFloat titleWidth = MAX(0, NSMinX([addFilterButton frame]) - 12.0);
+    [toolbarTitleLabel setFrame:NSMakeRect(0, NSHeight([toolbarView bounds]) - 22.0, titleWidth, 18.0)];
+    [toolbarHintLabel setFrame:NSMakeRect(0, 6.0, NSWidth([toolbarView bounds]), 14.0)];
+
+    CGFloat scrollY = kFilterPanelOuterPadding;
+    CGFloat scrollTop = NSMinY([toolbarView frame]) - 6.0;
+    [scrollView setFrame:NSMakeRect(kFilterPanelOuterPadding,
+                                    scrollY,
+                                    contentWidth - (kFilterPanelOuterPadding * 2.0),
+                                    MAX(0, scrollTop - scrollY))];
+}
+
+- (void)rebuildFilterLibraryEntries
+{
+    NSMutableArray *entries = [NSMutableArray array];
+    NSEnumerator *categoryEnumerator = [[self filterLibraryCategories] objectEnumerator];
+    NSDictionary *categoryEntry;
+    [popupButton removeAllItems];
+    [popupButton addItemWithTitle:@""];
+    [filterDic removeAllObjects];
+    while (categoryEntry = [categoryEnumerator nextObject]) {
+        NSString *categoryTitle = [categoryEntry objectForKey:@"title"];
+        NSArray *filters = [CIFilter filterNamesInCategories:[categoryEntry objectForKey:@"categories"]];
+        NSArray *sortedFilters = [filters sortedArrayUsingComparator:^NSComparisonResult(id obj1, id obj2) {
+            NSString *title1 = [CIFilter localizedNameForFilterName:obj1];
+            NSString *title2 = [CIFilter localizedNameForFilterName:obj2];
+            return [title1 localizedCaseInsensitiveCompare:title2];
+        }];
+        NSEnumerator *filterEnumerator = [sortedFilters objectEnumerator];
+        NSString *filterName;
+        while (filterName = [filterEnumerator nextObject]) {
+            NSString *displayName = [CIFilter localizedNameForFilterName:filterName];
+            [filterDic setObject:filterName forKey:displayName];
+            [popupButton addItemWithTitle:displayName];
+            [entries addObject:COVFilterLibraryEntry(filterName, displayName, categoryTitle)];
+        }
+    }
+    [availableFilterEntries release];
+    availableFilterEntries = [entries copy];
+    [filteredFilterEntries release];
+    filteredFilterEntries = [availableFilterEntries retain];
+}
+
+- (void)updateFilterPickerLayout
+{
+    if (filterPickerPanel == nil) {
+        return;
+    }
+
+    CGFloat scrollWidth = kFilterPickerWidth - (kFilterPickerHorizontalInset * 2.0);
+    CGFloat panelHeight = NSHeight([[filterPickerPanel contentView] frame]);
+    CGFloat scrollHeight = MAX(120.0, panelHeight - (kFilterPickerVerticalInset * 2.0) - kFilterPickerSearchHeight - kFilterPickerTopGap);
+    NSView *panelContentView = [filterPickerPanel contentView];
+    [panelContentView setFrame:NSMakeRect(0, 0, kFilterPickerWidth, panelHeight)];
+    [filterSearchField setFrame:NSMakeRect(kFilterPickerHorizontalInset,
+                                           panelHeight - kFilterPickerVerticalInset - kFilterPickerSearchHeight,
+                                           scrollWidth,
+                                           kFilterPickerSearchHeight)];
+    [filterPickerScrollView setFrame:NSMakeRect(kFilterPickerHorizontalInset,
+                                                kFilterPickerVerticalInset,
+                                                scrollWidth,
+                                                scrollHeight)];
+    CGFloat totalTableHeight = 0;
+    for (NSDictionary *item in filterPickerDisplayItems) {
+        NSString *type = [item objectForKey:@"type"];
+        if ([type isEqualToString:@"header"]) totalTableHeight += kFilterPickerHeaderHeight;
+        else if ([type isEqualToString:@"separator"]) totalTableHeight += kFilterPickerSeparatorHeight;
+        else totalTableHeight += kFilterPickerRowHeight;
+    }
+    [filterTableView setFrame:NSMakeRect(0, 0, scrollWidth, MAX(scrollHeight, totalTableHeight))];
+    [[filterPickerScrollView contentView] scrollToPoint:NSZeroPoint];
+    [filterPickerScrollView reflectScrolledClipView:[filterPickerScrollView contentView]];
+}
+
+- (void)refreshFilterPickerResults
+{
+    NSString *query = [[filterSearchField stringValue] lowercaseString];
+    if ([query length] == 0) {
+        NSArray *newEntries = [availableFilterEntries retain];
+        [filteredFilterEntries release];
+        filteredFilterEntries = newEntries;
+    } else {
+        NSMutableArray *entries = [NSMutableArray array];
+        NSEnumerator *enumerator = [availableFilterEntries objectEnumerator];
+        NSDictionary *entry;
+        while (entry = [enumerator nextObject]) {
+            NSString *displayName = [[entry objectForKey:@"displayName"] lowercaseString];
+            NSString *categoryTitle = [[entry objectForKey:@"categoryTitle"] lowercaseString];
+            if ([displayName rangeOfString:query].location != NSNotFound ||
+                [categoryTitle rangeOfString:query].location != NSNotFound) {
+                [entries addObject:entry];
+            }
+        }
+        [filteredFilterEntries release];
+        filteredFilterEntries = [entries copy];
+    }
+    [self rebuildFilterPickerDisplayItems];
+    [filterTableView reloadData];
+    [self updateFilterPickerLayout];
+}
+
+- (void)rebuildFilterPickerDisplayItems
+{
+    NSMutableArray *displayItems = [NSMutableArray array];
+    NSMutableArray *seenCategories = [NSMutableArray array];
+    NSMutableDictionary *categoryEntries = [NSMutableDictionary dictionary];
+    for (NSDictionary *entry in filteredFilterEntries) {
+        NSString *category = [entry objectForKey:@"categoryTitle"];
+        if (![seenCategories containsObject:category]) {
+            [seenCategories addObject:category];
+            [categoryEntries setObject:[NSMutableArray array] forKey:category];
+        }
+        [[categoryEntries objectForKey:category] addObject:entry];
+    }
+    BOOL firstCategory = YES;
+    for (NSString *category in seenCategories) {
+        if (!firstCategory) {
+            [displayItems addObject:[NSDictionary dictionaryWithObjectsAndKeys:@"separator", @"type", nil]];
+        }
+        firstCategory = NO;
+        [displayItems addObject:[NSDictionary dictionaryWithObjectsAndKeys:@"header", @"type", category, @"title", nil]];
+        for (NSDictionary *entry in [categoryEntries objectForKey:category]) {
+            NSMutableDictionary *displayEntry = [NSMutableDictionary dictionaryWithDictionary:entry];
+            [displayEntry setObject:@"entry" forKey:@"type"];
+            [displayItems addObject:displayEntry];
+        }
+    }
+    [filterPickerDisplayItems release];
+    filterPickerDisplayItems = [displayItems copy];
+}
+
+- (void)buildFilterPickerIfNeeded
+{
+    if (filterPickerPanel != nil) {
+        return;
+    }
+
+    NSInteger allCategoryCount = [[self filterLibraryCategories] count];
+    NSInteger separatorCount = MAX(0, allCategoryCount - 1);
+    CGFloat rowCount = MAX(kFilterPickerMinVisibleRows,
+                           MIN(kFilterPickerMaxVisibleRows, (CGFloat)[filteredFilterEntries count]));
+    CGFloat defaultHeight = kFilterPickerVerticalInset + kFilterPickerSearchHeight + kFilterPickerTopGap
+                            + ceil(rowCount * kFilterPickerRowHeight)
+                            + ceil((CGFloat)allCategoryCount * kFilterPickerHeaderHeight)
+                            + ceil((CGFloat)separatorCount * kFilterPickerSeparatorHeight)
+                            + kFilterPickerVerticalInset;
+    NSUserDefaults *defaults = [NSUserDefaults standardUserDefaults];
+    CGFloat savedHeight = [defaults doubleForKey:kFilterPickerSavedHeightDefaultsKey];
+    CGFloat initialHeight = (savedHeight > 0.0 ? savedHeight : defaultHeight);
+
+    CGFloat maxContentHeight = kFilterPickerVerticalInset + kFilterPickerSearchHeight + kFilterPickerTopGap
+                               + ceil((CGFloat)[availableFilterEntries count] * kFilterPickerRowHeight)
+                               + ceil((CGFloat)allCategoryCount * kFilterPickerHeaderHeight)
+                               + ceil((CGFloat)separatorCount * kFilterPickerSeparatorHeight)
+                               + kFilterPickerVerticalInset;
+
+    filterPickerPanel = [[NSPanel alloc] initWithContentRect:NSMakeRect(0, 0, kFilterPickerWidth, initialHeight)
+                                                   styleMask:(NSWindowStyleMaskTitled | NSWindowStyleMaskUtilityWindow | NSWindowStyleMaskResizable | NSWindowStyleMaskClosable)
+                                                     backing:NSBackingStoreBuffered
+                                                       defer:NO];
+    [filterPickerPanel setTitle:@"フィルターを追加"];
+    [filterPickerPanel setReleasedWhenClosed:NO];
+    [filterPickerPanel setHidesOnDeactivate:YES];
+    [filterPickerPanel setFloatingPanel:YES];
+    [filterPickerPanel setDelegate:(id)self];
+    [filterPickerPanel setContentMinSize:NSMakeSize(kFilterPickerWidth, defaultHeight)];
+    [filterPickerPanel setContentMaxSize:NSMakeSize(kFilterPickerWidth, maxContentHeight)];
+    [filterPickerPanel setMinSize:[filterPickerPanel frameRectForContentRect:NSMakeRect(0, 0, kFilterPickerWidth, defaultHeight)].size];
+    [filterPickerPanel setMaxSize:[filterPickerPanel frameRectForContentRect:NSMakeRect(0, 0, kFilterPickerWidth, maxContentHeight)].size];
+
+    filterSearchField = [[NSSearchField alloc] initWithFrame:NSZeroRect];
+    [filterSearchField setPlaceholderString:@"フィルターを検索"];
+    [filterSearchField setDelegate:self];
+    [filterSearchField setTarget:self];
+    [filterSearchField setAction:@selector(filterSearchChanged:)];
+    [[filterSearchField cell] setSendsSearchStringImmediately:YES];
+    [[filterSearchField cell] setSendsWholeSearchString:NO];
+    [[filterPickerPanel contentView] addSubview:filterSearchField];
+
+    filterPickerScrollView = [[NSScrollView alloc] initWithFrame:NSZeroRect];
+    [filterPickerScrollView setBorderType:NSNoBorder];
+    [filterPickerScrollView setHasVerticalScroller:YES];
+    [filterPickerScrollView setDrawsBackground:NO];
+
+    filterTableView = [[NSTableView alloc] initWithFrame:NSZeroRect];
+    [filterTableView setHeaderView:nil];
+    [filterTableView setDelegate:self];
+    [filterTableView setDataSource:self];
+    [filterTableView setRowHeight:kFilterPickerRowHeight];
+    [filterTableView setFocusRingType:NSFocusRingTypeNone];
+    [filterTableView setSelectionHighlightStyle:NSTableViewSelectionHighlightStyleRegular];
+    [filterTableView setTarget:self];
+    [filterTableView setAction:@selector(selectFilterFromPicker:)];
+    NSTableColumn *column = [[[NSTableColumn alloc] initWithIdentifier:@"filter"] autorelease];
+    [column setWidth:kFilterPickerWidth - (kFilterPickerHorizontalInset * 2.0)];
+    [filterTableView addTableColumn:column];
+    [filterPickerScrollView setDocumentView:filterTableView];
+    [[filterPickerPanel contentView] addSubview:filterPickerScrollView];
+    [self rebuildFilterPickerDisplayItems];
+    [self updateFilterPickerLayout];
+}
+
+- (void)startObservingFilter:(CIFilter *)filter
+{
     NSEnumerator *enu = [[filter inputKeys] objectEnumerator];
     NSString *key;
     while (key = [enu nextObject]) {
-        if ([key isEqualToString:kCIInputImageKey] ||
-            [key isEqualToString:kCIInputTargetImageKey]) {
-            continue;
-        }
-        [keys addObject:key];
+        if ([key isEqualToString:kCIInputImageKey] || [key isEqualToString:kCIInputTargetImageKey]) continue;
+        [filter addObserver:self forKeyPath:key options:0 context:kFilterObserverContext];
     }
-    return keys;
 }
 
-- (void)applyFilterValue:(id)value filterKey:(NSString *)filterKey inputKey:(NSString *)inputKey
+- (void)stopObservingFilter:(CIFilter *)filter
 {
-    CIFilter *filter = [selectedFilters objectForKey:filterKey];
-    if (filter == nil) return;
-    [filter setValue:value forKey:inputKey];
+    NSEnumerator *enu = [[filter inputKeys] objectEnumerator];
+    NSString *key;
+    while (key = [enu nextObject]) {
+        if ([key isEqualToString:kCIInputImageKey] || [key isEqualToString:kCIInputTargetImageKey]) continue;
+        [filter removeObserver:self forKeyPath:key context:kFilterObserverContext];
+    }
+}
+
+- (void)autoExpandPanelIfNeeded
+{
+    if ([selectedFilterKeys count] == 0) return;
+
+    CGFloat needed = 0;
+    for (NSString *key in selectedFilterKeys) {
+        NSView *v = [selectedFilterUIViews objectForKey:key];
+        if (v) needed += NSHeight([v frame]);
+    }
+    needed += MAX(0.0, (CGFloat)([selectedFilterKeys count] - 1)) * kFilterItemSpacing;
+
+    CGFloat available = NSHeight([[scrollView contentView] bounds]);
+    if (needed <= available + 0.5) return;
+
+    CGFloat expansion = ceil(needed - available);
+    NSRect panelFrame = [filterPanel frame];
+    NSScreen *screen = [filterPanel screen] ?: [NSScreen mainScreen];
+    CGFloat minY = NSMinY([screen visibleFrame]);
+
+    CGFloat newOriginY = panelFrame.origin.y - expansion;
+    CGFloat newHeight = panelFrame.size.height + expansion;
+    if (newOriginY < minY) {
+        newOriginY = minY;
+        newHeight = NSMaxY(panelFrame) - minY;
+    }
+    if (newHeight <= panelFrame.size.height + 0.5) return;
+
+    _lastLayoutContentWidth = NSWidth([[filterPanel contentView] bounds]);
+    [filterPanel setFrame:NSMakeRect(panelFrame.origin.x, newOriginY, panelFrame.size.width, newHeight) display:YES];
+    [self layoutToolbarAndScrollView];
+}
+
+- (void)relayoutFilterCards
+{
+    if ([selectedFilterKeys count] == 0) return;
+    CGFloat contentWidth = [self filterContentWidth];
+    CGFloat currentY = 0;
+    for (NSString *filterKey in selectedFilterKeys) {
+        NSView *v = [selectedFilterUIViews objectForKey:filterKey];
+        if (v) currentY += NSHeight([v frame]) + kFilterItemSpacing;
+    }
+    currentY -= kFilterItemSpacing;
+    CGFloat finalHeight = MAX(NSHeight([[scrollView contentView] bounds]), currentY);
+    [contentsView setFrameSize:NSMakeSize(contentWidth, finalHeight)];
+    CGFloat relayoutY = finalHeight;
+    for (NSString *filterKey in selectedFilterKeys) {
+        NSView *v = [selectedFilterUIViews objectForKey:filterKey];
+        if (v) {
+            relayoutY -= NSHeight([v frame]);
+            [v setFrameOrigin:NSMakePoint(0, relayoutY)];
+            relayoutY -= kFilterItemSpacing;
+        }
+    }
+}
+
+- (void)addFilterNamed:(NSString *)filterName
+{
+    if ([selectedFilterKeys containsObject:filterName]) {
+        return;
+    }
+    CIFilter *newFilter = [CIFilter filterWithName:filterName];
+    if (newFilter == nil) {
+        return;
+    }
+    [newFilter setDefaults];
+    [selectedFilterKeys addObject:filterName];
+    [selectedFilters setObject:newFilter forKey:filterName];
+    [collapsedFilterKeys removeObject:filterName];
+    [self startObservingFilter:newFilter];
+    [self drawFilterUIViews];
+    [self autoExpandPanelIfNeeded];
+    [self relayoutFilterCards];
+    NSView *newCardView = [selectedFilterUIViews objectForKey:filterName];
+    if (newCardView) {
+        [newCardView scrollRectToVisible:[newCardView bounds]];
+    }
     [self sendNotification];
     [self setUserDefaults];
-}
-
-- (void)syncNumericFieldForFilterKey:(NSString *)filterKey inputKey:(NSString *)inputKey number:(NSNumber *)number integral:(BOOL)integral
-{
-    NSString *fieldIdentifier = COVControlIdentifier(filterKey, inputKey, @"number", 0);
-    NSTextField *field = [controlViewsByIdentifier objectForKey:fieldIdentifier];
-    if (field) {
-        [field setStringValue:COVStringForNumber(number, integral)];
-    }
-}
-
-- (void)syncSliderForFilterKey:(NSString *)filterKey inputKey:(NSString *)inputKey number:(NSNumber *)number
-{
-    NSString *sliderIdentifier = COVControlIdentifier(filterKey, inputKey, @"slider", 0);
-    NSSlider *slider = [controlViewsByIdentifier objectForKey:sliderIdentifier];
-    if (slider) {
-        [slider setDoubleValue:[number doubleValue]];
-    }
-}
-
-- (NSNumber *)clampedNumberFromValue:(double)value attribute:(NSDictionary *)attribute
-{
-    NSNumber *minValue = [attribute objectForKey:kCIAttributeSliderMin];
-    NSNumber *maxValue = [attribute objectForKey:kCIAttributeSliderMax];
-    if (minValue == nil) minValue = [attribute objectForKey:kCIAttributeMin];
-    if (maxValue == nil) maxValue = [attribute objectForKey:kCIAttributeMax];
-    if (minValue) value = MAX(value, [minValue doubleValue]);
-    if (maxValue) value = MIN(value, [maxValue doubleValue]);
-    if (COVNumberIsIntegralType(attribute)) {
-        return [NSNumber numberWithLong:llround(value)];
-    }
-    return [NSNumber numberWithDouble:value];
-}
-
-- (NSView *)numberRowForFilterKey:(NSString *)filterKey
-                         inputKey:(NSString *)inputKey
-                        attribute:(NSDictionary *)attribute
-                       rowWidth:(CGFloat)rowWidth
-{
-    CGFloat rowHeight = 42.0;
-    NSView *rowView = [[[NSView alloc] initWithFrame:NSMakeRect(0, 0, rowWidth, rowHeight)] autorelease];
-    NSString *displayName = COVDisplayNameForInputKey(inputKey, attribute);
-    NSTextField *label = [NSTextField labelWithString:displayName];
-    [label setFrame:NSMakeRect(0, rowHeight - 14.0, rowWidth, 14.0)];
-    [rowView addSubview:label];
-
-    NSDictionary *attrs = attribute;
-    NSNumber *minValue = [attrs objectForKey:kCIAttributeSliderMin];
-    NSNumber *maxValue = [attrs objectForKey:kCIAttributeSliderMax];
-    if (minValue == nil) minValue = [attrs objectForKey:kCIAttributeMin];
-    if (maxValue == nil) maxValue = [attrs objectForKey:kCIAttributeMax];
-    NSNumber *currentValue = [[selectedFilters objectForKey:filterKey] valueForKey:inputKey];
-    BOOL integral = COVNumberIsIntegralType(attrs);
-    CGFloat controlY = 0.0;
-
-    if (minValue && maxValue && [maxValue doubleValue] > [minValue doubleValue]) {
-        NSSlider *slider = [[[NSSlider alloc] initWithFrame:NSMakeRect(0, controlY, rowWidth - kNumericFieldWidth - 8.0, kFieldHeight)] autorelease];
-        [slider setMinValue:[minValue doubleValue]];
-        [slider setMaxValue:[maxValue doubleValue]];
-        [slider setDoubleValue:[currentValue doubleValue]];
-        [slider setTarget:self];
-        [slider setAction:@selector(numberSliderChanged:)];
-        NSString *sliderIdentifier = COVControlIdentifier(filterKey, inputKey, @"slider", 0);
-        [self registerControlView:slider identifier:sliderIdentifier];
-        [rowView addSubview:slider];
-    }
-
-    NSTextField *field = [[[NSTextField alloc] initWithFrame:NSMakeRect(rowWidth - kNumericFieldWidth, controlY, kNumericFieldWidth, kFieldHeight)] autorelease];
-    [field setStringValue:COVStringForNumber(currentValue, integral)];
-    [field setTarget:self];
-    [field setAction:@selector(numberFieldChanged:)];
-    NSString *fieldIdentifier = COVControlIdentifier(filterKey, inputKey, @"number", 0);
-    [self registerControlView:field identifier:fieldIdentifier];
-    [rowView addSubview:field];
-
-    return rowView;
-}
-
-- (NSView *)booleanRowForFilterKey:(NSString *)filterKey
-                          inputKey:(NSString *)inputKey
-                         attribute:(NSDictionary *)attribute
-                          rowWidth:(CGFloat)rowWidth
-{
-    NSButton *checkbox = [[[NSButton alloc] initWithFrame:NSMakeRect(0, 0, rowWidth, 18.0)] autorelease];
-    [checkbox setButtonType:NSSwitchButton];
-    [checkbox setTitle:COVDisplayNameForInputKey(inputKey, attribute)];
-    [checkbox setState:[[[selectedFilters objectForKey:filterKey] valueForKey:inputKey] boolValue] ? NSControlStateValueOn : NSControlStateValueOff];
-    [checkbox setTarget:self];
-    [checkbox setAction:@selector(booleanValueChanged:)];
-    NSString *identifier = COVControlIdentifier(filterKey, inputKey, @"bool", 0);
-    [self registerControlView:checkbox identifier:identifier];
-
-    NSView *rowView = [[[NSView alloc] initWithFrame:NSMakeRect(0, 0, rowWidth, 18.0)] autorelease];
-    [rowView addSubview:checkbox];
-    return rowView;
-}
-
-- (NSView *)vectorRowForFilterKey:(NSString *)filterKey
-                         inputKey:(NSString *)inputKey
-                        attribute:(NSDictionary *)attribute
-                         rowWidth:(CGFloat)rowWidth
-{
-    CIVector *vector = [[selectedFilters objectForKey:filterKey] valueForKey:inputKey];
-    NSInteger count = COVVectorComponentCount(vector, attribute);
-    CGFloat rowHeight = 44.0;
-    NSView *rowView = [[[NSView alloc] initWithFrame:NSMakeRect(0, 0, rowWidth, rowHeight)] autorelease];
-    NSTextField *label = [NSTextField labelWithString:COVDisplayNameForInputKey(inputKey, attribute)];
-    [label setFrame:NSMakeRect(0, rowHeight - 14.0, rowWidth, 14.0)];
-    [rowView addSubview:label];
-
-    CGFloat gap = 6.0;
-    CGFloat fieldWidth = floor((rowWidth - ((count - 1) * gap)) / count);
-    NSInteger index;
-    for (index = 0; index < count; index++) {
-        CGFloat fieldX = (fieldWidth + gap) * index;
-        NSView *fieldContainer = [[[NSView alloc] initWithFrame:NSMakeRect(fieldX, 0, fieldWidth, kFieldHeight)] autorelease];
-        NSTextField *prefix = [NSTextField labelWithString:COVVectorComponentLabel(index, count, attribute)];
-        [prefix setFrame:NSMakeRect(0, 4, 12, 14)];
-        [fieldContainer addSubview:prefix];
-
-        NSTextField *field = [[[NSTextField alloc] initWithFrame:NSMakeRect(16, 0, fieldWidth - 16, kFieldHeight)] autorelease];
-        [field setStringValue:COVStringForNumber([NSNumber numberWithDouble:[vector valueAtIndex:index]], NO)];
-        [field setTarget:self];
-        [field setAction:@selector(vectorFieldChanged:)];
-        NSString *identifier = COVControlIdentifier(filterKey, inputKey, @"vector", index);
-        [self registerControlView:field identifier:identifier];
-        [fieldContainer addSubview:field];
-        [rowView addSubview:fieldContainer];
-    }
-    return rowView;
-}
-
-- (NSView *)colorRowForFilterKey:(NSString *)filterKey
-                        inputKey:(NSString *)inputKey
-                       attribute:(NSDictionary *)attribute
-                        rowWidth:(CGFloat)rowWidth
-{
-    CGFloat rowHeight = 44.0;
-    NSView *rowView = [[[NSView alloc] initWithFrame:NSMakeRect(0, 0, rowWidth, rowHeight)] autorelease];
-    NSTextField *label = [NSTextField labelWithString:COVDisplayNameForInputKey(inputKey, attribute)];
-    [label setFrame:NSMakeRect(0, rowHeight - 14.0, rowWidth, 14.0)];
-    [rowView addSubview:label];
-
-    CIColor *color = [[selectedFilters objectForKey:filterKey] valueForKey:inputKey];
-    NSColor *nsColor = [NSColor colorWithCalibratedRed:[color red] green:[color green] blue:[color blue] alpha:[color alpha]];
-    NSColorWell *well = [[[NSColorWell alloc] initWithFrame:NSMakeRect(0, 0, 52, kFieldHeight)] autorelease];
-    [well setColor:nsColor];
-    [well setTarget:self];
-    [well setAction:@selector(colorValueChanged:)];
-    NSString *identifier = COVControlIdentifier(filterKey, inputKey, @"color", 0);
-    [self registerControlView:well identifier:identifier];
-    [rowView addSubview:well];
-    return rowView;
-}
-
-- (NSView *)fallbackRowForFilterKey:(NSString *)filterKey
-                           inputKey:(NSString *)inputKey
-                          attribute:(NSDictionary *)attribute
-                           rowWidth:(CGFloat)rowWidth
-{
-    NSView *rowView = [[[NSView alloc] initWithFrame:NSMakeRect(0, 0, rowWidth, 34.0)] autorelease];
-    NSTextField *label = [NSTextField labelWithString:COVDisplayNameForInputKey(inputKey, attribute)];
-    [label setFrame:NSMakeRect(0, 18.0, rowWidth, 14.0)];
-    [rowView addSubview:label];
-    NSTextField *message = [NSTextField labelWithString:NSLocalizedString(@"Unsupported Filter Parameter", nil)];
-    [message setTextColor:[NSColor colorWithCalibratedWhite:1.0 alpha:0.65]];
-    [message setFrame:NSMakeRect(0, 0, rowWidth, 14.0)];
-    [rowView addSubview:message];
-    return rowView;
-}
-
-- (NSView *)editorRowForFilterKey:(NSString *)filterKey
-                         inputKey:(NSString *)inputKey
-                           filter:(CIFilter *)filter
-                         rowWidth:(CGFloat)rowWidth
-{
-    NSDictionary *attribute = [[filter attributes] objectForKey:inputKey];
-    NSString *attributeClass = [attribute objectForKey:kCIAttributeClass];
-    NSString *attributeType = [attribute objectForKey:kCIAttributeType];
-
-    if ([attributeClass isEqualToString:@"NSNumber"]) {
-        if ([attributeType isEqualToString:kCIAttributeTypeBoolean]) {
-            return [self booleanRowForFilterKey:filterKey inputKey:inputKey attribute:attribute rowWidth:rowWidth];
-        }
-        return [self numberRowForFilterKey:filterKey inputKey:inputKey attribute:attribute rowWidth:rowWidth];
-    }
-    if ([attributeClass isEqualToString:@"CIVector"]) {
-        return [self vectorRowForFilterKey:filterKey inputKey:inputKey attribute:attribute rowWidth:rowWidth];
-    }
-    if ([attributeClass isEqualToString:@"CIColor"]) {
-        return [self colorRowForFilterKey:filterKey inputKey:inputKey attribute:attribute rowWidth:rowWidth];
-    }
-    if ([attributeClass isEqualToString:@"NSString"]) {
-        return [self fallbackRowForFilterKey:filterKey inputKey:inputKey attribute:attribute rowWidth:rowWidth];
-    }
-    return [self fallbackRowForFilterKey:filterKey inputKey:inputKey attribute:attribute rowWidth:rowWidth];
 }
 
 - (NSView *)baseViewForFilterKey:(NSString *)filterKey width:(CGFloat)contentWidth
 {
     CIFilter *filter = [selectedFilters objectForKey:filterKey];
     NSString *localizedFilterName = [CIFilter localizedNameForFilterName:[filter name]];
+    BOOL isCollapsed = [collapsedFilterKeys containsObject:filterKey];
 
     NSButton *closeBtn = [[[NSButton alloc] init] autorelease];
     [closeBtn setImage:[NSImage imageNamed:NSImageNameStopProgressFreestandingTemplate]];
     [closeBtn setBezelStyle:NSInlineBezelStyle];
     [closeBtn setBordered:NO];
-    [closeBtn setFrameSize:NSMakeSize(15,16)];
+    [closeBtn setFrameSize:NSMakeSize(16,16)];
     [closeBtn setTarget:self];
     [closeBtn setAction:@selector(deleteFilter:)];
     [closeBtn setIdentifier:[filter name]];
     [closeBtn setTag:kFilterCloseButtonTag];
 
+    NSButton *disclosureButton = [[[NSButton alloc] initWithFrame:NSZeroRect] autorelease];
+    [disclosureButton setTitle:(isCollapsed ? @"▸" : @"▾")];
+    [disclosureButton setBordered:NO];
+    [disclosureButton setFont:[NSFont systemFontOfSize:12.0 weight:NSFontWeightSemibold]];
+    [disclosureButton setTarget:self];
+    [disclosureButton setAction:@selector(toggleFilterCollapsed:)];
+    [disclosureButton setIdentifier:[filter name]];
+    [disclosureButton setTag:kFilterDisclosureButtonTag];
+
     NSTextField *label = [NSTextField labelWithString:localizedFilterName];
     [label setTag:kFilterLabelTag];
+    [label setFont:[NSFont systemFontOfSize:13.0 weight:NSFontWeightSemibold]];
     [[label cell] setLineBreakMode:NSLineBreakByTruncatingTail];
+    [label setTextColor:[NSColor colorWithCalibratedWhite:1.0 alpha:0.95]];
 
-    CGFloat innerWidth = contentWidth - (kFilterBoxHorizontalPadding * 2.0);
-    CGFloat currentY = kFilterBoxVerticalPadding;
-    NSMutableArray *rowViews = [NSMutableArray array];
-    NSEnumerator *enu = [[self editableInputKeysForFilter:filter] objectEnumerator];
-    NSString *inputKey;
-    while (inputKey = [enu nextObject]) {
-        NSView *rowView = [self editorRowForFilterKey:filterKey inputKey:inputKey filter:filter rowWidth:innerWidth];
-        [rowView setFrameOrigin:NSMakePoint(kFilterBoxHorizontalPadding, currentY)];
-        [rowViews addObject:rowView];
-        currentY += NSHeight([rowView frame]) + kFilterRowSpacing;
-    }
-    if ([rowViews count] > 0) {
-        currentY -= kFilterRowSpacing;
-    }
-    currentY += kFilterBoxVerticalPadding;
-
-    COVFilterBorderView *borderView = [[[COVFilterBorderView alloc] initWithFrame:NSMakeRect(0, 0, contentWidth, currentY)] autorelease];
-    NSEnumerator *rowEnum = [rowViews objectEnumerator];
-    NSView *rowView;
-    while (rowView = [rowEnum nextObject]) {
-        [borderView addSubview:rowView];
+    IKFilterUIView *filterUIView = nil;
+    CGFloat filterUIHeight = 0;
+    if (!isCollapsed) {
+        NSDictionary *uiOptions = [NSDictionary dictionaryWithObject:IKUISizeMini forKey:IKUISizeFlavor];
+        NSArray *excludedKeys = [NSArray arrayWithObjects:kCIInputImageKey, kCIInputTargetImageKey, nil];
+        filterUIView = [filter viewForUIConfiguration:uiOptions excludedKeys:excludedKeys];
+        if (filterUIView) {
+            filterUIHeight = NSHeight([filterUIView frame]);
+        }
     }
 
-    CGFloat headerOriginY = currentY + kFilterHeaderBottomSpacing;
-    NSView *baseView = [[[NSView alloc] initWithFrame:NSMakeRect(0, 0, contentWidth, headerOriginY + kFilterLabelHeight)] autorelease];
-    [baseView addSubview:label];
-    [baseView addSubview:closeBtn];
-    [baseView addSubview:borderView];
+    CGFloat contentSectionHeight = isCollapsed ? 0.0 : (filterUIHeight + kFilterCardVerticalPadding + kFilterCardContentSpacing);
+    CGFloat cardHeight = contentSectionHeight + kFilterCardHeaderHeight + kFilterCardVerticalPadding;
 
-    [borderView setFrameOrigin:NSMakePoint(0, 0)];
-    CGFloat closeButtonX = contentWidth - kFilterCloseButtonRightInset - NSWidth([closeBtn frame]);
-    CGFloat closeButtonY = headerOriginY + floor((kFilterLabelHeight - NSHeight([closeBtn frame])) / 2.0);
-    CGFloat labelWidth = closeButtonX - kFilterHeaderHorizontalPadding - kFilterTitleToButtonSpacing;
-    [closeBtn setFrameOrigin:NSMakePoint(closeButtonX, closeButtonY)];
-    [label setFrame:NSMakeRect(kFilterHeaderHorizontalPadding, headerOriginY, MAX(0, labelWidth), kFilterLabelHeight)];
-    [baseView setAutoresizingMask:NSViewWidthSizable|NSViewMinYMargin];
-    return baseView;
+    COVFilterBorderView *cardView = [[[COVFilterBorderView alloc] initWithFrame:NSMakeRect(0, 0, contentWidth, cardHeight)] autorelease];
+    [cardView setAutoresizingMask:NSViewWidthSizable|NSViewMinYMargin];
+
+    CGFloat headerY = cardHeight - kFilterCardHeaderHeight - 8.0;
+    CGFloat disclosureX = kFilterCardButtonInset;
+    [disclosureButton setFrame:NSMakeRect(disclosureX, headerY + 1.0, 16.0, 18.0)];
+    [cardView addSubview:disclosureButton];
+
+    CGFloat closeButtonX = contentWidth - kFilterCardButtonInset - NSWidth([closeBtn frame]);
+    [closeBtn setFrameOrigin:NSMakePoint(closeButtonX, headerY + 2.0)];
+    [cardView addSubview:closeBtn];
+
+    NSButton *resetBtn = [[[NSButton alloc] initWithFrame:NSZeroRect] autorelease];
+    [resetBtn setTitle:@"↺"];
+    [resetBtn setBordered:NO];
+    [resetBtn setFont:[NSFont systemFontOfSize:13.0 weight:NSFontWeightLight]];
+    [resetBtn setContentTintColor:[NSColor colorWithCalibratedWhite:1.0 alpha:0.55]];
+    [resetBtn setTarget:self];
+    [resetBtn setAction:@selector(resetFilterParameters:)];
+    [resetBtn setIdentifier:[filter name]];
+    [resetBtn setTag:kFilterResetButtonTag];
+    [resetBtn setFrame:NSMakeRect(closeButtonX - 20.0, headerY + 1.0, 16.0, 18.0)];
+    [cardView addSubview:resetBtn];
+
+    CGFloat labelX = NSMaxX([disclosureButton frame]) + 6.0;
+    CGFloat labelWidth = MAX(0.0, NSMinX([resetBtn frame]) - labelX - 6.0);
+    [label setFrame:NSMakeRect(labelX, headerY + 1.0, labelWidth, kFilterLabelHeight)];
+    [cardView addSubview:label];
+
+    if (!isCollapsed) {
+        NSView *separator = [[[NSView alloc] initWithFrame:NSMakeRect(kFilterCardHorizontalPadding,
+                                                                      contentSectionHeight,
+                                                                      contentWidth - (kFilterCardHorizontalPadding * 2.0),
+                                                                      1.0)] autorelease];
+        [separator setWantsLayer:YES];
+        [[separator layer] setBackgroundColor:[[NSColor colorWithCalibratedWhite:1.0 alpha:0.08] CGColor]];
+        [cardView addSubview:separator];
+
+        if (filterUIView) {
+            [filterUIView setFrameOrigin:NSMakePoint(kFilterCardHorizontalPadding, kFilterCardVerticalPadding)];
+            [cardView addSubview:filterUIView];
+        }
+    }
+
+    return cardView;
 }
 
 -(void)awakeFromNib
@@ -439,30 +604,13 @@ static NSString *COVVectorComponentLabel(NSInteger index, NSInteger count, NSDic
 
     filterDic = [[NSMutableDictionary alloc] init];
     selectedFilterUIViews = [[NSMutableDictionary alloc] init];
-    controlViewsByIdentifier = [[NSMutableDictionary alloc] init];
+    collapsedFilterKeys = [[NSMutableSet alloc] init];
     [CIPlugIn loadAllPlugIns];
-
-    NSArray *usingCategories =
-        [NSArray arrayWithObjects:
-                        [NSArray arrayWithObjects:kCICategoryColorAdjustment,kCICategoryStillImage, nil],
-                        [NSArray arrayWithObjects:kCICategoryColorEffect,kCICategoryStillImage, nil],
-                        [NSArray arrayWithObjects:kCICategorySharpen,kCICategoryStillImage, nil],
-                        [NSArray arrayWithObjects:kCICategoryBlur,kCICategoryStillImage, nil],
-                        nil
-          ];
-
-    NSEnumerator *catenu = [usingCategories objectEnumerator];
-    NSArray *cate;
-    [popupButton addItemWithTitle:@""];
-    while (cate = [catenu nextObject]) {
-        NSArray *filters = [CIFilter filterNamesInCategories:cate];
-        NSEnumerator *enu = [filters objectEnumerator];
-        NSString *filterName;
-        while (filterName = [enu nextObject]) {
-            [filterDic setObject:filterName forKey:[CIFilter localizedNameForFilterName:filterName]];
-            [popupButton addItemWithTitle:[CIFilter localizedNameForFilterName:filterName]];
-        }
-    }
+    [self rebuildFilterLibraryEntries];
+    [self configureToolbarViews];
+    [self buildFilterPickerIfNeeded];
+    [self layoutToolbarAndScrollView];
+    _lastLayoutContentWidth = NSWidth([[filterPanel contentView] bounds]);
 
     selectedFilters = [[NSMutableDictionary alloc] init];
     selectedFilterKeys = [[NSMutableArray alloc] init];
@@ -481,6 +629,7 @@ static NSString *COVVectorComponentLabel(NSInteger index, NSInteger count, NSDic
             if ([dic objectForKey:filterKey]) {
                 [selectedFilterKeys addObject:filterKey];
                 [selectedFilters setObject:[dic objectForKey:filterKey] forKey:filterKey];
+                [self startObservingFilter:[dic objectForKey:filterKey]];
             }
         }
         [self drawFilterUIViews];
@@ -488,23 +637,47 @@ static NSString *COVVectorComponentLabel(NSInteger index, NSInteger count, NSDic
     }
     [self applyDebugPresetIfNeeded];
 }
+- (void)fitPanelHeightToContent
+{
+    CGFloat neededContentHeight;
+    if ([selectedFilterKeys count] == 0) {
+        neededContentHeight = kFilterPanelMinContentHeight;
+    } else {
+        CGFloat totalCards = 0;
+        for (NSString *key in selectedFilterKeys) {
+            NSView *v = [selectedFilterUIViews objectForKey:key];
+            if (v) totalCards += NSHeight([v frame]);
+        }
+        totalCards += MAX(0.0, (CGFloat)([selectedFilterKeys count] - 1)) * kFilterItemSpacing;
+        neededContentHeight = totalCards + kFilterTopBarHeight + (kFilterPanelOuterPadding * 2.0) + 6.0;
+        neededContentHeight = MAX(neededContentHeight, kFilterPanelMinContentHeight);
+    }
+
+    NSRect contentRect = NSMakeRect(0, 0, NSWidth([[filterPanel contentView] frame]), neededContentHeight);
+    CGFloat newWindowHeight = [filterPanel frameRectForContentRect:contentRect].size.height;
+    NSRect panelFrame = [filterPanel frame];
+    CGFloat newOriginY = NSMaxY(panelFrame) - newWindowHeight;
+    NSScreen *screen = [filterPanel screen] ?: [NSScreen mainScreen];
+    CGFloat minY = NSMinY([screen visibleFrame]);
+    if (newOriginY < minY) {
+        newOriginY = minY;
+        newWindowHeight = NSMaxY(panelFrame) - minY;
+    }
+    _lastLayoutContentWidth = NSWidth([[filterPanel contentView] bounds]);
+    [filterPanel setFrame:NSMakeRect(panelFrame.origin.x, newOriginY, panelFrame.size.width, newWindowHeight) display:NO];
+    [self layoutToolbarAndScrollView];
+}
 - (IBAction)openFilterPanel:(id)sender
 {
     [self ensureFilterPanelMinimumSize];
-    [filterPanel orderFront:self];
+    [self layoutToolbarAndScrollView];
+    [self fitPanelHeightToContent];
+    [filterPanel makeKeyAndOrderFront:self];
 }
 - (IBAction)filterSelected:(id)sender
 {
     NSString *filterName = [filterDic objectForKey:[sender title]];
-    if ([selectedFilterKeys containsObject:filterName]!=YES) {
-        CIFilter *newFilter = [CIFilter filterWithName:filterName];
-        if (newFilter) {
-            [newFilter setDefaults];
-            [selectedFilterKeys addObject:filterName];
-            [selectedFilters setObject:newFilter forKey:filterName];
-            [self drawFilterUIViews];
-        }
-    }
+    [self addFilterNamed:filterName];
     [sender setTitle:@""];
 }
 - (void)drawFilterUIViews
@@ -515,7 +688,6 @@ static NSString *COVVectorComponentLabel(NSInteger index, NSInteger count, NSDic
         [existingView removeFromSuperview];
     }
     [selectedFilterUIViews removeAllObjects];
-    [controlViewsByIdentifier removeAllObjects];
 
     CGFloat contentWidth = [self filterContentWidth];
     CGFloat currentY = 0;
@@ -544,76 +716,147 @@ static NSString *COVVectorComponentLabel(NSInteger index, NSInteger count, NSDic
         relayoutY -= kFilterItemSpacing;
     }
 }
-- (void)numberSliderChanged:(id)sender
+- (void)showFilterPicker:(id)sender
 {
-    NSArray *parts = COVControlIdentifierComponents([sender identifier]);
-    if ([parts count] < 4) return;
-    NSString *filterKey = [parts objectAtIndex:0];
-    NSString *inputKey = [parts objectAtIndex:1];
-    NSDictionary *attribute = [(NSDictionary *)[[selectedFilters objectForKey:filterKey] attributes] objectForKey:inputKey];
-    NSNumber *number = [self clampedNumberFromValue:[sender doubleValue] attribute:attribute];
-    [self syncNumericFieldForFilterKey:filterKey inputKey:inputKey number:number integral:COVNumberIsIntegralType(attribute)];
-    [self applyFilterValue:number filterKey:filterKey inputKey:inputKey];
-}
-- (void)numberFieldChanged:(id)sender
-{
-    NSArray *parts = COVControlIdentifierComponents([sender identifier]);
-    if ([parts count] < 4) return;
-    NSString *filterKey = [parts objectAtIndex:0];
-    NSString *inputKey = [parts objectAtIndex:1];
-    NSDictionary *attribute = [(NSDictionary *)[[selectedFilters objectForKey:filterKey] attributes] objectForKey:inputKey];
-    NSNumber *number = [self clampedNumberFromValue:[[sender stringValue] doubleValue] attribute:attribute];
-    [self syncNumericFieldForFilterKey:filterKey inputKey:inputKey number:number integral:COVNumberIsIntegralType(attribute)];
-    [self syncSliderForFilterKey:filterKey inputKey:inputKey number:number];
-    [self applyFilterValue:number filterKey:filterKey inputKey:inputKey];
-}
-- (void)booleanValueChanged:(id)sender
-{
-    NSArray *parts = COVControlIdentifierComponents([sender identifier]);
-    if ([parts count] < 4) return;
-    NSNumber *value = [NSNumber numberWithBool:([sender state] == NSControlStateValueOn)];
-    [self applyFilterValue:value filterKey:[parts objectAtIndex:0] inputKey:[parts objectAtIndex:1]];
-}
-- (void)vectorFieldChanged:(id)sender
-{
-    NSArray *parts = COVControlIdentifierComponents([sender identifier]);
-    if ([parts count] < 4) return;
-    NSString *filterKey = [parts objectAtIndex:0];
-    NSString *inputKey = [parts objectAtIndex:1];
-    NSDictionary *attribute = [(NSDictionary *)[[selectedFilters objectForKey:filterKey] attributes] objectForKey:inputKey];
-    CIVector *currentVector = [[selectedFilters objectForKey:filterKey] valueForKey:inputKey];
-    NSInteger count = COVVectorComponentCount(currentVector, attribute);
-    CGFloat values[4] = {0,0,0,0};
-    NSInteger index;
-    for (index = 0; index < count; index++) {
-        NSString *identifier = COVControlIdentifier(filterKey, inputKey, @"vector", index);
-        NSTextField *field = [controlViewsByIdentifier objectForKey:identifier];
-        values[index] = [[field stringValue] doubleValue];
+    [self buildFilterPickerIfNeeded];
+    [filterSearchField setStringValue:@""];
+    [self refreshFilterPickerResults];
+    [filterTableView deselectAll:nil];
+    NSRect buttonRectInWindow = [addFilterButton convertRect:[addFilterButton bounds] toView:nil];
+    NSRect buttonRectOnScreen = [[addFilterButton window] convertRectToScreen:buttonRectInWindow];
+    NSRect pickerFrame = [filterPickerPanel frame];
+    pickerFrame.origin.x = NSMaxX(buttonRectOnScreen) - NSWidth(pickerFrame);
+    pickerFrame.origin.y = NSMinY(buttonRectOnScreen) - NSHeight(pickerFrame) - 8.0;
+
+    NSScreen *screen = [[addFilterButton window] screen];
+    if (screen == nil) {
+        screen = [NSScreen mainScreen];
     }
-    CIVector *vector;
-    if (count == 2) {
-        vector = [CIVector vectorWithX:values[0] Y:values[1]];
+    NSRect visibleFrame = [screen visibleFrame];
+    if (NSMaxX(pickerFrame) > NSMaxX(visibleFrame) - 8.0) {
+        pickerFrame.origin.x = NSMaxX(visibleFrame) - NSWidth(pickerFrame) - 8.0;
+    }
+    if (NSMinX(pickerFrame) < NSMinX(visibleFrame) + 8.0) {
+        pickerFrame.origin.x = NSMinX(visibleFrame) + 8.0;
+    }
+    if (NSMinY(pickerFrame) < NSMinY(visibleFrame) + 8.0) {
+        pickerFrame.origin.y = NSMinY(buttonRectOnScreen) + 8.0;
+    }
+    [filterPickerPanel setFrame:pickerFrame display:YES];
+    [filterPickerPanel makeKeyAndOrderFront:self];
+    [NSApp activateIgnoringOtherApps:YES];
+}
+- (void)filterSearchChanged:(id)sender
+{
+    [self refreshFilterPickerResults];
+}
+- (void)selectFilterFromPicker:(id)sender
+{
+    NSInteger row = [filterTableView clickedRow];
+    if (row < 0 || row >= (NSInteger)[filterPickerDisplayItems count]) {
+        row = [filterTableView selectedRow];
+    }
+    if (row < 0 || row >= (NSInteger)[filterPickerDisplayItems count]) {
+        return;
+    }
+    NSDictionary *item = [filterPickerDisplayItems objectAtIndex:row];
+    if (![[item objectForKey:@"type"] isEqualToString:@"entry"]) {
+        return;
+    }
+    [self addFilterNamed:[item objectForKey:@"filterName"]];
+}
+- (void)toggleFilterCollapsed:(id)sender
+{
+    NSString *filterName = [sender identifier];
+    if ([collapsedFilterKeys containsObject:filterName]) {
+        [collapsedFilterKeys removeObject:filterName];
     } else {
-        vector = [CIVector vectorWithX:values[0] Y:values[1] Z:values[2] W:values[3]];
+        [collapsedFilterKeys addObject:filterName];
     }
-    [self applyFilterValue:vector filterKey:filterKey inputKey:inputKey];
+    [self drawFilterUIViews];
 }
-- (void)colorValueChanged:(id)sender
+- (BOOL)windowShouldClose:(NSWindow *)sender
 {
-    NSArray *parts = COVControlIdentifierComponents([sender identifier]);
-    if ([parts count] < 4) return;
-    NSColor *color = [[sender color] colorUsingColorSpace:[NSColorSpace genericRGBColorSpace]];
-    CIColor *ciColor = [CIColor colorWithRed:[color redComponent]
-                                       green:[color greenComponent]
-                                        blue:[color blueComponent]
-                                       alpha:[color alphaComponent]];
-    [self applyFilterValue:ciColor filterKey:[parts objectAtIndex:0] inputKey:[parts objectAtIndex:1]];
+    if (sender == filterPanel) {
+        [filterPanel orderOut:self];
+        return NO;
+    }
+    return YES;
+}
+- (void)windowWillClose:(NSNotification *)notification
+{
+    if ([notification object] == filterPickerPanel && [filterPanel isVisible]) {
+        [filterPanel makeKeyAndOrderFront:self];
+    }
 }
 - (void)windowDidResize:(NSNotification *)notification
 {
     if ([notification object] == filterPanel) {
-        [self drawFilterUIViews];
+        [self layoutToolbarAndScrollView];
+        CGFloat newWidth = NSWidth([[filterPanel contentView] bounds]);
+        if (fabs(newWidth - _lastLayoutContentWidth) > 0.5) {
+            _lastLayoutContentWidth = newWidth;
+            [self drawFilterUIViews];
+        }
+    } else if ([notification object] == filterPickerPanel) {
+        [self updateFilterPickerLayout];
+        [[NSUserDefaults standardUserDefaults] setDouble:NSHeight([[filterPickerPanel contentView] frame])
+                                                 forKey:kFilterPickerSavedHeightDefaultsKey];
     }
+}
+- (NSInteger)numberOfRowsInTableView:(NSTableView *)tableView
+{
+    return [filterPickerDisplayItems count];
+}
+- (CGFloat)tableView:(NSTableView *)tableView heightOfRow:(NSInteger)row
+{
+    NSDictionary *item = [filterPickerDisplayItems objectAtIndex:row];
+    NSString *type = [item objectForKey:@"type"];
+    if ([type isEqualToString:@"header"]) return kFilterPickerHeaderHeight;
+    if ([type isEqualToString:@"separator"]) return kFilterPickerSeparatorHeight;
+    return kFilterPickerRowHeight;
+}
+- (BOOL)tableView:(NSTableView *)tableView shouldSelectRow:(NSInteger)row
+{
+    NSDictionary *item = [filterPickerDisplayItems objectAtIndex:row];
+    return [[item objectForKey:@"type"] isEqualToString:@"entry"];
+}
+- (void)controlTextDidChange:(NSNotification *)obj
+{
+    if ([obj object] == filterSearchField) {
+        [self refreshFilterPickerResults];
+    }
+}
+- (NSView *)tableView:(NSTableView *)tableView viewForTableColumn:(NSTableColumn *)tableColumn row:(NSInteger)row
+{
+    CGFloat columnWidth = [tableColumn width];
+    NSDictionary *item = [filterPickerDisplayItems objectAtIndex:row];
+
+    if ([[item objectForKey:@"type"] isEqualToString:@"separator"]) {
+        NSView *sepView = [[[NSView alloc] initWithFrame:NSMakeRect(0, 0, columnWidth, kFilterPickerSeparatorHeight)] autorelease];
+        NSView *line = [[[NSView alloc] initWithFrame:NSMakeRect(8, floor((kFilterPickerSeparatorHeight - 1.0) / 2.0), columnWidth - 16, 1.0)] autorelease];
+        [line setWantsLayer:YES];
+        [[line layer] setBackgroundColor:[[NSColor separatorColor] CGColor]];
+        [sepView addSubview:line];
+        return sepView;
+    }
+
+    if ([[item objectForKey:@"type"] isEqualToString:@"header"]) {
+        NSView *headerView = [[[NSView alloc] initWithFrame:NSMakeRect(0, 0, columnWidth, kFilterPickerHeaderHeight)] autorelease];
+        NSTextField *headerLabel = [NSTextField labelWithString:[[item objectForKey:@"title"] uppercaseString]];
+        [headerLabel setFont:[NSFont systemFontOfSize:9.5 weight:NSFontWeightSemibold]];
+        [headerLabel setTextColor:[NSColor secondaryLabelColor]];
+        [headerLabel setFrame:NSMakeRect(8, floor((kFilterPickerHeaderHeight - 11.0) / 2.0), columnWidth - 16, 11)];
+        [headerView addSubview:headerLabel];
+        return headerView;
+    }
+
+    NSView *rowView = [[[NSView alloc] initWithFrame:NSMakeRect(0, 0, columnWidth, kFilterPickerRowHeight)] autorelease];
+    NSTextField *titleLabel = [NSTextField labelWithString:[item objectForKey:@"displayName"]];
+    [titleLabel setFont:[NSFont systemFontOfSize:12.0]];
+    [titleLabel setFrame:NSMakeRect(16, floor((kFilterPickerRowHeight - 14.0) / 2.0), columnWidth - 24, 14)];
+    [rowView addSubview:titleLabel];
+    return rowView;
 }
 - (BOOL)validateMenuItem:(NSMenuItem *)anItem
 {
@@ -621,11 +864,28 @@ static NSString *COVVectorComponentLabel(NSInteger index, NSInteger count, NSDic
 }
 - (void)observeValueForKeyPath:(NSString *)keyPath ofObject:(id)object change:(NSDictionary *)change context:(void *)context
 {
+    if (context != kFilterObserverContext) {
+        [super observeValueForKeyPath:keyPath ofObject:object change:change context:context];
+        return;
+    }
+    [self sendNotification];
+    [self setUserDefaults];
+}
+- (void)resetFilterParameters:(id)sender
+{
+    CIFilter *filter = [selectedFilters objectForKey:[sender identifier]];
+    if (filter == nil) return;
+    [filter setDefaults];
+    [self drawFilterUIViews];
     [self sendNotification];
     [self setUserDefaults];
 }
 - (void)deleteFilter:(id)sender
 {
+    CIFilter *filter = [selectedFilters objectForKey:[sender identifier]];
+    if (filter) {
+        [self stopObservingFilter:filter];
+    }
     [selectedFilters removeObjectForKey:[sender identifier]];
     [selectedFilterUIViews removeObjectForKey:[sender identifier]];
     [selectedFilterKeys removeObject:[sender identifier]];
@@ -645,7 +905,7 @@ static NSString *COVVectorComponentLabel(NSInteger index, NSInteger count, NSDic
     }
     CGFloat nonScrollableWidth = MAX(0.0, currentContentSize.width - visibleScrollWidth);
     CGFloat minContentWidth = ceil(kFilterPanelDefaultContentWidth + nonScrollableWidth + 2.0);
-    NSSize minContentSize = NSMakeSize(minContentWidth, currentContentSize.height);
+    NSSize minContentSize = NSMakeSize(minContentWidth, kFilterPanelMinContentHeight);
     [filterPanel setContentMinSize:minContentSize];
 
     NSRect minFrameRect = [filterPanel frameRectForContentRect:NSMakeRect(0, 0, minContentSize.width, minContentSize.height)];
@@ -676,6 +936,11 @@ static NSString *COVVectorComponentLabel(NSInteger index, NSInteger count, NSDic
         [defaults synchronize];
     }
 
+    NSEnumerator *stopEnu = [selectedFilters objectEnumerator];
+    CIFilter *existingFilter;
+    while (existingFilter = [stopEnu nextObject]) {
+        [self stopObservingFilter:existingFilter];
+    }
     [selectedFilterKeys removeAllObjects];
     [selectedFilters removeAllObjects];
 
@@ -691,6 +956,7 @@ static NSString *COVVectorComponentLabel(NSInteger index, NSInteger count, NSDic
             [filter setDefaults];
             [selectedFilterKeys addObject:filterName];
             [selectedFilters setObject:filter forKey:filterName];
+            [self startObservingFilter:filter];
         }
     }
 
@@ -707,6 +973,12 @@ static NSString *COVVectorComponentLabel(NSInteger index, NSInteger count, NSDic
     }
     [filterPanel makeKeyAndOrderFront:self];
     [NSApp activateIgnoringOtherApps:YES];
+    if ([defaults boolForKey:@"FilterPanelOpenPickerOnLaunch"]) {
+        [defaults removeObjectForKey:@"FilterPanelOpenPickerOnLaunch"];
+        [defaults synchronize];
+        [self showFilterPicker:addFilterButton];
+        [self dumpDebugFilterPickerIfNeeded];
+    }
     [self dumpDebugPanelIfNeeded];
 }
 - (void)dumpDebugPanelIfNeeded
@@ -726,10 +998,31 @@ static NSString *COVVectorComponentLabel(NSInteger index, NSInteger count, NSDic
         [defaults synchronize];
     });
 }
+- (void)dumpDebugFilterPickerIfNeeded
+{
+    NSUserDefaults *defaults = [NSUserDefaults standardUserDefaults];
+    if ([defaults boolForKey:@"FilterPanelDumpPickerOnLaunch"] == NO) return;
+
+    dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(0.6 * NSEC_PER_SEC)), dispatch_get_main_queue(), ^{
+        NSView *targetView = [filterPickerPanel contentView];
+        NSBitmapImageRep *rep = [targetView bitmapImageRepForCachingDisplayInRect:[targetView bounds]];
+        [targetView cacheDisplayInRect:[targetView bounds] toBitmapImageRep:rep];
+        NSData *pngData = [rep representationUsingType:NSPNGFileType properties:[NSDictionary dictionary]];
+        [pngData writeToFile:@"/tmp/cooviewer-filter-picker.png" atomically:YES];
+        [defaults removeObjectForKey:@"FilterPanelDumpPickerOnLaunch"];
+        [defaults synchronize];
+    });
+}
 - (void)setUserDefaults
 {
     NSUserDefaults *defaults = [NSUserDefaults standardUserDefaults];
-    NSData *data = [NSKeyedArchiver archivedDataWithRootObject:selectedFilters];
+    NSData *data;
+    if (@available(macOS 10.13, *)) {
+        NSError *archiveError = nil;
+        data = [NSKeyedArchiver archivedDataWithRootObject:selectedFilters requiringSecureCoding:NO error:&archiveError];
+    } else {
+        data = [NSKeyedArchiver archivedDataWithRootObject:selectedFilters];
+    }
     [defaults setObject:data forKey:@"CIFilters"];
     [defaults setObject:selectedFilterKeys forKey:@"CIFilterKeys"];
 }

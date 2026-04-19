@@ -9,7 +9,7 @@
 #import <Quartz/Quartz.h>
 #import <QuartzCore/QuartzCore.h>
 
-@interface FilterPanelController : NSObject
+@interface FilterPanelController : NSObject <NSTableViewDataSource, NSTableViewDelegate, NSSearchFieldDelegate>
 {
     IBOutlet id filterPanel;
     IBOutlet id scrollView;
@@ -20,7 +20,21 @@
     NSMutableArray *selectedFilterKeys;
     NSMutableDictionary *selectedFilters;
     NSMutableDictionary *selectedFilterUIViews;
-    NSMutableDictionary *controlViewsByIdentifier;
+    NSMutableSet *collapsedFilterKeys;
+
+    NSView *toolbarView;
+    NSButton *addFilterButton;
+    NSTextField *toolbarTitleLabel;
+    NSTextField *toolbarHintLabel;
+
+    NSPanel *filterPickerPanel;
+    NSSearchField *filterSearchField;
+    NSScrollView *filterPickerScrollView;
+    NSTableView *filterTableView;
+    NSArray *availableFilterEntries;
+    NSArray *filteredFilterEntries;
+    NSArray *filterPickerDisplayItems;
+    CGFloat _lastLayoutContentWidth;
 }
 - (BOOL)validateMenuItem:(NSMenuItem *)anItem;
 - (IBAction)openFilterPanel:(id)sender;
@@ -30,6 +44,7 @@
 - (void)ensureFilterPanelMinimumSize;
 - (void)applyDebugPresetIfNeeded;
 - (void)dumpDebugPanelIfNeeded;
+- (void)dumpDebugFilterPickerIfNeeded;
 - (void)setUserDefaults;
 - (void)sendNotification;
 @end
