@@ -38,6 +38,16 @@ static const CGFloat kFilterPickerSeparatorHeight = 8.0;
 
 static void *kFilterObserverContext = &kFilterObserverContext;
 
+@interface COVFilterPickerTableView : NSTableView
+@end
+
+@implementation COVFilterPickerTableView
+- (BOOL)acceptsFirstMouse:(NSEvent *)theEvent
+{
+    return YES;
+}
+@end
+
 @interface COVFilterBorderView : NSView
 @end
 
@@ -387,7 +397,7 @@ static NSAttributedString *COVToolbarButtonTitle(NSString *title)
     [filterPickerScrollView setHasVerticalScroller:YES];
     [filterPickerScrollView setDrawsBackground:NO];
 
-    filterTableView = [[NSTableView alloc] initWithFrame:NSZeroRect];
+    filterTableView = [[COVFilterPickerTableView alloc] initWithFrame:NSZeroRect];
     [filterTableView setHeaderView:nil];
     [filterTableView setDelegate:self];
     [filterTableView setDataSource:self];
@@ -854,7 +864,9 @@ static NSAttributedString *COVToolbarButtonTitle(NSString *title)
     NSView *rowView = [[[NSView alloc] initWithFrame:NSMakeRect(0, 0, columnWidth, kFilterPickerRowHeight)] autorelease];
     NSTextField *titleLabel = [NSTextField labelWithString:[item objectForKey:@"displayName"]];
     [titleLabel setFont:[NSFont systemFontOfSize:12.0]];
-    [titleLabel setFrame:NSMakeRect(16, floor((kFilterPickerRowHeight - 14.0) / 2.0), columnWidth - 24, 14)];
+    [titleLabel sizeToFit];
+    CGFloat labelH = NSHeight([titleLabel frame]);
+    [titleLabel setFrame:NSMakeRect(16, floor((kFilterPickerRowHeight - labelH) / 2.0), columnWidth - 24, labelH)];
     [rowView addSubview:titleLabel];
     return rowView;
 }
