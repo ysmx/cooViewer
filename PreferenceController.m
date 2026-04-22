@@ -7,7 +7,8 @@
 @interface PreferenceController ()
 {
 	BOOL didInstallAppearanceLayout;
-}
+	NSButton *secondaryDisplayBackgroundSyncCheck;
+	}
 - (void)co_updateSortDescendingControl;
 - (void)co_installAppearanceLayoutIfNeeded;
 - (NSTextField *)co_labelForControl:(NSView *)control minimumGap:(CGFloat)minimumGap maximumGap:(CGFloat)maximumGap;
@@ -21,6 +22,7 @@
 - (void)co_placeView:(NSView *)view afterView:(NSView *)previousView spacing:(CGFloat)spacing;
 - (void)co_resizeTextField:(NSTextField *)textField betweenLeftView:(NSView *)leftView rightView:(NSView *)rightView leftSpacing:(CGFloat)leftSpacing rightSpacing:(CGFloat)rightSpacing;
 - (void)co_expandStaticLabelsInView:(NSView *)container minimumY:(CGFloat)minimumY maximumY:(CGFloat)maximumY rightMargin:(CGFloat)rightMargin;
+	- (void)co_installSecondaryDisplayControlsIfNeeded;
 @end
 
 
@@ -864,6 +866,32 @@ static const int DIALOG_CANCEL	= 129;
 	}
 }
 
+- (void)co_installSecondaryDisplayControlsIfNeeded
+{
+	NSView *container;
+	NSRect referenceFrame;
+	NSRect checkFrame;
+
+	if (secondaryDisplayBackgroundSyncCheck != nil || viewBackGroundColor == nil) {
+		return;
+	}
+
+	container = [viewBackGroundColor superview];
+	if (container == nil) {
+		return;
+	}
+
+	referenceFrame = [viewBackGroundColor frame];
+	checkFrame = NSMakeRect(205.0, NSMinY(referenceFrame) + 1.0, 220.0, 18.0);
+
+	secondaryDisplayBackgroundSyncCheck = [[NSButton alloc] initWithFrame:checkFrame];
+	[secondaryDisplayBackgroundSyncCheck setButtonType:NSSwitchButton];
+	[secondaryDisplayBackgroundSyncCheck setTitle:@"拡張ディスプレイの背景を同期"];
+	[secondaryDisplayBackgroundSyncCheck sizeToFit];
+
+	[container addSubview:secondaryDisplayBackgroundSyncCheck];
+}
+
 - (void)co_installAppearanceLayoutIfNeeded
 {
 	NSTextField *viewBackgroundLabel;
@@ -898,6 +926,8 @@ static const int DIALOG_CANCEL	= 129;
 		return;
 	}
 
+	[self co_installSecondaryDisplayControlsIfNeeded];
+
 	viewBackgroundLabel = [self co_labelForControl:viewBackGroundColor maximumGap:120.0];
 	pageNumberFontLabel = [self co_labelForControl:fontTextField maximumGap:120.0];
 	pageNumberBorderLabel = [self co_labelForControl:pageBorderColor maximumGap:120.0];
@@ -926,11 +956,15 @@ static const int DIALOG_CANCEL	= 129;
 	keyboardInputView = [[inputTabView tabViewItemAtIndex:0] view];
 	mouseInputView = [[inputTabView tabViewItemAtIndex:1] view];
 
-	if (viewBackgroundLabel) {
-		[self co_sizeLabelToFit:viewBackgroundLabel];
-		[self co_centerView:viewBackgroundLabel onReferenceView:viewBackGroundColor];
-		[self co_placeView:viewBackGroundColor afterView:viewBackgroundLabel spacing:6.0];
-	}
+		if (viewBackgroundLabel) {
+			[self co_sizeLabelToFit:viewBackgroundLabel];
+			[self co_centerView:viewBackgroundLabel onReferenceView:viewBackGroundColor];
+			[self co_placeView:viewBackGroundColor afterView:viewBackgroundLabel spacing:6.0];
+			if (secondaryDisplayBackgroundSyncCheck) {
+				[self co_centerView:secondaryDisplayBackgroundSyncCheck onReferenceView:viewBackGroundColor];
+				[self co_placeView:secondaryDisplayBackgroundSyncCheck afterView:viewBackGroundColor spacing:12.0];
+			}
+		}
 
 	if (pageNumberFontLabel && pageNumberFontButton) {
 		[self co_sizeLabelToFit:pageNumberFontLabel];
@@ -1570,6 +1604,11 @@ static const int DIALOG_CANCEL	= 129;
 		viewBackGround = [NSColor blackColor];
 	}
 	[viewBackGroundColor setCurrentColor:viewBackGround];
+	if ([defaults objectForKey:@"SyncSecondaryDisplayBackground"] != nil) {
+		[secondaryDisplayBackgroundSyncCheck setState:[defaults boolForKey:@"SyncSecondaryDisplayBackground"] ? NSOnState : NSOffState];
+	} else {
+		[secondaryDisplayBackgroundSyncCheck setState:([defaults integerForKey:@"SecondaryDisplayMode"] != 0) ? NSOnState : NSOffState];
+	}
 	/*cache*/
 	int imageCache = (int)[defaults integerForKey:@"ImageCache"];
 	[imageCacheTextField setStringValue:[NSString stringWithFormat:@"%i", imageCache]];
@@ -1961,6 +2000,7 @@ static const int DIALOG_CANCEL	= 129;
 		[defaults setInteger:thumbnailCache forKey:@"ThumbnailCache"];
 		/*view*/
 		[defaults setObject:[NSArchiver archivedDataWithRootObject:[viewBackGroundColor currentColor]] forKey:@"ViewBackGroundColor"];
+		[defaults setBool:([secondaryDisplayBackgroundSyncCheck state] == NSOnState) forKey:@"SyncSecondaryDisplayBackground"];
 		
 		
 

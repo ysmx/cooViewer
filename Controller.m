@@ -3,6 +3,7 @@
 #import "BookmarkController.h"
 #import "CustomImageView.h"
 #import "FullImagePanel.h"
+#import <ApplicationServices/ApplicationServices.h>
 
 static NSMenu *COFindSortMenu(NSMenu *menu)
 {
@@ -23,13 +24,184 @@ static NSMenu *COFindSortMenu(NSMenu *menu)
 }
 
 @interface Controller ()
+{
+	NSMutableArray *secondaryDisplayCoverWindows;
+	NSMutableArray *secondaryDisplayCaptureDisplayIDs;
+}
 - (BOOL)co_sortModeSupportsDescending:(int)mode;
 - (void)co_installSortMenuIfNeeded;
+- (BOOL)co_syncSecondaryDisplayBackground;
+- (NSColor *)co_viewBackgroundColor;
+- (NSColor *)co_effectiveSecondaryDisplayColor;
+- (BOOL)co_shouldShowSecondaryDisplayCover;
+- (CGDirectDisplayID)co_displayIDForScreen:(NSScreen *)screen;
+- (void)co_releaseCapturedSecondaryDisplays;
+- (void)co_removeSecondaryDisplayCoverWindows;
+- (void)co_updateSecondaryDisplayCoverWindows;
+- (void)co_applicationDidChangeScreenParameters:(NSNotification *)notification;
 @end
 
 @implementation Controller
 static const int DIALOG_OK		= 128;
 static const int DIALOG_CANCEL	= 129;
+
+- (BOOL)co_syncSecondaryDisplayBackground
+{
+	if ([defaults objectForKey:@"SyncSecondaryDisplayBackground"] != nil) {
+		return [defaults boolForKey:@"SyncSecondaryDisplayBackground"];
+	}
+	return ([defaults integerForKey:@"SecondaryDisplayMode"] != 0);
+}
+
+- (NSColor *)co_viewBackgroundColor
+{
+	NSData *colorData = [defaults objectForKey:@"ViewBackGroundColor"];
+	NSColor *color = nil;
+
+	if (colorData != nil) {
+		color = [NSUnarchiver unarchiveObjectWithData:colorData];
+	}
+	if (color == nil) {
+		color = [NSColor blackColor];
+	}
+	color = [color colorUsingColorSpaceName:NSDeviceRGBColorSpace];
+	if (color == nil) {
+		color = [NSColor blackColor];
+	}
+	return color;
+}
+
+- (NSColor *)co_effectiveSecondaryDisplayColor
+{
+	if ([self co_syncSecondaryDisplayBackground]) {
+		return [self co_viewBackgroundColor];
+	}
+	return nil;
+}
+
+- (BOOL)co_shouldShowSecondaryDisplayCover
+{
+	if (![self co_syncSecondaryDisplayBackground]) {
+		return NO;
+	}
+	if (![NSApp isActive]) {
+		return NO;
+	}
+	if (![window isVisible]) {
+		return NO;
+	}
+	if (![window isKeyWindow] && ![window isMainWindow]) {
+		return NO;
+	}
+	return ([[NSScreen screens] count] > 1);
+}
+
+- (CGDirectDisplayID)co_displayIDForScreen:(NSScreen *)screen
+{
+	NSNumber *screenNumber;
+
+	screenNumber = [[screen deviceDescription] objectForKey:@"NSScreenNumber"];
+	if (screenNumber == nil) {
+		return kCGNullDirectDisplay;
+	}
+	return (CGDirectDisplayID)[screenNumber unsignedIntValue];
+}
+
+- (void)co_releaseCapturedSecondaryDisplays
+{
+	for (NSNumber *displayNumber in secondaryDisplayCaptureDisplayIDs) {
+		CGDisplayRelease((CGDirectDisplayID)[displayNumber unsignedIntValue]);
+	}
+	[secondaryDisplayCaptureDisplayIDs removeAllObjects];
+}
+
+- (void)co_removeSecondaryDisplayCoverWindows
+{
+	for (NSWindow *coverWindow in secondaryDisplayCoverWindows) {
+		[coverWindow orderOut:self];
+		[coverWindow close];
+	}
+	[secondaryDisplayCoverWindows removeAllObjects];
+	[self co_releaseCapturedSecondaryDisplays];
+}
+
+- (void)co_updateSecondaryDisplayCoverWindows
+{
+	NSScreen *primaryScreen;
+	NSColor *coverColor;
+
+	[self co_removeSecondaryDisplayCoverWindows];
+
+	if (![self co_shouldShowSecondaryDisplayCover]) {
+		return;
+	}
+
+	coverColor = [self co_effectiveSecondaryDisplayColor];
+	if (coverColor == nil) {
+		return;
+	}
+
+	primaryScreen = [window screen];
+	if (primaryScreen == nil) {
+		primaryScreen = [NSScreen mainScreen];
+	}
+	if (primaryScreen == nil) {
+		return;
+	}
+
+	if (secondaryDisplayCoverWindows == nil) {
+		secondaryDisplayCoverWindows = [[NSMutableArray alloc] init];
+	}
+
+	// Cover every non-active display while the viewer window is in use.
+	for (NSScreen *screen in [NSScreen screens]) {
+		CGDirectDisplayID displayID;
+		CGError captureError;
+		NSWindow *coverWindow;
+		BOOL isOpaque;
+
+		if (screen == primaryScreen) {
+			continue;
+		}
+
+		displayID = [self co_displayIDForScreen:screen];
+		if (displayID != kCGNullDirectDisplay) {
+			captureError = CGDisplayCapture(displayID);
+			if (captureError == kCGErrorSuccess) {
+				if (secondaryDisplayCaptureDisplayIDs == nil) {
+					secondaryDisplayCaptureDisplayIDs = [[NSMutableArray alloc] init];
+				}
+				[secondaryDisplayCaptureDisplayIDs addObject:[NSNumber numberWithUnsignedInt:displayID]];
+			}
+		}
+
+		isOpaque = ([coverColor alphaComponent] >= 0.999);
+		coverWindow = [[[NSWindow alloc] initWithContentRect:[screen frame]
+													 styleMask:NSBorderlessWindowMask
+												   backing:NSBackingStoreBuffered
+													 defer:NO
+													screen:screen] autorelease];
+		[coverWindow setReleasedWhenClosed:NO];
+		[coverWindow setOpaque:isOpaque];
+		[coverWindow setBackgroundColor:coverColor];
+		[coverWindow setHasShadow:NO];
+		[coverWindow setLevel:CGShieldingWindowLevel()];
+		[coverWindow setHidesOnDeactivate:YES];
+		[coverWindow setIgnoresMouseEvents:YES];
+		[coverWindow setCollectionBehavior:(NSWindowCollectionBehaviorCanJoinAllSpaces |
+												 NSWindowCollectionBehaviorStationary |
+											 NSWindowCollectionBehaviorFullScreenAuxiliary |
+											 NSWindowCollectionBehaviorIgnoresCycle)];
+		[coverWindow setExcludedFromWindowsMenu:YES];
+		[coverWindow orderFrontRegardless];
+		[secondaryDisplayCoverWindows addObject:coverWindow];
+	}
+}
+
+- (void)co_applicationDidChangeScreenParameters:(NSNotification *)notification
+{
+	[self co_updateSecondaryDisplayCoverWindows];
+}
 
 - (void)restoreViewerDeactivateBehavior
 {
@@ -350,6 +522,10 @@ static const int DIALOG_CANCEL	= 129;
 											 selector:@selector(viewDidEndLiveResize:) 
 												 name:@"ViewDidEndLiveResize"
 											   object:imageView];
+	[[NSNotificationCenter defaultCenter] addObserver:self
+											 selector:@selector(co_applicationDidChangeScreenParameters:)
+												 name:NSApplicationDidChangeScreenParametersNotification
+											   object:nil];
     
 
     openLinkMode = (int)[defaults integerForKey:@"OpenLinkMode"];
@@ -655,6 +831,7 @@ static const int DIALOG_CANCEL	= 129;
     [remoteControl startListening: self];
 }
 - (void)applicationWillResignActive:(NSNotification *)aNotification {
+    [self co_removeSecondaryDisplayCoverWindows];
     [remoteControl stopListening: self];
 }
 
@@ -1188,6 +1365,7 @@ static const int DIALOG_CANCEL	= 129;
 	}
     */
 	
+	[self co_updateSecondaryDisplayCoverWindows];
 }
 - (void)askInArchivePassword:(COImageLoader*)loader
 {
@@ -2064,6 +2242,7 @@ static const int DIALOG_CANCEL	= 129;
 	
 	[imageView setPreferences];
 	[window enableFlushWindow];
+	[self co_updateSecondaryDisplayCoverWindows];
 	
 	
 	
@@ -2915,6 +3094,7 @@ static const int DIALOG_CANCEL	= 129;
             [imageView setImage:firstImage];
         }
     }
+	[self co_updateSecondaryDisplayCoverWindows];
 }
 
 
@@ -2928,6 +3108,7 @@ static const int DIALOG_CANCEL	= 129;
 
 - (void)windowWillClose:(NSNotification *)aNotofication
 {
+	[self co_removeSecondaryDisplayCoverWindows];
 	[lock lock];
 	[lock unlock];
 	if ([window isVisible]) {
@@ -3086,6 +3267,7 @@ static const int DIALOG_CANCEL	= 129;
 - (void)windowDidMove:(NSNotification *)aNotification
 {
 	if (![window isFullScreen]) [window saveFrameUsingName:@"NormalWindow"];
+	[self co_updateSecondaryDisplayCoverWindows];
 }
 - (void)windowDidResize:(NSNotification *)aNotification
 {
@@ -3093,6 +3275,7 @@ static const int DIALOG_CANCEL	= 129;
 }
 - (void)applicationWillTerminate:(NSNotification *)notification
 {
+	[self co_removeSecondaryDisplayCoverWindows];
 	[defaults synchronize];
 }
 - (void)applicationDidBecomeActive:(NSNotification *)aNotification {
@@ -3100,6 +3283,7 @@ static const int DIALOG_CANCEL	= 129;
 	if (pendingViewerActivation) {
 		[self scheduleBringViewerToFront];
 	}
+	[self co_updateSecondaryDisplayCoverWindows];
 }
 
 
