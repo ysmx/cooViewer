@@ -1,7 +1,42 @@
 #import "CustomWindow.h"
 #import "Controller.h"
+#import <ApplicationServices/ApplicationServices.h>
 
 @implementation CustomWindow
+
+- (BOOL)isApplicationSwitcherEvent:(NSEvent *)theEvent
+{
+	return (([theEvent modifierFlags] & NSCommandKeyMask) != 0 && [theEvent keyCode] == 48);
+}
+
+- (BOOL)shouldAutoHideCursor
+{
+	if (fullscreen) {
+		return YES;
+	}
+	if ([controller respondsToSelector:@selector(isSlideshowRunning)]) {
+		return [controller isSlideshowRunning];
+	}
+	return NO;
+}
+
+- (void)clearCursorHideTimer
+{
+	if (cursorTimer == nil) {
+		return;
+	}
+	[cursorTimer invalidate];
+	[cursorTimer release];
+	cursorTimer = nil;
+}
+
+- (void)refreshCursorAutoHide
+{
+	[self clearCursorHideTimer];
+	if ([self shouldAutoHideCursor] && [self isKeyWindow]) {
+		[NSCursor setHiddenUntilMouseMoves:YES];
+	}
+}
 
 - (NSRect)fullscreenFrame
 {
@@ -118,8 +153,36 @@
 
 - (void)keyDown:(NSEvent *)theEvent
 {
-	if (fullscreen) [NSCursor setHiddenUntilMouseMoves:YES];
+	NSString *characters;
+	unichar character;
+	BOOL command;
+
+	characters = [theEvent charactersIgnoringModifiers];
+	if ([characters length] > 0) {
+		character = [characters characterAtIndex:0];
+		command = (([theEvent modifierFlags] & NSCommandKeyMask) != 0);
+		if ([self isApplicationSwitcherEvent:theEvent]) {
+			if ([controller respondsToSelector:@selector(prepareForApplicationSwitcher)]) {
+				[controller prepareForApplicationSwitcher];
+			}
+			CGEventRef keyDown = CGEventCreateKeyboardEvent(NULL, (CGKeyCode)[theEvent keyCode], true);
+			CGEventSetFlags(keyDown, (CGEventFlags)[theEvent modifierFlags]);
+			CGEventPost(kCGSessionEventTap, keyDown);
+			CFRelease(keyDown);
+			return;
+		}
+		if (command && (character == NSTabCharacter || character == NSBackTabCharacter)) {
+			[super keyDown:theEvent];
+			return;
+		}
+	}
+	if ([self shouldAutoHideCursor]) [NSCursor setHiddenUntilMouseMoves:YES];
 	[controller keyAction:theEvent];
+}
+
+- (void)flagsChanged:(NSEvent *)theEvent
+{
+	[super flagsChanged:theEvent];
 }
 
 - (BOOL)canBecomeKeyWindow
@@ -140,6 +203,16 @@
 
 - (BOOL)performKeyEquivalent:(NSEvent *)anEvent
 {	
+	if ([self isApplicationSwitcherEvent:anEvent]) {
+		if ([controller respondsToSelector:@selector(prepareForApplicationSwitcher)]) {
+			[controller prepareForApplicationSwitcher];
+		}
+		CGEventRef keyDown = CGEventCreateKeyboardEvent(NULL, (CGKeyCode)[anEvent keyCode], true);
+		CGEventSetFlags(keyDown, (CGEventFlags)[anEvent modifierFlags]);
+		CGEventPost(kCGSessionEventTap, keyDown);
+		CFRelease(keyDown);
+		return YES;
+	}
 	if (fullscreen) {
 		unsigned int cMod = 0;
 		BOOL option = ([anEvent modifierFlags] & NSAlternateKeyMask) ? YES : NO;
@@ -229,21 +302,21 @@
 
 - (void)cursorHide
 {
-	if (fullscreen && [self isKeyWindow]) {
+	if ([self shouldAutoHideCursor] && [self isKeyWindow]) {
 		[NSCursor setHiddenUntilMouseMoves:YES];
-		cursorTimer = nil;
 	}
+	[self clearCursorHideTimer];
 }
 
 
 - (void)mouseMoved:(NSEvent *)theEvent
 {
-	if (fullscreen && !cursorTimer) {
-		cursorTimer = [NSTimer scheduledTimerWithTimeInterval:3
-													   target:self
-													 selector:@selector(cursorHide)
-													 userInfo:NULL
-													  repeats:NO];
+	if ([self shouldAutoHideCursor] && !cursorTimer) {
+		cursorTimer = [[NSTimer scheduledTimerWithTimeInterval:3
+														target:self
+													  selector:@selector(cursorHide)
+													  userInfo:NULL
+													   repeats:NO] retain];
 	}
 	[view mouseMoved:theEvent];
 }
@@ -251,6 +324,7 @@
 -(void)becomeKeyWindow
 {
 	[super becomeKeyWindow];
+	[self refreshCursorAutoHide];
 	if (fullscreen && hideMenuBar) {
 		[NSMenu setMenuBarVisible:NO];
 	} else {
@@ -258,6 +332,12 @@
 	}
 }
 
+- (void)dealloc
+{
+	[NSObject cancelPreviousPerformRequestsWithTarget:self];
+	[self clearCursorHideTimer];
+	[super dealloc];
+}
 
 
 

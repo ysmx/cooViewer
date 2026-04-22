@@ -228,6 +228,9 @@
 
 
 - (IBAction)fullscreen:(id)sender;
+- (BOOL)isSlideshowRunning;
+- (void)prepareForApplicationSwitcher;
+- (void)refreshSecondaryDisplayCoverWindows;
 - (void)viewSet;
 - (void)windowWillClose:(NSNotification *)aNotofication;
 - (void)applicationWillTerminate:(NSNotification *)notification;

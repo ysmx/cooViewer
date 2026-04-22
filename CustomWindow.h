@@ -26,8 +26,10 @@
 - (void)performMiniaturize:(id)sender;
 - (NSRect)constrainFrameRect:(NSRect)frameRect toScreen:(NSScreen *)aScreen;
 - (void)keyDown:(NSEvent *)theEvent;
+- (void)flagsChanged:(NSEvent *)theEvent;
 - (void)mouseEntered:(NSEvent *)theEvent;
 - (void)mouseExited:(NSEvent *)theEvent;
 - (void)updateTrackingRect;
+- (void)refreshCursorAutoHide;
 
 @end

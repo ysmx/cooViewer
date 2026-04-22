@@ -27,6 +27,7 @@ static NSMenu *COFindSortMenu(NSMenu *menu)
 {
 	NSMutableArray *secondaryDisplayCoverWindows;
 	NSMutableArray *secondaryDisplayCaptureDisplayIDs;
+	BOOL secondaryDisplayCoverPreparedForApplicationSwitcher;
 }
 - (BOOL)co_sortModeSupportsDescending:(int)mode;
 - (void)co_installSortMenuIfNeeded;
@@ -36,6 +37,7 @@ static NSMenu *COFindSortMenu(NSMenu *menu)
 - (BOOL)co_shouldShowSecondaryDisplayCover;
 - (CGDirectDisplayID)co_displayIDForScreen:(NSScreen *)screen;
 - (void)co_releaseCapturedSecondaryDisplays;
+- (void)co_prepareSecondaryDisplayCoverWindowsForApplicationSwitcher;
 - (void)co_removeSecondaryDisplayCoverWindows;
 - (void)co_updateSecondaryDisplayCoverWindows;
 - (void)co_applicationDidChangeScreenParameters:(NSNotification *)notification;
@@ -115,6 +117,23 @@ static const int DIALOG_CANCEL	= 129;
 	[secondaryDisplayCaptureDisplayIDs removeAllObjects];
 }
 
+- (void)co_prepareSecondaryDisplayCoverWindowsForApplicationSwitcher
+{
+	if (secondaryDisplayCoverPreparedForApplicationSwitcher) {
+		return;
+	}
+	if ([secondaryDisplayCoverWindows count] == 0) {
+		return;
+	}
+	for (NSWindow *coverWindow in secondaryDisplayCoverWindows) {
+		[coverWindow orderOut:self];
+		[coverWindow close];
+	}
+	[secondaryDisplayCoverWindows removeAllObjects];
+	[self co_releaseCapturedSecondaryDisplays];
+	secondaryDisplayCoverPreparedForApplicationSwitcher = YES;
+}
+
 - (void)co_removeSecondaryDisplayCoverWindows
 {
 	for (NSWindow *coverWindow in secondaryDisplayCoverWindows) {
@@ -123,6 +142,7 @@ static const int DIALOG_CANCEL	= 129;
 	}
 	[secondaryDisplayCoverWindows removeAllObjects];
 	[self co_releaseCapturedSecondaryDisplays];
+	secondaryDisplayCoverPreparedForApplicationSwitcher = NO;
 }
 
 - (void)co_updateSecondaryDisplayCoverWindows
@@ -131,6 +151,7 @@ static const int DIALOG_CANCEL	= 129;
 	NSColor *coverColor;
 
 	[self co_removeSecondaryDisplayCoverWindows];
+	secondaryDisplayCoverPreparedForApplicationSwitcher = NO;
 
 	if (![self co_shouldShowSecondaryDisplayCover]) {
 		return;
@@ -245,6 +266,26 @@ static const int DIALOG_CANCEL	= 129;
 		pendingViewerActivation = NO;
 		[NSObject cancelPreviousPerformRequestsWithTarget:self selector:@selector(restoreViewerDeactivateBehavior) object:nil];
 		[self performSelector:@selector(restoreViewerDeactivateBehavior) withObject:nil afterDelay:0.2];
+	}
+}
+
+- (BOOL)isSlideshowRunning
+{
+	return timerSwitch;
+}
+
+- (void)prepareForApplicationSwitcher
+{
+	[NSObject cancelPreviousPerformRequestsWithTarget:self selector:@selector(bringViewerToFront) object:nil];
+	[NSObject cancelPreviousPerformRequestsWithTarget:self selector:@selector(restoreViewerDeactivateBehavior) object:nil];
+	pendingViewerActivation = NO;
+	[self co_prepareSecondaryDisplayCoverWindowsForApplicationSwitcher];
+}
+
+- (void)refreshSecondaryDisplayCoverWindows
+{
+	if ([NSApp isActive]) {
+		[self co_updateSecondaryDisplayCoverWindows];
 	}
 }
 
@@ -831,8 +872,7 @@ static const int DIALOG_CANCEL	= 129;
     [remoteControl startListening: self];
 }
 - (void)applicationWillResignActive:(NSNotification *)aNotification {
-    [self co_removeSecondaryDisplayCoverWindows];
-    [remoteControl stopListening: self];
+	[remoteControl stopListening: self];
 }
 
 #pragma mark openFromAny
@@ -3280,9 +3320,6 @@ static const int DIALOG_CANCEL	= 129;
 }
 - (void)applicationDidBecomeActive:(NSNotification *)aNotification {
 	[self checkCurrentFolderUpdated];
-	if (pendingViewerActivation) {
-		[self scheduleBringViewerToFront];
-	}
 	[self co_updateSecondaryDisplayCoverWindows];
 }
 

@@ -2983,6 +2983,9 @@ static NSTimer* dontSleepTimer = nil;
 			}
 			[imageView setSlideshow:YES];
 		}
+		if ([window respondsToSelector:@selector(refreshCursorAutoHide)]) {
+			[(CustomWindow *)window refreshCursorAutoHide];
+		}
 	}
 }
 
