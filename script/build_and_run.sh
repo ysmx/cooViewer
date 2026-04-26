@@ -6,7 +6,7 @@ APP_NAME="cooViewer"
 BUNDLE_ID="jp.coo.cooViewer"
 PROJECT="cooViewer.xcodeproj"
 SCHEME="cooViewer"
-CONFIGURATION="Deployment"
+CONFIGURATION="Release"
 DEPLOYMENT_TARGET="10.14"
 
 ROOT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
