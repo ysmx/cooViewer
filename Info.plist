@@ -2,6 +2,8 @@
 <!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
 <plist version="1.0">
 <dict>
+	<key>BuildMachineOSBuild</key>
+	<string>24G624</string>
 	<key>CFBundleDevelopmentRegion</key>
 	<string>English</string>
 	<key>CFBundleDocumentTypes</key>
@@ -12,16 +14,18 @@
 				<string>7z</string>
 				<string>7Z</string>
 			</array>
-			<key>CFBundleTypeIconFile</key>
-			<string>coo_alt</string>
 			<key>CFBundleTypeName</key>
 			<string>7-Zip Archive</string>
 			<key>CFBundleTypeRole</key>
 			<string>Viewer</string>
 			<key>LSTypeIsPackage</key>
 			<false/>
-			<key>NSPersistentStoreTypeKey</key>
-			<string>Binary</string>
+			<key>LSHandlerRank</key>
+			<string>Alternate</string>
+			<key>LSItemContentTypes</key>
+			<array>
+				<string>org.7-zip.7-zip-archive</string>
+			</array>
 		</dict>
 		<dict>
 			<key>CFBundleTypeExtensions</key>
@@ -31,16 +35,14 @@
 				<string>LHA</string>
 				<string>LZH</string>
 			</array>
-			<key>CFBundleTypeIconFile</key>
-			<string>coo_alt</string>
 			<key>CFBundleTypeName</key>
 			<string>LhA Archive</string>
 			<key>CFBundleTypeRole</key>
 			<string>Viewer</string>
 			<key>LSTypeIsPackage</key>
 			<false/>
-			<key>NSPersistentStoreTypeKey</key>
-			<string>Binary</string>
+			<key>LSHandlerRank</key>
+			<string>Alternate</string>
 		</dict>
 		<dict>
 			<key>CFBundleTypeExtensions</key>
@@ -49,16 +51,14 @@
 				<string>sitx</string>
 				<string>SIT</string>
 			</array>
-			<key>CFBundleTypeIconFile</key>
-			<string>coo_alt</string>
 			<key>CFBundleTypeName</key>
 			<string>StuffIt Archive</string>
 			<key>CFBundleTypeRole</key>
 			<string>Viewer</string>
 			<key>LSTypeIsPackage</key>
 			<false/>
-			<key>NSPersistentStoreTypeKey</key>
-			<string>Binary</string>
+			<key>LSHandlerRank</key>
+			<string>Alternate</string>
 		</dict>
 		<dict>
 			<key>CFBundleTypeExtensions</key>
@@ -66,16 +66,14 @@
 				<string>hqx</string>
 				<string>HQX</string>
 			</array>
-			<key>CFBundleTypeIconFile</key>
-			<string>coo_alt</string>
 			<key>CFBundleTypeName</key>
 			<string>BinHex File</string>
 			<key>CFBundleTypeRole</key>
 			<string>Viewer</string>
 			<key>LSTypeIsPackage</key>
 			<false/>
-			<key>NSPersistentStoreTypeKey</key>
-			<string>Binary</string>
+			<key>LSHandlerRank</key>
+			<string>Alternate</string>
 		</dict>
 		<dict>
 			<key>CFBundleTypeExtensions</key>
@@ -83,16 +81,14 @@
 				<string>bin</string>
 				<string>macbin</string>
 			</array>
-			<key>CFBundleTypeIconFile</key>
-			<string>coo_alt</string>
 			<key>CFBundleTypeName</key>
 			<string>MacBinary File</string>
 			<key>CFBundleTypeRole</key>
 			<string>Viewer</string>
 			<key>LSTypeIsPackage</key>
 			<false/>
-			<key>NSPersistentStoreTypeKey</key>
-			<string>Binary</string>
+			<key>LSHandlerRank</key>
+			<string>Alternate</string>
 		</dict>
 		<dict>
 			<key>CFBundleTypeExtensions</key>
@@ -101,16 +97,18 @@
 				<string>gzip</string>
 				<string>GZ</string>
 			</array>
-			<key>CFBundleTypeIconFile</key>
-			<string>coo_alt</string>
 			<key>CFBundleTypeName</key>
 			<string>Gzip File</string>
 			<key>CFBundleTypeRole</key>
 			<string>Viewer</string>
 			<key>LSTypeIsPackage</key>
 			<false/>
-			<key>NSPersistentStoreTypeKey</key>
-			<string>Binary</string>
+			<key>LSHandlerRank</key>
+			<string>Alternate</string>
+			<key>LSItemContentTypes</key>
+			<array>
+				<string>org.gnu.gnu-zip-archive</string>
+			</array>
 		</dict>
 		<dict>
 			<key>CFBundleTypeExtensions</key>
@@ -119,16 +117,18 @@
 				<string>tar-gz</string>
 				<string>TGZ</string>
 			</array>
-			<key>CFBundleTypeIconFile</key>
-			<string>coo_alt</string>
 			<key>CFBundleTypeName</key>
 			<string>Gzip Tar Archive</string>
 			<key>CFBundleTypeRole</key>
 			<string>Viewer</string>
 			<key>LSTypeIsPackage</key>
 			<false/>
-			<key>NSPersistentStoreTypeKey</key>
-			<string>Binary</string>
+			<key>LSHandlerRank</key>
+			<string>Alternate</string>
+			<key>LSItemContentTypes</key>
+			<array>
+				<string>org.gnu.gnu-zip-tar-archive</string>
+			</array>
 		</dict>
 		<dict>
 			<key>CFBundleTypeExtensions</key>
@@ -139,16 +139,18 @@
 				<string>BZ2</string>
 				<string>BZ</string>
 			</array>
-			<key>CFBundleTypeIconFile</key>
-			<string>coo_alt</string>
 			<key>CFBundleTypeName</key>
 			<string>Bzip2 File</string>
 			<key>CFBundleTypeRole</key>
 			<string>Viewer</string>
 			<key>LSTypeIsPackage</key>
 			<false/>
-			<key>NSPersistentStoreTypeKey</key>
-			<string>Binary</string>
+			<key>LSHandlerRank</key>
+			<string>Alternate</string>
+			<key>LSItemContentTypes</key>
+			<array>
+				<string>public.bzip2-archive</string>
+			</array>
 		</dict>
 		<dict>
 			<key>CFBundleTypeExtensions</key>
@@ -157,16 +159,14 @@
 				<string>tbz</string>
 				<string>TBZ</string>
 			</array>
-			<key>CFBundleTypeIconFile</key>
-			<string>coo_alt</string>
 			<key>CFBundleTypeName</key>
 			<string>Bzip2 Tar Archive</string>
 			<key>CFBundleTypeRole</key>
 			<string>Viewer</string>
 			<key>LSTypeIsPackage</key>
 			<false/>
-			<key>NSPersistentStoreTypeKey</key>
-			<string>Binary</string>
+			<key>LSHandlerRank</key>
+			<string>Alternate</string>
 		</dict>
 		<dict>
 			<key>CFBundleTypeExtensions</key>
@@ -174,16 +174,18 @@
 				<string>xz</string>
 				<string>XZ</string>
 			</array>
-			<key>CFBundleTypeIconFile</key>
-			<string>coo_alt</string>
 			<key>CFBundleTypeName</key>
 			<string>XZ File</string>
 			<key>CFBundleTypeRole</key>
 			<string>Viewer</string>
 			<key>LSTypeIsPackage</key>
 			<false/>
-			<key>NSPersistentStoreTypeKey</key>
-			<string>Binary</string>
+			<key>LSHandlerRank</key>
+			<string>Alternate</string>
+			<key>LSItemContentTypes</key>
+			<array>
+				<string>org.tukaani.xz-archive</string>
+			</array>
 		</dict>
 		<dict>
 			<key>CFBundleTypeExtensions</key>
@@ -191,16 +193,14 @@
 				<string>txz</string>
 				<string>TXZ</string>
 			</array>
-			<key>CFBundleTypeIconFile</key>
-			<string>coo_alt</string>
 			<key>CFBundleTypeName</key>
 			<string>XZ Tar Archive</string>
 			<key>CFBundleTypeRole</key>
 			<string>Viewer</string>
 			<key>LSTypeIsPackage</key>
 			<false/>
-			<key>NSPersistentStoreTypeKey</key>
-			<string>Binary</string>
+			<key>LSHandlerRank</key>
+			<string>Alternate</string>
 		</dict>
 		<dict>
 			<key>CFBundleTypeExtensions</key>
@@ -208,32 +208,32 @@
 				<string>tar</string>
 				<string>TAR</string>
 			</array>
-			<key>CFBundleTypeIconFile</key>
-			<string>coo_alt</string>
 			<key>CFBundleTypeName</key>
 			<string>Tar Archive</string>
 			<key>CFBundleTypeRole</key>
 			<string>Viewer</string>
 			<key>LSTypeIsPackage</key>
 			<false/>
-			<key>NSPersistentStoreTypeKey</key>
-			<string>Binary</string>
+			<key>LSHandlerRank</key>
+			<string>Alternate</string>
+			<key>LSItemContentTypes</key>
+			<array>
+				<string>public.tar-archive</string>
+			</array>
 		</dict>
 		<dict>
 			<key>CFBundleTypeExtensions</key>
 			<array>
 				<string>gtar</string>
 			</array>
-			<key>CFBundleTypeIconFile</key>
-			<string>coo_alt</string>
 			<key>CFBundleTypeName</key>
 			<string>GNU Tar Archive</string>
 			<key>CFBundleTypeRole</key>
 			<string>Viewer</string>
 			<key>LSTypeIsPackage</key>
 			<false/>
-			<key>NSPersistentStoreTypeKey</key>
-			<string>Binary</string>
+			<key>LSHandlerRank</key>
+			<string>Alternate</string>
 		</dict>
 		<dict>
 			<key>CFBundleTypeExtensions</key>
@@ -241,16 +241,14 @@
 				<string>z</string>
 				<string>Z</string>
 			</array>
-			<key>CFBundleTypeIconFile</key>
-			<string>coo_alt</string>
 			<key>CFBundleTypeName</key>
 			<string>Unix Compress File</string>
 			<key>CFBundleTypeRole</key>
 			<string>Viewer</string>
 			<key>LSTypeIsPackage</key>
 			<false/>
-			<key>NSPersistentStoreTypeKey</key>
-			<string>Binary</string>
+			<key>LSHandlerRank</key>
+			<string>Alternate</string>
 		</dict>
 		<dict>
 			<key>CFBundleTypeExtensions</key>
@@ -258,32 +256,28 @@
 				<string>taz</string>
 				<string>tar-z</string>
 			</array>
-			<key>CFBundleTypeIconFile</key>
-			<string>coo_alt</string>
 			<key>CFBundleTypeName</key>
 			<string>Unix Compress Tar Archive</string>
 			<key>CFBundleTypeRole</key>
 			<string>Viewer</string>
 			<key>LSTypeIsPackage</key>
 			<false/>
-			<key>NSPersistentStoreTypeKey</key>
-			<string>Binary</string>
+			<key>LSHandlerRank</key>
+			<string>Alternate</string>
 		</dict>
 		<dict>
 			<key>CFBundleTypeExtensions</key>
 			<array>
 				<string>lzma</string>
 			</array>
-			<key>CFBundleTypeIconFile</key>
-			<string>coo_alt</string>
 			<key>CFBundleTypeName</key>
 			<string>LZMA File</string>
 			<key>CFBundleTypeRole</key>
 			<string>Viewer</string>
 			<key>LSTypeIsPackage</key>
 			<false/>
-			<key>NSPersistentStoreTypeKey</key>
-			<string>Binary</string>
+			<key>LSHandlerRank</key>
+			<string>Alternate</string>
 		</dict>
 		<dict>
 			<key>CFBundleTypeExtensions</key>
@@ -291,16 +285,14 @@
 				<string>xar</string>
 				<string>XAR</string>
 			</array>
-			<key>CFBundleTypeIconFile</key>
-			<string>coo_alt</string>
 			<key>CFBundleTypeName</key>
 			<string>XAR Archive</string>
 			<key>CFBundleTypeRole</key>
 			<string>Viewer</string>
 			<key>LSTypeIsPackage</key>
 			<false/>
-			<key>NSPersistentStoreTypeKey</key>
-			<string>Binary</string>
+			<key>LSHandlerRank</key>
+			<string>Alternate</string>
 		</dict>
 		<dict>
 			<key>CFBundleTypeExtensions</key>
@@ -308,16 +300,14 @@
 				<string>ace</string>
 				<string>ACE</string>
 			</array>
-			<key>CFBundleTypeIconFile</key>
-			<string>coo_alt</string>
 			<key>CFBundleTypeName</key>
 			<string>ACE Archive</string>
 			<key>CFBundleTypeRole</key>
 			<string>Viewer</string>
 			<key>LSTypeIsPackage</key>
 			<false/>
-			<key>NSPersistentStoreTypeKey</key>
-			<string>Binary</string>
+			<key>LSHandlerRank</key>
+			<string>Alternate</string>
 		</dict>
 		<dict>
 			<key>CFBundleTypeExtensions</key>
@@ -325,16 +315,14 @@
 				<string>arj</string>
 				<string>ARJ</string>
 			</array>
-			<key>CFBundleTypeIconFile</key>
-			<string>coo_alt</string>
 			<key>CFBundleTypeName</key>
 			<string>ARJ Archive</string>
 			<key>CFBundleTypeRole</key>
 			<string>Viewer</string>
 			<key>LSTypeIsPackage</key>
 			<false/>
-			<key>NSPersistentStoreTypeKey</key>
-			<string>Binary</string>
+			<key>LSHandlerRank</key>
+			<string>Alternate</string>
 		</dict>
 		<dict>
 			<key>CFBundleTypeExtensions</key>
@@ -346,16 +334,14 @@
 				<string>spk</string>
 				<string>SPK</string>
 			</array>
-			<key>CFBundleTypeIconFile</key>
-			<string>coo_alt</string>
 			<key>CFBundleTypeName</key>
 			<string>ARC Archive</string>
 			<key>CFBundleTypeRole</key>
 			<string>Viewer</string>
 			<key>LSTypeIsPackage</key>
 			<false/>
-			<key>NSPersistentStoreTypeKey</key>
-			<string>Binary</string>
+			<key>LSHandlerRank</key>
+			<string>Alternate</string>
 		</dict>
 		<dict>
 			<key>CFBundleTypeExtensions</key>
@@ -363,16 +349,14 @@
 				<string>zoo</string>
 				<string>ZOO</string>
 			</array>
-			<key>CFBundleTypeIconFile</key>
-			<string>coo_alt</string>
 			<key>CFBundleTypeName</key>
 			<string>ZOO Archive</string>
 			<key>CFBundleTypeRole</key>
 			<string>Viewer</string>
 			<key>LSTypeIsPackage</key>
 			<false/>
-			<key>NSPersistentStoreTypeKey</key>
-			<string>Binary</string>
+			<key>LSHandlerRank</key>
+			<string>Alternate</string>
 		</dict>
 		<dict>
 			<key>CFBundleTypeExtensions</key>
@@ -384,16 +368,14 @@
 				<string>lzr</string>
 				<string>LZR</string>
 			</array>
-			<key>CFBundleTypeIconFile</key>
-			<string>coo_alt</string>
 			<key>CFBundleTypeName</key>
 			<string>LBR Archive</string>
 			<key>CFBundleTypeRole</key>
 			<string>Viewer</string>
 			<key>LSTypeIsPackage</key>
 			<false/>
-			<key>NSPersistentStoreTypeKey</key>
-			<string>Binary</string>
+			<key>LSHandlerRank</key>
+			<string>Alternate</string>
 		</dict>
 		<dict>
 			<key>CFBundleTypeExtensions</key>
@@ -401,16 +383,14 @@
 				<string>cab</string>
 				<string>CAB</string>
 			</array>
-			<key>CFBundleTypeIconFile</key>
-			<string>coo_alt</string>
 			<key>CFBundleTypeName</key>
 			<string>CAB Archive</string>
 			<key>CFBundleTypeRole</key>
 			<string>Viewer</string>
 			<key>LSTypeIsPackage</key>
 			<false/>
-			<key>NSPersistentStoreTypeKey</key>
-			<string>Binary</string>
+			<key>LSHandlerRank</key>
+			<string>Alternate</string>
 		</dict>
 		<dict>
 			<key>CFBundleTypeExtensions</key>
@@ -418,16 +398,14 @@
 				<string>rpm</string>
 				<string>RPM</string>
 			</array>
-			<key>CFBundleTypeIconFile</key>
-			<string>coo_alt</string>
 			<key>CFBundleTypeName</key>
 			<string>Linux RPM Archive</string>
 			<key>CFBundleTypeRole</key>
 			<string>Viewer</string>
 			<key>LSTypeIsPackage</key>
 			<false/>
-			<key>NSPersistentStoreTypeKey</key>
-			<string>Binary</string>
+			<key>LSHandlerRank</key>
+			<string>Alternate</string>
 		</dict>
 		<dict>
 			<key>CFBundleTypeExtensions</key>
@@ -435,16 +413,14 @@
 				<string>alz</string>
 				<string>ALZ</string>
 			</array>
-			<key>CFBundleTypeIconFile</key>
-			<string>coo_alt</string>
 			<key>CFBundleTypeName</key>
 			<string>ALZip Archive</string>
 			<key>CFBundleTypeRole</key>
 			<string>Viewer</string>
 			<key>LSTypeIsPackage</key>
 			<false/>
-			<key>NSPersistentStoreTypeKey</key>
-			<string>Binary</string>
+			<key>LSHandlerRank</key>
+			<string>Alternate</string>
 		</dict>
 		<dict>
 			<key>CFBundleTypeExtensions</key>
@@ -452,16 +428,14 @@
 				<string>dd</string>
 				<string>DD</string>
 			</array>
-			<key>CFBundleTypeIconFile</key>
-			<string>coo_alt</string>
 			<key>CFBundleTypeName</key>
 			<string>DiskDoubler Archive</string>
 			<key>CFBundleTypeRole</key>
 			<string>Viewer</string>
 			<key>LSTypeIsPackage</key>
 			<false/>
-			<key>NSPersistentStoreTypeKey</key>
-			<string>Binary</string>
+			<key>LSHandlerRank</key>
+			<string>Alternate</string>
 		</dict>
 		<dict>
 			<key>CFBundleTypeExtensions</key>
@@ -469,16 +443,14 @@
 				<string>cpt</string>
 				<string>CPT</string>
 			</array>
-			<key>CFBundleTypeIconFile</key>
-			<string>coo_alt</string>
 			<key>CFBundleTypeName</key>
 			<string>Compact Pro Archive</string>
 			<key>CFBundleTypeRole</key>
 			<string>Viewer</string>
 			<key>LSTypeIsPackage</key>
 			<false/>
-			<key>NSPersistentStoreTypeKey</key>
-			<string>Binary</string>
+			<key>LSHandlerRank</key>
+			<string>Alternate</string>
 		</dict>
 		<dict>
 			<key>CFBundleTypeExtensions</key>
@@ -486,16 +458,14 @@
 				<string>pit</string>
 				<string>PIT</string>
 			</array>
-			<key>CFBundleTypeIconFile</key>
-			<string>coo_alt</string>
 			<key>CFBundleTypeName</key>
 			<string>PackIt Archive</string>
 			<key>CFBundleTypeRole</key>
 			<string>Viewer</string>
 			<key>LSTypeIsPackage</key>
 			<false/>
-			<key>NSPersistentStoreTypeKey</key>
-			<string>Binary</string>
+			<key>LSHandlerRank</key>
+			<string>Alternate</string>
 		</dict>
 		<dict>
 			<key>CFBundleTypeExtensions</key>
@@ -503,16 +473,14 @@
 				<string>now</string>
 				<string>NOW</string>
 			</array>
-			<key>CFBundleTypeIconFile</key>
-			<string>coo_alt</string>
 			<key>CFBundleTypeName</key>
 			<string>Now Compress Archive</string>
 			<key>CFBundleTypeRole</key>
 			<string>Viewer</string>
 			<key>LSTypeIsPackage</key>
 			<false/>
-			<key>NSPersistentStoreTypeKey</key>
-			<string>Binary</string>
+			<key>LSHandlerRank</key>
+			<string>Alternate</string>
 		</dict>
 		<dict>
 			<key>CFBundleTypeExtensions</key>
@@ -520,16 +488,14 @@
 				<string>sea</string>
 				<string>SEA</string>
 			</array>
-			<key>CFBundleTypeIconFile</key>
-			<string>coo_alt</string>
 			<key>CFBundleTypeName</key>
 			<string>Self-Extracting Archive</string>
 			<key>CFBundleTypeRole</key>
 			<string>Viewer</string>
 			<key>LSTypeIsPackage</key>
 			<false/>
-			<key>NSPersistentStoreTypeKey</key>
-			<string>Binary</string>
+			<key>LSHandlerRank</key>
+			<string>Alternate</string>
 		</dict>
 		<dict>
 			<key>CFBundleTypeExtensions</key>
@@ -537,48 +503,42 @@
 				<string>exe</string>
 				<string>EXE</string>
 			</array>
-			<key>CFBundleTypeIconFile</key>
-			<string>coo_alt</string>
 			<key>CFBundleTypeName</key>
 			<string>Windows Self-Extracting Archive</string>
 			<key>CFBundleTypeRole</key>
 			<string>Viewer</string>
 			<key>LSTypeIsPackage</key>
 			<false/>
-			<key>NSPersistentStoreTypeKey</key>
-			<string>Binary</string>
+			<key>LSHandlerRank</key>
+			<string>Alternate</string>
 		</dict>
 		<dict>
 			<key>CFBundleTypeExtensions</key>
 			<array>
 				<string>cpio</string>
 			</array>
-			<key>CFBundleTypeIconFile</key>
-			<string>coo_alt</string>
 			<key>CFBundleTypeName</key>
 			<string>CPIO Archive</string>
 			<key>CFBundleTypeRole</key>
 			<string>Viewer</string>
 			<key>LSTypeIsPackage</key>
 			<false/>
-			<key>NSPersistentStoreTypeKey</key>
-			<string>Binary</string>
+			<key>LSHandlerRank</key>
+			<string>Alternate</string>
 		</dict>
 		<dict>
 			<key>CFBundleTypeExtensions</key>
 			<array>
 				<string>cpgz</string>
 			</array>
-			<key>CFBundleTypeIconFile</key>
-			<string>coo_alt</string>
 			<key>CFBundleTypeName</key>
 			<string>Gzip CPIO Archive</string>
 			<key>CFBundleTypeRole</key>
 			<string>Viewer</string>
 			<key>LSTypeIsPackage</key>
 			<false/>
-			<key>NSPersistentStoreTypeKey</key>
-			<string>Binary</string>
+			<key>LSHandlerRank</key>
+			<string>Alternate</string>
 		</dict>
 		<dict>
 			<key>CFBundleTypeExtensions</key>
@@ -586,16 +546,14 @@
 				<string>pax</string>
 				<string>PAX</string>
 			</array>
-			<key>CFBundleTypeIconFile</key>
-			<string>coo_alt</string>
 			<key>CFBundleTypeName</key>
 			<string>Pax Archive</string>
 			<key>CFBundleTypeRole</key>
 			<string>Viewer</string>
 			<key>LSTypeIsPackage</key>
 			<false/>
-			<key>NSPersistentStoreTypeKey</key>
-			<string>Binary</string>
+			<key>LSHandlerRank</key>
+			<string>Alternate</string>
 		</dict>
 		<dict>
 			<key>CFBundleTypeExtensions</key>
@@ -603,16 +561,14 @@
 				<string>ha</string>
 				<string>HA</string>
 			</array>
-			<key>CFBundleTypeIconFile</key>
-			<string>coo_alt</string>
 			<key>CFBundleTypeName</key>
 			<string>HA Archive</string>
 			<key>CFBundleTypeRole</key>
 			<string>Viewer</string>
 			<key>LSTypeIsPackage</key>
 			<false/>
-			<key>NSPersistentStoreTypeKey</key>
-			<string>Binary</string>
+			<key>LSHandlerRank</key>
+			<string>Alternate</string>
 		</dict>
 		<dict>
 			<key>CFBundleTypeExtensions</key>
@@ -620,16 +576,14 @@
 				<string>adf</string>
 				<string>ADF</string>
 			</array>
-			<key>CFBundleTypeIconFile</key>
-			<string>coo_alt</string>
 			<key>CFBundleTypeName</key>
 			<string>Amiga Disk File</string>
 			<key>CFBundleTypeRole</key>
 			<string>Viewer</string>
 			<key>LSTypeIsPackage</key>
 			<false/>
-			<key>NSPersistentStoreTypeKey</key>
-			<string>Binary</string>
+			<key>LSHandlerRank</key>
+			<string>Alternate</string>
 		</dict>
 		<dict>
 			<key>CFBundleTypeExtensions</key>
@@ -637,16 +591,14 @@
 				<string>adz</string>
 				<string>ADZ</string>
 			</array>
-			<key>CFBundleTypeIconFile</key>
-			<string>coo_alt</string>
 			<key>CFBundleTypeName</key>
 			<string>Compressed Amiga Disk File</string>
 			<key>CFBundleTypeRole</key>
 			<string>Viewer</string>
 			<key>LSTypeIsPackage</key>
 			<false/>
-			<key>NSPersistentStoreTypeKey</key>
-			<string>Binary</string>
+			<key>LSHandlerRank</key>
+			<string>Alternate</string>
 		</dict>
 		<dict>
 			<key>CFBundleTypeExtensions</key>
@@ -654,16 +606,14 @@
 				<string>dms</string>
 				<string>DMS</string>
 			</array>
-			<key>CFBundleTypeIconFile</key>
-			<string>coo_alt</string>
 			<key>CFBundleTypeName</key>
 			<string>Amiga DMS Disk Archive</string>
 			<key>CFBundleTypeRole</key>
 			<string>Viewer</string>
 			<key>LSTypeIsPackage</key>
 			<false/>
-			<key>NSPersistentStoreTypeKey</key>
-			<string>Binary</string>
+			<key>LSHandlerRank</key>
+			<string>Alternate</string>
 		</dict>
 		<dict>
 			<key>CFBundleTypeExtensions</key>
@@ -671,16 +621,14 @@
 				<string>f</string>
 				<string>F</string>
 			</array>
-			<key>CFBundleTypeIconFile</key>
-			<string>coo_alt</string>
 			<key>CFBundleTypeName</key>
 			<string>Amiga LhF Archive</string>
 			<key>CFBundleTypeRole</key>
 			<string>Viewer</string>
 			<key>LSTypeIsPackage</key>
 			<false/>
-			<key>NSPersistentStoreTypeKey</key>
-			<string>Binary</string>
+			<key>LSHandlerRank</key>
+			<string>Alternate</string>
 		</dict>
 		<dict>
 			<key>CFBundleTypeExtensions</key>
@@ -688,16 +636,14 @@
 				<string>lzx</string>
 				<string>LZX</string>
 			</array>
-			<key>CFBundleTypeIconFile</key>
-			<string>coo_alt</string>
 			<key>CFBundleTypeName</key>
 			<string>Amiga LZX Archive</string>
 			<key>CFBundleTypeRole</key>
 			<string>Viewer</string>
 			<key>LSTypeIsPackage</key>
 			<false/>
-			<key>NSPersistentStoreTypeKey</key>
-			<string>Binary</string>
+			<key>LSHandlerRank</key>
+			<string>Alternate</string>
 		</dict>
 		<dict>
 			<key>CFBundleTypeExtensions</key>
@@ -705,16 +651,14 @@
 				<string>dcs</string>
 				<string>DCS</string>
 			</array>
-			<key>CFBundleTypeIconFile</key>
-			<string>coo_alt</string>
 			<key>CFBundleTypeName</key>
 			<string>Amiga DCS Disk Archive</string>
 			<key>CFBundleTypeRole</key>
 			<string>Viewer</string>
 			<key>LSTypeIsPackage</key>
 			<false/>
-			<key>NSPersistentStoreTypeKey</key>
-			<string>Binary</string>
+			<key>LSHandlerRank</key>
+			<string>Alternate</string>
 		</dict>
 		<dict>
 			<key>CFBundleTypeExtensions</key>
@@ -722,16 +666,14 @@
 				<string>pkd</string>
 				<string>PKD</string>
 			</array>
-			<key>CFBundleTypeIconFile</key>
-			<string>coo_alt</string>
 			<key>CFBundleTypeName</key>
 			<string>Amiga PackDev Disk Archive</string>
 			<key>CFBundleTypeRole</key>
 			<string>Viewer</string>
 			<key>LSTypeIsPackage</key>
 			<false/>
-			<key>NSPersistentStoreTypeKey</key>
-			<string>Binary</string>
+			<key>LSHandlerRank</key>
+			<string>Alternate</string>
 		</dict>
 		<dict>
 			<key>CFBundleTypeExtensions</key>
@@ -739,16 +681,14 @@
 				<string>xms</string>
 				<string>XMS</string>
 			</array>
-			<key>CFBundleTypeIconFile</key>
-			<string>coo_alt</string>
 			<key>CFBundleTypeName</key>
 			<string>Amiga xMash Disk Archive</string>
 			<key>CFBundleTypeRole</key>
 			<string>Viewer</string>
 			<key>LSTypeIsPackage</key>
 			<false/>
-			<key>NSPersistentStoreTypeKey</key>
-			<string>Binary</string>
+			<key>LSHandlerRank</key>
+			<string>Alternate</string>
 		</dict>
 		<dict>
 			<key>CFBundleTypeExtensions</key>
@@ -756,16 +696,14 @@
 				<string>zom</string>
 				<string>ZOM</string>
 			</array>
-			<key>CFBundleTypeIconFile</key>
-			<string>coo_alt</string>
 			<key>CFBundleTypeName</key>
 			<string>Amiga Zoom Disk Archive</string>
 			<key>CFBundleTypeRole</key>
 			<string>Viewer</string>
 			<key>LSTypeIsPackage</key>
 			<false/>
-			<key>NSPersistentStoreTypeKey</key>
-			<string>Binary</string>
+			<key>LSHandlerRank</key>
+			<string>Alternate</string>
 		</dict>
 		<dict>
 			<key>CFBundleTypeExtensions</key>
@@ -773,16 +711,14 @@
 				<string>pp</string>
 				<string>PP</string>
 			</array>
-			<key>CFBundleTypeIconFile</key>
-			<string>coo_alt</string>
 			<key>CFBundleTypeName</key>
 			<string>Amiga PowerPacker File</string>
 			<key>CFBundleTypeRole</key>
 			<string>Viewer</string>
 			<key>LSTypeIsPackage</key>
 			<false/>
-			<key>NSPersistentStoreTypeKey</key>
-			<string>Binary</string>
+			<key>LSHandlerRank</key>
+			<string>Alternate</string>
 		</dict>
 		<dict>
 			<key>CFBundleTypeExtensions</key>
@@ -790,16 +726,14 @@
 				<string>nsa</string>
 				<string>NSA</string>
 			</array>
-			<key>CFBundleTypeIconFile</key>
-			<string>coo_alt</string>
 			<key>CFBundleTypeName</key>
 			<string>NSA Archive</string>
 			<key>CFBundleTypeRole</key>
 			<string>Viewer</string>
 			<key>LSTypeIsPackage</key>
 			<false/>
-			<key>NSPersistentStoreTypeKey</key>
-			<string>Binary</string>
+			<key>LSHandlerRank</key>
+			<string>Alternate</string>
 		</dict>
 		<dict>
 			<key>CFBundleTypeExtensions</key>
@@ -807,16 +741,18 @@
 				<string>sar</string>
 				<string>SAR</string>
 			</array>
-			<key>CFBundleTypeIconFile</key>
-			<string>coo_alt</string>
 			<key>CFBundleTypeName</key>
 			<string>SAR Archive</string>
 			<key>CFBundleTypeRole</key>
 			<string>Viewer</string>
 			<key>LSTypeIsPackage</key>
 			<false/>
-			<key>NSPersistentStoreTypeKey</key>
-			<string>Binary</string>
+			<key>LSHandlerRank</key>
+			<string>Alternate</string>
+			<key>LSItemContentTypes</key>
+			<array>
+				<string>public.archive</string>
+			</array>
 		</dict>
 		<dict>
 			<key>CFBundleTypeExtensions</key>
@@ -871,16 +807,14 @@
 				<string>048</string>
 				<string>049</string>
 			</array>
-			<key>CFBundleTypeIconFile</key>
-			<string>coo_alt</string>
 			<key>CFBundleTypeName</key>
 			<string>Split File</string>
 			<key>CFBundleTypeRole</key>
 			<string>Viewer</string>
 			<key>LSTypeIsPackage</key>
 			<false/>
-			<key>NSPersistentStoreTypeKey</key>
-			<string>Binary</string>
+			<key>LSHandlerRank</key>
+			<string>Alternate</string>
 		</dict>
 		<dict>
 			<key>CFBundleTypeExtensions</key>
@@ -888,16 +822,18 @@
 				<string>jar</string>
 				<string>JAR</string>
 			</array>
-			<key>CFBundleTypeIconFile</key>
-			<string>coo_alt</string>
 			<key>CFBundleTypeName</key>
 			<string>Java Archive</string>
 			<key>CFBundleTypeRole</key>
 			<string>Viewer</string>
 			<key>LSTypeIsPackage</key>
 			<false/>
-			<key>NSPersistentStoreTypeKey</key>
-			<string>Binary</string>
+			<key>LSHandlerRank</key>
+			<string>Alternate</string>
+			<key>LSItemContentTypes</key>
+			<array>
+				<string>com.sun.java-archive</string>
+			</array>
 		</dict>
 		<dict>
 			<key>CFBundleTypeExtensions</key>
@@ -905,16 +841,18 @@
 				<string>cbz</string>
 				<string>CBZ</string>
 			</array>
-			<key>CFBundleTypeIconFile</key>
-			<string>coo_alt</string>
 			<key>CFBundleTypeName</key>
 			<string>Comic Book Zip Archive</string>
 			<key>CFBundleTypeRole</key>
 			<string>Viewer</string>
 			<key>LSTypeIsPackage</key>
 			<false/>
-			<key>NSPersistentStoreTypeKey</key>
-			<string>Binary</string>
+			<key>LSHandlerRank</key>
+			<string>Alternate</string>
+			<key>LSItemContentTypes</key>
+			<array>
+				<string>jp.coo.cooViewer.cbz</string>
+			</array>
 		</dict>
 		<dict>
 			<key>CFBundleTypeExtensions</key>
@@ -922,16 +860,18 @@
 				<string>cbr</string>
 				<string>CBR</string>
 			</array>
-			<key>CFBundleTypeIconFile</key>
-			<string>coo_alt</string>
 			<key>CFBundleTypeName</key>
 			<string>Comic Book Rar Archive</string>
 			<key>CFBundleTypeRole</key>
 			<string>Viewer</string>
 			<key>LSTypeIsPackage</key>
 			<false/>
-			<key>NSPersistentStoreTypeKey</key>
-			<string>Binary</string>
+			<key>LSHandlerRank</key>
+			<string>Alternate</string>
+			<key>LSItemContentTypes</key>
+			<array>
+				<string>jp.coo.cooViewer.cbr</string>
+			</array>
 		</dict>
 		<dict>
 			<key>CFBundleTypeExtensions</key>
@@ -939,24 +879,20 @@
 				<string>nds</string>
 				<string>NDS</string>
 			</array>
-			<key>CFBundleTypeIconFile</key>
-			<string>coo_alt</string>
 			<key>CFBundleTypeName</key>
 			<string>Nintendo DS ROM file</string>
 			<key>CFBundleTypeRole</key>
 			<string>Viewer</string>
 			<key>LSTypeIsPackage</key>
 			<false/>
-			<key>NSPersistentStoreTypeKey</key>
-			<string>Binary</string>
+			<key>LSHandlerRank</key>
+			<string>Alternate</string>
 		</dict>
 		<dict>
 			<key>CFBundleTypeExtensions</key>
 			<array>
 				<string>cvbdl</string>
 			</array>
-			<key>CFBundleTypeIconFile</key>
-			<string>coo_cvbdl</string>
 			<key>CFBundleTypeName</key>
 			<string>ComicViewer Comic</string>
 			<key>CFBundleTypeOSTypes</key>
@@ -967,24 +903,30 @@
 			<string>Viewer</string>
 			<key>LSTypeIsPackage</key>
 			<true/>
-			<key>NSPersistentStoreTypeKey</key>
-			<string>Binary</string>
+			<key>LSHandlerRank</key>
+			<string>Owner</string>
+			<key>LSItemContentTypes</key>
+			<array>
+				<string>jp.coo.cooViewer.cvbdl</string>
+			</array>
 		</dict>
 		<dict>
 			<key>CFBundleTypeExtensions</key>
 			<array>
 				<string>bmp</string>
 			</array>
-			<key>CFBundleTypeIconFile</key>
-			<string>coo_bmp</string>
 			<key>CFBundleTypeName</key>
 			<string>BMP Image</string>
 			<key>CFBundleTypeRole</key>
 			<string>Viewer</string>
 			<key>LSTypeIsPackage</key>
 			<false/>
-			<key>NSPersistentStoreTypeKey</key>
-			<string>Binary</string>
+			<key>LSHandlerRank</key>
+			<string>Alternate</string>
+			<key>LSItemContentTypes</key>
+			<array>
+				<string>com.microsoft.bmp</string>
+			</array>
 		</dict>
 		<dict>
 			<key>CFBundleTypeExtensions</key>
@@ -992,48 +934,54 @@
 				<string>tiff</string>
 				<string>tif</string>
 			</array>
-			<key>CFBundleTypeIconFile</key>
-			<string>coo_tiff</string>
 			<key>CFBundleTypeName</key>
 			<string>TIFF Image</string>
 			<key>CFBundleTypeRole</key>
 			<string>Viewer</string>
 			<key>LSTypeIsPackage</key>
 			<false/>
-			<key>NSPersistentStoreTypeKey</key>
-			<string>Binary</string>
+			<key>LSHandlerRank</key>
+			<string>Alternate</string>
+			<key>LSItemContentTypes</key>
+			<array>
+				<string>public.tiff</string>
+			</array>
 		</dict>
 		<dict>
 			<key>CFBundleTypeExtensions</key>
 			<array>
 				<string>png</string>
 			</array>
-			<key>CFBundleTypeIconFile</key>
-			<string>coo_png</string>
 			<key>CFBundleTypeName</key>
 			<string>PNG Image</string>
 			<key>CFBundleTypeRole</key>
 			<string>Viewer</string>
 			<key>LSTypeIsPackage</key>
 			<false/>
-			<key>NSPersistentStoreTypeKey</key>
-			<string>Binary</string>
+			<key>LSHandlerRank</key>
+			<string>Alternate</string>
+			<key>LSItemContentTypes</key>
+			<array>
+				<string>public.png</string>
+			</array>
 		</dict>
 		<dict>
 			<key>CFBundleTypeExtensions</key>
 			<array>
 				<string>gif</string>
 			</array>
-			<key>CFBundleTypeIconFile</key>
-			<string>coo_gif</string>
 			<key>CFBundleTypeName</key>
 			<string>GIF Image</string>
 			<key>CFBundleTypeRole</key>
 			<string>Viewer</string>
 			<key>LSTypeIsPackage</key>
 			<false/>
-			<key>NSPersistentStoreTypeKey</key>
-			<string>Binary</string>
+			<key>LSHandlerRank</key>
+			<string>Alternate</string>
+			<key>LSItemContentTypes</key>
+			<array>
+				<string>com.compuserve.gif</string>
+			</array>
 		</dict>
 		<dict>
 			<key>CFBundleTypeExtensions</key>
@@ -1041,64 +989,72 @@
 				<string>jpg</string>
 				<string>jpeg</string>
 			</array>
-			<key>CFBundleTypeIconFile</key>
-			<string>coo_jpeg</string>
 			<key>CFBundleTypeName</key>
 			<string>JPEG Image</string>
 			<key>CFBundleTypeRole</key>
 			<string>Viewer</string>
 			<key>LSTypeIsPackage</key>
 			<false/>
-			<key>NSPersistentStoreTypeKey</key>
-			<string>Binary</string>
+			<key>LSHandlerRank</key>
+			<string>Alternate</string>
+			<key>LSItemContentTypes</key>
+			<array>
+				<string>public.jpeg</string>
+			</array>
 		</dict>
 		<dict>
 			<key>CFBundleTypeExtensions</key>
 			<array>
 				<string>pdf</string>
 			</array>
-			<key>CFBundleTypeIconFile</key>
-			<string>coo_pdf</string>
 			<key>CFBundleTypeName</key>
 			<string>PDF Document</string>
 			<key>CFBundleTypeRole</key>
 			<string>Viewer</string>
 			<key>LSTypeIsPackage</key>
 			<false/>
-			<key>NSPersistentStoreTypeKey</key>
-			<string>Binary</string>
+			<key>LSHandlerRank</key>
+			<string>Alternate</string>
+			<key>LSItemContentTypes</key>
+			<array>
+				<string>com.adobe.pdf</string>
+			</array>
 		</dict>
 		<dict>
 			<key>CFBundleTypeExtensions</key>
 			<array>
 				<string>cbz</string>
 			</array>
-			<key>CFBundleTypeIconFile</key>
-			<string>coo_cbz</string>
 			<key>CFBundleTypeName</key>
 			<string>CBZ Archive</string>
 			<key>CFBundleTypeRole</key>
 			<string>Viewer</string>
 			<key>LSTypeIsPackage</key>
 			<false/>
-			<key>NSPersistentStoreTypeKey</key>
-			<string>Binary</string>
+			<key>LSHandlerRank</key>
+			<string>Alternate</string>
+			<key>LSItemContentTypes</key>
+			<array>
+				<string>jp.coo.cooViewer.cbz</string>
+			</array>
 		</dict>
 		<dict>
 			<key>CFBundleTypeExtensions</key>
 			<array>
 				<string>cbr</string>
 			</array>
-			<key>CFBundleTypeIconFile</key>
-			<string>coo_cbr</string>
 			<key>CFBundleTypeName</key>
 			<string>CBR Archive</string>
 			<key>CFBundleTypeRole</key>
 			<string>Viewer</string>
 			<key>LSTypeIsPackage</key>
 			<false/>
-			<key>NSPersistentStoreTypeKey</key>
-			<string>Binary</string>
+			<key>LSHandlerRank</key>
+			<string>Alternate</string>
+			<key>LSItemContentTypes</key>
+			<array>
+				<string>jp.coo.cooViewer.cbr</string>
+			</array>
 		</dict>
 		<dict>
 			<key>CFBundleTypeExtensions</key>
@@ -1108,16 +1064,18 @@
 				<string>z01</string>
 				<string>Z01</string>
 			</array>
-			<key>CFBundleTypeIconFile</key>
-			<string>coo_zip</string>
 			<key>CFBundleTypeName</key>
 			<string>ZIP Archive</string>
 			<key>CFBundleTypeRole</key>
 			<string>Viewer</string>
 			<key>LSTypeIsPackage</key>
 			<false/>
-			<key>NSPersistentStoreTypeKey</key>
-			<string>Binary</string>
+			<key>LSHandlerRank</key>
+			<string>Alternate</string>
+			<key>LSItemContentTypes</key>
+			<array>
+				<string>public.zip-archive</string>
+			</array>
 		</dict>
 		<dict>
 			<key>CFBundleTypeExtensions</key>
@@ -1425,16 +1383,18 @@
 				<string>098</string>
 				<string>099</string>
 			</array>
-			<key>CFBundleTypeIconFile</key>
-			<string>coo_rar</string>
 			<key>CFBundleTypeName</key>
 			<string>RAR Archive</string>
 			<key>CFBundleTypeRole</key>
 			<string>Viewer</string>
 			<key>LSTypeIsPackage</key>
 			<false/>
-			<key>NSPersistentStoreTypeKey</key>
-			<string>Binary</string>
+			<key>LSHandlerRank</key>
+			<string>Alternate</string>
+			<key>LSItemContentTypes</key>
+			<array>
+				<string>com.rarlab.rar-archive</string>
+			</array>
 		</dict>
 		<dict>
 			<key>CFBundleTypeExtensions</key>
@@ -1447,8 +1407,8 @@
 			<string>Viewer</string>
 			<key>LSTypeIsPackage</key>
 			<false/>
-			<key>NSPersistentStoreTypeKey</key>
-			<string>Binary</string>
+			<key>LSHandlerRank</key>
+			<string>Alternate</string>
 		</dict>
 		<dict>
 			<key>CFBundleTypeName</key>
@@ -1465,6 +1425,8 @@
 			</array>
 			<key>LSTypeIsPackage</key>
 			<false/>
+			<key>LSHandlerRank</key>
+			<string>Alternate</string>
 		</dict>
 	</array>
 	<key>CFBundleExecutable</key>
@@ -1472,20 +1434,101 @@
 	<key>CFBundleIconFile</key>
 	<string>icon.icns</string>
 	<key>CFBundleIdentifier</key>
-	<string>$(PRODUCT_BUNDLE_IDENTIFIER)</string>
+	<string>jp.coo.cooViewer</string>
 	<key>CFBundleInfoDictionaryVersion</key>
 	<string>6.0</string>
 	<key>CFBundlePackageType</key>
 	<string>APPL</string>
+	<key>CFBundleShortVersionString</key>
+	<string>1.3.9</string>
 	<key>CFBundleSignature</key>
 	<string>COvw</string>
-	<key>CFBundleShortVersionString</key>
-	<string>$(CURRENT_PROJECT_VERSION)</string>
+	<key>CFBundleSupportedPlatforms</key>
+	<array>
+		<string>MacOSX</string>
+	</array>
 	<key>CFBundleVersion</key>
-	<string>$(CURRENT_PROJECT_VERSION)</string>
+	<string>1.3.9</string>
+	<key>DTCompiler</key>
+	<string>com.apple.compilers.llvm.clang.1_0</string>
+	<key>DTPlatformBuild</key>
+	<string>25C58</string>
+	<key>DTPlatformName</key>
+	<string>macosx</string>
+	<key>DTPlatformVersion</key>
+	<string>26.2</string>
+	<key>DTSDKBuild</key>
+	<string>25C58</string>
+	<key>DTSDKName</key>
+	<string>macosx26.2</string>
+	<key>DTXcode</key>
+	<string>2630</string>
+	<key>DTXcodeBuild</key>
+	<string>17C529</string>
+	<key>LSMinimumSystemVersion</key>
+	<string>10.13</string>
 	<key>NSMainNibFile</key>
 	<string>MainMenu</string>
 	<key>NSPrincipalClass</key>
 	<string>NSApplication</string>
+	<key>UTImportedTypeDeclarations</key>
+	<array>
+		<dict>
+			<key>UTTypeIdentifier</key>
+			<string>jp.coo.cooViewer.cbz</string>
+			<key>UTTypeDescription</key>
+			<string>Comic Book ZIP Archive</string>
+			<key>UTTypeConformsTo</key>
+			<array>
+				<string>public.zip-archive</string>
+			</array>
+			<key>UTTypeTagSpecification</key>
+			<dict>
+				<key>public.filename-extension</key>
+				<array>
+					<string>cbz</string>
+					<string>CBZ</string>
+				</array>
+			</dict>
+		</dict>
+		<dict>
+			<key>UTTypeIdentifier</key>
+			<string>jp.coo.cooViewer.cbr</string>
+			<key>UTTypeDescription</key>
+			<string>Comic Book RAR Archive</string>
+			<key>UTTypeConformsTo</key>
+			<array>
+				<string>com.rarlab.rar-archive</string>
+			</array>
+			<key>UTTypeTagSpecification</key>
+			<dict>
+				<key>public.filename-extension</key>
+				<array>
+					<string>cbr</string>
+					<string>CBR</string>
+				</array>
+			</dict>
+		</dict>
+	</array>
+	<key>UTExportedTypeDeclarations</key>
+	<array>
+		<dict>
+			<key>UTTypeIdentifier</key>
+			<string>jp.coo.cooViewer.cvbdl</string>
+			<key>UTTypeDescription</key>
+			<string>ComicViewer Comic Bundle</string>
+			<key>UTTypeConformsTo</key>
+			<array>
+				<string>public.package</string>
+			</array>
+			<key>UTTypeTagSpecification</key>
+			<dict>
+				<key>public.filename-extension</key>
+				<array>
+					<string>cvbdl</string>
+				</array>
+			</dict>
+		</dict>
+	</array>
 </dict>
 </plist>
