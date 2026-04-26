@@ -6,11 +6,11 @@ APP_NAME="cooViewer"
 BUNDLE_ID="jp.coo.cooViewer"
 PROJECT="cooViewer.xcodeproj"
 SCHEME="cooViewer"
-CONFIGURATION="Default"
+CONFIGURATION="Deployment"
 DEPLOYMENT_TARGET="10.13"
 
 ROOT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
-DERIVED_DATA_PATH="/tmp/cooViewer-derived"
+DERIVED_DATA_PATH="/tmp/cooViewer-release-derived"
 APP_BUNDLE="$ROOT_DIR/build/$CONFIGURATION/$APP_NAME.app"
 APP_BINARY="$APP_BUNDLE/Contents/MacOS/$APP_NAME"
 APP_BUNDLE_REL="build/$CONFIGURATION/$APP_NAME.app"
@@ -21,8 +21,8 @@ build_app() {
     -scheme "$SCHEME" \
     -configuration "$CONFIGURATION" \
     -derivedDataPath "$DERIVED_DATA_PATH" \
-    ARCHS=arm64 \
-    ONLY_ACTIVE_ARCH=YES \
+    ARCHS="arm64 x86_64" \
+    ONLY_ACTIVE_ARCH=NO \
     MACOSX_DEPLOYMENT_TARGET="$DEPLOYMENT_TARGET" \
     build
 }
