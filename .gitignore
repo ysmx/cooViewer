@@ -77,6 +77,9 @@ iOSInjectionProject/
 # Local agent settings
 .claude/
 
+# Local planning documents
+cooViewer-markdown-preview-plan.md
+
 # Legacy local build artifacts
 cooViewer_build/
 

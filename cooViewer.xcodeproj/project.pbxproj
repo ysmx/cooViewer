@@ -134,11 +134,11 @@
 		373D3537130F075E0037F8DD /* GlobalKeyboardDevice.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = GlobalKeyboardDevice.h; sourceTree = "<group>"; };
 		373D3538130F075E0037F8DD /* GlobalKeyboardDevice.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = GlobalKeyboardDevice.m; sourceTree = "<group>"; };
 		37AD8315131AA9E600F0123C /* Quartz.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Quartz.framework; path = /System/Library/Frameworks/Quartz.framework; sourceTree = "<absolute>"; };
-		37BB532B1312C017001710B4 /* UniversalDetector.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; path = UniversalDetector.framework; sourceTree = "<group>"; };
-		37BB53451312C01C001710B4 /* XADMaster.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; path = XADMaster.framework; sourceTree = "<group>"; };
+		37BB532B1312C017001710B4 /* UniversalDetector.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; path = Frameworks/UniversalDetector.framework; sourceTree = "<group>"; };
+		37BB53451312C01C001710B4 /* XADMaster.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; path = Frameworks/XADMaster.framework; sourceTree = "<group>"; };
 		7601F5F607D5508700457A5B /* CustomImageView.h */ = {isa = PBXFileReference; fileEncoding = 0; lastKnownFileType = sourcecode.c.h; path = CustomImageView.h; sourceTree = "<group>"; };
 		7601F5F707D5508700457A5B /* CustomImageView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = CustomImageView.m; sourceTree = "<group>"; };
-		76181B7D08BE17BC000A527E /* Credits.rtf */ = {isa = PBXFileReference; lastKnownFileType = text.rtf; path = Credits.rtf; sourceTree = "<group>"; };
+		76181B7D08BE17BC000A527E /* Credits.rtf */ = {isa = PBXFileReference; lastKnownFileType = text.rtf; path = Resources/Credits.rtf; sourceTree = "<group>"; };
 		761B469C0D61E95D00667B2A /* AccessoryView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = AccessoryView.h; sourceTree = "<group>"; };
 		761B469D0D61E95D00667B2A /* AccessoryView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = AccessoryView.m; sourceTree = "<group>"; };
 		761B46A20D61E97900667B2A /* AccessoryWindow.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = AccessoryWindow.h; sourceTree = "<group>"; };
@@ -222,13 +222,13 @@
 		8D1107320486CEB800E47090 /* cooViewer.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = cooViewer.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		A31C5A9723CA3D6300DD4E70 /* FilterPanelController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = FilterPanelController.h; sourceTree = "<group>"; };
 		A31C5A9823CA3D6300DD4E70 /* FilterPanelController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = FilterPanelController.m; sourceTree = "<group>"; };
-		A3582E2123BBB03500DCC566 /* en */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = en; path = en.lproj/Localizable.strings; sourceTree = "<group>"; };
+		A3582E2123BBB03500DCC566 /* en */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = en; path = Resources/en.lproj/Localizable.strings; sourceTree = "<group>"; };
 		A397A3DD23C877FD009FE76D /* ja.xliff */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xml; name = ja.xliff; path = "localize/ja.xcloc/Localized Contents/ja.xliff"; sourceTree = "<group>"; };
 		A39D6C3223BEB590002FD912 /* LoupeView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = LoupeView.h; sourceTree = "<group>"; };
 		A39D6C3423BEB597002FD912 /* LoupeView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = LoupeView.m; sourceTree = "<group>"; };
-		A39D6C8823BF85C4002FD912 /* ja */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = ja; path = ja.lproj/Localizable.strings; sourceTree = "<group>"; };
-		A39D6C8923BF85D6002FD912 /* ja */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = ja; path = ja.lproj/MainMenu.strings; sourceTree = "<group>"; };
-		A39D6C8A23BF8667002FD912 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.xib; name = Base; path = Base.lproj/MainMenu.xib; sourceTree = "<group>"; };
+		A39D6C8823BF85C4002FD912 /* ja */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = ja; path = Resources/ja.lproj/Localizable.strings; sourceTree = "<group>"; };
+		A39D6C8923BF85D6002FD912 /* ja */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = ja; path = Resources/ja.lproj/MainMenu.strings; sourceTree = "<group>"; };
+		A39D6C8A23BF8667002FD912 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.xib; name = Base; path = Resources/Base.lproj/MainMenu.xib; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -341,6 +341,7 @@
 		};
 		76344BB5095958E1003761DA /* item */ = {
 			isa = PBXGroup;
+			path = Sources/Loader;
 			children = (
 				76344C0809595C74003761DA /* COImageLoader.h */,
 				76344C0909595C74003761DA /* COImageLoader.m */,
@@ -363,6 +364,7 @@
 		};
 		7686266709514730006BFAAC /* thumbnail */ = {
 			isa = PBXGroup;
+			path = Sources/Panels/Thumbnail;
 			children = (
 				76FE6986082E4C6E00283560 /* ThumbnailController.h */,
 				763EFA1B0D3B27FB0014522D /* ThumbnailController.m */,
@@ -378,6 +380,7 @@
 		};
 		768626680951473B006BFAAC /* preference */ = {
 			isa = PBXGroup;
+			path = Sources/Panels/Preference;
 			children = (
 				76C6BEA508C2927300377076 /* PreferenceController.h */,
 				76C6BEA608C2927300377076 /* PreferenceController.m */,
@@ -385,13 +388,7 @@
 				766DE03709936CF4004DD915 /* COColorPopUpButton.m */,
 				76F2B6420D67329C003269BB /* COTextView.h */,
 				76F2B6430D67329C003269BB /* COTextView.m */,
-				76B85F8B099BB20B0077A211 /* NSDictionary_Adding.h */,
-				76B85F8C099BB20B0077A211 /* NSDictionary_Adding.m */,
-				762259610D426E3800161AC8 /* NSNumberFormatter_Adding.h */,
-				762259620D426E3800161AC8 /* NSNumberFormatter_Adding.m */,
-				767EEA1F0D5F6C8800522A56 /* NSAttributedString_Adding.h */,
-				767EEA200D5F6C8800522A56 /* NSAttributedString_Adding.m */,
-			);
+																											);
 			name = preference;
 			sourceTree = "<group>";
 		};
@@ -418,6 +415,7 @@
 		};
 		7686266B09514777006BFAAC /* bookmark */ = {
 			isa = PBXGroup;
+			path = Sources/Panels/Bookmark;
 			children = (
 				76EA136407E3FC39008EB0E1 /* BookmarkPanel.h */,
 				76EA136507E3FC39008EB0E1 /* BookmarkPanel.m */,
@@ -429,6 +427,7 @@
 		};
 		76AE418D0D46394F008AD4A1 /* FullImageWindow */ = {
 			isa = PBXGroup;
+			path = Sources/Panels/FullImage;
 			children = (
 				76EF3EF707FC33DB008D6B37 /* FullImagePanel.h */,
 				76EF3EF807FC33DB008D6B37 /* FullImagePanel.m */,
@@ -440,6 +439,7 @@
 		};
 		76CB9167097BA6750009A972 /* mainController */ = {
 			isa = PBXGroup;
+			path = Sources/Controller;
 			children = (
 				76B19AC107C9C15A00A6FB97 /* Controller.h */,
 				76B19AC207C9C15A00A6FB97 /* Controller.m */,
@@ -450,6 +450,7 @@
 		};
 		76CB9168097BA68B0009A972 /* mainWindow */ = {
 			isa = PBXGroup;
+			path = Sources/Views;
 			children = (
 				768E1DEA07CC6B740023AF61 /* CustomWindow.h */,
 				768E1DEB07CC6B740023AF61 /* CustomWindow.m */,
@@ -479,6 +480,7 @@
 		};
 		76D5AA3C0D69E3FC0057EF7A /* Behaviors */ = {
 			isa = PBXGroup;
+			path = Sources/Remote;
 			children = (
 				76D5AA3D0D69E3FC0057EF7A /* MultiClickRemoteBehavior.h */,
 				76D5AA3E0D69E3FC0057EF7A /* MultiClickRemoteBehavior.m */,
@@ -488,6 +490,7 @@
 		};
 		76D5AA3F0D69E41C0057EF7A /* Base Classes */ = {
 			isa = PBXGroup;
+			path = Sources/Remote;
 			children = (
 				76D5AA400D69E41C0057EF7A /* RemoteControl.h */,
 				76D5AA410D69E41C0057EF7A /* RemoteControl.m */,
@@ -499,6 +502,7 @@
 		};
 		76D5AA480D69E42D0057EF7A /* Devices */ = {
 			isa = PBXGroup;
+			path = Sources/Remote;
 			children = (
 				373D3537130F075E0037F8DD /* GlobalKeyboardDevice.h */,
 				373D3538130F075E0037F8DD /* GlobalKeyboardDevice.m */,
@@ -512,6 +516,7 @@
 		};
 		76EF34BA0D4CE5FD00211B2E /* image */ = {
 			isa = PBXGroup;
+			path = Resources/Images;
 			children = (
 				7622420C095288F600C888E4 /* cross.tiff */,
 				768C80120838765500E6C5C8 /* left.tiff */,
@@ -533,17 +538,25 @@
 		};
 		76EF34C70D4CE64900211B2E /* Category */ = {
 			isa = PBXGroup;
+			path = Sources/Categories;
 			children = (
 				761C25AB0D5F4D9F0038687B /* NSBezierPath_Adding.h */,
 				761C25AC0D5F4D9F0038687B /* NSBezierPath_Adding.m */,
 				76705AE40885785900FEF4E2 /* NSString_Compare.h */,
-				76705AE50885785900FEF4E2 /* NSString_Compare.m */,
+				76705AE50885785900FEF4E2 /* NSString_Compare.m */,				76B85F8B099BB20B0077A211 /* NSDictionary_Adding.h */,				76B85F8C099BB20B0077A211 /* NSDictionary_Adding.m */,				762259610D426E3800161AC8 /* NSNumberFormatter_Adding.h */,				762259620D426E3800161AC8 /* NSNumberFormatter_Adding.m */,				767EEA1F0D5F6C8800522A56 /* NSAttributedString_Adding.h */,				767EEA200D5F6C8800522A56 /* NSAttributedString_Adding.m */,
+			
+			
+			
+			
+			
+			
 			);
 			name = Category;
 			sourceTree = "<group>";
 		};
 		A31C5A9623CA3D4700DD4E70 /* filter */ = {
 			isa = PBXGroup;
+			path = Sources/Panels/Filter;
 			children = (
 				A31C5A9723CA3D6300DD4E70 /* FilterPanelController.h */,
 				A31C5A9823CA3D6300DD4E70 /* FilterPanelController.m */,
@@ -798,7 +811,7 @@
 					/Library/Frameworks,
 					"\"$(SRCROOT)\"",
 				);
-				FRAMEWORK_SEARCH_PATHS_QUOTED_1 = "\"$(SRCROOT)\"";
+				FRAMEWORK_SEARCH_PATHS_QUOTED_1 = "\"$(SRCROOT)/Frameworks\"";
 				GCC_DYNAMIC_NO_PIC = NO;
 				GCC_ENABLE_OBJC_EXCEPTIONS = YES;
 				GCC_GENERATE_DEBUGGING_SYMBOLS = YES;
@@ -868,7 +881,7 @@
 					"$(FRAMEWORK_SEARCH_PATHS_QUOTED_1)",
 					"\"$(SRCROOT)\"",
 				);
-				FRAMEWORK_SEARCH_PATHS_QUOTED_1 = "\"$(SRCROOT)\"";
+				FRAMEWORK_SEARCH_PATHS_QUOTED_1 = "\"$(SRCROOT)/Frameworks\"";
 				GCC_ENABLE_OBJC_EXCEPTIONS = YES;
 				GCC_GENERATE_DEBUGGING_SYMBOLS = YES;
 				GCC_OPTIMIZATION_LEVEL = 0;
@@ -939,7 +952,7 @@
 					/Library/Frameworks,
 					"\"$(SRCROOT)\"",
 				);
-				FRAMEWORK_SEARCH_PATHS_QUOTED_1 = "\"$(SRCROOT)\"";
+				FRAMEWORK_SEARCH_PATHS_QUOTED_1 = "\"$(SRCROOT)/Frameworks\"";
 				GCC_ENABLE_OBJC_EXCEPTIONS = YES;
 				GCC_GENERATE_DEBUGGING_SYMBOLS = NO;
 				GCC_PRECOMPILE_PREFIX_HEADER = NO;
@@ -971,7 +984,7 @@
 					"$(FRAMEWORK_SEARCH_PATHS_QUOTED_1)",
 					"\"$(SRCROOT)\"",
 				);
-				FRAMEWORK_SEARCH_PATHS_QUOTED_1 = "\"$(SRCROOT)\"";
+				FRAMEWORK_SEARCH_PATHS_QUOTED_1 = "\"$(SRCROOT)/Frameworks\"";
 				GCC_ENABLE_OBJC_EXCEPTIONS = YES;
 				GCC_GENERATE_DEBUGGING_SYMBOLS = NO;
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
@@ -1002,7 +1015,7 @@
 					"$(FRAMEWORK_SEARCH_PATHS_QUOTED_1)",
 					"\"$(SRCROOT)\"",
 				);
-				FRAMEWORK_SEARCH_PATHS_QUOTED_1 = "\"$(SRCROOT)\"";
+				FRAMEWORK_SEARCH_PATHS_QUOTED_1 = "\"$(SRCROOT)/Frameworks\"";
 				GCC_ENABLE_OBJC_EXCEPTIONS = YES;
 				GCC_GENERATE_DEBUGGING_SYMBOLS = NO;
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
@@ -1032,7 +1045,7 @@
 					"$(FRAMEWORK_SEARCH_PATHS_QUOTED_1)",
 					"\"$(SRCROOT)\"",
 				);
-				FRAMEWORK_SEARCH_PATHS_QUOTED_1 = "\"$(SRCROOT)\"";
+				FRAMEWORK_SEARCH_PATHS_QUOTED_1 = "\"$(SRCROOT)/Frameworks\"";
 				GCC_ENABLE_OBJC_EXCEPTIONS = NO;
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
 				GCC_PREFIX_HEADER = cooViewer_Prefix.pch;
