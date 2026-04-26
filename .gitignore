@@ -71,6 +71,9 @@ fastlane/test_output
 
 iOSInjectionProject/
 
+# Local Codex app settings
+.codex/environments/
+
 # Legacy local build artifacts
 cooViewer_build/
 
