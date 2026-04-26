@@ -11,6 +11,15 @@ https://coo-ona.github.io/cooViewer/
 
 **動作環境: macOS 10.14 Mojave 以降**
 
+## インストール
+
+[Homebrew](https://brew.sh/) を使ってインストールできます。
+
+```bash
+brew tap ysmx/cooviewer
+brew install --cask cooviewer
+```
+
 ## 操作方法
 https://coo-ona.github.io/cooViewer/manual.html
 
