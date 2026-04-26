@@ -7,7 +7,7 @@ BUNDLE_ID="jp.coo.cooViewer"
 PROJECT="cooViewer.xcodeproj"
 SCHEME="cooViewer"
 CONFIGURATION="Deployment"
-DEPLOYMENT_TARGET="10.13"
+DEPLOYMENT_TARGET="10.14"
 
 ROOT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
 DERIVED_DATA_PATH="/tmp/cooViewer-release-derived"
