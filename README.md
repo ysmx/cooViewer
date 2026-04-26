@@ -51,6 +51,7 @@ https://coo-ona.github.io/cooViewer/manual.html
 ## 著作権、免責等
 cooViewerはMITライセンスです。
 ライセンスについては添付のLicence.txtを参照してください。
+オリジナルはcoo氏によって作成されました。
 
 このソフトウェアはXAD library system ( http://sourceforge.net/projects/libxad/ ) を使用しています。<br>
 ライセンスについては添付のLicence_xad.txtを参照してください。
