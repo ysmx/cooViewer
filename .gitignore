@@ -74,8 +74,18 @@ iOSInjectionProject/
 # Local Codex app settings
 .codex/environments/
 
+# Local agent settings
+.claude/
+
 # Legacy local build artifacts
 cooViewer_build/
+
+# Legacy Xcode/generated leftovers
+*.xcclassmodel/
+*~.nib/
+*_temp.m
+info copy.plist
+localize_helper/
 
 # Keep the shared Xcode project files, ignore local leftovers
 cooViewer.xcodeproj/.svn/
