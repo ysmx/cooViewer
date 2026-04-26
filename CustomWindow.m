@@ -1,13 +1,7 @@
 #import "CustomWindow.h"
 #import "Controller.h"
-#import <ApplicationServices/ApplicationServices.h>
 
 @implementation CustomWindow
-
-- (BOOL)isApplicationSwitcherEvent:(NSEvent *)theEvent
-{
-	return (([theEvent modifierFlags] & NSCommandKeyMask) != 0 && [theEvent keyCode] == 48);
-}
 
 - (BOOL)shouldAutoHideCursor
 {
@@ -161,16 +155,6 @@
 	if ([characters length] > 0) {
 		character = [characters characterAtIndex:0];
 		command = (([theEvent modifierFlags] & NSCommandKeyMask) != 0);
-		if ([self isApplicationSwitcherEvent:theEvent]) {
-			if ([controller respondsToSelector:@selector(prepareForApplicationSwitcher)]) {
-				[controller prepareForApplicationSwitcher];
-			}
-			CGEventRef keyDown = CGEventCreateKeyboardEvent(NULL, (CGKeyCode)[theEvent keyCode], true);
-			CGEventSetFlags(keyDown, (CGEventFlags)[theEvent modifierFlags]);
-			CGEventPost(kCGSessionEventTap, keyDown);
-			CFRelease(keyDown);
-			return;
-		}
 		if (command && (character == NSTabCharacter || character == NSBackTabCharacter)) {
 			[super keyDown:theEvent];
 			return;
@@ -203,16 +187,6 @@
 
 - (BOOL)performKeyEquivalent:(NSEvent *)anEvent
 {	
-	if ([self isApplicationSwitcherEvent:anEvent]) {
-		if ([controller respondsToSelector:@selector(prepareForApplicationSwitcher)]) {
-			[controller prepareForApplicationSwitcher];
-		}
-		CGEventRef keyDown = CGEventCreateKeyboardEvent(NULL, (CGKeyCode)[anEvent keyCode], true);
-		CGEventSetFlags(keyDown, (CGEventFlags)[anEvent modifierFlags]);
-		CGEventPost(kCGSessionEventTap, keyDown);
-		CFRelease(keyDown);
-		return YES;
-	}
 	if (fullscreen) {
 		unsigned int cMod = 0;
 		BOOL option = ([anEvent modifierFlags] & NSAlternateKeyMask) ? YES : NO;

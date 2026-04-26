@@ -3,7 +3,6 @@
 #import "BookmarkController.h"
 #import "CustomImageView.h"
 #import "FullImagePanel.h"
-#import <ApplicationServices/ApplicationServices.h>
 
 static NSMenu *COFindSortMenu(NSMenu *menu)
 {
@@ -26,8 +25,6 @@ static NSMenu *COFindSortMenu(NSMenu *menu)
 @interface Controller ()
 {
 	NSMutableArray *secondaryDisplayCoverWindows;
-	NSMutableArray *secondaryDisplayCaptureDisplayIDs;
-	BOOL secondaryDisplayCoverPreparedForApplicationSwitcher;
 }
 - (BOOL)co_sortModeSupportsDescending:(int)mode;
 - (void)co_installSortMenuIfNeeded;
@@ -35,9 +32,6 @@ static NSMenu *COFindSortMenu(NSMenu *menu)
 - (NSColor *)co_viewBackgroundColor;
 - (NSColor *)co_effectiveSecondaryDisplayColor;
 - (BOOL)co_shouldShowSecondaryDisplayCover;
-- (CGDirectDisplayID)co_displayIDForScreen:(NSScreen *)screen;
-- (void)co_releaseCapturedSecondaryDisplays;
-- (void)co_prepareSecondaryDisplayCoverWindowsForApplicationSwitcher;
 - (void)co_removeSecondaryDisplayCoverWindows;
 - (void)co_updateSecondaryDisplayCoverWindows;
 - (void)co_applicationDidChangeScreenParameters:(NSNotification *)notification;
@@ -98,42 +92,6 @@ static const int DIALOG_CANCEL	= 129;
 	return ([[NSScreen screens] count] > 1);
 }
 
-- (CGDirectDisplayID)co_displayIDForScreen:(NSScreen *)screen
-{
-	NSNumber *screenNumber;
-
-	screenNumber = [[screen deviceDescription] objectForKey:@"NSScreenNumber"];
-	if (screenNumber == nil) {
-		return kCGNullDirectDisplay;
-	}
-	return (CGDirectDisplayID)[screenNumber unsignedIntValue];
-}
-
-- (void)co_releaseCapturedSecondaryDisplays
-{
-	for (NSNumber *displayNumber in secondaryDisplayCaptureDisplayIDs) {
-		CGDisplayRelease((CGDirectDisplayID)[displayNumber unsignedIntValue]);
-	}
-	[secondaryDisplayCaptureDisplayIDs removeAllObjects];
-}
-
-- (void)co_prepareSecondaryDisplayCoverWindowsForApplicationSwitcher
-{
-	if (secondaryDisplayCoverPreparedForApplicationSwitcher) {
-		return;
-	}
-	if ([secondaryDisplayCoverWindows count] == 0) {
-		return;
-	}
-	for (NSWindow *coverWindow in secondaryDisplayCoverWindows) {
-		[coverWindow orderOut:self];
-		[coverWindow close];
-	}
-	[secondaryDisplayCoverWindows removeAllObjects];
-	[self co_releaseCapturedSecondaryDisplays];
-	secondaryDisplayCoverPreparedForApplicationSwitcher = YES;
-}
-
 - (void)co_removeSecondaryDisplayCoverWindows
 {
 	for (NSWindow *coverWindow in secondaryDisplayCoverWindows) {
@@ -141,8 +99,6 @@ static const int DIALOG_CANCEL	= 129;
 		[coverWindow close];
 	}
 	[secondaryDisplayCoverWindows removeAllObjects];
-	[self co_releaseCapturedSecondaryDisplays];
-	secondaryDisplayCoverPreparedForApplicationSwitcher = NO;
 }
 
 - (void)co_updateSecondaryDisplayCoverWindows
@@ -151,7 +107,6 @@ static const int DIALOG_CANCEL	= 129;
 	NSColor *coverColor;
 
 	[self co_removeSecondaryDisplayCoverWindows];
-	secondaryDisplayCoverPreparedForApplicationSwitcher = NO;
 
 	if (![self co_shouldShowSecondaryDisplayCover]) {
 		return;
@@ -176,45 +131,35 @@ static const int DIALOG_CANCEL	= 129;
 
 	// Cover every non-active display while the viewer window is in use.
 	for (NSScreen *screen in [NSScreen screens]) {
-		CGDirectDisplayID displayID;
-		CGError captureError;
 		NSWindow *coverWindow;
+		NSRect screenRect;
 		BOOL isOpaque;
 
 		if (screen == primaryScreen) {
 			continue;
 		}
 
-		displayID = [self co_displayIDForScreen:screen];
-		if (displayID != kCGNullDirectDisplay) {
-			captureError = CGDisplayCapture(displayID);
-			if (captureError == kCGErrorSuccess) {
-				if (secondaryDisplayCaptureDisplayIDs == nil) {
-					secondaryDisplayCaptureDisplayIDs = [[NSMutableArray alloc] init];
-				}
-				[secondaryDisplayCaptureDisplayIDs addObject:[NSNumber numberWithUnsignedInt:displayID]];
-			}
-		}
-
+		screenRect = [screen frame];
+		screenRect.origin = NSZeroPoint;
 		isOpaque = ([coverColor alphaComponent] >= 0.999);
-		coverWindow = [[[NSWindow alloc] initWithContentRect:[screen frame]
+		coverWindow = [[[NSWindow alloc] initWithContentRect:screenRect
 													 styleMask:NSBorderlessWindowMask
-												   backing:NSBackingStoreBuffered
-													 defer:NO
-													screen:screen] autorelease];
+													   backing:NSBackingStoreBuffered
+														 defer:NO
+														screen:screen] autorelease];
 		[coverWindow setReleasedWhenClosed:NO];
 		[coverWindow setOpaque:isOpaque];
 		[coverWindow setBackgroundColor:coverColor];
 		[coverWindow setHasShadow:NO];
-		[coverWindow setLevel:CGShieldingWindowLevel()];
-		[coverWindow setHidesOnDeactivate:YES];
+		[coverWindow setLevel:(NSMainMenuWindowLevel + 1)];
+		[coverWindow setHidesOnDeactivate:NO];
 		[coverWindow setIgnoresMouseEvents:YES];
 		[coverWindow setCollectionBehavior:(NSWindowCollectionBehaviorCanJoinAllSpaces |
 												 NSWindowCollectionBehaviorStationary |
 											 NSWindowCollectionBehaviorFullScreenAuxiliary |
 											 NSWindowCollectionBehaviorIgnoresCycle)];
 		[coverWindow setExcludedFromWindowsMenu:YES];
-		[coverWindow orderFrontRegardless];
+		[coverWindow orderFront:self];
 		[secondaryDisplayCoverWindows addObject:coverWindow];
 	}
 }
@@ -264,6 +209,7 @@ static const int DIALOG_CANCEL	= 129;
 	[window makeKeyWindow];
 	if ([NSApp isActive]) {
 		pendingViewerActivation = NO;
+		[NSObject cancelPreviousPerformRequestsWithTarget:self selector:@selector(bringViewerToFront) object:nil];
 		[NSObject cancelPreviousPerformRequestsWithTarget:self selector:@selector(restoreViewerDeactivateBehavior) object:nil];
 		[self performSelector:@selector(restoreViewerDeactivateBehavior) withObject:nil afterDelay:0.2];
 	}
@@ -272,14 +218,6 @@ static const int DIALOG_CANCEL	= 129;
 - (BOOL)isSlideshowRunning
 {
 	return timerSwitch;
-}
-
-- (void)prepareForApplicationSwitcher
-{
-	[NSObject cancelPreviousPerformRequestsWithTarget:self selector:@selector(bringViewerToFront) object:nil];
-	[NSObject cancelPreviousPerformRequestsWithTarget:self selector:@selector(restoreViewerDeactivateBehavior) object:nil];
-	pendingViewerActivation = NO;
-	[self co_prepareSecondaryDisplayCoverWindowsForApplicationSwitcher];
 }
 
 - (void)refreshSecondaryDisplayCoverWindows
@@ -873,6 +811,7 @@ static const int DIALOG_CANCEL	= 129;
 }
 - (void)applicationWillResignActive:(NSNotification *)aNotification {
 	[remoteControl stopListening: self];
+	[self co_removeSecondaryDisplayCoverWindows];
 }
 
 #pragma mark openFromAny
@@ -3320,6 +3259,9 @@ static const int DIALOG_CANCEL	= 129;
 }
 - (void)applicationDidBecomeActive:(NSNotification *)aNotification {
 	[self checkCurrentFolderUpdated];
+	if (pendingViewerActivation) {
+		[self scheduleBringViewerToFront];
+	}
 	[self co_updateSecondaryDisplayCoverWindows];
 }
 
