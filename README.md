@@ -9,6 +9,8 @@ https://coo-ona.github.io/cooViewer/
 
 現在の更新版は、macOS Sequoia 以降および Apple Silicon / Intel Mac の両対応を目的として保守しています。
 
+**動作環境: macOS 10.14 Mojave 以降**
+
 ## 操作方法
 https://coo-ona.github.io/cooViewer/manual.html
 
@@ -36,7 +38,4 @@ cooViewerはMITライセンスです。
 アプリアイコンは [macOS App Icons](https://macosicons.com/) に掲載されている vladlucha 氏のアイコンを使用しています。<br>
 https://macosicons.com/?icon=XsWGbR0OuK
 
-デフォルトの書類アイコンは新・mac板 オナニー用画像ビューアー Part4の971さんに作成していただきました。
-
-64bit化対応にあたり、スレの皆様をはじめ、多くの方にご協力いただきました。ありがとうございます。
-また、nibをxibに変換いただいたkanjitalk755さんには特に感謝申し上げます。
+書類アイコンは macOS の自動合成（アプリアイコン＋拡張子バッジ）を使用しています。
