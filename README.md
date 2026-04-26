@@ -16,6 +16,12 @@ https://coo-ona.github.io/cooViewer/
 [Homebrew](https://brew.sh/) を使ってインストールできます。
 
 ```bash
+brew install --cask ysmx/cooviewer/cooviewer
+```
+
+または：
+
+```bash
 brew tap ysmx/cooviewer
 brew install --cask cooviewer
 ```
