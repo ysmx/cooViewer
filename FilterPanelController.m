@@ -35,6 +35,7 @@ static const CGFloat kFilterPanelMinContentHeight = 160.0;
 static const CGFloat kFilterPickerRowHeight = 24.0;
 static const CGFloat kFilterPickerHeaderHeight = 18.0;
 static const CGFloat kFilterPickerSeparatorHeight = 8.0;
+static const CGFloat kFilterPickerPanelGap = 8.0;
 
 static void *kFilterObserverContext = &kFilterObserverContext;
 
@@ -128,6 +129,51 @@ static NSAttributedString *COVToolbarButtonTitle(NSString *title)
                                 [NSColor whiteColor], NSForegroundColorAttributeName,
                                 nil];
     return [[[NSAttributedString alloc] initWithString:title attributes:attributes] autorelease];
+}
+
+static CGFloat COVClampCGFloat(CGFloat value, CGFloat minValue, CGFloat maxValue)
+{
+    if (maxValue < minValue) {
+        return minValue;
+    }
+    return MIN(MAX(value, minValue), maxValue);
+}
+
+static NSRect COVClampRectToVisibleFrame(NSRect rect, NSRect visibleFrame)
+{
+    rect.origin.x = COVClampCGFloat(NSMinX(rect),
+                                   NSMinX(visibleFrame) + kFilterPickerPanelGap,
+                                   NSMaxX(visibleFrame) - NSWidth(rect) - kFilterPickerPanelGap);
+    rect.origin.y = COVClampCGFloat(NSMinY(rect),
+                                   NSMinY(visibleFrame) + kFilterPickerPanelGap,
+                                   NSMaxY(visibleFrame) - NSHeight(rect) - kFilterPickerPanelGap);
+    return rect;
+}
+
+static CGFloat COVDistanceFromRectToRect(NSRect rect, NSRect target)
+{
+    CGFloat dx = 0.0;
+    CGFloat dy = 0.0;
+    if (NSMaxX(rect) < NSMinX(target)) {
+        dx = NSMinX(target) - NSMaxX(rect);
+    } else if (NSMinX(rect) > NSMaxX(target)) {
+        dx = NSMinX(rect) - NSMaxX(target);
+    }
+    if (NSMaxY(rect) < NSMinY(target)) {
+        dy = NSMinY(target) - NSMaxY(rect);
+    } else if (NSMinY(rect) > NSMaxY(target)) {
+        dy = NSMinY(rect) - NSMaxY(target);
+    }
+    return (dx * dx) + (dy * dy);
+}
+
+static CGFloat COVRectIntersectionArea(NSRect rectA, NSRect rectB)
+{
+    NSRect intersection = NSIntersectionRect(rectA, rectB);
+    if (NSIsEmptyRect(intersection)) {
+        return 0.0;
+    }
+    return NSWidth(intersection) * NSHeight(intersection);
 }
 
 @implementation FilterPanelController
@@ -413,6 +459,76 @@ static NSAttributedString *COVToolbarButtonTitle(NSString *title)
     [[filterPickerPanel contentView] addSubview:filterPickerScrollView];
     [self rebuildFilterPickerDisplayItems];
     [self updateFilterPickerLayout];
+}
+
+- (NSRect)filterPickerFrameNearButtonRect:(NSRect)buttonRectOnScreen
+{
+    NSWindow *buttonWindow = [addFilterButton window];
+    NSScreen *screen = [buttonWindow screen];
+    if (screen == nil) {
+        screen = [filterPanel screen];
+    }
+    if (screen == nil) {
+        screen = [NSScreen mainScreen];
+    }
+
+    NSRect visibleFrame = [screen visibleFrame];
+    NSRect panelFrame = [filterPanel frame];
+    NSRect pickerFrame = [filterPickerPanel frame];
+    NSSize pickerSize = pickerFrame.size;
+    NSRect desiredFrame = NSMakeRect(NSMaxX(buttonRectOnScreen) - pickerSize.width,
+                                     NSMinY(buttonRectOnScreen) - pickerSize.height - kFilterPickerPanelGap,
+                                     pickerSize.width,
+                                     pickerSize.height);
+    desiredFrame = COVClampRectToVisibleFrame(desiredFrame, visibleFrame);
+
+    if (!NSIntersectsRect(desiredFrame, panelFrame)) {
+        return desiredFrame;
+    }
+
+    NSRect candidates[4];
+    candidates[0] = NSMakeRect(NSMaxX(panelFrame) + kFilterPickerPanelGap,
+                               desiredFrame.origin.y,
+                               pickerSize.width,
+                               pickerSize.height);
+    candidates[1] = NSMakeRect(NSMinX(panelFrame) - pickerSize.width - kFilterPickerPanelGap,
+                               desiredFrame.origin.y,
+                               pickerSize.width,
+                               pickerSize.height);
+    candidates[2] = NSMakeRect(desiredFrame.origin.x,
+                               NSMinY(panelFrame) - pickerSize.height - kFilterPickerPanelGap,
+                               pickerSize.width,
+                               pickerSize.height);
+    candidates[3] = NSMakeRect(desiredFrame.origin.x,
+                               NSMaxY(panelFrame) + kFilterPickerPanelGap,
+                               pickerSize.width,
+                               pickerSize.height);
+
+    BOOL foundNonOverlappingFrame = NO;
+    NSRect bestFrame = desiredFrame;
+    CGFloat bestScore = CGFLOAT_MAX;
+
+    for (NSInteger i = 0; i < 4; i++) {
+        NSRect candidate = COVClampRectToVisibleFrame(candidates[i], visibleFrame);
+        CGFloat overlapArea = COVRectIntersectionArea(candidate, panelFrame);
+        CGFloat distanceScore = COVDistanceFromRectToRect(candidate, buttonRectOnScreen);
+        if (overlapArea <= 0.5) {
+            if (!foundNonOverlappingFrame || distanceScore < bestScore) {
+                foundNonOverlappingFrame = YES;
+                bestFrame = candidate;
+                bestScore = distanceScore;
+            }
+        } else if (!foundNonOverlappingFrame) {
+            CGFloat overlapPenalty = overlapArea * 1000000.0;
+            CGFloat score = overlapPenalty + distanceScore;
+            if (score < bestScore) {
+                bestFrame = candidate;
+                bestScore = score;
+            }
+        }
+    }
+
+    return bestFrame;
 }
 
 - (void)startObservingFilter:(CIFilter *)filter
@@ -734,24 +850,7 @@ static NSAttributedString *COVToolbarButtonTitle(NSString *title)
     [filterTableView deselectAll:nil];
     NSRect buttonRectInWindow = [addFilterButton convertRect:[addFilterButton bounds] toView:nil];
     NSRect buttonRectOnScreen = [[addFilterButton window] convertRectToScreen:buttonRectInWindow];
-    NSRect pickerFrame = [filterPickerPanel frame];
-    pickerFrame.origin.x = NSMaxX(buttonRectOnScreen) - NSWidth(pickerFrame);
-    pickerFrame.origin.y = NSMinY(buttonRectOnScreen) - NSHeight(pickerFrame) - 8.0;
-
-    NSScreen *screen = [[addFilterButton window] screen];
-    if (screen == nil) {
-        screen = [NSScreen mainScreen];
-    }
-    NSRect visibleFrame = [screen visibleFrame];
-    if (NSMaxX(pickerFrame) > NSMaxX(visibleFrame) - 8.0) {
-        pickerFrame.origin.x = NSMaxX(visibleFrame) - NSWidth(pickerFrame) - 8.0;
-    }
-    if (NSMinX(pickerFrame) < NSMinX(visibleFrame) + 8.0) {
-        pickerFrame.origin.x = NSMinX(visibleFrame) + 8.0;
-    }
-    if (NSMinY(pickerFrame) < NSMinY(visibleFrame) + 8.0) {
-        pickerFrame.origin.y = NSMinY(buttonRectOnScreen) + 8.0;
-    }
+    NSRect pickerFrame = [self filterPickerFrameNearButtonRect:buttonRectOnScreen];
     [filterPickerPanel setFrame:pickerFrame display:YES];
     [filterPickerPanel makeKeyAndOrderFront:self];
     [NSApp activateIgnoringOtherApps:YES];
