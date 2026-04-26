@@ -37,9 +37,9 @@ JPEG, PNG, GIF, BMP, TIFF, PDF
 ## 操作方法
 https://coo-ona.github.io/cooViewer/manual.html
 
-## 更新履歴・技術メモ
+## 更新履歴
 
-macOS Sequoia 対応、universal binary 化、Finder 起動時の前面化、複数ディスプレイ環境でのフルスクリーン表示、Cmd+Tab / App Switcher 周り、フィルター追加パネルの配置修正については以下にまとめています。
+詳細は以下にまとめています。
 
 [docs/update-notes.md](docs/update-notes.md)
 

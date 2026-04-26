@@ -1,8 +1,8 @@
 # cooViewer 更新履歴・技術メモ
 
-このメモは、2026-04-14 の macOS Sequoia 対応と universal binary 化から始まった、更新版 cooViewer の主な修正内容を整理したものです。
+このメモは、macOS Sequoia 対応と universal binary 化から始まった、更新版 cooViewer の主な修正内容を整理したものです。
 
-## 2026-04-14: macOS Sequoia 対応と universal 化
+## macOS Sequoia 対応と universal 化
 
 ### 目的
 
