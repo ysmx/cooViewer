@@ -26,6 +26,14 @@ brew tap ysmx/cooviewer
 brew install --cask cooviewer
 ```
 
+## 対応フォーマット
+
+#### アーカイブ
+ZIP, RAR, CBZ, CBR, 7Z, TAR, GZ, BZ2, XZ, LZH/LHA, CAB, ACE, ARJ, ZOO, ALZ, JAR, CPT, SIT, SITX, HQX, BIN, SEA, ARC, PAX, CPIO, RPM, XAR, NDS, NSA など
+
+#### 画像
+JPEG, PNG, GIF, BMP, TIFF, PDF
+
 ## 操作方法
 https://coo-ona.github.io/cooViewer/manual.html
 
