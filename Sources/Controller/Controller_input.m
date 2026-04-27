@@ -2104,6 +2104,12 @@ static BOOL appleRemoteHoldDown = NO;
 }
 - (void)setSortMode:(int)mode page:(int)p
 {
+	// Stop any background lookahead thread before mutating completeMutableArray to prevent crashes
+	threadStop = YES;
+	[lock lock];
+	[lock unlock];
+	threadStop = NO;
+
 	//if (sortMode != mode) {
 	sortMode = mode;
 	[completeMutableArray sortUsingSelector:@selector(finderCompareS:)];
@@ -2140,7 +2146,8 @@ static BOOL appleRemoteHoldDown = NO;
 		NSArray *reversedArray = [[completeMutableArray reverseObjectEnumerator] allObjects];
 		[completeMutableArray setArray:reversedArray];
 	}
-	if (rememberBookSettings && p>-1) {
+	// Never persist shuffle (mode==1) to book settings — shuffle is always started explicitly
+	if (rememberBookSettings && p>-1 && mode != 1) {
 		[currentBookSetting setObject:[NSNumber numberWithInt:mode] forKey:@"sortMode"];
 		[currentBookSetting setObject:[NSNumber numberWithBool:sortDescending] forKey:@"sortDescending"];
 	}

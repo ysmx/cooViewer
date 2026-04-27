@@ -1193,6 +1193,11 @@ static const int DIALOG_CANCEL	= 129;
 	} else {
 		sortMode = (int)[defaults integerForKey:@"SortMode"];
 	}
+	// Shuffle (sortMode==1) is never restored from settings; always start each book without shuffle
+	if (sortMode == 1) {
+		sortMode = 0;
+	}
+	preShuffleSortMode = sortMode;  // initialize pre-shuffle mode for this book
 	if ([currentBookSetting objectForKey:@"sortDescending"]) {
 		sortDescending = [[currentBookSetting objectForKey:@"sortDescending"] boolValue];
 	} else {
@@ -1890,14 +1895,11 @@ static const int DIALOG_CANCEL	= 129;
 	*/
 	//[lock lock];
 	//[lock unlock];
-	//[window disableFlushWindow];
-	
-	NSDisableScreenUpdates();
-    [self lockedImageDisplay];
-    NSEnableScreenUpdates();
-	
-	//[window enableFlushWindow];
-	//[window flushWindowIfNeeded];
+	// NSDisableScreenUpdates/NSEnableScreenUpdates (deprecated since 10.11)
+	// disrupts the fullscreen compositor and causes the Dock/menu bar to appear.
+	// The modern Quartz compositor handles double-buffering internally,
+	// so no explicit screen-update batching is needed here.
+	[self lockedImageDisplay];
 	
 	/*
 	stop=[NSDate timeIntervalSinceReferenceDate];
@@ -2450,15 +2452,13 @@ static const int DIALOG_CANCEL	= 129;
 		
 	} else if ([[anItem title] isEqualToString:NSLocalizedString(@"Name", @"")] == YES) {
 		if ([window isVisible]) {
-			if (sortMode == 0) {
-				[anItem setState:NSOnState];
-			} else {
-				[anItem setState:NSOffState];
-			}
-			return YES;
+			// While shuffling, show checkmark on the pre-shuffle sort mode
+			int displayMode = (sortMode == 1) ? preShuffleSortMode : sortMode;
+			[anItem setState:(displayMode == 0) ? NSOnState : NSOffState];
+			return sortMode != 1;  // grayed out while shuffle is active
 		} else {
 			return NO;
-		} 
+		}
 	} else if ([[anItem title] isEqualToString:NSLocalizedString(@"Shuffle", @"")] == YES) {
 		if ([window isVisible]) {
 			if (sortMode == 1) {
@@ -2469,49 +2469,35 @@ static const int DIALOG_CANCEL	= 129;
 			return YES;
 		} else {
 			return NO;
-		} 
+		}
 	} else if ([[anItem title] isEqualToString:NSLocalizedString(@"Creation Date", @"")] == YES) {
 		if ([window isVisible]) {
-			if (sortMode == 2) {
-				[anItem setState:NSOnState];
-			} else {
-				[anItem setState:NSOffState];
+			int displayMode = (sortMode == 1) ? preShuffleSortMode : sortMode;
+			[anItem setState:(displayMode == 2) ? NSOnState : NSOffState];
+			if (sortMode == 1) {
+				return NO;  // grayed out while shuffle is active
 			}
-			if ([imageLoader canSortByDate]) {
-				return YES;
-			} else {
-				return NO;
-			}
-		} else {
-			return NO;
-		} 
-	} else if ([[anItem title] isEqualToString:NSLocalizedString(@"Modification Date", @"")] == YES) {
-		if ([window isVisible]) {
-			if (sortMode == 3) {
-				[anItem setState:NSOnState];
-			} else {
-				[anItem setState:NSOffState];
-			}
-			if ([imageLoader canSortByDate]) {
-				return YES;
-			} else {
-				return NO;
-			}
-		} else {
-			return NO;
-		} 
-	} else if ([[anItem title] isEqualToString:NSLocalizedString(@"Descending", @"")] == YES) {
-		if ([window isVisible]) {
-			if ([self co_sortModeSupportsDescending:sortMode]) {
-				[anItem setState:sortDescending ? NSOnState : NSOffState];
-				return YES;
-			} else {
-				[anItem setState:NSOffState];
-				return NO;
-			}
+			return [imageLoader canSortByDate];
 		} else {
 			return NO;
 		}
+	} else if ([[anItem title] isEqualToString:NSLocalizedString(@"Modification Date", @"")] == YES) {
+		if ([window isVisible]) {
+			int displayMode = (sortMode == 1) ? preShuffleSortMode : sortMode;
+			[anItem setState:(displayMode == 3) ? NSOnState : NSOffState];
+			if (sortMode == 1) {
+				return NO;  // grayed out while shuffle is active
+			}
+			return [imageLoader canSortByDate];
+		} else {
+			return NO;
+		} 
+	} else if ([[anItem title] isEqualToString:NSLocalizedString(@"Ascending", @"Sort order")] == YES) {
+		[anItem setState:sortDescending ? NSOffState : NSOnState];
+		return [window isVisible] && [self co_sortModeSupportsDescending:sortMode];
+	} else if ([[anItem title] isEqualToString:NSLocalizedString(@"Descending", @"Sort order")] == YES) {
+		[anItem setState:sortDescending ? NSOnState : NSOffState];
+		return [window isVisible] && [self co_sortModeSupportsDescending:sortMode];
 	} else {
 		/*contextMenu*/
 		NSRect left,right;
@@ -2825,13 +2811,49 @@ static const int DIALOG_CANCEL	= 129;
     if ([[sender title] isEqualToString:NSLocalizedString(@"Name", @"")] == YES) {
 		[self setSortMode:0 page:0];
 	} else if ([[sender title] isEqualToString:NSLocalizedString(@"Shuffle", @"")] == YES) {
-		[self setSortMode:1 page:0];
+		if (sortMode == 1) {
+			// Deactivate Shuffle: restore the pre-shuffle sort mode and navigate to the same image
+			NSString *currentImagePath = nil;
+			int displayedIdx = (nowPage > 0 && nowPage <= (int)[completeMutableArray count]) ? nowPage - 1 : 0;
+			if ([completeMutableArray count] > 0) {
+				currentImagePath = [[[completeMutableArray objectAtIndex:displayedIdx] retain] autorelease];
+			}
+			int restoreMode = preShuffleSortMode;  // restore what was active before shuffle
+			[self setSortMode:restoreMode page:-1];
+			// p=-1 skips the settings save inside setSortMode, so save explicitly here
+			if (rememberBookSettings) {
+				[currentBookSetting setObject:[NSNumber numberWithInt:restoreMode] forKey:@"sortMode"];
+				[currentBookSetting setObject:[NSNumber numberWithBool:sortDescending] forKey:@"sortDescending"];
+			}
+			// Find the current image in the newly sorted array and go there
+			if (currentImagePath) {
+				NSInteger newIdx = [completeMutableArray indexOfObject:currentImagePath];
+				[self goTo:(newIdx != NSNotFound ? (int)newIdx : 0) array:nil];
+			} else {
+				[self goTo:0 array:nil];
+			}
+		} else {
+			// Activate Shuffle: remember current sort mode, then reshuffle
+			preShuffleSortMode = sortMode;
+			[self setSortMode:1 page:0];
+		}
+		// Image loading in goTo: blocks the main thread, which can prevent macOS from
+		// auto-hiding the menu bar after the menu is dismissed. Schedule two deferred
+		// calls: one immediately after the current run-loop turn (0.0 s) and a safety
+		// net at 0.5 s in case a background thread briefly disturbs window-focus state.
+		[NSObject cancelPreviousPerformRequestsWithTarget:window
+												 selector:@selector(refreshMenuBarVisibility)
+												   object:nil];
+		[window performSelector:@selector(refreshMenuBarVisibility) withObject:nil afterDelay:0.0];
+		[window performSelector:@selector(refreshMenuBarVisibility) withObject:nil afterDelay:0.5];
 	} else if ([[sender title] isEqualToString:NSLocalizedString(@"Creation Date", @"")] == YES) {
 		[self setSortMode:2 page:0];
 	} else if ([[sender title] isEqualToString:NSLocalizedString(@"Modification Date", @"")] == YES) {
 		[self setSortMode:3 page:0];
-	} else if ([[sender title] isEqualToString:NSLocalizedString(@"Descending", @"")] == YES) {
-		[self setSortDescending:!sortDescending page:0];
+	} else if ([[sender title] isEqualToString:NSLocalizedString(@"Ascending", @"Sort order")] == YES) {
+		[self setSortDescending:NO page:0];
+	} else if ([[sender title] isEqualToString:NSLocalizedString(@"Descending", @"Sort order")] == YES) {
+		[self setSortDescending:YES page:0];
 	}
 }
 
@@ -3411,8 +3433,8 @@ static const int DIALOG_CANCEL	= 129;
 	if (!sortMenu) {
 		return;
 	}
-	NSString *descendingTitle = NSLocalizedString(@"Descending", @"");
-	if ([sortMenu itemWithTitle:descendingTitle]) {
+	NSString *ascendingTitle = NSLocalizedString(@"Ascending", @"Sort order");
+	if ([sortMenu itemWithTitle:ascendingTitle]) {
 		return;
 	}
 	int insertIndex = (int)[sortMenu numberOfItems];
@@ -3420,9 +3442,22 @@ static const int DIALOG_CANCEL	= 129;
 	if (shuffleItem) {
 		insertIndex = (int)[sortMenu indexOfItem:shuffleItem];
 	}
+	// Build: [Ascending][Descending][separator][Shuffle]
+	// Insert in reverse order so each pushes the previous down
+	NSString *descendingTitle = NSLocalizedString(@"Descending", @"Sort order");
+
+	// 1. separator goes just before Shuffle
+	[sortMenu insertItem:[NSMenuItem separatorItem] atIndex:insertIndex];
+
+	// 2. Descending goes before separator
 	NSMenuItem *descendingItem = [[[NSMenuItem alloc] initWithTitle:descendingTitle action:@selector(changeSortModeMenu:) keyEquivalent:@""] autorelease];
 	[descendingItem setTarget:self];
 	[sortMenu insertItem:descendingItem atIndex:insertIndex];
+
+	// 3. Ascending goes before Descending
+	NSMenuItem *ascendingItem = [[[NSMenuItem alloc] initWithTitle:ascendingTitle action:@selector(changeSortModeMenu:) keyEquivalent:@""] autorelease];
+	[ascendingItem setTarget:self];
+	[sortMenu insertItem:ascendingItem atIndex:insertIndex];
 }
 
 - (int)openLinkMode

@@ -19,9 +19,12 @@
 	if (cursorTimer == nil) {
 		return;
 	}
-	[cursorTimer invalidate];
-	[cursorTimer release];
+	// Nil cursorTimer before releasing to guard against reentrant calls
+	// (e.g. via dealloc triggered by [timer release] releasing target:self)
+	NSTimer *timer = cursorTimer;
 	cursorTimer = nil;
+	[timer invalidate];
+	[timer release];
 }
 
 - (void)refreshCursorAutoHide
@@ -29,6 +32,22 @@
 	[self clearCursorHideTimer];
 	if ([self shouldAutoHideCursor] && [self isKeyWindow]) {
 		[NSCursor setHiddenUntilMouseMoves:YES];
+	}
+}
+
+- (void)refreshMenuBarVisibility
+{
+	// Re-applies the correct menu-bar state for our fullscreen window.
+	// Called after any menu-triggered action (sort, shuffle) that may block
+	// the main thread and prevent macOS from auto-hiding the menu bar.
+	// We intentionally skip the isKeyWindow check because the background
+	// lookaheadAndCompose thread detach can briefly disturb window focus state.
+	if (fullscreen) {
+		if (hideMenuBar) {
+			[NSMenu setMenuBarVisible:NO];
+		} else {
+			[NSMenu setMenuBarVisible:YES];
+		}
 	}
 }
 

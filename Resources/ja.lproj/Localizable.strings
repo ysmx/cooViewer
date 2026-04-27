@@ -47,6 +47,9 @@
 "Creation Date" = "作成日";
 
 /* Sort order */
+"Ascending" = "昇順";
+
+/* Sort order */
 "Descending" = "降順";
 
 /* No comment provided by engineer.No comment provided by engineer.No comment provided by engineer.No comment provided by engineer.No comment provided by engineer.No comment provided by engineer. */
@@ -415,8 +418,6 @@
 /* Filter panel */
 "Color Effects" = "カラー効果";
 
-/* Filter panel */
-<parameter name="description">Append new JA localization keys
 /* Filter panel */
 "Sharpness" = "シャープ";
 
