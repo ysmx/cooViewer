@@ -408,3 +408,30 @@
 
 /* No comment provided by engineer. */
 "ViewOriginal(L/R)**" = "ViewOriginal(L/R)**";
+
+/* Filter panel */
+"Color Adjustments" = "Color Adjustments";
+
+/* Filter panel */
+"Color Effects" = "Color Effects";
+
+/* Filter panel */
+"Sharpness" = "Sharpness";
+
+/* Filter panel */
+"Blur" = "Blur";
+
+/* Filter panel title */
+"Filters" = "Filters";
+
+/* Filter panel hint */
+"Search to add filters and adjust each one individually." = "Search to add filters and adjust each one individually.";
+
+/* Add filter button */
+"Add Filter" = "Add Filter";
+
+/* Filter search field placeholder */
+"Search Filters" = "Search Filters";
+
+/* Preference checkbox */
+"Sync background with external display" = "Sync background with external display";

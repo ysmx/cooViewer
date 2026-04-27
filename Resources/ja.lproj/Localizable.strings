@@ -408,3 +408,32 @@
 
 /* No comment provided by engineer.No comment provided by engineer.No comment provided by engineer.No comment provided by engineer.No comment provided by engineer.No comment provided by engineer. */
 "Window" = "ウインドウ";
+
+/* Filter panel */
+"Color Adjustments" = "カラー調整";
+
+/* Filter panel */
+"Color Effects" = "カラー効果";
+
+/* Filter panel */
+<parameter name="description">Append new JA localization keys
+/* Filter panel */
+"Sharpness" = "シャープ";
+
+/* Filter panel */
+"Blur" = "ぼかし";
+
+/* Filter panel title */
+"Filters" = "フィルター";
+
+/* Filter panel hint */
+"Search to add filters and adjust each one individually." = "検索して追加し、カードごとに調整できます";
+
+/* Add filter button */
+"Add Filter" = "フィルターを追加";
+
+/* Filter search field placeholder */
+"Search Filters" = "フィルターを検索";
+
+/* Preference checkbox */
+"Sync background with external display" = "拡張ディスプレイの背景を同期";
