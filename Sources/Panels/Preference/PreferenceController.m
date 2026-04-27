@@ -886,7 +886,7 @@ static const int DIALOG_CANCEL	= 129;
 
 	secondaryDisplayBackgroundSyncCheck = [[NSButton alloc] initWithFrame:checkFrame];
 	[secondaryDisplayBackgroundSyncCheck setButtonType:NSSwitchButton];
-	[secondaryDisplayBackgroundSyncCheck setTitle:@"拡張ディスプレイの背景を同期"];
+	[secondaryDisplayBackgroundSyncCheck setTitle:NSLocalizedString(@"Sync background with external display", @"Preference checkbox")];
 	[secondaryDisplayBackgroundSyncCheck sizeToFit];
 
 	[container addSubview:secondaryDisplayBackgroundSyncCheck];

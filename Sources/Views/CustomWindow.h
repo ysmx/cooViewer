@@ -31,5 +31,6 @@
 - (void)mouseExited:(NSEvent *)theEvent;
 - (void)updateTrackingRect;
 - (void)refreshCursorAutoHide;
+- (void)refreshMenuBarVisibility;
 
 @end

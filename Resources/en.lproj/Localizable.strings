@@ -1,0 +1,440 @@
+/* No comment provided by engineer. */
+"Add Bookmark" = "Add Bookmark";
+
+/* No comment provided by engineer. */
+"Add/RemoveBookmark" = "Add/RemoveBookmark";
+
+/* No comment provided by engineer. */
+"Advanced" = "Advanced";
+
+/* No comment provided by engineer. */
+"Appearance" = "Appearance";
+
+/* No comment provided by engineer. */
+"Are you sure you want to reset the %@ mode key setting?" = "Are you sure you want to reset the %@ mode key setting?";
+
+/* No comment provided by engineer. */
+"Are you sure you want to reset the %@ mode mouse setting?" = "Are you sure you want to reset the %@ mode mouse setting?";
+
+/* No comment provided by engineer. */
+"BackSkip" = "BackSkip";
+
+/* No comment provided by engineer. */
+"ChangeReadMode" = "ChangeReadMode";
+
+/* No comment provided by engineer. */
+"ChangeSortMode" = "ChangeSortMode";
+
+/* No comment provided by engineer. */
+"ChangeViewMode" = "ChangeViewMode";
+
+/* No comment provided by engineer. */
+"Close" = "Close";
+
+/* No comment provided by engineer. */
+"ContextualMenu" = "ContextualMenu";
+
+/* No comment provided by engineer. */
+"Creation Date" = "Creation Date";
+
+/* Sort order */
+"Ascending" = "Ascending";
+
+/* Sort order */
+"Descending" = "Descending";
+
+/* No comment provided by engineer. */
+"Delete Settings" = "Delete Settings";
+
+/* No comment provided by engineer. */
+"Delete this Bookmark" = "Delete this Bookmark";
+
+/* No comment provided by engineer. */
+"Do you really want to move %@ to the trash?" = "Do you really want to move %@ to the trash?";
+
+/* No comment provided by engineer. */
+"Do you want to go to %i page?" = "Do you want to go to %i page?";
+
+/* No comment provided by engineer. */
+"DragScroll" = "DragScroll";
+
+/* No comment provided by engineer. */
+"Edit Bookmark..." = "Edit Bookmark...";
+
+/* No comment provided by engineer. */
+"Fit to Screen" = "Fit to Screen";
+
+/* No comment provided by engineer. */
+"Fit to Screen Width" = "Fit to Screen Width";
+
+/* No comment provided by engineer. */
+"Fit to Screen Width(divide)" = "Fit to Screen Width(divide)";
+
+/* No comment provided by engineer. */
+"Fullscreen" = "Fullscreen";
+
+/* No comment provided by engineer. */
+"General" = "General";
+
+/* No comment provided by engineer. */
+"Go to %" = "Go to %";
+
+/* No comment provided by engineer. */
+"Go to FirstPage" = "Go to FirstPage";
+
+/* No comment provided by engineer. */
+"Go to LastPage" = "Go to LastPage";
+
+/* No comment provided by engineer. */
+"Go to Page" = "Go to Page";
+
+/* No comment provided by engineer. */
+"Go to the last page" = "Go to the last page";
+
+/* No comment provided by engineer. */
+"HalfNext/PrevPage*" = "HalfNext/PrevPage*";
+
+/* No comment provided by engineer. */
+"HalfNextPage" = "HalfNextPage";
+
+/* No comment provided by engineer. */
+"HalfPreviousPage" = "HalfPreviousPage";
+
+/* No comment provided by engineer. */
+"Input" = "Input";
+
+/* No comment provided by engineer. */
+"Last/TopPage*" = "Last/TopPage*";
+
+/* No comment provided by engineer. */
+"Left to Right" = "Left to Right";
+
+/* No comment provided by engineer. */
+"Left to Right (single)" = "Left to Right (single)";
+
+/* No comment provided by engineer. */
+"LoupePower+" = "LoupePower+";
+
+/* No comment provided by engineer. */
+"LoupePower-" = "LoupePower-";
+
+/* No comment provided by engineer. */
+"Modification Date" = "Modification Date";
+
+/* No comment provided by engineer. */
+"Move to Trash" = "Move to Trash";
+
+/* No comment provided by engineer. */
+"Move to Trash(L/R)*" = "Move to Trash(L/R)*";
+
+/* No comment provided by engineer. */
+"Move to Trash(left)" = "Move to Trash(left)";
+
+/* No comment provided by engineer. */
+"Move to Trash(right)" = "Move to Trash(right)";
+
+/* No comment provided by engineer. */
+"Name" = "Name";
+
+/* No comment provided by engineer. */
+"Next Bookmark" = "Next Bookmark";
+
+/* No comment provided by engineer. */
+"Next Folder" = "Next Folder";
+
+/* No comment provided by engineer. */
+"Next/PrevBookmark*" = "Next/PrevBookmark*";
+
+/* No comment provided by engineer. */
+"Next/PrevFolder(Archive)*" = "Next/PrevFolder(Archive)*";
+
+/* No comment provided by engineer. */
+"Next/PrevPage*" = "Next/PrevPage*";
+
+/* No comment provided by engineer. */
+"Next/PrevSubFolder(Archive)*" = "Next/PrevSubFolder(Archive)*";
+
+/* No comment provided by engineer. */
+"NextBookmark" = "NextBookmark";
+
+/* No comment provided by engineer. */
+"NextFolder(Archive)" = "NextFolder(Archive)";
+
+/* No comment provided by engineer. */
+"NextPage" = "NextPage";
+
+/* No comment provided by engineer. */
+"NextSubFolder(Archive)" = "NextSubFolder(Archive)";
+
+/* No comment provided by engineer. */
+"No Scale" = "No Scale";
+
+/* No comment provided by engineer. */
+"Open the last page" = "Open the last page";
+
+/* No comment provided by engineer. */
+"PageDown" = "PageDown";
+
+/* No comment provided by engineer. */
+"PageDown + NextPage" = "PageDown + NextPage";
+
+/* No comment provided by engineer. */
+"PageUp" = "PageUp";
+
+/* No comment provided by engineer. */
+"PageUp + PrevPage" = "PageUp + PrevPage";
+
+/* No comment provided by engineer. */
+"PageUp/Down + Prev/NextPage" = "PageUp/Down + Prev/NextPage";
+
+/* No comment provided by engineer. */
+"PageUp/Down + Prev/NextPage*" = "PageUp/Down + Prev/NextPage*";
+
+/* No comment provided by engineer. */
+"Previous Bookmark" = "Previous Bookmark";
+
+/* No comment provided by engineer. */
+"Previous Folder" = "Previous Folder";
+
+/* No comment provided by engineer. */
+"PreviousBookmark" = "PreviousBookmark";
+
+/* No comment provided by engineer. */
+"PreviousFolder(Archive)" = "PreviousFolder(Archive)";
+
+/* No comment provided by engineer. */
+"PreviousPage" = "PreviousPage";
+
+/* No comment provided by engineer. */
+"PreviousSubFolder(Archive)" = "PreviousSubFolder(Archive)";
+
+/* No comment provided by engineer. */
+"Remove Bookmark" = "Remove Bookmark";
+
+/* No comment provided by engineer. */
+"Reset key setting" = "Reset key setting";
+
+/* No comment provided by engineer. */
+"Reset mouse setting" = "Reset mouse setting";
+
+/* No comment provided by engineer. */
+"Right to Left" = "Right to Left";
+
+/* No comment provided by engineer. */
+"Right to Left (single)" = "Right to Left (single)";
+
+/* No comment provided by engineer. */
+"Rotate Left" = "Rotate Left";
+
+/* No comment provided by engineer. */
+"Rotate Right" = "Rotate Right";
+
+/* No comment provided by engineer. */
+"Rotate(L/R)*" = "Rotate(L/R)*";
+
+/* No comment provided by engineer. */
+"ScrollDown" = "ScrollDown";
+
+/* No comment provided by engineer. */
+"ScrollLeft" = "ScrollLeft";
+
+/* No comment provided by engineer. */
+"ScrollRight" = "ScrollRight";
+
+/* No comment provided by engineer. */
+"ScrollToEnd" = "ScrollToEnd";
+
+/* No comment provided by engineer. */
+"ScrollToTop" = "ScrollToTop";
+
+/* No comment provided by engineer. */
+"ScrollUp" = "ScrollUp";
+
+/* No comment provided by engineer. */
+"Setting is not found" = "Setting is not found";
+
+/* No comment provided by engineer. */
+"Setting of %@ is not found.\nDo you want to use a setting of %@ ?" = "Setting of %1$@ is not found.\nDo you want to use a setting of %2$@ ?";
+
+/* No comment provided by engineer. */
+"Show in Finder" = "Show in Finder";
+
+/* No comment provided by engineer. */
+"Show in Finder(L/R)*" = "Show in Finder(L/R)*";
+
+/* No comment provided by engineer. */
+"Show in Finder(left)" = "Show in Finder(left)";
+
+/* No comment provided by engineer. */
+"Show in Finder(right)" = "Show in Finder(right)";
+
+/* No comment provided by engineer. */
+"Show Thumbnail" = "Show Thumbnail";
+
+/* No comment provided by engineer. */
+"ShowLoupe" = "ShowLoupe";
+
+/* No comment provided by engineer. */
+"ShowNumber" = "ShowNumber";
+
+/* No comment provided by engineer. */
+"ShowPageBar" = "ShowPageBar";
+
+/* No comment provided by engineer. */
+"Shuffle" = "Shuffle";
+
+/* No comment provided by engineer. */
+"Skip" = "Skip";
+
+/* No comment provided by engineer. */
+"Skip/BackSkip*" = "Skip/BackSkip*";
+
+/* No comment provided by engineer. */
+"Slideshow" = "Slideshow";
+
+/* No comment provided by engineer. */
+"Start Slideshow" = "Start Slideshow";
+
+/* No comment provided by engineer. */
+"Start/Stop" = "Start/Stop";
+
+/* No comment provided by engineer. */
+"Stop Slideshow" = "Stop Slideshow";
+
+/* No comment provided by engineer. */
+"Switch Single/Bind" = "Switch Single/Bind";
+
+/* No comment provided by engineer. */
+"SwitchSingle/Bind" = "SwitchSingle/Bind";
+
+/* No comment provided by engineer. */
+"unknown" = "unknown";
+
+/* No comment provided by engineer. */
+"View at Original Size" = "View at Original Size";
+
+/* No comment provided by engineer. */
+"ViewOriginal(L/R)*" = "ViewOriginal(L/R)*";
+
+/* No comment provided by engineer. */
+"ViewOriginal(left)" = "ViewOriginal(left)";
+
+/* No comment provided by engineer. */
+"ViewOriginal(right)" = "ViewOriginal(right)";
+
+/* No comment provided by engineer. */
+"Window" = "Window";
+
+/* No comment provided by engineer. */
+"Open '%@' in default browser?" = "Open '%@' in default browser?";
+
+/* No comment provided by engineer. */
+"Open URL" = "Open URL";
+
+/* No comment provided by engineer. */
+"Are you sure you want to delete the setting which file is not found?" = "Are you sure you want to delete the setting which file is not found?";
+
+/* No comment provided by engineer. */
+"Change current folder" = "Change current folder";
+
+/* No comment provided by engineer. */
+"Disposing of settings" = "Disposing of settings";
+
+/* No comment provided by engineer. */
+"Disposing of settings was canceled" = "Disposing of settings was canceled";
+
+/* No comment provided by engineer. */
+"Disposing of settings was completed" = "Disposing of settings was completed";
+
+/* No comment provided by engineer. */
+"File" = "File";
+
+/* No comment provided by engineer. */
+"Minimize" = "Minimize";
+
+/* No comment provided by engineer. */
+"MinimizeWindow" = "MinimizeWindow";
+
+/* No comment provided by engineer. */
+"SwitchFullscreen" = "SwitchFullscreen";
+
+/* No comment provided by engineer. */
+"The parent folder of current book was changed. Do you want to follow?" = "The parent folder of current book was changed. Do you want to follow?";
+
+/* No comment provided by engineer. */
+"The current opening book was moved. Are you sure you want to change current folder?" = "The current opening book was moved. Are you sure you want to change current folder?";
+
+/* No comment provided by engineer. */
+"Cancel" = "Cancel";
+
+/* No comment provided by engineer. */
+"OK" = "OK";
+
+/* No comment provided by engineer. */
+"EnlargeViewMode" = "EnlargeViewMode";
+
+/* No comment provided by engineer. */
+"HalfNext/PrevPage**" = "HalfNext/PrevPage**";
+
+/* No comment provided by engineer. */
+"Last/TopPage**" = "Last/TopPage**";
+
+/* No comment provided by engineer. */
+"Move to Trash(L/R)**" = "Move to Trash(L/R)**";
+
+/* No comment provided by engineer. */
+"Next/PrevBookmark**" = "Next/PrevBookmark**";
+
+/* No comment provided by engineer. */
+"Next/PrevFolder(Archive)**" = "Next/PrevFolder(Archive)**";
+
+/* No comment provided by engineer. */
+"Next/PrevPage**" = "Next/PrevPage**";
+
+/* No comment provided by engineer. */
+"Next/PrevSubFolder(Archive)**" = "Next/PrevSubFolder(Archive)**";
+
+/* No comment provided by engineer. */
+"PageUp/Down + Prev/NextPage**" = "PageUp/Down + Prev/NextPage**";
+
+/* No comment provided by engineer. */
+"ReduceViewMode" = "ReduceViewMode";
+
+/* No comment provided by engineer. */
+"Rotate(L/R)**" = "Rotate(L/R)**";
+
+/* No comment provided by engineer. */
+"Show in Finder(L/R)**" = "Show in Finder(L/R)**";
+
+/* No comment provided by engineer. */
+"Skip/BackSkip**" = "Skip/BackSkip**";
+
+/* No comment provided by engineer. */
+"ViewOriginal(L/R)**" = "ViewOriginal(L/R)**";
+
+/* Filter panel */
+"Color Adjustments" = "Color Adjustments";
+
+/* Filter panel */
+"Color Effects" = "Color Effects";
+
+/* Filter panel */
+"Sharpness" = "Sharpness";
+
+/* Filter panel */
+"Blur" = "Blur";
+
+/* Filter panel title */
+"Filters" = "Filters";
+
+/* Filter panel hint */
+"Search to add filters and adjust each one individually." = "Search to add filters and adjust each one individually.";
+
+/* Add filter button */
+"Add Filter" = "Add Filter";
+
+/* Filter search field placeholder */
+"Search Filters" = "Search Filters";
+
+/* Preference checkbox */
+"Sync background with external display" = "Sync background with external display";

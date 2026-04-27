@@ -190,19 +190,19 @@ static CGFloat COVRectIntersectionArea(NSRect rectA, NSRect rectB)
 {
     return [NSArray arrayWithObjects:
             [NSDictionary dictionaryWithObjectsAndKeys:
-             @"カラー調整", @"title",
+             NSLocalizedString(@"Color Adjustments", @"Filter category"), @"title",
              [NSArray arrayWithObjects:kCICategoryColorAdjustment, kCICategoryStillImage, nil], @"categories",
              nil],
             [NSDictionary dictionaryWithObjectsAndKeys:
-             @"カラー効果", @"title",
+             NSLocalizedString(@"Color Effects", @"Filter category"), @"title",
              [NSArray arrayWithObjects:kCICategoryColorEffect, kCICategoryStillImage, nil], @"categories",
              nil],
             [NSDictionary dictionaryWithObjectsAndKeys:
-             @"シャープ", @"title",
+             NSLocalizedString(@"Sharpness", @"Filter category"), @"title",
              [NSArray arrayWithObjects:kCICategorySharpen, kCICategoryStillImage, nil], @"categories",
              nil],
             [NSDictionary dictionaryWithObjectsAndKeys:
-             @"ぼかし", @"title",
+             NSLocalizedString(@"Blur", @"Filter category"), @"title",
              [NSArray arrayWithObjects:kCICategoryBlur, kCICategoryStillImage, nil], @"categories",
              nil],
             nil];
@@ -219,18 +219,18 @@ static CGFloat COVRectIntersectionArea(NSRect rectA, NSRect rectB)
     toolbarView = [[NSView alloc] initWithFrame:NSZeroRect];
     [toolbarView setAutoresizingMask:NSViewWidthSizable|NSViewMinYMargin];
 
-    toolbarTitleLabel = [[NSTextField labelWithString:@"フィルター"] retain];
+    toolbarTitleLabel = [[NSTextField labelWithString:NSLocalizedString(@"Filters", @"Filter panel title")] retain];
     [toolbarTitleLabel setFont:[NSFont systemFontOfSize:13.0 weight:NSFontWeightSemibold]];
     [toolbarView addSubview:toolbarTitleLabel];
 
-    toolbarHintLabel = [[NSTextField labelWithString:@"検索して追加し、カードごとに調整できます"] retain];
+    toolbarHintLabel = [[NSTextField labelWithString:NSLocalizedString(@"Search to add filters and adjust each one individually.", @"Filter panel hint")] retain];
     [toolbarHintLabel setTextColor:[NSColor colorWithCalibratedWhite:1.0 alpha:0.60]];
     [toolbarHintLabel setFont:[NSFont systemFontOfSize:11.0]];
     [toolbarView addSubview:toolbarHintLabel];
 
     addFilterButton = [[COVToolbarButton alloc] initWithFrame:NSZeroRect];
-    [addFilterButton setTitle:@"フィルターを追加"];
-    [addFilterButton setAttributedTitle:COVToolbarButtonTitle(@"フィルターを追加")];
+    [addFilterButton setTitle:NSLocalizedString(@"Add Filter", @"Add filter button")];
+    [addFilterButton setAttributedTitle:COVToolbarButtonTitle(NSLocalizedString(@"Add Filter", @"Add filter button"))];
     [addFilterButton setBezelStyle:NSBezelStyleTexturedRounded];
     [addFilterButton setBordered:NO];
     [addFilterButton setTarget:self];
@@ -419,7 +419,7 @@ static CGFloat COVRectIntersectionArea(NSRect rectA, NSRect rectB)
                                                    styleMask:(NSWindowStyleMaskTitled | NSWindowStyleMaskUtilityWindow | NSWindowStyleMaskResizable | NSWindowStyleMaskClosable)
                                                      backing:NSBackingStoreBuffered
                                                        defer:NO];
-    [filterPickerPanel setTitle:@"フィルターを追加"];
+    [filterPickerPanel setTitle:NSLocalizedString(@"Add Filter", @"Add filter panel title")];
     [filterPickerPanel setReleasedWhenClosed:NO];
     [filterPickerPanel setHidesOnDeactivate:YES];
     [filterPickerPanel setFloatingPanel:YES];
@@ -430,7 +430,7 @@ static CGFloat COVRectIntersectionArea(NSRect rectA, NSRect rectB)
     [filterPickerPanel setMaxSize:[filterPickerPanel frameRectForContentRect:NSMakeRect(0, 0, kFilterPickerWidth, maxContentHeight)].size];
 
     filterSearchField = [[NSSearchField alloc] initWithFrame:NSZeroRect];
-    [filterSearchField setPlaceholderString:@"フィルターを検索"];
+    [filterSearchField setPlaceholderString:NSLocalizedString(@"Search Filters", @"Filter search field placeholder")];
     [filterSearchField setDelegate:self];
     [filterSearchField setTarget:self];
     [filterSearchField setAction:@selector(filterSearchChanged:)];

@@ -41,7 +41,7 @@ https://coo-ona.github.io/cooViewer/manual.html
 
 詳細は以下にまとめています。
 
-[docs/update-notes.md](docs/update-notes.md)
+[update-notes.md](update-notes.md)
 
 ## アンインストール
 ・アプリ本体<br>

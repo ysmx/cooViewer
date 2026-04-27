@@ -28,6 +28,7 @@
 	
 	
 	int sortMode;
+	int preShuffleSortMode;  // sort mode to restore when shuffle is deactivated
 	BOOL sortDescending;
 	BOOL threadStop;
 	int cacheSize;
