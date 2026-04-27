@@ -1667,6 +1667,70 @@
 			<key>LSTypeIsPackage</key>
 			<false/>
 		</dict>
+		<dict>
+			<key>CFBundleTypeExtensions</key>
+			<array>
+				<string>dng</string>
+				<string>DNG</string>
+				<string>cr2</string>
+				<string>CR2</string>
+				<string>cr3</string>
+				<string>CR3</string>
+				<string>nef</string>
+				<string>NEF</string>
+				<string>nrw</string>
+				<string>NRW</string>
+				<string>arw</string>
+				<string>ARW</string>
+				<string>sr2</string>
+				<string>SR2</string>
+				<string>raf</string>
+				<string>RAF</string>
+				<string>rw2</string>
+				<string>RW2</string>
+				<string>orf</string>
+				<string>ORF</string>
+				<string>pef</string>
+				<string>PEF</string>
+				<string>srw</string>
+				<string>SRW</string>
+				<string>erf</string>
+				<string>ERF</string>
+				<string>mrw</string>
+				<string>MRW</string>
+				<string>3fr</string>
+				<string>3FR</string>
+				<string>iiq</string>
+				<string>IIQ</string>
+			</array>
+			<key>CFBundleTypeName</key>
+			<string>Camera RAW Image</string>
+			<key>CFBundleTypeRole</key>
+			<string>Viewer</string>
+			<key>LSHandlerRank</key>
+			<string>Alternate</string>
+			<key>LSItemContentTypes</key>
+			<array>
+				<string>com.adobe.raw-image</string>
+				<string>com.canon.cr2-raw-image</string>
+				<string>com.canon.cr3-raw-image</string>
+				<string>com.nikon.raw-image</string>
+				<string>com.nikon.nrw-raw-image</string>
+				<string>com.sony.arw-raw-image</string>
+				<string>com.sony.sr2-raw-image</string>
+				<string>com.fuji.raw-image</string>
+				<string>com.panasonic.rw2-raw-image</string>
+				<string>com.olympus.raw-image</string>
+				<string>com.pentax.raw-image</string>
+				<string>com.samsung.raw-image</string>
+				<string>com.epson.raw-image</string>
+				<string>com.konicaminolta.raw-image</string>
+				<string>com.hasselblad.3fr-raw-image</string>
+				<string>com.phaseone.raw-image</string>
+			</array>
+			<key>LSTypeIsPackage</key>
+			<false/>
+		</dict>
 	</array>
 	<key>CFBundleExecutable</key>
 	<string>cooViewer</string>
