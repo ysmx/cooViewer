@@ -83,6 +83,10 @@ cooViewer-markdown-preview-plan.md
 # Legacy local build artifacts
 cooViewer_build/
 
+# Xcode localization exports (re-generate with Product > Export Localizations)
+localize/
+*.xcloc/
+
 # Legacy Xcode/generated leftovers
 *.xcclassmodel/
 *~.nib/
