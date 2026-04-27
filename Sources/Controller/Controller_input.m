@@ -2120,8 +2120,11 @@ static BOOL appleRemoteHoldDown = NO;
 			[imageView setInfoString:[NSString stringWithFormat:@"sort:name%@",sortDescending?@"(desc)":@"(asc)"]];
 			break;
 		case 1:
-			//random
-			[completeMutableArray sortUsingSelector:@selector(randomCompare:)];
+			//random - Fisher-Yates shuffle (uniform distribution, unbiased)
+			for (NSInteger i = (NSInteger)[completeMutableArray count] - 1; i > 0; i--) {
+				NSInteger j = (NSInteger)arc4random_uniform((uint32_t)(i + 1));
+				[completeMutableArray exchangeObjectAtIndex:(NSUInteger)i withObjectAtIndex:(NSUInteger)j];
+			}
 			[imageView setInfoString:[NSString stringWithFormat:@"sort:shuffle"]];
 			break;
 		case 2:

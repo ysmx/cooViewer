@@ -25,23 +25,6 @@ kUCCollateComposeInsensitiveMask
 	return((NSComparisonResult)compareResult);      
 }
 
-- (NSComparisonResult)randomCompare:(NSString *)otherString
-{
-    int n;
-	
-    srand(rand()%time(NULL));
-	//srand((unsigned)time(NULL));
-    n = rand()%3;
-	
-    switch(n) {
-        case 0: return NSOrderedAscending; break; //左小さい
-        case 1: return NSOrderedSame; break; //同じ
-        case 2: return NSOrderedDescending; break; //右小さい
-    }
-	
-    return NSOrderedSame;
-}
-
 - (NSComparisonResult)fileCreationDateCompare:(NSString *)otherString
 {
 	NSFileManager *manager = [NSFileManager defaultManager];
