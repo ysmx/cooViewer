@@ -29,10 +29,13 @@ brew install --cask cooviewer
 ## 対応フォーマット
 
 #### アーカイブ
-ZIP, RAR, CBZ, CBR, 7Z, TAR, GZ, BZ2, XZ, LZH/LHA, CAB, ACE, ARJ, ZOO, ALZ, JAR, CPT, SIT, SITX, HQX, BIN, SEA, ARC, PAX, CPIO, RPM, XAR, NDS, NSA など
+ZIP, RAR, CBZ, CBR, 7Z, TAR, GZ, BZ2, XZ, LZH/LHA, CAB など
 
 #### 画像
-JPEG, PNG, GIF, BMP, TIFF, PDF
+JPEG, PNG, GIF, BMP, TIFF, PDF, HEIC/HEIF, WebP, AVIF, PSD など
+
+#### RAW形式
+DNG, CR2/CR3, NEF/NRW, ARW/SR2, RAF, RW2, ORF, PEF など
 
 ## 操作方法
 https://coo-ona.github.io/cooViewer/manual.html
