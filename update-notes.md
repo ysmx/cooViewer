@@ -1,81 +1,36 @@
-# cooViewer 更新履歴・技術メモ
+# cooViewer 更新履歴
 
-このメモは、macOS Sequoia 対応と universal binary 化から始まった、更新版 cooViewer の主な修正内容を整理したものです。
+## macOS Sequoia 対応・Universal Binary 化
 
-## macOS Sequoia 対応と universal 化
+- フルスクリーン時に画面上端へ細いグレー帯が出る問題を修正
+  - 擬似フルスクリーン時に `NSBorderlessWindowMask` へ切り替えるよう変更
+  - 旧実装の `+22` ピクセル補正を廃止し、フレーム計算を整理
+- `arm64` / `x86_64` の Universal Binary としてビルド可能に
+- 同梱フレームワーク（XADMaster, UniversalDetector）も Universal Binary 化
 
-### 目的
+## 1.3 系
 
-- macOS Sequoia でフルスクリーン時に画面上端へ細いグレー帯が出る問題を修正する
-- `cooViewer.app` を `arm64` / `x86_64` の universal binary としてビルド可能にする
+- **1.3** — バージョンを 1.3 に更新
+- **1.3.1** — Finder からファイルを開いた際、フルスクリーン中の cooViewer が前面に出ない問題を修正
+- **1.3.2–1.3.3** — Preferences ウィンドウのレイアウト調整
+- **1.3.4** — ソートに降順指定を追加
+- **1.3.5–1.3.6** — フィルタパネルのレイアウト修正、`IKFilterUIView` を復帰
+- **1.3.7** — 複数ディスプレイ環境で、サブディスプレイ背景をメイン表示と同期するオプションを追加
+- **1.3.8** — フルスクリーン中の Cmd+Tab / App Switcher 周りの問題を修正
+- **1.3.9**
+  - サブディスプレイの黒カバー処理を見直し（`CGDisplayCapture` / `CGShieldingWindowLevel` を廃止し、通常の borderless `NSWindow` で覆う方式に変更）
+  - App Switcher の横取りを廃止し、macOS に処理を委ねるよう変更
+  - フィルター追加パネルがフィルターパネルに重ならないよう自動配置
+  - カスタム書類アイコン（`coo_*.icns`）を廃止し、macOS の自動合成アイコンに移行
+  - 最低動作環境を macOS 10.14 Mojave 以降に引き上げ
 
-### 主な変更
+## 1.4.0
 
-- 擬似フルスクリーン時に `NSBorderlessWindowMask` へ切り替えるよう変更
-- 旧実装の `+22` ピクセル補正を廃止
-- フルスクリーン用フレーム計算を `fullscreenFrame` へ整理
-- 通常表示へ戻る際に元の style mask を復元
-- borderless 化しても入力を失わないよう `canBecomeKeyWindow` / `canBecomeMainWindow` を追加
-- `XADMaster.framework` と `UniversalDetector.framework` を universal binary 化
-
-### 確認結果
-
-- `cooViewer.app` は `x86_64 arm64`
-- 同梱 `XADMaster.framework` は `x86_64 arm64`
-- 同梱 `UniversalDetector.framework` は `x86_64 arm64`
-- `arm64` ネイティブ起動と `arch -x86_64` による Rosetta 起動の両方で即時クラッシュなし
-
-## 1.3 系の更新
-
-### 1.3
-
-- アプリバージョンを `1.3` に更新
-
-### 1.3.1
-
-- Finder からファイルを開いたとき、フルスクリーン表示中の cooViewer が前面に出ない場合がある問題を修正
-
-### 1.3.2 - 1.3.3
-
-- Preferences ウィンドウのレイアウトを調整
-
-### 1.3.4
-
-- ソートに降順指定を追加
-
-### 1.3.5 - 1.3.6
-
-- フィルタパネルのレイアウトを修正
-- `IKFilterUIView` を復帰
-- フィルタ選択 UI の行ラベル位置を調整
-
-### 1.3.7
-
-- 複数ディスプレイ環境向けに、サブディスプレイ背景をメイン表示と同期するオプションを追加
-
-### 1.3.8
-
-- フルスクリーン中の Cmd+Tab / App Switcher 周りの問題を修正
-
-### 1.3.9
-
-- IINA の実装を参考に、サブディスプレイの黒カバー処理を見直し
-- `CGDisplayCapture` / `CGShieldingWindowLevel()` によるディスプレイ捕捉を廃止
-- サブディスプレイは通常の borderless `NSWindow` で黒く覆う方式に変更
-- Cmd+Tab の横取りと合成 `CGEvent` 再投入を削除し、App Switcher は macOS に処理させるよう変更
-- サブディスプレイ用カバーウィンドウの座標を対象スクリーン内座標に修正
-- cooViewer が非アクティブになるタイミングでサブディスプレイの黒カバーを消すよう修正
-- Finder からファイルを開いた際の前面化リトライ処理を調整
-- フィルター追加パネルがメインのフィルターパネルに重ならないよう、ボタンに近い空き位置へ自動配置するよう修正
-- カスタム書類アイコン（`coo_*.icns`）を廃止し、macOS の自動合成アイコンに移行
-  - ユーザーが「このアプリで開く → すべてを変更」で cooViewer を紐付けると、macOS が折れ角付き書類シェイプ＋アプリアイコン＋拡張子バッジを自動生成する
-  - 紐付けなしの場合は macOS 標準の扱いに委ねる
-- 最低動作環境を **macOS 10.14 Mojave 以降** に引き上げ
-  - `MACOSX_DEPLOYMENT_TARGET` を `10.8` → `10.14` に変更
-  - 現行 Xcode SDK が `libarclite` を同梱しなくなったことへの対応
-  - x86_64 + arm64 の Universal Binary ビルドが正常に通るようになった
-
-## ビルド時メモ
-
-- `MACOSX_DEPLOYMENT_TARGET` はプロジェクト設定で `10.14` に固定済み（コマンドラインで上書き不要）
-- `./script/build_and_run.sh` で既存プロセス停止、ビルド、起動まで行う
+- シャッフルアルゴリズムを Fisher-Yates 法に変更（偏りを解消）
+- シャッフル ON/OFF 切り替え時のクラッシュを修正
+- シャッフル OFF 時に直前のソートモードと表示位置を復元
+- シャッフル ON 中はソートメニューをグレーアウト
+- シャッフルはファイルを開くたびに OFF から開始（設定に保存しない）
+- フルスクリーン時にシャッフル切り替えで Dock・メニューバーが残る問題を修正
+- カーソルタイマー解放時のクラッシュを修正
+- 対応フォーマットを追加：HEIC/HEIF, WebP, AVIF, PSD, カメラ RAW（DNG, CR2/CR3, NEF, ARW, RAF, RW2, ORF, PEF など）
