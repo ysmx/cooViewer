@@ -22,6 +22,21 @@ static NSMenu *COFindSortMenu(NSMenu *menu)
 	return nil;
 }
 
+static NSString *COPathForHistoryLookup(NSString *path)
+{
+	if (path == nil) {
+		return nil;
+	}
+	return [path precomposedStringWithCanonicalMapping];
+}
+
+static BOOL COPathsEqualForHistoryLookup(NSString *a, NSString *b)
+{
+	NSString *normalizedA = COPathForHistoryLookup(a);
+	NSString *normalizedB = COPathForHistoryLookup(b);
+	return (normalizedA != nil && normalizedB != nil && [normalizedA isEqualToString:normalizedB]);
+}
+
 @interface Controller ()
 {
 	NSMutableArray *secondaryDisplayCoverWindows;
@@ -527,7 +542,7 @@ static const int DIALOG_CANCEL	= 129;
 			while (settingKey = [settingKeyEnu nextObject]) {
 				setting = [newBookSettings objectForKey:settingKey];
 				NSMutableDictionary *newSetting = [NSMutableDictionary dictionaryWithDictionary:setting];
-				[newSetting setObject:[self pathFromAliasData:[setting objectForKey:@"alias"]] forKey:@"temppath"];
+				[newSetting setObject:COPathForHistoryLookup([self pathFromAliasData:[setting objectForKey:@"alias"]]) forKey:@"temppath"];
 				[newBookSettings setObject:newSetting forKey:settingKey];
 			}
 			[defaults setObject:newBookSettings forKey:@"BookSettings"];
@@ -545,7 +560,7 @@ static const int DIALOG_CANCEL	= 129;
 				} else {
 					NSMutableDictionary *newInnerDic = [NSMutableDictionary dictionaryWithDictionary:object];
 					[newLastPages removeObjectAtIndex:index];
-					[newInnerDic setObject:[self pathFromAliasData:[object objectForKey:@"alias"]] forKey:@"temppath"];
+					[newInnerDic setObject:COPathForHistoryLookup([self pathFromAliasData:[object objectForKey:@"alias"]]) forKey:@"temppath"];
 					[newLastPages addObject:newInnerDic];
 				}
 			}
@@ -561,7 +576,7 @@ static const int DIALOG_CANCEL	= 129;
 				NSMutableDictionary *newInnerDic = [NSMutableDictionary dictionaryWithDictionary:object];
 				int index = (int)[[defaults arrayForKey:@"RecentItems"] indexOfObject:object];
 				[newRecentItems removeObjectAtIndex:index];
-				[newInnerDic setObject:[self pathFromAliasData:[object objectForKey:@"alias"]] forKey:@"temppath"];
+				[newInnerDic setObject:COPathForHistoryLookup([self pathFromAliasData:[object objectForKey:@"alias"]]) forKey:@"temppath"];
 				[newRecentItems insertObject:newInnerDic atIndex:index];
 			}
 			[defaults setObject:newRecentItems forKey:@"RecentItems"];
@@ -833,7 +848,7 @@ static const int DIALOG_CANCEL	= 129;
 			NSEnumerator *enu = [[defaults arrayForKey:@"LastPages"] objectEnumerator];
 			id object;
 			while (object = [enu nextObject]) {
-				if ([[self pathFromAliasData:[object objectForKey:@"alias"]] isEqualToString:currentBookPath]) {
+				if (COPathsEqualForHistoryLookup([self pathFromAliasData:[object objectForKey:@"alias"]], currentBookPath)) {
 					page = [[object objectForKey:@"page"] intValue];
 					[self goTo:page array:nil];
 					return;
@@ -1012,7 +1027,7 @@ static const int DIALOG_CANCEL	= 129;
 			[self searchFromBookSettings:oldBookPath key:&key];
 			
 			[currentBookSetting setObject:aliasData forKey:@"alias"];
-			[currentBookSetting setObject:oldBookPath forKey:@"temppath"];
+			[currentBookSetting setObject:COPathForHistoryLookup(oldBookPath) forKey:@"temppath"];
 			if ([bookmarkArray count]>0) {
 				[currentBookSetting setObject:bookmarkArray forKey:@"bookmarks"];
 			} else if ([bookmarkArray count]==0) {
@@ -1056,7 +1071,7 @@ static const int DIALOG_CANCEL	= 129;
 				while ([newRecentItems count] >= openRecentLimit) {
 					[newRecentItems removeLastObject];
 				}
-				[newRecentItems insertObject:[NSDictionary dictionaryWithObjectsAndKeys:aliasData,@"alias",pageNumber,@"page",oldBookPath,@"temppath",nil] atIndex:0];
+				[newRecentItems insertObject:[NSDictionary dictionaryWithObjectsAndKeys:aliasData,@"alias",pageNumber,@"page",COPathForHistoryLookup(oldBookPath),@"temppath",nil] atIndex:0];
 				[defaults setObject:newRecentItems forKey:@"RecentItems"];
 			} else {
 				[defaults removeObjectForKey:@"RecentItems"];
@@ -1073,7 +1088,7 @@ static const int DIALOG_CANCEL	= 129;
 				if (object) {
 					[lastPages removeObjectAtIndex:index];
 				}
-				[lastPages addObject:[NSDictionary dictionaryWithObjectsAndKeys:aliasData,@"alias",pageNumber,@"page",oldBookPath,@"temppath",nil]];
+				[lastPages addObject:[NSDictionary dictionaryWithObjectsAndKeys:aliasData,@"alias",pageNumber,@"page",COPathForHistoryLookup(oldBookPath),@"temppath",nil]];
 				[defaults setObject:lastPages forKey:@"LastPages"];
 			} else if (!alwaysRememberLastPage || nowPage == 0) {
 				NSMutableArray *lastPages;
@@ -1155,7 +1170,7 @@ static const int DIALOG_CANCEL	= 129;
 	}
 	/*add RecentItem*/
 	if (openRecentLimit>0) {
-		NSDictionary *newDic = [NSDictionary dictionaryWithObjectsAndKeys:aliasData,@"alias",currentBookPath,@"temppath",nil];
+		NSDictionary *newDic = [NSDictionary dictionaryWithObjectsAndKeys:aliasData,@"alias",COPathForHistoryLookup(currentBookPath),@"temppath",nil];
 		if (alwaysRememberLastPage) {
 			id object = [self searchFromLastPages:currentBookPath index:nil];
 			if (object) {
@@ -2317,7 +2332,7 @@ static const int DIALOG_CANCEL	= 129;
 				NSEnumerator *enu = [[defaults arrayForKey:@"RecentItems"] objectEnumerator];
 				id object;
 				while (object = [enu nextObject]) {
-					if ([[self pathFromAliasData:[object objectForKey:@"alias"]] isEqualToString:currentBookPath] && [object objectForKey:@"page"]) {
+					if (COPathsEqualForHistoryLookup([self pathFromAliasData:[object objectForKey:@"alias"]], currentBookPath) && [object objectForKey:@"page"]) {
 						return YES;
 					}
 				}
@@ -2326,7 +2341,7 @@ static const int DIALOG_CANCEL	= 129;
 				NSEnumerator *enu = [[defaults arrayForKey:@"LastPages"] objectEnumerator];
 				id object;
 				while (object = [enu nextObject]) {
-					if ([[self pathFromAliasData:[object objectForKey:@"alias"]] isEqualToString:currentBookPath] && [object objectForKey:@"page"]) {
+					if (COPathsEqualForHistoryLookup([self pathFromAliasData:[object objectForKey:@"alias"]], currentBookPath) && [object objectForKey:@"page"]) {
 						return YES;
 					}
 				}
@@ -2892,7 +2907,7 @@ static const int DIALOG_CANCEL	= 129;
 {	
 	NSData *alias = currentBookAlias;
 	[currentBookSetting setObject:alias forKey:@"alias"];
-	[currentBookSetting setObject:currentBookPath forKey:@"temppath"];
+	[currentBookSetting setObject:COPathForHistoryLookup(currentBookPath) forKey:@"temppath"];
 	[currentBookSetting removeObjectForKey:@"readMode"];
 	[currentBookSetting removeObjectForKey:@"sortMode"];
 	[currentBookSetting removeObjectForKey:@"sortDescending"];
@@ -3148,7 +3163,7 @@ static const int DIALOG_CANCEL	= 129;
 			}
 			
 			[currentBookSetting setObject:aliasData forKey:@"alias"];
-			[currentBookSetting setObject:currentBookPath forKey:@"temppath"];
+			[currentBookSetting setObject:COPathForHistoryLookup(currentBookPath) forKey:@"temppath"];
 			if ([bookmarkArray count]>0) {
 				[currentBookSetting setObject:bookmarkArray forKey:@"bookmarks"];
 			} else if ([bookmarkArray count]==0) {
@@ -3186,7 +3201,7 @@ static const int DIALOG_CANCEL	= 129;
 				NSEnumerator *enu = [array objectEnumerator];
 				id object;
 				while (object = [enu nextObject]) {
-					if ([[self pathFromAliasData:[object objectForKey:@"alias"]] isEqualToString:currentBookPath]) {
+					if (COPathsEqualForHistoryLookup([self pathFromAliasData:[object objectForKey:@"alias"]], currentBookPath)) {
 						[array removeObject:object];
 						break;
 					}
@@ -3194,7 +3209,7 @@ static const int DIALOG_CANCEL	= 129;
 				while ([array count] >= openRecentLimit) {
 					[array removeLastObject];
 				}
-				[array insertObject:[NSDictionary dictionaryWithObjectsAndKeys:aliasData,@"alias",pageNumber,@"page",currentBookPath,@"temppath",nil] atIndex:0];
+				[array insertObject:[NSDictionary dictionaryWithObjectsAndKeys:aliasData,@"alias",pageNumber,@"page",COPathForHistoryLookup(currentBookPath),@"temppath",nil] atIndex:0];
 				[defaults setObject:array forKey:@"RecentItems"];
 			} else {
 				[defaults removeObjectForKey:@"RecentItems"];
@@ -3209,12 +3224,12 @@ static const int DIALOG_CANCEL	= 129;
 				NSEnumerator *enu = [array objectEnumerator];
 				id object;
 				while (object = [enu nextObject]) {
-					if ([[self pathFromAliasData:[object objectForKey:@"alias"]] isEqualToString:currentBookPath]) {
+					if (COPathsEqualForHistoryLookup([self pathFromAliasData:[object objectForKey:@"alias"]], currentBookPath)) {
 						[array removeObject:object];
 						break;
 					}
 				}
-				[array addObject:[NSDictionary dictionaryWithObjectsAndKeys:aliasData,@"alias",pageNumber,@"page",currentBookPath,@"temppath",nil]];
+				[array addObject:[NSDictionary dictionaryWithObjectsAndKeys:aliasData,@"alias",pageNumber,@"page",COPathForHistoryLookup(currentBookPath),@"temppath",nil]];
 				[defaults setObject:array forKey:@"LastPages"];
 			} else if (!alwaysRememberLastPage || nowPage == 0) {
 				NSMutableArray *lastPages;
@@ -3630,8 +3645,8 @@ static const int DIALOG_CANCEL	= 129;
 		NSEnumerator *enu = [[defaults dictionaryForKey:@"BookSettings"] objectEnumerator];
 		id object;
 		while (object = [enu nextObject]) {
-			if ([[object objectForKey:@"temppath"] isEqualToString:path]) {
-				if ([[self pathFromAliasData:[object objectForKey:@"alias"]] isEqualToString:path]) {
+			if (COPathsEqualForHistoryLookup([object objectForKey:@"temppath"], path)) {
+				if (COPathsEqualForHistoryLookup([self pathFromAliasData:[object objectForKey:@"alias"]], path)) {
 					if (key) {
 						*key = [[[defaults dictionaryForKey:@"BookSettings"] allKeysForObject:object] objectAtIndex:0];
 						//*key = [NSString stringWithString:[[settings allKeysForObject:object] objectAtIndex:0]];
@@ -3645,9 +3660,9 @@ static const int DIALOG_CANCEL	= 129;
 		NSEnumerator *enuS = [newDic keyEnumerator];
 		id tempKey;
 		while (tempKey = [enuS nextObject]) {
-			if ([[self pathFromAliasData:[[newDic objectForKey:tempKey] objectForKey:@"alias"]] isEqualToString:path]) {
+			if (COPathsEqualForHistoryLookup([self pathFromAliasData:[[newDic objectForKey:tempKey] objectForKey:@"alias"]], path)) {
 				NSMutableDictionary *newInnerDic = [NSMutableDictionary dictionaryWithDictionary:[newDic objectForKey:tempKey]];
-				[newInnerDic setObject:path forKey:@"temppath"];
+				[newInnerDic setObject:COPathForHistoryLookup(path) forKey:@"temppath"];
 				[newDic setObject:newInnerDic forKey:tempKey];
 				
 				if (key) {
@@ -3668,8 +3683,8 @@ static const int DIALOG_CANCEL	= 129;
 		NSEnumerator *enu = [[defaults arrayForKey:@"RecentItems"] objectEnumerator];
 		id object;
 		while (object = [enu nextObject]) {
-			if ([[object objectForKey:@"temppath"] isEqualToString:path]) {
-				if ([[self pathFromAliasData:[object objectForKey:@"alias"]] isEqualToString:path]) {
+			if (COPathsEqualForHistoryLookup([object objectForKey:@"temppath"], path)) {
+				if (COPathsEqualForHistoryLookup([self pathFromAliasData:[object objectForKey:@"alias"]], path)) {
 					if (index) {
 						*index = (int)[[defaults arrayForKey:@"RecentItems"] indexOfObject:object];
 					}
@@ -3680,12 +3695,12 @@ static const int DIALOG_CANCEL	= 129;
 		
 		NSEnumerator *enuS = [[defaults arrayForKey:@"RecentItems"] objectEnumerator];
 		while (object = [enuS nextObject]) {
-			if ([[self pathFromAliasData:[object objectForKey:@"alias"]] isEqualToString:path]) {
+			if (COPathsEqualForHistoryLookup([self pathFromAliasData:[object objectForKey:@"alias"]], path)) {
 				NSMutableArray *newArray = [NSMutableArray arrayWithArray:[defaults arrayForKey:@"RecentItems"]];
 				NSMutableDictionary *newInnerDic = [NSMutableDictionary dictionaryWithDictionary:object];
 				int tempIndex = (int)[[defaults arrayForKey:@"RecentItems"] indexOfObject:object];
 				[newArray removeObjectAtIndex:tempIndex];
-				[newInnerDic setObject:path forKey:@"temppath"];
+				[newInnerDic setObject:COPathForHistoryLookup(path) forKey:@"temppath"];
 				[newArray insertObject:newInnerDic atIndex:tempIndex];
 				
 				if (index) {
@@ -3708,8 +3723,8 @@ static const int DIALOG_CANCEL	= 129;
 		NSEnumerator *enu = [[defaults arrayForKey:@"LastPages"] objectEnumerator];
 		id object;
 		while (object = [enu nextObject]) {
-			if ([[object objectForKey:@"temppath"] isEqualToString:path]) {
-				if ([[self pathFromAliasData:[object objectForKey:@"alias"]] isEqualToString:path]) {
+			if (COPathsEqualForHistoryLookup([object objectForKey:@"temppath"], path)) {
+				if (COPathsEqualForHistoryLookup([self pathFromAliasData:[object objectForKey:@"alias"]], path)) {
 					if (index) {
 						*index = (int)[[defaults arrayForKey:@"LastPages"] indexOfObject:object];
 					}
@@ -3720,12 +3735,12 @@ static const int DIALOG_CANCEL	= 129;
 		
 		NSEnumerator *enuS = [[defaults arrayForKey:@"LastPages"] objectEnumerator];
 		while (object = [enuS nextObject]) {
-			if ([[self pathFromAliasData:[object objectForKey:@"alias"]] isEqualToString:path]) {
+			if (COPathsEqualForHistoryLookup([self pathFromAliasData:[object objectForKey:@"alias"]], path)) {
 				NSMutableArray *newArray = [NSMutableArray arrayWithArray:[defaults arrayForKey:@"LastPages"]];
 				NSMutableDictionary *newInnerDic = [NSMutableDictionary dictionaryWithDictionary:object];
 				int tempIndex = (int)[[defaults arrayForKey:@"LastPages"] indexOfObject:object];
 				[newArray removeObjectAtIndex:tempIndex];
-				[newInnerDic setObject:path forKey:@"temppath"];
+				[newInnerDic setObject:COPathForHistoryLookup(path) forKey:@"temppath"];
 				[newArray insertObject:newInnerDic atIndex:tempIndex];
 				
 				if (index) {
@@ -3755,7 +3770,7 @@ static const int DIALOG_CANCEL	= 129;
 		
 		while (tempKey = [enuS nextObject]) {
 			temp = [self pathFromAliasData:[[newDic objectForKey:tempKey] objectForKey:@"alias"]];
-			if ([[temp lastPathComponent] isEqualToString:[path lastPathComponent]] && ![[NSFileManager defaultManager] fileExistsAtPath:temp]) {
+			if (COPathsEqualForHistoryLookup([temp lastPathComponent], [path lastPathComponent]) && ![[NSFileManager defaultManager] fileExistsAtPath:temp]) {
 				
 				int result = (int)NSRunAlertPanel(NSLocalizedString(@"Setting is not found",@""),
 											 NSLocalizedString(@"Setting of %@ is not found.\nDo you want to use a setting of %@ ?",@""),
@@ -3771,7 +3786,7 @@ static const int DIALOG_CANCEL	= 129;
 					if (lastPage) { 
 						NSMutableDictionary *newLastPage = [NSMutableDictionary dictionaryWithDictionary:lastPage];
 						NSMutableArray *newLastPagesArray = [NSMutableArray arrayWithArray:[defaults arrayForKey:@"LastPages"]];
-						[newLastPage setObject:path forKey:@"temppath"];
+						[newLastPage setObject:COPathForHistoryLookup(path) forKey:@"temppath"];
 						[newLastPage setObject:[self aliasDataFromPath:path] forKey:@"alias"];
 						[newLastPagesArray removeObjectAtIndex:lastPagesIndex];
 						[newLastPagesArray insertObject:newLastPage atIndex:lastPagesIndex];
@@ -3783,7 +3798,7 @@ static const int DIALOG_CANCEL	= 129;
 					if (recentItem) { 
 						NSMutableDictionary *newRecentItem = [NSMutableDictionary dictionaryWithDictionary:recentItem];
 						NSMutableArray *newRecentItemsArray = [NSMutableArray arrayWithArray:[defaults arrayForKey:@"RecentItems"]];
-						[newRecentItem setObject:path forKey:@"temppath"];
+						[newRecentItem setObject:COPathForHistoryLookup(path) forKey:@"temppath"];
 						[newRecentItem setObject:[self aliasDataFromPath:path] forKey:@"alias"];
 						[newRecentItemsArray removeObjectAtIndex:recentItemsIndex];
 						[newRecentItemsArray insertObject:newRecentItem atIndex:recentItemsIndex];
@@ -3791,7 +3806,7 @@ static const int DIALOG_CANCEL	= 129;
 					}					
 					/*BookSettingsの修正*/
 					NSMutableDictionary *newInnerDic = [NSMutableDictionary dictionaryWithDictionary:[newDic objectForKey:tempKey]];
-					[newInnerDic setObject:path forKey:@"temppath"];
+					[newInnerDic setObject:COPathForHistoryLookup(path) forKey:@"temppath"];
 					[newInnerDic setObject:[self aliasDataFromPath:path] forKey:@"alias"];
 					[newDic setObject:newInnerDic forKey:tempKey];
 					
