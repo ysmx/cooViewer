@@ -23,6 +23,118 @@ NSRect COIntRect(NSRect aRect)
 	tempRect.size.height = (int)(tempRect.size.height+0.5);
 	return tempRect;
 }
+
+static NSRect COPageBarLayoutRect(NSRect contentFrame, NSPoint margin, float widthValue, float heightValue, int position)
+{
+	float width = widthValue+1;
+	float height = heightValue+1;
+	NSRect rect;
+	switch (position) {
+		case 0:
+			rect = NSMakeRect(contentFrame.origin.x+margin.x+2,
+							  contentFrame.size.height-17-height-margin.y-3,
+							  width,height);
+			break;
+		case 1:
+			rect = NSMakeRect(contentFrame.origin.x+contentFrame.size.width-width-margin.x-3,
+							  contentFrame.origin.y-17-height+contentFrame.size.height-margin.y-3,
+							  width,height);
+			break;
+		case 2:
+			rect = NSMakeRect(contentFrame.origin.x+margin.x+2,
+							  contentFrame.origin.y+margin.y+2,
+							  width,height);
+			break;
+		case 3:
+			rect = NSMakeRect(contentFrame.origin.x+contentFrame.size.width-width-margin.x-3,
+							  contentFrame.origin.y+margin.y+2,
+							  width,height);
+			break;
+		default:
+			rect = NSMakeRect(0,0,width,height);
+			break;
+	}
+	return COIntRect(rect);
+}
+
+static NSSize COPageStringDrawingSize(NSAttributedString *string)
+{
+	if (!string) return NSZeroSize;
+	NSRect rect = [string boundingRectWithSize:NSMakeSize(100000.0, 100000.0)
+									   options:NSStringDrawingUsesLineFragmentOrigin | NSStringDrawingUsesFontLeading];
+	return NSMakeSize(ceil(rect.size.width), ceil(rect.size.height));
+}
+
+static NSSize COPageStringSizeWithBG(NSAttributedString *string)
+{
+	NSSize drawingSize = COPageStringDrawingSize(string);
+	return NSMakeSize(drawingSize.width+18,drawingSize.height+10);
+}
+
+static CGFloat COPageStringTextLeftOffset(void)
+{
+	return 9.0;
+}
+
+static BOOL COColorShouldDraw(NSColor *color)
+{
+	if (!color || [color isEqualTo:[NSColor clearColor]]) return NO;
+	return ([color alphaComponent] > 0.0);
+}
+
+static void CODrawPageStringAtPoint(NSAttributedString *string, NSPoint pt, NSColor *bg, NSColor *border)
+{
+	if (!string) return;
+
+	NSSize totalSize = COPageStringSizeWithBG(string);
+	NSRect backgroundRect = NSMakeRect(pt.x+1,pt.y+1,totalSize.width-2,totalSize.height-2);
+	NSRect stringRect = NSInsetRect(backgroundRect,COPageStringTextLeftOffset()-1.0,4);
+	BOOL drawBG = COColorShouldDraw(bg);
+	BOOL drawBorder = COColorShouldDraw(border);
+
+	if (drawBG || drawBorder) {
+		NSBezierPath *bezier = [NSBezierPath bezierPathWithRoundedRect:backgroundRect xRadius:6.0 yRadius:6.0];
+		if (drawBG) {
+			[bg set];
+			[bezier fill];
+		}
+		if (drawBorder) {
+			[border set];
+			[bezier stroke];
+		}
+	}
+	[string drawInRect:stringRect];
+}
+
+static NSRect COPageStringLayoutRect(NSRect contentFrame, NSAttributedString *string, NSPoint margin, int position, NSRect infoRect)
+{
+	NSSize pageStringSize = COPageStringSizeWithBG(string);
+	NSRect rect = NSMakeRect(0,0,pageStringSize.width,pageStringSize.height);
+	rect.size.width = rect.size.width + 1;
+	rect.size.height = rect.size.height + 1;
+	switch (position) {
+		case 0:
+			rect.origin.x = margin.x+2 +infoRect.size.width;
+			rect.origin.y = contentFrame.size.height-rect.size.height-margin.y;
+			break;
+		case 1:
+			rect.origin.x = contentFrame.size.width-rect.size.width-margin.x-2 -infoRect.size.width;
+			rect.origin.y = contentFrame.size.height-rect.size.height-margin.y;
+			break;
+		case 2:
+			rect.origin.x = margin.x+2 +infoRect.size.width;
+			rect.origin.y = 17+margin.y+2;
+			break;
+		case 3:
+			rect.origin.x = contentFrame.size.width-rect.size.width-margin.x-2 -infoRect.size.width;
+			rect.origin.y = 17+margin.y+2;
+			break;
+		default:
+			break;
+	}
+	return COIntRect(rect);
+}
+
 - (void)setPreferences
 {
 	if (!didFirst) {
@@ -215,19 +327,33 @@ NSRect COIntRect(NSRect aRect)
 {
     NSDisableScreenUpdates();
     NSPoint lensOldPoint;
-    if ([controller indicator] && ![imageView loupeIsVisible]) {
+    if ([imageView image] && ![imageView loupeIsVisible]) {
         lensOldPoint = [[self window] mouseLocationOutsideOfEventStream];
-        
-        if (autoHidedPageBar) {
+		NSRect updateRect = NSZeroRect;
+		BOOL shouldDisplayPageBar = NO;
+		BOOL shouldDisplayPageString = NO;
+		
+        if ([controller indicator] && autoHidedPageBar) {
             autoHidedPageBar = NO;
-            [self displayRect:[self pageBarRect]];
+			shouldDisplayPageBar = YES;
         }
     
         if (autoHidedPageString) {
             autoHidedPageString = NO;
-            [self displayRect:[self pageStringRect]];
-            [self setInfoString:[infoString string]];
+			shouldDisplayPageString = YES;
         }
+		
+		if (shouldDisplayPageBar) {
+			updateRect = [self pageBarRect];
+		}
+		if (shouldDisplayPageString) {
+			NSRect rect = [self pageStringRect];
+			updateRect = NSIsEmptyRect(updateRect) ? rect : NSUnionRect(updateRect,rect);
+			[self setInfoString:[infoString string]];
+		}
+		if (!NSIsEmptyRect(updateRect)) {
+			[self displayRect:updateRect];
+		}
         
         if (autoHidePageBar || autoHidePageString) {
             [accessoryTimer invalidate];
@@ -238,14 +364,16 @@ NSRect COIntRect(NSRect aRect)
                                                               repeats:NO];
         }
         
-        NSRect tempPageBarRect = NSInsetRect([self pageBarRect],2,2);
-        if (NSPointInRect(lensOldPoint, tempPageBarRect)) {
-            [self display];
-        } else {
-            if (!NSIsEmptyRect(pageBarStringRect)) {
-                [self display];
-            }
-        }
+		if ([controller indicator]) {
+			NSRect tempPageBarRect = NSInsetRect([self pageBarRect],2,2);
+			if (NSPointInRect(lensOldPoint, tempPageBarRect)) {
+				[self display];
+			} else {
+				if (!NSIsEmptyRect(pageBarStringRect)) {
+					[self display];
+				}
+			}
+		}
     }
     NSEnableScreenUpdates();
 }
@@ -547,6 +675,10 @@ NSRect COIntRect(NSRect aRect)
 	if ([controller indicator] && [imageView image]) {
 		if (!autoHidedPageBar) {
 			pageBarRect = [self pageBarRect];
+			[pageBarBezierPath release];
+			NSRect innerRect = NSInsetRect(pageBarRect,1,1);
+			pageBarBezierPath = [[NSBezierPath bezierPathWithRectWithDoubleArc:innerRect] retain];
+			[pageBarBezierPath closePath];
 			
 			float nowPar = [controller nowPar];
 			float now = pageBarRect.size.width*nowPar;
@@ -617,7 +749,7 @@ NSRect COIntRect(NSRect aRect)
 	if (pageString && [imageView image]) {
 		if (!autoHidedPageString) {			
 			pageStringRect = [self pageStringRect];
-			[pageString drawAtPoint:pageStringRect.origin bg:textBGColor border:textBorderColor];
+			CODrawPageStringAtPoint(pageString, pageStringRect.origin, textBGColor, textBorderColor);
 		} else {
 			pageStringRect = NSZeroRect;
 		}
@@ -731,21 +863,23 @@ NSRect COIntRect(NSRect aRect)
 	accessoryTimer = nil;
 	
 	NSRect updateRect = NSZeroRect;
+	NSRect oldPageBarRect = pageBarRect;
+	NSRect oldPageStringRect = pageStringRect;
 	if (autoHidePageBar) {
 		autoHidedPageBar = YES;
 		if (NSEqualRects(updateRect,NSZeroRect)) {
-			updateRect = [self pageBarRect];
+			updateRect = NSIsEmptyRect(oldPageBarRect) ? [self pageBarRect] : oldPageBarRect;
 		} else {
-			updateRect = NSUnionRect(updateRect,[self pageBarRect]);
+			updateRect = NSUnionRect(updateRect,NSIsEmptyRect(oldPageBarRect) ? [self pageBarRect] : oldPageBarRect);
 		}
 	}
 	if (autoHidePageString) {
 		autoHidedPageString = YES;
 		[self setInfoString:[infoString string]];
 		if (NSEqualRects(updateRect,NSZeroRect)) {
-			updateRect = [self pageStringRect];
+			updateRect = NSIsEmptyRect(oldPageStringRect) ? [self pageStringRect] : oldPageStringRect;
 		} else {
-			updateRect = NSUnionRect(updateRect,[self pageStringRect]);
+			updateRect = NSUnionRect(updateRect,NSIsEmptyRect(oldPageStringRect) ? [self pageStringRect] : oldPageStringRect);
 		}
 	}
 	
@@ -787,30 +921,7 @@ NSRect COIntRect(NSRect aRect)
 -(NSRect)pageStringRect
 {
 	NSRect contentFrame = [self frame];
-	NSRect rect = NSMakeRect(0,0,[pageString sizeWithBG].width,[pageString sizeWithBG].height);
-	rect.size.width = rect.size.width + 1;
-	rect.size.height = rect.size.height + 1;
-	switch (pageStringPosition) {
-		case 0:
-			rect.origin.x = pageMargin.x+2 +[self infoStringRect].size.width;
-			rect.origin.y = contentFrame.size.height-rect.size.height-pageMargin.y;
-			break;
-		case 1:
-			rect.origin.x = contentFrame.size.width-rect.size.width-pageMargin.x-2 -[self infoStringRect].size.width;
-			rect.origin.y = contentFrame.size.height-rect.size.height-pageMargin.y;
-			break;
-		case 2:
-			rect.origin.x = pageMargin.x+2 +[self infoStringRect].size.width;
-			rect.origin.y = 17+pageMargin.y+2;
-			break;
-		case 3:
-			rect.origin.x = contentFrame.size.width-rect.size.width-pageMargin.x-2 -[self infoStringRect].size.width;
-			rect.origin.y = 17+pageMargin.y+2;
-			break;
-		default:
-			break;
-	}
-	return COIntRect(rect);
+	return COPageStringLayoutRect(contentFrame,pageString,pageMargin,pageStringPosition,[self infoStringRect]);
 }
 
 #pragma mark pageBar
@@ -825,34 +936,14 @@ NSRect COIntRect(NSRect aRect)
 -(NSRect)pageBarRect
 {
 	if ([controller indicator]) {		
-		float width = pageBarWidth+1;
-		float height = pageBarHeight+1;
-		NSRect rect;
 		NSRect contentFrame = [self frame];
-		switch (pageBarPosition) {
-			case 0:
-				rect = NSMakeRect(contentFrame.origin.x+pageBarMargin.x+2,
-								  contentFrame.size.height-17-height-pageBarMargin.y-3,
-								  width,height);
-				break;
-			case 1:
-				rect = NSMakeRect(contentFrame.origin.x+contentFrame.size.width-width-pageBarMargin.x-3,
-								  contentFrame.origin.y-17-height+contentFrame.size.height-pageBarMargin.y-3,
-								  width,height);
-				break;
-			case 2:
-				rect = NSMakeRect(contentFrame.origin.x+pageBarMargin.x+2,
-								  contentFrame.origin.y+pageBarMargin.y+2,
-								  width,height);
-				break;
-			case 3:
-				rect = NSMakeRect(contentFrame.origin.x+contentFrame.size.width-width-pageBarMargin.x-3,
-								  contentFrame.origin.y+pageBarMargin.y+2,
-								  width,height);
-				break;
-			default:
-				rect = NSMakeRect(0,0,width,height);
-				break;
+		NSRect rect = COPageBarLayoutRect(contentFrame,pageBarMargin,pageBarWidth,pageBarHeight,pageBarPosition);
+		if (pageString && !autoHidedPageString) {
+			NSRect stringRect = COPageStringLayoutRect(contentFrame,pageString,pageMargin,pageStringPosition,[self infoStringRect]);
+			if (!NSIsEmptyRect(stringRect) && NSIntersectsRect(rect, stringRect)) {
+				rect.origin.x = stringRect.origin.x+COPageStringTextLeftOffset();
+				rect.origin.y = NSMinY(stringRect)-rect.size.height-2;
+			}
 		}
 		return COIntRect(rect);
 	}

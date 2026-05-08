@@ -47,6 +47,9 @@ static BOOL COPathsEqualForHistoryLookup(NSString *a, NSString *b)
 - (NSColor *)co_viewBackgroundColor;
 - (NSColor *)co_effectiveSecondaryDisplayColor;
 - (BOOL)co_shouldShowSecondaryDisplayCover;
+- (NSString *)co_displayContainerNameForPageIndex:(int)index;
+- (NSString *)co_displayContainerNameForFirstPageIndex:(int)firstIndex secondPageIndex:(int)secondIndex;
+- (void)co_waitForImageBufferCount:(NSUInteger)minimumCount sleepInterval:(NSTimeInterval)sleepInterval context:(NSString *)context;
 - (void)co_removeSecondaryDisplayCoverWindows;
 - (void)co_updateSecondaryDisplayCoverWindows;
 - (void)co_applicationDidChangeScreenParameters:(NSNotification *)notification;
@@ -105,6 +108,76 @@ static const int DIALOG_CANCEL	= 129;
 		return NO;
 	}
 	return ([[NSScreen screens] count] > 1);
+}
+
+- (NSString *)co_displayContainerNameForPageIndex:(int)index
+{
+	if (!imageLoader || index < 0 || index >= [completeMutableArray count]) {
+		return currentBookName;
+	}
+
+	NSString *path = [imageLoader itemPathAtIndex:index];
+	if (![path length]) {
+		return currentBookName;
+	}
+
+	BOOL isDir = NO;
+	[[NSFileManager defaultManager] fileExistsAtPath:path isDirectory:&isDir];
+	if (isDir) {
+		return [path lastPathComponent];
+	}
+
+	NSString *extension = [[path pathExtension] lowercaseString];
+	if ([[COImageLoader archiveTypes] containsObject:extension] ||
+		[[COImageLoader fileTypes] containsObject:extension]) {
+		return [path lastPathComponent];
+	}
+
+	NSString *parentPath = [path stringByDeletingLastPathComponent];
+	if ([parentPath length] && ![parentPath isEqualToString:path]) {
+		return [parentPath lastPathComponent];
+	}
+
+	return [path lastPathComponent];
+}
+
+- (NSString *)co_displayContainerNameForFirstPageIndex:(int)firstIndex secondPageIndex:(int)secondIndex
+{
+	NSString *firstName = [self co_displayContainerNameForPageIndex:firstIndex];
+	NSString *secondName = [self co_displayContainerNameForPageIndex:secondIndex];
+
+	if (![firstName length]) {
+		return secondName;
+	}
+	if (![secondName length] || [firstName isEqualToString:secondName]) {
+		return firstName;
+	}
+	return [NSString stringWithFormat:@"%@ | %@", firstName, secondName];
+}
+
+- (void)co_waitForImageBufferCount:(NSUInteger)minimumCount sleepInterval:(NSTimeInterval)sleepInterval context:(NSString *)context
+{
+	NSTimeInterval startTime = [NSDate timeIntervalSinceReferenceDate];
+	NSTimeInterval nextLogTime = 1.0;
+
+	while ([imageMutableArray count] < minimumCount) {
+		NSTimeInterval elapsed = [NSDate timeIntervalSinceReferenceDate] - startTime;
+		if (elapsed >= nextLogTime) {
+			NSLog(@"cooViewer image buffer wait: context=%@ required=%lu current=%lu elapsed=%.3f nowPage=%d total=%lu threadCount=%d threadStop=%d readMode=%d fitScreenMode=%d",
+				  context,
+				  (unsigned long)minimumCount,
+				  (unsigned long)[imageMutableArray count],
+				  elapsed,
+				  nowPage,
+				  (unsigned long)[completeMutableArray count],
+				  threadCount,
+				  threadStop,
+				  readMode,
+				  fitScreenMode);
+			nextLogTime += 5.0;
+		}
+		[NSThread sleepUntilDate:[NSDate dateWithTimeIntervalSinceNow:sleepInterval]];
+	}
 }
 
 - (void)co_removeSecondaryDisplayCoverWindows
@@ -919,9 +992,17 @@ static const int DIALOG_CANCEL	= 129;
 {
 	NSString *path = [sender representedObject];
 	if (path == nil) {
+		NSLog(@"cooViewer openFromSameDir missing representedObject: title=%@ last=%d",
+			  [sender title],
+			  isLast);
 		NSBeep();
 		return;
 	}
+	NSLog(@"cooViewer openFromSameDir begin: from=%@ to=%@ title=%@ last=%d",
+		  currentBookPath,
+		  path,
+		  [sender title],
+		  isLast);
 	[self setCurrentBookPathAndOldBookPath:path];
 	
 	[self openPage:0 last:isLast];
@@ -940,6 +1021,7 @@ static const int DIALOG_CANCEL	= 129;
 #pragma mark openning
 - (void)openPage:(int)page last:(BOOL)last;
 {	
+	NSTimeInterval openPageStartTime = [NSDate timeIntervalSinceReferenceDate];
 	[window makeKeyAndOrderFront:self];
 	
 	[progressIndicator startAnimation:self];
@@ -977,10 +1059,28 @@ static const int DIALOG_CANCEL	= 129;
 		}
 	}
 	
+	NSLog(@"cooViewer openPage begin: path=%@ page=%d last=%d readSubFolder=%d",
+		  currentBookPath,
+		  page,
+		  last,
+		  readSubFolder);
 	COImageLoader *newImageLoader = [[COImageLoader alloc] initWithPath:currentBookPath readSubFolder:readSubFolder controller:self];
+	NSTimeInterval openPageElapsed = [NSDate timeIntervalSinceReferenceDate] - openPageStartTime;
+	if (openPageElapsed >= 1.0) {
+		NSLog(@"cooViewer openPage slow loader: path=%@ elapsed=%.3f mode=%d count=%d",
+			  currentBookPath,
+			  openPageElapsed,
+			  newImageLoader ? [newImageLoader mode] : -1,
+			  newImageLoader ? [newImageLoader itemCount] : 0);
+	}
 
 	//NSLog(@"controller mode=%i count=%i",[newImageLoader mode],[newImageLoader itemCount]);
 	if (!newImageLoader || ![newImageLoader checkPassword] || [newImageLoader mode] < 0 || [newImageLoader itemCount] < 1) {
+		NSLog(@"cooViewer openPage failed loader: path=%@ mode=%d count=%d hasImage=%d",
+			  currentBookPath,
+			  newImageLoader ? [newImageLoader mode] : -1,
+			  newImageLoader ? [newImageLoader itemCount] : 0,
+			  [imageView image] ? 1 : 0);
 		/*表示出来ない時は元に戻す*/
 		[newImageLoader release];
 		if ([imageView image]) {
@@ -1464,7 +1564,19 @@ static const int DIALOG_CANCEL	= 129;
 		}
 	}
 	
-	NSImage *image = [imageLoader itemAtIndex:index];	
+	if (index < 0 || index >= [completeMutableArray count]) {
+		NSLog(@"cooViewer loadImage out of range: index=%d total=%lu nowPage=%d",
+			  index,
+			  (unsigned long)[completeMutableArray count],
+			  nowPage);
+	}
+	NSImage *image = [imageLoader itemAtIndex:index];
+	if (image == nil) {
+		NSLog(@"cooViewer loadImage returned nil: index=%d total=%lu path=%@",
+			  index,
+			  (unsigned long)[completeMutableArray count],
+			  (index >= 0 && index < [completeMutableArray count]) ? [completeMutableArray objectAtIndex:index] : nil);
+	}
     int heightValue = 0,widthValue = 0,repi = 0;
     /*
 	NSImageRep*	rep;
@@ -1508,7 +1620,15 @@ static const int DIALOG_CANCEL	= 129;
 				[pool release];
 				return;
 			}
-			[imageMutableArray addObject:[self loadImage:i]];
+			NSImage *image = [self loadImage:i];
+			if (image == nil) {
+				NSLog(@"cooViewer lookahead nil image before buffering: index=%d nowPage=%d current=%lu total=%lu",
+					  i,
+					  nowPage,
+					  (unsigned long)[imageMutableArray count],
+					  (unsigned long)[completeMutableArray count]);
+			}
+			[imageMutableArray addObject:image];
 			i = nowPage;
 			i += [imageMutableArray count];
 			if (i == [completeMutableArray count]) {
@@ -1544,7 +1664,15 @@ static const int DIALOG_CANCEL	= 129;
 				 [pool release];
 				 return;
 			 }
-			 [imageMutableArray addObject:[self loadImage:i]];
+			 NSImage *image = [self loadImage:i];
+			 if (image == nil) {
+				 NSLog(@"cooViewer lookaheadAndCompose nil image before buffering: index=%d nowPage=%d current=%lu total=%lu",
+					   i,
+					   nowPage,
+					   (unsigned long)[imageMutableArray count],
+					   (unsigned long)[completeMutableArray count]);
+			 }
+			 [imageMutableArray addObject:image];
 			 i = nowPage;
 			 i += [imageMutableArray count];
 			 if (i == [completeMutableArray count]) {
@@ -1942,7 +2070,7 @@ static const int DIALOG_CANCEL	= 129;
 				}
 			}
 		} else if (nowPage < [completeMutableArray count]) {
-			while ([imageMutableArray count] == 0) [NSThread sleepUntilDate:[NSDate dateWithTimeIntervalSinceNow:0.0001]];
+			[self co_waitForImageBufferCount:1 sleepInterval:0.0001 context:@"lockedImageDisplay single"];
 			//[self isSmallImage:[imageMutableArray objectAtIndex:0] page:nowPage+1];
 			[imageView setImage:nil];
 			[firstImage release];
@@ -1966,11 +2094,11 @@ static const int DIALOG_CANCEL	= 129;
 			firstImage = nil;
 			[secondImage release];
 			secondImage = nil;
-			while ([imageMutableArray count] == 0) [NSThread sleepUntilDate:[NSDate dateWithTimeIntervalSinceNow:0.0001]];
+			[self co_waitForImageBufferCount:1 sleepInterval:0.0001 context:@"lockedImageDisplay spread first"];
 			
 			if ([self isSmallImage:[imageMutableArray objectAtIndex:0] page:nowPage+1] == YES) {
 				if (nowPage+1 != [completeMutableArray count] && threadCount > 0) {
-					while ([imageMutableArray count] == 1) [NSThread sleepUntilDate:[NSDate dateWithTimeIntervalSinceNow:0.001]];
+					[self co_waitForImageBufferCount:2 sleepInterval:0.001 context:@"lockedImageDisplay spread second"];
 				}
 				if ([imageMutableArray count] > 1) {
 					if ([self isSmallImage:[imageMutableArray objectAtIndex:1] page:nowPage+2] == YES) {
@@ -2223,16 +2351,8 @@ static const int DIALOG_CANCEL	= 129;
 			[imageView setPageString:nil];
 			numberSwitch = NO;
 		} else {
-			if (!secondImage) {
-				int i = nowPage - 1;
-				[imageView setPageString:[NSString stringWithFormat:@"#%d/%d (%@)",nowPage,(int)[completeMutableArray count],[[completeMutableArray objectAtIndex:i] lastPathComponent]]];
-				numberSwitch = YES;
-			} else if (secondImage) {
-				int i = nowPage - 1;
-				int iS = i - 1;
-				[imageView setPageString:[NSString stringWithFormat:@"#%d-%d/%d (%@ / %@)",i,nowPage,(int)[completeMutableArray count],[[completeMutableArray objectAtIndex:iS] lastPathComponent],[[completeMutableArray objectAtIndex:i] lastPathComponent]]];
-				numberSwitch = YES;
-			}
+			numberSwitch = YES;
+			[self setPageTextField];
 		}
 	}
 	
@@ -2792,14 +2912,30 @@ static const int DIALOG_CANCEL	= 129;
 	if (numberSwitch && nowPage >= 0) {
 		if (!secondImage) {
 			int i = nowPage - 1;
-			return [NSString stringWithFormat:@"#%d/%d (%@)",nowPage,(int)[completeMutableArray count],[[completeMutableArray objectAtIndex:i] lastPathComponent]];
+			return [NSString stringWithFormat:@"%@\n#%d/%d (%@)",
+					[self co_displayContainerNameForPageIndex:i],
+					nowPage,
+					(int)[completeMutableArray count],
+					[[completeMutableArray objectAtIndex:i] lastPathComponent]];
 		} else if (secondImage) {
 			int i = nowPage - 1;
 			int iS = i - 1;
 			if (readMode == 1 || readMode == 3) {
-				return [NSString stringWithFormat:@"#%d-%d/%d (%@ | %@)",i,nowPage,(int)[completeMutableArray count],[[completeMutableArray objectAtIndex:iS] lastPathComponent],[[completeMutableArray objectAtIndex:i] lastPathComponent]];
+				return [NSString stringWithFormat:@"%@\n#%d-%d/%d (%@ | %@)",
+						[self co_displayContainerNameForFirstPageIndex:iS secondPageIndex:i],
+						i,
+						nowPage,
+						(int)[completeMutableArray count],
+						[[completeMutableArray objectAtIndex:iS] lastPathComponent],
+						[[completeMutableArray objectAtIndex:i] lastPathComponent]];
 			} else {
-				return [NSString stringWithFormat:@"#%d-%d/%d (%@ | %@)",i,nowPage,(int)[completeMutableArray count],[[completeMutableArray objectAtIndex:i] lastPathComponent],[[completeMutableArray objectAtIndex:iS] lastPathComponent]];
+				return [NSString stringWithFormat:@"%@\n#%d-%d/%d (%@ | %@)",
+						[self co_displayContainerNameForFirstPageIndex:i secondPageIndex:iS],
+						i,
+						nowPage,
+						(int)[completeMutableArray count],
+						[[completeMutableArray objectAtIndex:i] lastPathComponent],
+						[[completeMutableArray objectAtIndex:iS] lastPathComponent]];
 			}
 		}
 	}

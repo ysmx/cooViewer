@@ -82,6 +82,10 @@ static NSArray *_COImageLoader_archiveTypes=nil;
 		[self content];
 	}
 	if ([self itemCount]==0) {
+		NSLog(@"cooViewer loader content empty placeholder: path=%@ mode=%d readSubFolder=%d",
+			  filePath,
+			  mode,
+			  readSubFolder);
 		[contentPathArray addObject:[[NSBundle mainBundle] pathForResource:@"empty" ofType:@"png"]];
 	}
     return self;	
@@ -369,10 +373,19 @@ static NSArray *_COImageLoader_archiveTypes=nil;
 @implementation COImageLoader(private)
 - (void)content
 {
-	if (![[NSFileManager defaultManager] fileExistsAtPath:filePath]) return;
+	NSTimeInterval contentStartTime = [NSDate timeIntervalSinceReferenceDate];
+	NSLog(@"cooViewer loader content begin: path=%@ ext=%@ readSubFolder=%d",
+		  filePath,
+		  [[filePath pathExtension] lowercaseString],
+		  readSubFolder);
+	if (![[NSFileManager defaultManager] fileExistsAtPath:filePath]) {
+		NSLog(@"cooViewer loader content missing path: path=%@", filePath);
+		return;
+	}
 	
 	NSMutableArray *pathArray = [NSMutableArray array];
 	if ([[filePath pathExtension] compare:@"pdf" options:NSCaseInsensitiveSearch] == NSOrderedSame) {
+		NSLog(@"cooViewer loader content branch: pdf path=%@", filePath);
 		mode=4;
 		pdfRep = [(COPDFImageRep *)[COPDFImageRep imageRepWithContentsOfFile:filePath] retain];
 		int pages = (int)[pdfRep pageCount];
@@ -381,15 +394,32 @@ static NSArray *_COImageLoader_archiveTypes=nil;
 		for (i=0;pages>i;i++) {
 			[contentPathArray addObject:[NSString stringWithFormat:@"%@/%i.pdf",filePath,i+1]];
 		}
+		NSTimeInterval elapsed = [NSDate timeIntervalSinceReferenceDate] - contentStartTime;
+		if (elapsed >= 1.0) {
+			NSLog(@"cooViewer loader content slow: branch=pdf path=%@ elapsed=%.3f count=%lu",
+				  filePath,
+				  elapsed,
+				  (unsigned long)[contentPathArray count]);
+		}
 		return;
 		
 	} else if([[COImageLoader archiveTypes] containsObject:[[filePath pathExtension] lowercaseString]]) {
+		NSLog(@"cooViewer loader content branch: archive path=%@", filePath);
 		mode=2;
         archiveContainer=[[XADWrapper alloc] initWithPath:filePath];
 		[self checkArchiveContainer:0];
+		NSTimeInterval elapsed = [NSDate timeIntervalSinceReferenceDate] - contentStartTime;
+		if (elapsed >= 1.0) {
+			NSLog(@"cooViewer loader content slow: branch=archive path=%@ elapsed=%.3f count=%lu raw=%lu",
+				  filePath,
+				  elapsed,
+				  (unsigned long)[contentPathArray count],
+				  (unsigned long)[rawContentPathArray count]);
+		}
 		return;
 		
 	} else if([[filePath pathExtension] compare:@"savedSearch" options:NSCaseInsensitiveSearch] == NSOrderedSame){
+		NSLog(@"cooViewer loader content branch: savedSearch path=%@", filePath);
 		mode=-1;
 #if MAC_OS_X_VERSION_MAX_ALLOWED >= 1040
 		if([NSObject respondsToSelector:@selector(finalize)]){
@@ -446,6 +476,7 @@ static NSArray *_COImageLoader_archiveTypes=nil;
 		BOOL isDir;
 		[[NSFileManager defaultManager] fileExistsAtPath:filePath isDirectory:&isDir];
 		if (isDir) {
+			NSLog(@"cooViewer loader content branch: directory path=%@ readSubFolder=%d", filePath, readSubFolder);
 			NSArray *completeArray;
 			if (readSubFolder) {
 				completeArray = [NSArray arrayWithArray:[[NSFileManager defaultManager] subpathsAtPath:filePath]];
@@ -468,10 +499,20 @@ static NSArray *_COImageLoader_archiveTypes=nil;
 			}
 			[contentPathArray addObjectsFromArray:pathArray];
 		} else {
+			NSLog(@"cooViewer loader content branch: unsupported path=%@", filePath);
 			mode=-1;
 		}
 	}
 	[contentPathArray sortUsingSelector:@selector(finderCompareS:)];
+	NSTimeInterval elapsed = [NSDate timeIntervalSinceReferenceDate] - contentStartTime;
+	if (elapsed >= 1.0) {
+		NSLog(@"cooViewer loader content slow: path=%@ mode=%d elapsed=%.3f count=%lu raw=%lu",
+			  filePath,
+			  mode,
+			  elapsed,
+			  (unsigned long)[contentPathArray count],
+			  (unsigned long)[rawContentPathArray count]);
+	}
 }
 
 - (BOOL)checkArchiveContainer:(int)index

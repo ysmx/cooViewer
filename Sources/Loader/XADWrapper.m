@@ -15,6 +15,8 @@
 -(id)initWithPath:(NSString*)path{
     self = [super init];
     if (self) {
+        NSTimeInterval archiveStartTime = [NSDate timeIntervalSinceReferenceDate];
+        NSLog(@"cooViewer XADWrapper open begin: path=%@", path);
         archive = [[XADArchive alloc] initWithFile:path];
         contentArray = [[NSMutableArray array] retain];
         contentIndexArray = [[NSMutableArray array] retain];
@@ -31,12 +33,22 @@
                 //NSLog(@"isdir %@",[archive nameOfEntry:i]);
             }
         }
+        NSTimeInterval elapsed = [NSDate timeIntervalSinceReferenceDate] - archiveStartTime;
+        if (elapsed >= 1.0) {
+            NSLog(@"cooViewer XADWrapper open slow: path=%@ elapsed=%.3f entries=%d contents=%lu",
+                  path,
+                  elapsed,
+                  [archive numberOfEntries],
+                  (unsigned long)[contentArray count]);
+        }
     }
     return self;
 }
 -(id)initWithPath:(NSString*)path nameEncoding:(NSStringEncoding)enc{
     self = [super init];
     if (self) {
+		NSTimeInterval archiveStartTime = [NSDate timeIntervalSinceReferenceDate];
+		NSLog(@"cooViewer XADWrapper open begin: path=%@ encoding=%lu", path, (unsigned long)enc);
 		archive = [[XADArchive alloc] initWithFile:path];
 		contentArray = [[NSMutableArray array] retain];
 		contentIndexArray = [[NSMutableArray array] retain];
@@ -56,6 +68,15 @@
 			} else {
 				//NSLog(@"isdir %@",[archive nameOfEntry:i]);
 			}
+		}
+		NSTimeInterval elapsed = [NSDate timeIntervalSinceReferenceDate] - archiveStartTime;
+		if (elapsed >= 1.0) {
+			NSLog(@"cooViewer XADWrapper open slow: path=%@ encoding=%lu elapsed=%.3f entries=%d contents=%lu",
+				  path,
+				  (unsigned long)enc,
+				  elapsed,
+				  [archive numberOfEntries],
+				  (unsigned long)[contentArray count]);
 		}
 	}
     return self;

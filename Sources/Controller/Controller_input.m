@@ -347,16 +347,8 @@ static BOOL appleRemoteHoldDown = NO;
 						numberSwitch = NO;
 						[defaults setBool:numberSwitch forKey:@"ShowNumber"];
 					} else {
-						if (!secondImage) {
-							int i = nowPage - 1;
-							[imageView setPageString:[NSString stringWithFormat:@"#%d/%d (%@)",nowPage,(int)[completeMutableArray count],[[completeMutableArray objectAtIndex:i] lastPathComponent]]];
-							numberSwitch = YES;
-						} else if (secondImage) {
-							int i = nowPage - 1;
-							int iS = i - 1;
-							[imageView setPageString:[NSString stringWithFormat:@"#%d-%d/%d (%@ / %@)",i,nowPage,(int)[completeMutableArray count],[[completeMutableArray objectAtIndex:iS] lastPathComponent],[[completeMutableArray objectAtIndex:i] lastPathComponent]]];
-							numberSwitch = YES;
-						}
+						numberSwitch = YES;
+						[self setPageTextField];
 						[defaults setBool:numberSwitch forKey:@"ShowNumber"];
 					}
 					//[imageView setNeedsDisplay];					
@@ -1320,16 +1312,8 @@ static BOOL appleRemoteHoldDown = NO;
 						numberSwitch = NO;
 						[defaults setBool:numberSwitch forKey:@"ShowNumber"];
 					} else {
-						if (!secondImage) {
-							int i = nowPage - 1;
-							[imageView setPageString:[NSString stringWithFormat:@"#%d/%d (%@)",nowPage,(int)[completeMutableArray count],[[completeMutableArray objectAtIndex:i] lastPathComponent]]];
-							numberSwitch = YES;
-						} else if (secondImage) {
-							int i = nowPage - 1;
-							int iS = i - 1;
-							[imageView setPageString:[NSString stringWithFormat:@"#%d-%d/%d (%@ / %@)",i,nowPage,(int)[completeMutableArray count],[[completeMutableArray objectAtIndex:iS] lastPathComponent],[[completeMutableArray objectAtIndex:i] lastPathComponent]]];
-							numberSwitch = YES;
-						}
+						numberSwitch = YES;
+						[self setPageTextField];
 						[defaults setBool:numberSwitch forKey:@"ShowNumber"];
 					}
 					//[imageView setNeedsDisplay];		
