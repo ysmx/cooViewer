@@ -33,7 +33,7 @@
 {
     [[NSColor whiteColor] set];
     NSRectFill(dstSpacePortionRect);
-    return [super drawInRect:dstSpacePortionRect fromRect:srcSpacePortionRect operation:NSCompositeSourceOver fraction:requestedAlpha respectFlipped:respectContextIsFlipped hints:hints];
+    return [super drawInRect:dstSpacePortionRect fromRect:srcSpacePortionRect operation:NSCompositingOperationSourceOver fraction:requestedAlpha respectFlipped:respectContextIsFlipped hints:hints];
 }
 
 -(NSInteger)pixelsWide {return [self size].width;}

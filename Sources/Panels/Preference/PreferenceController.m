@@ -625,14 +625,14 @@ static const int DIALOG_CANCEL	= 129;
 	defaults = [NSUserDefaults standardUserDefaults];
 	[keyPanelTextView setTarget:self];
     [keyPanelTextView setAction:@selector(keyConfigAction:)];
-	[keyPanelTextView setAlignment:NSCenterTextAlignment];
+	[keyPanelTextView setAlignment:NSTextAlignmentCenter];
 	[sortModePopUpButton setTarget:self];
 	[sortModePopUpButton setAction:@selector(sortModeChanged:)];
 	
 	NSRect sortFrame = [sortModePopUpButton frame];
 	NSButton *button = [[[NSButton alloc] initWithFrame:NSMakeRect(sortFrame.origin.x, sortFrame.origin.y, 80, sortFrame.size.height)] autorelease];
-	[button setButtonType:NSSwitchButton];
-	[button setControlSize:NSSmallControlSize];
+	[button setButtonType:NSButtonTypeSwitch];
+	[button setControlSize:NSControlSizeSmall];
 	[button setTitle:NSLocalizedString(@"Descending", @"")];
 	[button sizeToFit];
 	NSRect buttonFrame = [button frame];
@@ -885,7 +885,7 @@ static const int DIALOG_CANCEL	= 129;
 	checkFrame = NSMakeRect(205.0, NSMinY(referenceFrame) + 1.0, 220.0, 18.0);
 
 	secondaryDisplayBackgroundSyncCheck = [[NSButton alloc] initWithFrame:checkFrame];
-	[secondaryDisplayBackgroundSyncCheck setButtonType:NSSwitchButton];
+	[secondaryDisplayBackgroundSyncCheck setButtonType:NSButtonTypeSwitch];
 	[secondaryDisplayBackgroundSyncCheck setTitle:NSLocalizedString(@"Sync background with external display", @"Preference checkbox")];
 	[secondaryDisplayBackgroundSyncCheck sizeToFit];
 
@@ -1467,40 +1467,40 @@ static const int DIALOG_CANCEL	= 129;
 	
 	
 	if ([defaults boolForKey:@"ShowNumber"]) {
-		[showPageNumCheck setState:NSOnState];
+		[showPageNumCheck setState:NSControlStateValueOn];
 	} else {
-		[showPageNumCheck setState:NSOffState];
+		[showPageNumCheck setState:NSControlStateValueOff];
 	}
 	if ([defaults boolForKey:@"ShowPageBar"]) {
-		[showPageBarCheck setState:NSOnState];
+		[showPageBarCheck setState:NSControlStateValueOn];
 	} else {
-		[showPageBarCheck setState:NSOffState];
+		[showPageBarCheck setState:NSControlStateValueOff];
 	}
 	
 	if ([defaults boolForKey:@"PageNumAutoHide"]) {
-		[pageNumAutoHideCheck setState:NSOnState];
+		[pageNumAutoHideCheck setState:NSControlStateValueOn];
 	} else {
-		[pageNumAutoHideCheck setState:NSOffState];
+		[pageNumAutoHideCheck setState:NSControlStateValueOff];
 	}
 	if ([defaults boolForKey:@"PageBarAutoHide"]) {
-		[pageBarAutoHideCheck setState:NSOnState];
+		[pageBarAutoHideCheck setState:NSControlStateValueOn];
 	} else {
-		[pageBarAutoHideCheck setState:NSOffState];
+		[pageBarAutoHideCheck setState:NSControlStateValueOff];
 	}
 	if ([defaults boolForKey:@"PageBarShowThumbnail"]) {
-		[pageBarShowThumbCheck setState:NSOnState];
+		[pageBarShowThumbCheck setState:NSControlStateValueOn];
 	} else {
-		[pageBarShowThumbCheck setState:NSOffState];
+		[pageBarShowThumbCheck setState:NSControlStateValueOff];
 	}
 	if ([defaults boolForKey:@"ChangeOpenWith"]) {
-		[changeOpenWithCheck setState:NSOnState];
+		[changeOpenWithCheck setState:NSControlStateValueOn];
 	} else {
-		[changeOpenWithCheck setState:NSOffState];
+		[changeOpenWithCheck setState:NSControlStateValueOff];
 	}
 	if ([defaults boolForKey:@"ChangeCreator"]) {
-		[changeCreatorCheck setState:NSOnState];
+		[changeCreatorCheck setState:NSControlStateValueOn];
 	} else {
-		[changeCreatorCheck setState:NSOffState];
+		[changeCreatorCheck setState:NSControlStateValueOff];
 	}
 	
 	switch ([defaults integerForKey:@"SortMode"]) {
@@ -1520,25 +1520,25 @@ static const int DIALOG_CANCEL	= 129;
 			[sortModePopUpButton selectItemAtIndex:0];
 			break;
 	}
-	[sortDescendingButton setState:[defaults boolForKey:@"SortDescending"] ? NSOnState : NSOffState];
+	[sortDescendingButton setState:[defaults boolForKey:@"SortDescending"] ? NSControlStateValueOn : NSControlStateValueOff];
 	[self co_updateSortDescendingControl];
 	
 	if ([defaults boolForKey:@"DontHideMenuBar"]) {
-		[dontHideMenubarCheck setState:NSOnState];
+		[dontHideMenubarCheck setState:NSControlStateValueOn];
 	} else {
-		[dontHideMenubarCheck setState:NSOffState];
+		[dontHideMenubarCheck setState:NSControlStateValueOff];
 	}
 	if ([defaults boolForKey:@"ShowThumbnailWhenOpen"]) {
-		[showThumbnailCheck setState:NSOnState];
+		[showThumbnailCheck setState:NSControlStateValueOn];
 	} else {
-		[showThumbnailCheck setState:NSOffState];
+		[showThumbnailCheck setState:NSControlStateValueOff];
 	}
 	
 	/*history*/
 	if ([defaults boolForKey:@"AlwaysRememberLastPage"]) {
-		[alwaysRememberLastCheck setState:NSOnState];
+		[alwaysRememberLastCheck setState:NSControlStateValueOn];
 	} else {
-		[alwaysRememberLastCheck setState:NSOffState];
+		[alwaysRememberLastCheck setState:NSControlStateValueOff];
 	}
 	
 	[goToLastPopUpButton selectItemAtIndex:[defaults integerForKey:@"GoToLastPage"]];
@@ -1605,9 +1605,9 @@ static const int DIALOG_CANCEL	= 129;
 	}
 	[viewBackGroundColor setCurrentColor:viewBackGround];
 	if ([defaults objectForKey:@"SyncSecondaryDisplayBackground"] != nil) {
-		[secondaryDisplayBackgroundSyncCheck setState:[defaults boolForKey:@"SyncSecondaryDisplayBackground"] ? NSOnState : NSOffState];
+		[secondaryDisplayBackgroundSyncCheck setState:[defaults boolForKey:@"SyncSecondaryDisplayBackground"] ? NSControlStateValueOn : NSControlStateValueOff];
 	} else {
-		[secondaryDisplayBackgroundSyncCheck setState:([defaults integerForKey:@"SecondaryDisplayMode"] != 0) ? NSOnState : NSOffState];
+		[secondaryDisplayBackgroundSyncCheck setState:([defaults integerForKey:@"SecondaryDisplayMode"] != 0) ? NSControlStateValueOn : NSControlStateValueOff];
 	}
 	/*cache*/
 	int imageCache = (int)[defaults integerForKey:@"ImageCache"];
@@ -1673,9 +1673,9 @@ static const int DIALOG_CANCEL	= 129;
 	}
 	
 	if (fitOriginal) {
-		[fitOriginalCheck setState:NSOnState];
+		[fitOriginalCheck setState:NSControlStateValueOn];
 	} else {
-		[fitOriginalCheck setState:NSOffState];
+		[fitOriginalCheck setState:NSControlStateValueOff];
 	}
 	
 	
@@ -1690,25 +1690,25 @@ static const int DIALOG_CANCEL	= 129;
 
 	
 	if (rememberBookSettings) {
-		[rememberBookSettingsCheck setState:NSOnState];
+		[rememberBookSettingsCheck setState:NSControlStateValueOn];
 	} else {
-		[rememberBookSettingsCheck setState:NSOffState];
+		[rememberBookSettingsCheck setState:NSControlStateValueOff];
 	}
 	
 	
 	
 	
 	if (openLastFolder == YES) {
-		[openLastFolderCheck setState:NSOnState];
+		[openLastFolderCheck setState:NSControlStateValueOn];
 	} else {
-		[openLastFolderCheck setState:NSOffState];
+		[openLastFolderCheck setState:NSControlStateValueOff];
 	}
     
     
     if (useCalayer == YES) {
-        [useCalayerCheck setState:NSOnState];
+        [useCalayerCheck setState:NSControlStateValueOn];
     } else {
-        [useCalayerCheck setState:NSOffState];
+        [useCalayerCheck setState:NSControlStateValueOff];
     }
 	
 	
@@ -1722,9 +1722,9 @@ static const int DIALOG_CANCEL	= 129;
 	
 	
 	if (readSubFolder == YES) {
-		[readSubFolderCheck setState:NSOnState];
+		[readSubFolderCheck setState:NSControlStateValueOn];
 	} else {
-		[readSubFolderCheck setState:NSOffState];
+		[readSubFolderCheck setState:NSControlStateValueOff];
 	}
 	
 	
@@ -1745,24 +1745,24 @@ static const int DIALOG_CANCEL	= 129;
 	
 	switch ([defaults integerForKey:@"ReadMode"]) {
 		case 0:
-			[readRightButton setState:NSOffState];
-			[readLeftButton setState:NSOnState];
-			[readSingleCheckButton setState:NSOffState];
+			[readRightButton setState:NSControlStateValueOff];
+			[readLeftButton setState:NSControlStateValueOn];
+			[readSingleCheckButton setState:NSControlStateValueOff];
 			break;
 		case 1:
-			[readRightButton setState:NSOnState];
-			[readLeftButton setState:NSOffState];
-			[readSingleCheckButton setState:NSOffState];
+			[readRightButton setState:NSControlStateValueOn];
+			[readLeftButton setState:NSControlStateValueOff];
+			[readSingleCheckButton setState:NSControlStateValueOff];
 			break;
 		case 2:
-			[readRightButton setState:NSOffState];
-			[readLeftButton setState:NSOnState];
-			[readSingleCheckButton setState:NSOnState];
+			[readRightButton setState:NSControlStateValueOff];
+			[readLeftButton setState:NSControlStateValueOn];
+			[readSingleCheckButton setState:NSControlStateValueOn];
 			break;
 		case 3:
-			[readRightButton setState:NSOnState];
-			[readLeftButton setState:NSOffState];
-			[readSingleCheckButton setState:NSOnState];
+			[readRightButton setState:NSControlStateValueOn];
+			[readLeftButton setState:NSControlStateValueOff];
+			[readSingleCheckButton setState:NSControlStateValueOn];
 			break;
 		default:break;
 	}
@@ -1808,7 +1808,7 @@ static const int DIALOG_CANCEL	= 129;
 		currentMouseArray = nil;
         return;
     } else if(result == DIALOG_OK) {
-		if ([fitOriginalCheck state] == NSOnState) {
+		if ([fitOriginalCheck state] == NSControlStateValueOn) {
 			fitOriginal = YES;
 		} else {
 			fitOriginal = NO;
@@ -1836,7 +1836,7 @@ static const int DIALOG_CANCEL	= 129;
 		[accessorySettingView pageMargin];
 		*/
 		
-		if ([rememberBookSettingsCheck state] == NSOnState) {
+		if ([rememberBookSettingsCheck state] == NSControlStateValueOn) {
 			rememberBookSettings = YES;
 		} else {
 			rememberBookSettings = NO;
@@ -1846,21 +1846,21 @@ static const int DIALOG_CANCEL	= 129;
 		[defaults setBool:rememberBookSettings forKey:@"RememberBookSettings"];
 		
 		
-		if ([openLastFolderCheck state] == NSOnState) {
+		if ([openLastFolderCheck state] == NSControlStateValueOn) {
 			openLastFolder = YES;
 		} else {
 			openLastFolder = NO;
 		}
 		[defaults setBool:openLastFolder forKey:@"OpenLastFolder"];
 		
-		if ([readSubFolderCheck state] == NSOnState) {
+		if ([readSubFolderCheck state] == NSControlStateValueOn) {
 			readSubFolder = YES;
 		} else {
 			readSubFolder = NO;
 		}
 		[defaults setBool:readSubFolder forKey:@"ReadSubFolder"];
         
-        if ([useCalayerCheck state] == NSOnState) {
+        if ([useCalayerCheck state] == NSControlStateValueOn) {
             useCalayer = YES;
         } else {
             useCalayer = NO;
@@ -1882,14 +1882,14 @@ static const int DIALOG_CANCEL	= 129;
 		
 		
 		int readMode;
-		if ([readLeftButton state] == NSOnState) {
-			if ([readSingleCheckButton state] == NSOnState) {
+		if ([readLeftButton state] == NSControlStateValueOn) {
+			if ([readSingleCheckButton state] == NSControlStateValueOn) {
 				readMode = 2;
 			} else {
 				readMode = 0;
 			}
-		} else /*if ([readRightButton state] == NSOnState)*/ {
-			if ([readSingleCheckButton state] == NSOnState) {
+		} else /*if ([readRightButton state] == NSControlStateValueOn)*/ {
+			if ([readSingleCheckButton state] == NSControlStateValueOn) {
 				readMode = 3;
 			} else {
 				readMode = 1;
@@ -1963,7 +1963,7 @@ static const int DIALOG_CANCEL	= 129;
 		[defaults setObject:[NSArchiver archivedDataWithRootObject:[pageColor currentColor]] forKey:@"TextColor"];
 		[defaults setObject:[NSArchiver archivedDataWithRootObject:[pageBGColor currentColor]] forKey:@"TextBGColor"];
 		[defaults setObject:[NSArchiver archivedDataWithRootObject:[pageBorderColor currentColor]] forKey:@"TextBorderColor"];
-		if ([showPageNumCheck state]==NSOnState) {
+		if ([showPageNumCheck state]==NSControlStateValueOn) {
 			[defaults setBool:YES forKey:@"ShowNumber"];
 		} else {
 			[defaults setBool:NO forKey:@"ShowNumber"];
@@ -1978,7 +1978,7 @@ static const int DIALOG_CANCEL	= 129;
 		[defaults setObject:[NSArchiver archivedDataWithRootObject:[pageBarReadedColor currentColor]] forKey:@"PageBarReadedColor"];
 		[defaults setObject:[NSArchiver archivedDataWithRootObject:[pageBarFontColor currentColor]] forKey:@"PageBarFontColor"];
 		[defaults setObject:[NSArchiver archivedDataWithRootObject:[pageBarFontTextField font]] forKey:@"PageBarTextFont"];		
-		if ([showPageBarCheck state]==NSOnState) {
+		if ([showPageBarCheck state]==NSControlStateValueOn) {
 			[defaults setBool:YES forKey:@"ShowPageBar"];
 		} else {
 			[defaults setBool:NO forKey:@"ShowPageBar"];
@@ -2000,32 +2000,32 @@ static const int DIALOG_CANCEL	= 129;
 		[defaults setInteger:thumbnailCache forKey:@"ThumbnailCache"];
 		/*view*/
 		[defaults setObject:[NSArchiver archivedDataWithRootObject:[viewBackGroundColor currentColor]] forKey:@"ViewBackGroundColor"];
-		[defaults setBool:([secondaryDisplayBackgroundSyncCheck state] == NSOnState) forKey:@"SyncSecondaryDisplayBackground"];
+		[defaults setBool:([secondaryDisplayBackgroundSyncCheck state] == NSControlStateValueOn) forKey:@"SyncSecondaryDisplayBackground"];
 		
 		
 
 		
-		if ([pageNumAutoHideCheck state]==NSOnState) {
+		if ([pageNumAutoHideCheck state]==NSControlStateValueOn) {
 			[defaults setBool:YES forKey:@"PageNumAutoHide"];
 		} else {
 			[defaults setBool:NO forKey:@"PageNumAutoHide"];
 		}			
-		if ([pageBarAutoHideCheck state]==NSOnState) {
+		if ([pageBarAutoHideCheck state]==NSControlStateValueOn) {
 			[defaults setBool:YES forKey:@"PageBarAutoHide"];
 		} else {
 			[defaults setBool:NO forKey:@"PageBarAutoHide"];
 		}	
-		if ([pageBarShowThumbCheck state]==NSOnState) {
+		if ([pageBarShowThumbCheck state]==NSControlStateValueOn) {
 			[defaults setBool:YES forKey:@"PageBarShowThumbnail"];
 		} else {
 			[defaults setBool:NO forKey:@"PageBarShowThumbnail"];
 		}		
-		if ([changeOpenWithCheck state]==NSOnState) {
+		if ([changeOpenWithCheck state]==NSControlStateValueOn) {
 			[defaults setBool:YES forKey:@"ChangeOpenWith"];
 		} else {
 			[defaults setBool:NO forKey:@"ChangeOpenWith"];
 		}
-		if ([changeCreatorCheck state]==NSOnState) {
+		if ([changeCreatorCheck state]==NSControlStateValueOn) {
 			[defaults setBool:YES forKey:@"ChangeCreator"];
 		} else {
 			[defaults setBool:NO forKey:@"ChangeCreator"];
@@ -2048,20 +2048,20 @@ static const int DIALOG_CANCEL	= 129;
 		default:
 			break;
 		}
-		[defaults setBool:([sortDescendingButton state] == NSOnState) forKey:@"SortDescending"];
+		[defaults setBool:([sortDescendingButton state] == NSControlStateValueOn) forKey:@"SortDescending"];
 		
-		if ([dontHideMenubarCheck state]==NSOnState) {
+		if ([dontHideMenubarCheck state]==NSControlStateValueOn) {
 			[defaults setBool:YES forKey:@"DontHideMenuBar"];
 		} else {
 			[defaults setBool:NO forKey:@"DontHideMenuBar"];
 		}
-		if ([showThumbnailCheck state]==NSOnState) {
+		if ([showThumbnailCheck state]==NSControlStateValueOn) {
 			[defaults setBool:YES forKey:@"ShowThumbnailWhenOpen"];
 		} else {
 			[defaults setBool:NO forKey:@"ShowThumbnailWhenOpen"];
 		}
 		
-		if ([alwaysRememberLastCheck state]==NSOnState) {
+		if ([alwaysRememberLastCheck state]==NSControlStateValueOn) {
 			[defaults setBool:YES forKey:@"AlwaysRememberLastPage"];
 		} else {
 			[defaults setBool:NO forKey:@"AlwaysRememberLastPage"];
@@ -2549,13 +2549,13 @@ static const int DIALOG_CANCEL	= 129;
 	
 	[mouse setObject:[NSNumber numberWithInt:(int)[mousePanelButtonPopUpButton selectedTag]] forKey:@"button"];
 	int cMod = 0;
-	if ([mousePanelShiftCheck state] == NSOnState) {
+	if ([mousePanelShiftCheck state] == NSControlStateValueOn) {
 		cMod += 1;
 	}
-	if ([mousePanelOptionCheck state] == NSOnState) {
+	if ([mousePanelOptionCheck state] == NSControlStateValueOn) {
 		cMod += 2;
 	}
-	if ([mousePanelControlCheck state] == NSOnState) {
+	if ([mousePanelControlCheck state] == NSControlStateValueOn) {
 		cMod += 4;
 	}
 	if ([mousePanelClickPopUpButton isEnabled]) {
@@ -2595,7 +2595,7 @@ static const int DIALOG_CANCEL	= 129;
 	}
 	[mouse setObject:[NSNumber numberWithInt:cMod] forKey:@"modifier"];
 	
-	if ([mousePanelSwitchActionCheck isEnabled] && [mousePanelSwitchActionCheck state] == NSOnState) {
+	if ([mousePanelSwitchActionCheck isEnabled] && [mousePanelSwitchActionCheck state] == NSControlStateValueOn) {
 		[mouse setObject:[NSNumber numberWithBool:YES] forKey:@"switchAction"];
 	} else {
 		[mouse removeObjectForKey:@"switchAction"];
@@ -2972,7 +2972,7 @@ static const int DIALOG_CANCEL	= 129;
 			break;
 			
 	}
-	if ([keyPanelSwitchActionCheck isEnabled] && [keyPanelSwitchActionCheck state] == NSOnState) {
+	if ([keyPanelSwitchActionCheck isEnabled] && [keyPanelSwitchActionCheck state] == NSControlStateValueOn) {
 		[lastInput setObject:[NSNumber numberWithBool:YES] forKey:@"switchAction"];
 	} else {
 		[lastInput removeObjectForKey:@"switchAction"];
@@ -3130,9 +3130,9 @@ static const int DIALOG_CANCEL	= 129;
 			}
 		}
 		if ([[lastInput objectForKey:@"switchAction"] boolValue] == YES) {
-			[keyPanelSwitchActionCheck setState:NSOnState];
+			[keyPanelSwitchActionCheck setState:NSControlStateValueOn];
 		} else {
-			[keyPanelSwitchActionCheck setState:NSOffState];
+			[keyPanelSwitchActionCheck setState:NSControlStateValueOff];
 		}
 		
 		[keyPanelPopUpButton setEnabled:YES];
@@ -3170,9 +3170,9 @@ static const int DIALOG_CANCEL	= 129;
 				[[menuArray objectAtIndex:i] setAction:@selector(mousePanelActionPopUpButtonAction:)];
 			}
 		}
-		[mousePanelShiftCheck setState:NSOffState];
-		[mousePanelOptionCheck setState:NSOffState];
-		[mousePanelControlCheck setState:NSOffState];
+		[mousePanelShiftCheck setState:NSControlStateValueOff];
+		[mousePanelOptionCheck setState:NSControlStateValueOff];
+		[mousePanelControlCheck setState:NSControlStateValueOff];
 		int cMod = [[lastInput objectForKey:@"modifier"] intValue];
 		if (cMod>=1000) {
 			[mousePanelClickPopUpButton selectItemAtIndex:10];
@@ -3209,13 +3209,13 @@ static const int DIALOG_CANCEL	= 129;
 		}
 		switch (cMod) {
 			case 0:break;
-			case 1:[mousePanelShiftCheck setState:NSOnState];break;
-			case 2:[mousePanelOptionCheck setState:NSOnState];break;
-			case 3:[mousePanelShiftCheck setState:NSOnState];[mousePanelOptionCheck setState:NSOnState];break;
-			case 4:[mousePanelControlCheck setState:NSOnState];break;
-			case 5:[mousePanelControlCheck setState:NSOnState];[mousePanelShiftCheck setState:NSOnState];break;
-			case 6:[mousePanelControlCheck setState:NSOnState];[mousePanelOptionCheck setState:NSOnState];break;
-			case 7:[mousePanelControlCheck setState:NSOnState];[mousePanelShiftCheck setState:NSOnState];[mousePanelOptionCheck setState:NSOnState];break;
+			case 1:[mousePanelShiftCheck setState:NSControlStateValueOn];break;
+			case 2:[mousePanelOptionCheck setState:NSControlStateValueOn];break;
+			case 3:[mousePanelShiftCheck setState:NSControlStateValueOn];[mousePanelOptionCheck setState:NSControlStateValueOn];break;
+			case 4:[mousePanelControlCheck setState:NSControlStateValueOn];break;
+			case 5:[mousePanelControlCheck setState:NSControlStateValueOn];[mousePanelShiftCheck setState:NSControlStateValueOn];break;
+			case 6:[mousePanelControlCheck setState:NSControlStateValueOn];[mousePanelOptionCheck setState:NSControlStateValueOn];break;
+			case 7:[mousePanelControlCheck setState:NSControlStateValueOn];[mousePanelShiftCheck setState:NSControlStateValueOn];[mousePanelOptionCheck setState:NSControlStateValueOn];break;
 			default:break;
 		}
 		[mousePanelButtonPopUpButton selectItemWithTag:[[lastInput objectForKey:@"button"] intValue]];
@@ -3225,9 +3225,9 @@ static const int DIALOG_CANCEL	= 129;
 			[mousePanelClickPopUpButton setEnabled:YES];
 		}
 		if ([[lastInput objectForKey:@"switchAction"] boolValue] == YES) {
-			[mousePanelSwitchActionCheck setState:NSOnState];
+			[mousePanelSwitchActionCheck setState:NSControlStateValueOn];
 		} else {
-			[mousePanelSwitchActionCheck setState:NSOffState];
+			[mousePanelSwitchActionCheck setState:NSControlStateValueOff];
 		}
 		[[NSApplication sharedApplication] beginSheet:mouseConfigPanel 
 									   modalForWindow:preferences 

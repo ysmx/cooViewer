@@ -27,11 +27,11 @@ static inline unsigned int COKeyModifierMaskForEvent(NSEvent *event, unichar cha
 	unsigned int cMod = 0;
 	NSUInteger flags = [event modifierFlags];
 
-	if (flags & NSShiftKeyMask) cMod += COKeyModifierShift;
-	if (flags & NSAlternateKeyMask) cMod += COKeyModifierOption;
-	if (flags & NSControlKeyMask) cMod += COKeyModifierControl;
-	if (flags & NSCommandKeyMask) cMod += COKeyModifierCommand;
-	if (includeNumericPad && (flags & NSNumericPadKeyMask) && !COKeyCharacterIsArrow(character)) {
+	if (flags & NSEventModifierFlagShift) cMod += COKeyModifierShift;
+	if (flags & NSEventModifierFlagOption) cMod += COKeyModifierOption;
+	if (flags & NSEventModifierFlagControl) cMod += COKeyModifierControl;
+	if (flags & NSEventModifierFlagCommand) cMod += COKeyModifierCommand;
+	if (includeNumericPad && (flags & NSEventModifierFlagNumericPad) && !COKeyCharacterIsArrow(character)) {
 		cMod += COKeyModifierNumeric;
 	}
 

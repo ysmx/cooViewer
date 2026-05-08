@@ -8,10 +8,10 @@
 - (void)awakeFromNib
 {
 	bookmarkMode = [[NSUserDefaults standardUserDefaults] boolForKey:@"ThumbnailOnlyBookmark"];	
-	if (bookmarkMode) [onlyBookmarkButton setState:NSOnState];
+	if (bookmarkMode) [onlyBookmarkButton setState:NSControlStateValueOn];
 	
 	mangaMode = [[NSUserDefaults standardUserDefaults] boolForKey:@"ThumbnailComicMode"];
-	if (mangaMode) [comicModeButton setState:NSOnState];
+	if (mangaMode) [comicModeButton setState:NSControlStateValueOn];
 	
 	
 	doCount = 0;
@@ -40,8 +40,8 @@
 	
 	NSRect sortFrame = [sortPopUpButton frame];
 	NSButton *button = [[[NSButton alloc] initWithFrame:NSMakeRect(sortFrame.origin.x, sortFrame.origin.y, 80, sortFrame.size.height)] autorelease];
-	[button setButtonType:NSSwitchButton];
-	[button setControlSize:NSSmallControlSize];
+	[button setButtonType:NSButtonTypeSwitch];
+	[button setControlSize:NSControlSizeSmall];
 	[button setTitle:NSLocalizedString(@"Descending", @"")];
 	[button setTarget:self];
 	[button setAction:@selector(sortDescending:)];
@@ -69,7 +69,7 @@
 	sortMode = 0;
 	//mangaMode = NO;
 	[sortPopUpButton selectItemAtIndex:0];
-	[sortDescendingButton setState:NSOffState];
+	[sortDescendingButton setState:NSControlStateValueOff];
 	if (loader != imageLoader) [thumImageArray removeAllObjects];
 	pathArray = [loader pathArray];
 	imageLoader = loader;
@@ -134,7 +134,7 @@
 	[[NSGraphicsContext currentContext] setImageInterpolation:NSImageInterpolationLow];
     [image drawInRect:NSMakeRect(0,0,(int)newWidth,(int)newHeight)
              fromRect:NSMakeRect(0, 0, [image size].width, [image size].height)
-            operation:NSCompositeSourceOver fraction:1.0];
+            operation:NSCompositingOperationSourceOver fraction:1.0];
 	
 	/*
 	if (b) {
@@ -162,7 +162,7 @@
 		
 		[image drawInRect:rect
 				 fromRect:NSMakeRect(0,0,[image size].width,[image size].height)
-				operation:NSCompositeSourceOver
+				operation:NSCompositingOperationSourceOver
 				 fraction:1.0];
 	}*/
 	
@@ -244,17 +244,17 @@
 				if ([controller readMode] == 1) {
                     [image drawInRect:NSMakeRect(0,(int)center1,(int)widthValue1,(int)heightValue1)
                              fromRect:NSMakeRect(0, 0, [image size].width, [image size].height)
-                            operation:NSCompositeSourceOver fraction:1.0];
+                            operation:NSCompositingOperationSourceOver fraction:1.0];
                     [image2 drawInRect:NSMakeRect((int)widthValue1,(int)center2,(int)widthValue2,(int)heightValue2)
                               fromRect:NSMakeRect(0, 0, [image2 size].width, [image2 size].height)
-                             operation:NSCompositeSourceOver fraction:1.0];
+                             operation:NSCompositingOperationSourceOver fraction:1.0];
 				} else if ([controller readMode] == 0) {
                     [image2 drawInRect:NSMakeRect(0,(int)center2,(int)widthValue2,(int)heightValue2)
                              fromRect:NSMakeRect(0, 0, [image2 size].width, [image2 size].height)
-                            operation:NSCompositeSourceOver fraction:1.0];
+                            operation:NSCompositingOperationSourceOver fraction:1.0];
                     [image drawInRect:NSMakeRect((int)widthValue2,(int)center1,(int)widthValue1,(int)heightValue1)
                               fromRect:NSMakeRect(0, 0, [image size].width, [image size].height)
-                             operation:NSCompositeSourceOver fraction:1.0];
+                             operation:NSCompositingOperationSourceOver fraction:1.0];
 				}
 				[ newImage unlockFocus ];
 				[image release];
@@ -336,17 +336,17 @@
 				if ([controller readMode] == 1) {
                     [ image2 drawInRect:NSMakeRect(0,(int)center2,(int)widthValue2,(int)heightValue2)
                                fromRect:NSMakeRect(0, 0, [image2 size].width, [image2 size].height)
-                              operation:NSCompositeSourceOver fraction:1.0];
+                              operation:NSCompositingOperationSourceOver fraction:1.0];
                     [ image drawInRect:NSMakeRect((int)widthValue2,(int)center1,(int)widthValue1,(int)heightValue1)
                               fromRect:NSMakeRect(0, 0, [image size].width, [image size].height)
-                             operation:NSCompositeSourceOver fraction:1.0];
+                             operation:NSCompositingOperationSourceOver fraction:1.0];
 				} else if ([controller readMode] == 0) {
                     [image drawInRect:NSMakeRect(0,(int)center1,(int)widthValue1,(int)heightValue1)
                              fromRect:NSMakeRect(0, 0, [image size].width, [image size].height)
-                            operation:NSCompositeSourceOver fraction:1.0];
+                            operation:NSCompositingOperationSourceOver fraction:1.0];
                     [image2 drawInRect:NSMakeRect((int)widthValue1,(int)center2,(int)widthValue2,(int)heightValue2)
                               fromRect:NSMakeRect(0, 0, [image2 size].width, [image2 size].height)
-                             operation:NSCompositeSourceOver fraction:1.0];
+                             operation:NSCompositingOperationSourceOver fraction:1.0];
 				}
 				[ newImage unlockFocus ];
 				[image release];
@@ -510,7 +510,7 @@
 		sortMode = 0;
 		[sortPopUpButton selectItemAtIndex:0];
 	}
-	[sortDescendingButton setState:[controller sortDescending] ? NSOnState : NSOffState];
+	[sortDescendingButton setState:[controller sortDescending] ? NSControlStateValueOn : NSControlStateValueOff];
 	
 	 if (bookmarkMode) {
 		 [self showBookmarkThumbnail];
@@ -1462,7 +1462,7 @@
 
 -(IBAction)onlyBookmark:(id)sender
 {
-	if ([sender state] == NSOnState) {
+	if ([sender state] == NSControlStateValueOn) {
 		bookmarkMode = YES;
 		[self showBookmarkThumbnail];
 	} else {
@@ -1473,7 +1473,7 @@
 }
 -(IBAction)comicMode:(id)sender
 {
-	if ([sender state] == NSOnState) {
+	if ([sender state] == NSControlStateValueOn) {
 		mangaMode = YES;
 		[self showThumbnail:[controller nowPage]];
 	} else {
@@ -1524,7 +1524,7 @@
 -(IBAction)sortDescending:(id)sender
 {
 	[thumImageArray removeAllObjects];
-	[controller setSortDescending:([sender state] == NSOnState) page:0];
+	[controller setSortDescending:([sender state] == NSControlStateValueOn) page:0];
 	now = 0;
 	nowBookmarkPage = 1;
 	[self showThumbnail:[controller nowPage]];

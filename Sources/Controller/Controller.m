@@ -158,7 +158,7 @@ static const int DIALOG_CANCEL	= 129;
 		screenRect.origin = NSZeroPoint;
 		isOpaque = ([coverColor alphaComponent] >= 0.999);
 		coverWindow = [[[NSWindow alloc] initWithContentRect:screenRect
-													 styleMask:NSBorderlessWindowMask
+													 styleMask:NSWindowStyleMaskBorderless
 													   backing:NSBackingStoreBuffered
 														 defer:NO
 														screen:screen] autorelease];
@@ -421,7 +421,7 @@ static const int DIALOG_CANCEL	= 129;
 
 	fullscreen = [defaults boolForKey:@"Fullscreen"];
 	if (!fullscreen) {
-		[[[[[NSApp mainMenu] itemWithTitle:NSLocalizedString(@"Window", @"")] submenu]  itemWithTitle:NSLocalizedString(@"Fullscreen", @"")] setState:NSOffState];
+		[[[[[NSApp mainMenu] itemWithTitle:NSLocalizedString(@"Window", @"")] submenu]  itemWithTitle:NSLocalizedString(@"Fullscreen", @"")] setState:NSControlStateValueOff];
 	}
 	
 	
@@ -1191,7 +1191,7 @@ static const int DIALOG_CANCEL	= 129;
 	}
 	[self setOpenRecentMenu];
 	NSMenu *menu=[openRecentMenuItem submenu];
-	[[menu itemAtIndex:0] setState:NSOnState];
+	[[menu itemAtIndex:0] setState:NSControlStateValueOn];
 	[[menu itemAtIndex:0] setEnabled:NO];
 	
 	[defaults synchronize];
@@ -1785,18 +1785,18 @@ static const int DIALOG_CANCEL	= 129;
 		case 0: case 2:
             [image1 drawInRect:NSMakeRect(0,center1,widthValue1,heightValue1)
                       fromRect:NSMakeRect(0, 0, [image1 size].width, [image1 size].height)
-                     operation:NSCompositeSourceOver fraction:1.0];
+                     operation:NSCompositingOperationSourceOver fraction:1.0];
             [image2 drawInRect:NSMakeRect(widthValue1,center2,widthValue2,heightValue2)
                       fromRect:NSMakeRect(0, 0, [image2 size].width, [image2 size].height)
-                     operation:NSCompositeSourceOver fraction:1.0];
+                     operation:NSCompositingOperationSourceOver fraction:1.0];
 			break;
 		case 1: case 3:
             [image2 drawInRect:NSMakeRect(0,center2,widthValue2,heightValue2)
                       fromRect:NSMakeRect(0, 0, [image2 size].width, [image2 size].height)
-                     operation:NSCompositeSourceOver fraction:1.0];
+                     operation:NSCompositingOperationSourceOver fraction:1.0];
             [image1 drawInRect:NSMakeRect(widthValue2,center1,widthValue1,heightValue1)
                       fromRect:NSMakeRect(0, 0, [image1 size].width, [image1 size].height)
-                     operation:NSCompositeSourceOver fraction:1.0];
+                     operation:NSCompositingOperationSourceOver fraction:1.0];
 			break;
 		default:
 			break;
@@ -2099,7 +2099,7 @@ static const int DIALOG_CANCEL	= 129;
 			[self setOpenRecentMenu];
 			if ([imageView image]) {
 				NSMenu *menu=[openRecentMenuItem submenu];
-				[[menu itemAtIndex:0] setState:NSOnState];
+				[[menu itemAtIndex:0] setState:NSControlStateValueOn];
 				[[menu itemAtIndex:0] setEnabled:NO];
 			}
 		} else {
@@ -2361,9 +2361,9 @@ static const int DIALOG_CANCEL	= 129;
 	} else if ([[anItem title] isEqualToString:NSLocalizedString(@"Right to Left", @"")] == YES) {
 		if ([window isVisible]) {
 			if (readMode == 0) {
-				[anItem setState:NSOnState];
+				[anItem setState:NSControlStateValueOn];
 			} else {
-				[anItem setState:NSOffState];
+				[anItem setState:NSControlStateValueOff];
 			}
 			return YES;
 		} else {
@@ -2372,9 +2372,9 @@ static const int DIALOG_CANCEL	= 129;
 	} else if ([[anItem title] isEqualToString:NSLocalizedString(@"Left to Right", @"")] == YES) {
 		if ([window isVisible]) {
 			if (readMode == 1) {
-				[anItem setState:NSOnState];
+				[anItem setState:NSControlStateValueOn];
 			} else {
-				[anItem setState:NSOffState];
+				[anItem setState:NSControlStateValueOff];
 			}
 			return YES;
 		} else {
@@ -2383,9 +2383,9 @@ static const int DIALOG_CANCEL	= 129;
 	} else if ([[anItem title] isEqualToString:NSLocalizedString(@"Right to Left (single)", @"")] == YES) {
 		if ([window isVisible]) {
 			if (readMode == 2) {
-				[anItem setState:NSOnState];
+				[anItem setState:NSControlStateValueOn];
 			} else {
-				[anItem setState:NSOffState];
+				[anItem setState:NSControlStateValueOff];
 			}
 			return YES;
 		} else {
@@ -2394,9 +2394,9 @@ static const int DIALOG_CANCEL	= 129;
 	} else if ([[anItem title] isEqualToString:NSLocalizedString(@"Left to Right (single)", @"")] == YES) {
 		if ([window isVisible]) {
 			if (readMode == 3) {
-				[anItem setState:NSOnState];
+				[anItem setState:NSControlStateValueOn];
 			} else {
-				[anItem setState:NSOffState];
+				[anItem setState:NSControlStateValueOff];
 			}
 			return YES;
 		} else {
@@ -2405,9 +2405,9 @@ static const int DIALOG_CANCEL	= 129;
 	} else if ([[anItem title] isEqualToString:NSLocalizedString(@"Fit to Screen", @"")] == YES) {
 		if ([window isVisible]) {
 			if (fitScreenMode == 0) {
-				[anItem setState:NSOnState];
+				[anItem setState:NSControlStateValueOn];
 			} else {
-				[anItem setState:NSOffState];
+				[anItem setState:NSControlStateValueOff];
 			}
 			return YES;
 		} else {
@@ -2416,9 +2416,9 @@ static const int DIALOG_CANCEL	= 129;
 	} else if ([[anItem title] isEqualToString:NSLocalizedString(@"Fit to Screen Width", @"")] == YES) {
 		if ([window isVisible]) {
 			if (fitScreenMode == 1) {
-				[anItem setState:NSOnState];
+				[anItem setState:NSControlStateValueOn];
 			} else {
-				[anItem setState:NSOffState];
+				[anItem setState:NSControlStateValueOff];
 			}
 			return YES;
 		} else {
@@ -2427,9 +2427,9 @@ static const int DIALOG_CANCEL	= 129;
 	} else if ([[anItem title] isEqualToString:NSLocalizedString(@"No Scale", @"")] == YES) {
 		if ([window isVisible]) {
 			if (fitScreenMode == 2) {
-				[anItem setState:NSOnState];
+				[anItem setState:NSControlStateValueOn];
 			} else {
-				[anItem setState:NSOffState];
+				[anItem setState:NSControlStateValueOff];
 			}
 			return YES;
 		} else {
@@ -2438,9 +2438,9 @@ static const int DIALOG_CANCEL	= 129;
 	} else if ([[anItem title] isEqualToString:NSLocalizedString(@"Fit to Screen Width(divide)", @"")] == YES) {
 		if ([window isVisible]) {
 			if (fitScreenMode == 3) {
-				[anItem setState:NSOnState];
+				[anItem setState:NSControlStateValueOn];
 			} else {
-				[anItem setState:NSOffState];
+				[anItem setState:NSControlStateValueOff];
 			}
 			return YES;
 		} else {
@@ -2469,7 +2469,7 @@ static const int DIALOG_CANCEL	= 129;
 		if ([window isVisible]) {
 			// While shuffling, show checkmark on the pre-shuffle sort mode
 			int displayMode = (sortMode == 1) ? preShuffleSortMode : sortMode;
-			[anItem setState:(displayMode == 0) ? NSOnState : NSOffState];
+			[anItem setState:(displayMode == 0) ? NSControlStateValueOn : NSControlStateValueOff];
 			return sortMode != 1;  // grayed out while shuffle is active
 		} else {
 			return NO;
@@ -2477,9 +2477,9 @@ static const int DIALOG_CANCEL	= 129;
 	} else if ([[anItem title] isEqualToString:NSLocalizedString(@"Shuffle", @"")] == YES) {
 		if ([window isVisible]) {
 			if (sortMode == 1) {
-				[anItem setState:NSOnState];
+				[anItem setState:NSControlStateValueOn];
 			} else {
-				[anItem setState:NSOffState];
+				[anItem setState:NSControlStateValueOff];
 			}
 			return YES;
 		} else {
@@ -2488,7 +2488,7 @@ static const int DIALOG_CANCEL	= 129;
 	} else if ([[anItem title] isEqualToString:NSLocalizedString(@"Creation Date", @"")] == YES) {
 		if ([window isVisible]) {
 			int displayMode = (sortMode == 1) ? preShuffleSortMode : sortMode;
-			[anItem setState:(displayMode == 2) ? NSOnState : NSOffState];
+			[anItem setState:(displayMode == 2) ? NSControlStateValueOn : NSControlStateValueOff];
 			if (sortMode == 1) {
 				return NO;  // grayed out while shuffle is active
 			}
@@ -2499,7 +2499,7 @@ static const int DIALOG_CANCEL	= 129;
 	} else if ([[anItem title] isEqualToString:NSLocalizedString(@"Modification Date", @"")] == YES) {
 		if ([window isVisible]) {
 			int displayMode = (sortMode == 1) ? preShuffleSortMode : sortMode;
-			[anItem setState:(displayMode == 3) ? NSOnState : NSOffState];
+			[anItem setState:(displayMode == 3) ? NSControlStateValueOn : NSControlStateValueOff];
 			if (sortMode == 1) {
 				return NO;  // grayed out while shuffle is active
 			}
@@ -2508,10 +2508,10 @@ static const int DIALOG_CANCEL	= 129;
 			return NO;
 		} 
 	} else if ([[anItem title] isEqualToString:NSLocalizedString(@"Ascending", @"Sort order")] == YES) {
-		[anItem setState:sortDescending ? NSOffState : NSOnState];
+		[anItem setState:sortDescending ? NSControlStateValueOff : NSControlStateValueOn];
 		return [window isVisible] && [self co_sortModeSupportsDescending:sortMode];
 	} else if ([[anItem title] isEqualToString:NSLocalizedString(@"Descending", @"Sort order")] == YES) {
-		[anItem setState:sortDescending ? NSOnState : NSOffState];
+		[anItem setState:sortDescending ? NSControlStateValueOn : NSControlStateValueOff];
 		return [window isVisible] && [self co_sortModeSupportsDescending:sortMode];
 	} else {
 		/*contextMenu*/
@@ -2662,7 +2662,7 @@ static const int DIALOG_CANCEL	= 129;
 					[item setRepresentedObject:[superPath stringByAppendingPathComponent:object]];
 					
 					if ([object isEqualToString:tmpCurrentBookName]) {
-						[item setState:NSOnState];
+						[item setState:NSControlStateValueOn];
 					}
 				} else {
 					if([[COImageLoader fileTypes] containsObject:[[object pathExtension] lowercaseString]]){
@@ -2673,7 +2673,7 @@ static const int DIALOG_CANCEL	= 129;
 						[item setRepresentedObject:[superPath stringByAppendingPathComponent:object] ];
 						
 						if ([object isEqualToString:tmpCurrentBookName]) {
-							[item setState:NSOnState];
+							[item setState:NSControlStateValueOn];
 						}
 					}
 				}
@@ -2692,10 +2692,10 @@ static const int DIALOG_CANCEL	= 129;
 		int setStateCount = 0;
 		while (object = [enumerator nextObject]) {
 			if ([[[object representedObject] lastPathComponent] isEqualToString:tmpCurrentBookName]){
-				[object setState:NSOnState];
+				[object setState:NSControlStateValueOn];
 				setStateCount++;
-			} else if ([object state] == NSOnState) {
-				[object setState:NSOffState];
+			} else if ([object state] == NSControlStateValueOn) {
+				[object setState:NSControlStateValueOff];
 				setStateCount++;
 			}
 			if (setStateCount==2) {
@@ -3085,13 +3085,13 @@ static const int DIALOG_CANCEL	= 129;
 
 - (IBAction)fullscreen:(id)sender
 {
-	if ([sender state] == NSOffState) {
+	if ([sender state] == NSControlStateValueOff) {
 		[window setFullScreen:YES];
-		[sender setState:NSOnState];
+		[sender setState:NSControlStateValueOn];
 		[defaults setBool:YES forKey:@"Fullscreen"];
 	} else {
 		[window setFullScreen:NO];
-		[sender setState:NSOffState];
+		[sender setState:NSControlStateValueOff];
 		[defaults setBool:NO forKey:@"Fullscreen"];
 	}
 	
@@ -3140,8 +3140,8 @@ static const int DIALOG_CANCEL	= 129;
 		}
 		int iA;
 		for (iA=0; iA<[[openSameFolderMenuItem submenu] numberOfItems]; iA++) {
-			if ([[[openSameFolderMenuItem submenu] itemAtIndex:iA] state] == NSOnState) {
-				[[[openSameFolderMenuItem submenu] itemAtIndex:iA] setState:NSOffState];
+			if ([[[openSameFolderMenuItem submenu] itemAtIndex:iA] state] == NSControlStateValueOn) {
+				[[[openSameFolderMenuItem submenu] itemAtIndex:iA] setState:NSControlStateValueOff];
 				break;
 			}
 		}
@@ -3611,7 +3611,6 @@ static const int DIALOG_CANCEL	= 129;
 		CFURLRef	tempURL = NULL;
 		CFStringRef	tempResult = NULL;
 		
-		if (&tempRef != NULL) {
 			tempURL = CFURLCreateFromFSRef(kCFAllocatorDefault, &tempRef);
 			if (tempURL == NULL) {
 				//return [NSString stringWithFormat:@"file not found"];
@@ -3629,7 +3628,6 @@ static const int DIALOG_CANCEL	= 129;
 			}
 			tempResult = CFURLCopyFileSystemPath(tempURL, kCFURLPOSIXPathStyle);
 			CFRelease(tempURL);
-		}
 		
         result = (NSString *)tempResult;
     }
@@ -3879,7 +3877,7 @@ static const int DIALOG_CANCEL	= 129;
 				NSEnumerator *enumerator = [[[openSameFolderMenuItem submenu] itemArray] objectEnumerator];
 				id object;
 				while (object = [enumerator nextObject]) {
-					if ([object state] == NSOnState){
+					if ([object state] == NSControlStateValueOn){
 						[object setEnabled:NO];
 						break;
 					}

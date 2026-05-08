@@ -59,7 +59,7 @@
 - (void)updateWindowStyleForFullscreen
 {
 	if (fullscreen) {
-		[self setStyleMask:NSBorderlessWindowMask];
+		[self setStyleMask:NSWindowStyleMaskBorderless];
 		[self setOpaque:YES];
 		[self setHasShadow:NO];
 	} else {
@@ -87,7 +87,7 @@
 	windowedStyleMask = [self styleMask];
 	resizable = YES;
 	[self setFullScreen:fullscreen];
-	if (!fullscreen) [[[[[NSApp mainMenu] itemWithTitle:NSLocalizedString(@"Window", @"")] submenu] itemWithTitle:NSLocalizedString(@"Fullscreen", @"")] setState:NSOffState];
+	if (!fullscreen) [[[[[NSApp mainMenu] itemWithTitle:NSLocalizedString(@"Window", @"")] submenu] itemWithTitle:NSLocalizedString(@"Fullscreen", @"")] setState:NSControlStateValueOff];
 	[self setShowsResizeIndicator:NO];
 }
 - (void)setFrame:(NSRect)windowFrame display:(BOOL)displayViews
@@ -173,7 +173,7 @@
 	characters = [theEvent charactersIgnoringModifiers];
 	if ([characters length] > 0) {
 		character = [characters characterAtIndex:0];
-		command = (([theEvent modifierFlags] & NSCommandKeyMask) != 0);
+		command = (([theEvent modifierFlags] & NSEventModifierFlagCommand) != 0);
 		if (command && (character == NSTabCharacter || character == NSBackTabCharacter)) {
 			[super keyDown:theEvent];
 			return;
@@ -208,9 +208,9 @@
 {	
 	if (fullscreen) {
 		unsigned int cMod = 0;
-		BOOL option = ([anEvent modifierFlags] & NSAlternateKeyMask) ? YES : NO;
-		BOOL control = ([anEvent modifierFlags] & NSControlKeyMask) ? YES : NO;
-		BOOL command = ([anEvent modifierFlags] & NSCommandKeyMask) ? YES : NO;
+		BOOL option = ([anEvent modifierFlags] & NSEventModifierFlagOption) ? YES : NO;
+		BOOL control = ([anEvent modifierFlags] & NSEventModifierFlagControl) ? YES : NO;
+		BOOL command = ([anEvent modifierFlags] & NSEventModifierFlagCommand) ? YES : NO;
 		
 		if (option) cMod += 1;
 		if (control) cMod += 2;

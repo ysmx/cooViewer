@@ -254,7 +254,7 @@ static NSArray *_COImageLoader_archiveTypes=nil;
 		//1つ前も同じフォルダだったらこのフォルダの先頭を検索
 		NSString *prevFolder;
 		int i = now-1;
-		for (i;i>=0;i--) {
+		for (;i>=0;i--) {
 			if (i == 0) return 0;
 			prevFolder = [[contentPathArray objectAtIndex:i] stringByDeletingLastPathComponent];
 			if (![currentFolder isEqualToString:prevFolder]) {
@@ -265,7 +265,7 @@ static NSArray *_COImageLoader_archiveTypes=nil;
 		//1つ前が違うフォルダだったらそっちの先頭を検索
 		NSString *prevFolder,*prevFolderHead;
 		int i = now-1;
-		for (i;i>=0;i--) {
+		for (;i>=0;i--) {
 			prevFolder = [[contentPathArray objectAtIndex:i] stringByDeletingLastPathComponent];
 			//NSLog(@"%@ %i",[contentPathArray objectAtIndex:i],i);
 			if (![currentFolder isEqualToString:prevFolder]) {
@@ -282,7 +282,7 @@ static NSArray *_COImageLoader_archiveTypes=nil;
 			}
 		}
 		i=(int)[contentPathArray count]-1;
-		for (i;i>=0;i--) {
+		for (;i>=0;i--) {
 			if (i==now) {
 				//NSLog(@"notFound");
 				return now-1;

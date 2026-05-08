@@ -36,6 +36,8 @@
 #define F6 97
 #define F7 98
 
+static OSStatus hotKeyEventHandler(EventHandlerCallRef inHandlerRef, EventRef inEvent, void* userData);
+
 /*
  the following default keys are read and shall be used to change the keyboard mapping
  
@@ -170,9 +172,9 @@
 	EventHotKeyRef carbonHotKey;
 
 	hotKeyID.signature = 'PTHk';
-	hotKeyID.id = (long)keycode;
+	hotKeyID.id = keycode;
 	
-	err = RegisterEventHotKey(keycode, modifiers, hotKeyID, GetEventDispatcherTarget(), nil, &carbonHotKey );
+	err = RegisterEventHotKey(keycode, modifiers, hotKeyID, GetEventDispatcherTarget(), 0, &carbonHotKey );
 	
 	if( err )
 		return NO;

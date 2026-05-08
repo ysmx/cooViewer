@@ -46,7 +46,7 @@
 		password=nil;
 		
 		if ([archive nameOfEntry:0] == nil) {
-			[archive setNameEncoding:nil];
+			[archive setNameEncoding:(NSStringEncoding)0];
 		}
 		int i;
 		for (i=0; i<[archive numberOfEntries]; i++) {

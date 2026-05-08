@@ -14,7 +14,7 @@
 - (id)initWithContentRect:(NSRect)contentRect styleMask:(NSWindowStyleMask)styleMask backing:(NSBackingStoreType)bufferingType defer:(BOOL)deferCreation
 {
 	self = [super initWithContentRect:contentRect
-							styleMask:NSBorderlessWindowMask
+							styleMask:NSWindowStyleMaskBorderless
 							  backing:bufferingType
 								defer:deferCreation
 		];
@@ -24,7 +24,7 @@
 - (id)initWithContentRect:(NSRect)contentRect styleMask:(NSWindowStyleMask)styleMask backing:(NSBackingStoreType)bufferingType defer:(BOOL)deferCreation screen:(NSScreen *)screen
 {
 	self = [super initWithContentRect:contentRect
-							styleMask:NSBorderlessWindowMask
+							styleMask:NSWindowStyleMaskBorderless
 							  backing:bufferingType
 								defer:deferCreation
 							   screen:screen

@@ -24,7 +24,7 @@
 {
 	[super becomeKeyWindow];
 	
-	if ([[[NSApp windowsMenu] itemWithTitle:NSLocalizedString(@"Fullscreen", @"")] state] == NSOnState){
+	if ([[[NSApp windowsMenu] itemWithTitle:NSLocalizedString(@"Fullscreen", @"")] state] == NSControlStateValueOn){
 		if ([[NSUserDefaults standardUserDefaults] boolForKey:@"DontHideMenuBar"] == NO) [NSMenu setMenuBarVisible:NO];
 	}
 	 
@@ -71,7 +71,7 @@
 		// space
 		//[view spaceBarAction];
 		
-		BOOL shiftTemp = ([event modifierFlags] & NSShiftKeyMask) ? YES : NO;
+		BOOL shiftTemp = ([event modifierFlags] & NSEventModifierFlagShift) ? YES : NO;
 		
 		//NSScrollView *scrollView = [[[self contentView] subviews] objectAtIndex:0];
 		NSScrollView *scrollView = [view enclosingScrollView];
@@ -154,7 +154,7 @@
                                 horizontalScrollerClass:nil
                                   verticalScrollerClass:nil
                                              borderType:[scrollView borderType]
-                                            controlSize:NSRegularControlSize
+                                            controlSize:NSControlSizeRegular
                                           scrollerStyle:[scrollView scrollerStyle]
     ];
     NSRect theScrollViewRect;
@@ -203,7 +203,7 @@
 {
 	//[super setLevel:NSNormalWindowLevel];
 	
-	if ([[[NSApp windowsMenu] itemWithTitle:NSLocalizedString(@"Fullscreen", @"")] state] == NSOffState){
+	if ([[[NSApp windowsMenu] itemWithTitle:NSLocalizedString(@"Fullscreen", @"")] state] == NSControlStateValueOff){
 		[super setLevel:NSNormalWindowLevel];
 	} else {
 		if (level == NSPopUpMenuWindowLevel) {

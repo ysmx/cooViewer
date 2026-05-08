@@ -72,7 +72,7 @@
 			imageRect.origin.y+=1;
 			[image drawInRect:imageRect
 					 fromRect:NSMakeRect(0,0,[image size].width,[image size].height)
-					operation:NSCompositeSourceOver
+					operation:NSCompositingOperationSourceOver
 					 fraction:1.0
                respectFlipped:YES
                         hints:nil];
@@ -126,7 +126,7 @@
 			
 			
 			NSMutableParagraphStyle* style = [[[NSMutableParagraphStyle alloc] init] autorelease];
-			[style setAlignment:NSCenterTextAlignment];
+			[style setAlignment:NSTextAlignmentCenter];
 			[style setLineBreakMode:NSLineBreakByTruncatingHead];
 			
 			NSMutableDictionary* attr = [NSMutableDictionary dictionary];

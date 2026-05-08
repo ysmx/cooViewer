@@ -804,9 +804,9 @@ static BOOL appleRemoteHoldDown = NO;
 	
 	int button = (int)[sender buttonNumber];
 	unsigned int cMod = 0;
-	BOOL shift = ([sender modifierFlags] & NSShiftKeyMask) ? YES : NO;
-	BOOL option = ([sender modifierFlags] & NSAlternateKeyMask) ? YES : NO;
-	BOOL control = ([sender modifierFlags] & NSControlKeyMask) ? YES : NO;
+	BOOL shift = ([sender modifierFlags] & NSEventModifierFlagShift) ? YES : NO;
+	BOOL option = ([sender modifierFlags] & NSEventModifierFlagOption) ? YES : NO;
+	BOOL control = ([sender modifierFlags] & NSEventModifierFlagControl) ? YES : NO;
 	
 	if (shift) {
 		cMod += 1;
@@ -893,9 +893,9 @@ static BOOL appleRemoteHoldDown = NO;
 		default:
 			break;
 	}
-	BOOL shift = ([sender modifierFlags] & NSShiftKeyMask) ? YES : NO;
-	BOOL option = ([sender modifierFlags] & NSAlternateKeyMask) ? YES : NO;
-	BOOL control = ([sender modifierFlags] & NSControlKeyMask) ? YES : NO;
+	BOOL shift = ([sender modifierFlags] & NSEventModifierFlagShift) ? YES : NO;
+	BOOL option = ([sender modifierFlags] & NSEventModifierFlagOption) ? YES : NO;
+	BOOL control = ([sender modifierFlags] & NSEventModifierFlagControl) ? YES : NO;
 	
 	if (shift) {
 		cMod += 1;
@@ -937,7 +937,7 @@ static BOOL appleRemoteHoldDown = NO;
 		}
 	} else if (fitScreenMode == 2 || fitScreenMode == 3) {
 		if (![self getMouseAction:button mod:cMod mode:2 left:leftBool]) {
-			![self getMouseAction:button mod:cMod mode:0 left:leftBool];
+			[self getMouseAction:button mod:cMod mode:0 left:leftBool];
 		}
 	}
 }
@@ -966,9 +966,9 @@ static BOOL appleRemoteHoldDown = NO;
 		default:
 			break;
 	}
-	BOOL shift = ([sender modifierFlags] & NSShiftKeyMask) ? YES : NO;
-	BOOL option = ([sender modifierFlags] & NSAlternateKeyMask) ? YES : NO;
-	BOOL control = ([sender modifierFlags] & NSControlKeyMask) ? YES : NO;
+	BOOL shift = ([sender modifierFlags] & NSEventModifierFlagShift) ? YES : NO;
+	BOOL option = ([sender modifierFlags] & NSEventModifierFlagOption) ? YES : NO;
+	BOOL control = ([sender modifierFlags] & NSEventModifierFlagControl) ? YES : NO;
 	
 	if (shift) {
 		cMod += 1;
@@ -1968,7 +1968,7 @@ static BOOL appleRemoteHoldDown = NO;
 	id scrollView = [fullImageView enclosingScrollView];
 	
 	[fullImageView setImage:nil];
-	[fullImageView setImageScaling:NSScaleNone];
+	[fullImageView setImageScaling:NSImageScaleNone];
 	int i;
 	if (!secondImage) {
 		i = nowPage - 1;
@@ -1983,7 +1983,7 @@ static BOOL appleRemoteHoldDown = NO;
                                 horizontalScrollerClass:nil
                                   verticalScrollerClass:nil
                                              borderType:[scrollView borderType]
-                                            controlSize:NSRegularControlSize
+                                            controlSize:NSControlSizeRegular
                                           scrollerStyle:[scrollView scrollerStyle]
     ];
 	[fullImagePanel setContentSize:theScrollViewSize];
@@ -2020,7 +2020,7 @@ static BOOL appleRemoteHoldDown = NO;
 	}
 	id scrollView = [fullImageView enclosingScrollView];
 	[fullImageView setImage:nil];
-	[fullImageView setImageScaling:NSScaleNone];
+	[fullImageView setImageScaling:NSImageScaleNone];
 	int i;
 	if (!secondImage) {
 		i = nowPage - 1;
@@ -2034,7 +2034,7 @@ static BOOL appleRemoteHoldDown = NO;
                                 horizontalScrollerClass:nil
                                   verticalScrollerClass:nil
                                              borderType:[scrollView borderType]
-                                            controlSize:NSRegularControlSize
+                                            controlSize:NSControlSizeRegular
                                           scrollerStyle:[scrollView scrollerStyle]
     ];
 	[fullImagePanel setContentSize:theScrollViewSize];
@@ -2594,8 +2594,8 @@ static BOOL appleRemoteHoldDown = NO;
 		NSEnumerator *enumerator = [items objectEnumerator];
 		id object;
 		while (object = [enumerator nextObject]) {
-			if ([object state] == NSOnState){
-				[object setState:NSOffState];
+			if ([object state] == NSControlStateValueOn){
+				[object setState:NSControlStateValueOff];
 				while (object = [enumerator nextObject]) {
 					if ([object isEnabled]) {
 						break;
@@ -2604,7 +2604,7 @@ static BOOL appleRemoteHoldDown = NO;
 				if (!object) {
 					object = [[[openSameFolderMenuItem submenu] itemArray] objectAtIndex:0];
 				}
-				[object setState:NSOnState];
+				[object setState:NSControlStateValueOn];
 				break;
 			}
 		}
@@ -2612,7 +2612,7 @@ static BOOL appleRemoteHoldDown = NO;
 			enumerator = [items objectEnumerator];
 			while (object = [enumerator nextObject]) {
 				if ([object isEnabled]) {
-					[object setState:NSOnState];
+					[object setState:NSControlStateValueOn];
 					break;
 				}
 			}
@@ -2629,8 +2629,8 @@ static BOOL appleRemoteHoldDown = NO;
 		NSEnumerator *enumerator = [items reverseObjectEnumerator];
 		id object;
 		while (object = [enumerator nextObject]) {
-			if ([object state] == NSOnState){
-				[object setState:NSOffState];
+			if ([object state] == NSControlStateValueOn){
+				[object setState:NSControlStateValueOff];
 				while (object = [enumerator nextObject]) {
 					if ([object isEnabled]) {
 						break;
@@ -2639,7 +2639,7 @@ static BOOL appleRemoteHoldDown = NO;
 				if (!object) {
 					object = [[[openSameFolderMenuItem submenu] itemArray] lastObject];
 				}
-				[object setState:NSOnState];
+				[object setState:NSControlStateValueOn];
 				break;
 			}
 		}
@@ -2647,7 +2647,7 @@ static BOOL appleRemoteHoldDown = NO;
 			enumerator = [items reverseObjectEnumerator];
 			while (object = [enumerator nextObject]) {
 				if ([object isEnabled]) {
-					[object setState:NSOnState];
+					[object setState:NSControlStateValueOn];
 					break;
 				}
 			}
@@ -2664,8 +2664,8 @@ static BOOL appleRemoteHoldDown = NO;
 		NSEnumerator *enumerator = [items reverseObjectEnumerator];
 		id object;
 		while (object = [enumerator nextObject]) {
-			if ([object state] == NSOnState){
-				[object setState:NSOffState];
+			if ([object state] == NSControlStateValueOn){
+				[object setState:NSControlStateValueOff];
 				while (object = [enumerator nextObject]) {
 					if ([object isEnabled]) {
 						break;
@@ -2674,7 +2674,7 @@ static BOOL appleRemoteHoldDown = NO;
 				if (!object) {
 					object = [[[openSameFolderMenuItem submenu] itemArray] lastObject];
 				}
-				[object setState:NSOnState];
+				[object setState:NSControlStateValueOn];
 				break;
 			}
 		}
@@ -2682,7 +2682,7 @@ static BOOL appleRemoteHoldDown = NO;
 			enumerator = [items reverseObjectEnumerator];
 			while (object = [enumerator nextObject]) {
 				if ([object isEnabled]) {
-					[object setState:NSOnState];
+					[object setState:NSControlStateValueOn];
 					break;
 				}
 			}

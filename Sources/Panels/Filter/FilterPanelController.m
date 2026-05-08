@@ -639,7 +639,7 @@ static CGFloat COVRectIntersectionArea(NSRect rectA, NSRect rectB)
 
     NSButton *closeBtn = [[[NSButton alloc] init] autorelease];
     [closeBtn setImage:[NSImage imageNamed:NSImageNameStopProgressFreestandingTemplate]];
-    [closeBtn setBezelStyle:NSInlineBezelStyle];
+    [closeBtn setBezelStyle:NSBezelStyleInline];
     [closeBtn setBordered:NO];
     [closeBtn setFrameSize:NSMakeSize(16,16)];
     [closeBtn setTarget:self];
@@ -1103,7 +1103,7 @@ static CGFloat COVRectIntersectionArea(NSRect rectA, NSRect rectB)
         NSView *targetView = [filterPanel contentView];
         NSBitmapImageRep *rep = [targetView bitmapImageRepForCachingDisplayInRect:[targetView bounds]];
         [targetView cacheDisplayInRect:[targetView bounds] toBitmapImageRep:rep];
-        NSData *pngData = [rep representationUsingType:NSPNGFileType properties:[NSDictionary dictionary]];
+        NSData *pngData = [rep representationUsingType:NSBitmapImageFileTypePNG properties:[NSDictionary dictionary]];
         [pngData writeToFile:@"/tmp/cooviewer-filter-panel.png" atomically:YES];
         [defaults removeObjectForKey:@"FilterPanelDumpOnLaunch"];
         [defaults synchronize];
@@ -1118,7 +1118,7 @@ static CGFloat COVRectIntersectionArea(NSRect rectA, NSRect rectB)
         NSView *targetView = [filterPickerPanel contentView];
         NSBitmapImageRep *rep = [targetView bitmapImageRepForCachingDisplayInRect:[targetView bounds]];
         [targetView cacheDisplayInRect:[targetView bounds] toBitmapImageRep:rep];
-        NSData *pngData = [rep representationUsingType:NSPNGFileType properties:[NSDictionary dictionary]];
+        NSData *pngData = [rep representationUsingType:NSBitmapImageFileTypePNG properties:[NSDictionary dictionary]];
         [pngData writeToFile:@"/tmp/cooviewer-filter-picker.png" atomically:YES];
         [defaults removeObjectForKey:@"FilterPanelDumpPickerOnLaunch"];
         [defaults synchronize];

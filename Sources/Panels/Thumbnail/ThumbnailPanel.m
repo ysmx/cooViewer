@@ -60,7 +60,7 @@
 
 - (void)sendEvent:(NSEvent *)theEvent
 {
-	if ([theEvent type] == NSKeyDown) {
+	if ([theEvent type] == NSEventTypeKeyDown) {
 		[target performSelector:@selector(action:) withObject:theEvent];
 	} else {
 		[super sendEvent:theEvent];

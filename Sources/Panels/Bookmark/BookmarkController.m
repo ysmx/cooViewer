@@ -422,7 +422,7 @@ static const int DIALOG_CANCEL	= 129;
     if (nil == pageInfo) {
         NSMutableParagraphStyle *pageStyle = [[NSParagraphStyle defaultParagraphStyle] mutableCopy];
         [pageStyle setLineBreakMode:NSLineBreakByTruncatingMiddle];
-        [pageStyle setAlignment:NSRightTextAlignment];
+        [pageStyle setAlignment:NSTextAlignmentRight];
         pageInfo = [[NSDictionary alloc] initWithObjectsAndKeys:pageStyle, NSParagraphStyleAttributeName, nil];
         [pageStyle release];
     }

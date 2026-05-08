@@ -419,7 +419,7 @@ NSRect COIntRect(NSRect aRect)
 				}
 				[thumbnail drawInRect:imageRect
 							 fromRect:NSMakeRect(0,0,widthValue,heightValue)
-							operation:NSCompositeSourceOver fraction:1.0];
+							operation:NSCompositingOperationSourceOver fraction:1.0];
 				[string drawAtPoint:pt];
 			} else {
 				switch (pageBarPosition) {
@@ -569,7 +569,7 @@ NSRect COIntRect(NSRect aRect)
 				[NSGraphicsContext saveGraphicsState]; 		
 				[base addClip]; 
 				[pageBarReadedColor set];
-				NSRectFillUsingOperation(slice,NSCompositeSourceOver);
+				NSRectFillUsingOperation(slice,NSCompositingOperationSourceOver);
 				[NSGraphicsContext restoreGraphicsState]; 		
 			}
 			if (![pageBarBorderColor isEqualTo:[NSColor clearColor]]) {

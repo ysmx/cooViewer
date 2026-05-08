@@ -32,7 +32,7 @@
 	
 	[image drawInRect:tempRect
 			 fromRect:NSMakeRect(0,0,[rep pixelsWide],[rep pixelsHigh])
-			operation:NSCompositeSourceOver fraction:1.0];
+			operation:NSCompositingOperationSourceOver fraction:1.0];
 }
 
 - (void)sizeToFit
