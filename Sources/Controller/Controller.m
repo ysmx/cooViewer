@@ -47,8 +47,6 @@ static BOOL COPathsEqualForHistoryLookup(NSString *a, NSString *b)
 - (NSColor *)co_viewBackgroundColor;
 - (NSColor *)co_effectiveSecondaryDisplayColor;
 - (BOOL)co_shouldShowSecondaryDisplayCover;
-- (NSString *)co_displayContainerNameForPageIndex:(int)index;
-- (NSString *)co_displayContainerNameForFirstPageIndex:(int)firstIndex secondPageIndex:(int)secondIndex;
 - (void)co_waitForImageBufferCount:(NSUInteger)minimumCount sleepInterval:(NSTimeInterval)sleepInterval context:(NSString *)context;
 - (void)co_removeSecondaryDisplayCoverWindows;
 - (void)co_updateSecondaryDisplayCoverWindows;
@@ -108,51 +106,6 @@ static const int DIALOG_CANCEL	= 129;
 		return NO;
 	}
 	return ([[NSScreen screens] count] > 1);
-}
-
-- (NSString *)co_displayContainerNameForPageIndex:(int)index
-{
-	if (!imageLoader || index < 0 || index >= [completeMutableArray count]) {
-		return currentBookName;
-	}
-
-	NSString *path = [imageLoader itemPathAtIndex:index];
-	if (![path length]) {
-		return currentBookName;
-	}
-
-	BOOL isDir = NO;
-	[[NSFileManager defaultManager] fileExistsAtPath:path isDirectory:&isDir];
-	if (isDir) {
-		return [path lastPathComponent];
-	}
-
-	NSString *extension = [[path pathExtension] lowercaseString];
-	if ([[COImageLoader archiveTypes] containsObject:extension] ||
-		[[COImageLoader fileTypes] containsObject:extension]) {
-		return [path lastPathComponent];
-	}
-
-	NSString *parentPath = [path stringByDeletingLastPathComponent];
-	if ([parentPath length] && ![parentPath isEqualToString:path]) {
-		return [parentPath lastPathComponent];
-	}
-
-	return [path lastPathComponent];
-}
-
-- (NSString *)co_displayContainerNameForFirstPageIndex:(int)firstIndex secondPageIndex:(int)secondIndex
-{
-	NSString *firstName = [self co_displayContainerNameForPageIndex:firstIndex];
-	NSString *secondName = [self co_displayContainerNameForPageIndex:secondIndex];
-
-	if (![firstName length]) {
-		return secondName;
-	}
-	if (![secondName length] || [firstName isEqualToString:secondName]) {
-		return firstName;
-	}
-	return [NSString stringWithFormat:@"%@ | %@", firstName, secondName];
 }
 
 - (void)co_waitForImageBufferCount:(NSUInteger)minimumCount sleepInterval:(NSTimeInterval)sleepInterval context:(NSString *)context
@@ -2912,8 +2865,7 @@ static const int DIALOG_CANCEL	= 129;
 	if (numberSwitch && nowPage >= 0) {
 		if (!secondImage) {
 			int i = nowPage - 1;
-			return [NSString stringWithFormat:@"%@\n#%d/%d (%@)",
-					[self co_displayContainerNameForPageIndex:i],
+			return [NSString stringWithFormat:@"#%d/%d (%@)",
 					nowPage,
 					(int)[completeMutableArray count],
 					[[completeMutableArray objectAtIndex:i] lastPathComponent]];
@@ -2921,16 +2873,14 @@ static const int DIALOG_CANCEL	= 129;
 			int i = nowPage - 1;
 			int iS = i - 1;
 			if (readMode == 1 || readMode == 3) {
-				return [NSString stringWithFormat:@"%@\n#%d-%d/%d (%@ | %@)",
-						[self co_displayContainerNameForFirstPageIndex:iS secondPageIndex:i],
+				return [NSString stringWithFormat:@"#%d-%d/%d (%@ | %@)",
 						i,
 						nowPage,
 						(int)[completeMutableArray count],
 						[[completeMutableArray objectAtIndex:iS] lastPathComponent],
 						[[completeMutableArray objectAtIndex:i] lastPathComponent]];
 			} else {
-				return [NSString stringWithFormat:@"%@\n#%d-%d/%d (%@ | %@)",
-						[self co_displayContainerNameForFirstPageIndex:i secondPageIndex:iS],
+				return [NSString stringWithFormat:@"#%d-%d/%d (%@ | %@)",
 						i,
 						nowPage,
 						(int)[completeMutableArray count],

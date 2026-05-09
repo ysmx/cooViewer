@@ -22,6 +22,9 @@
 -(NSDictionary*)pageMargin;
 -(NSDictionary*)pageBarMargin;
 
+-(void)resetPageNumberPositionToDefaults;
+-(void)resetPageBarPositionAndSizeToDefaults;
+
 -(void)setPageBarBGColor:(NSColor*)color;
 -(void)setPageBarBorderColor:(NSColor*)color;
 -(void)setPageBarReadedColor:(NSColor*)color;

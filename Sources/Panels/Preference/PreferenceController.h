@@ -170,7 +170,9 @@
 - (void)sheetDidEnd:(NSWindow*)sheet returnCode:(int)returnCode contextInfo:(void*)contextInfo;
 
 
-- (IBAction)setPosition:(id)sender;
-- (BOOL)inKeyEdit;
+	- (IBAction)setPosition:(id)sender;
+	- (IBAction)resetPageNumberPosition:(id)sender;
+	- (IBAction)resetPageBarPositionAndSize:(id)sender;
+	- (BOOL)inKeyEdit;
 - (void)setKeyCharacters:(NSString*)characters;
 @end

@@ -12,6 +12,11 @@
 #import "Controller.h"
 
 
+static CGFloat COSettingPageStringTextLeftOffset(void)
+{
+	return 9.0;
+}
+
 @implementation AccessorySettingView
 -(void)setPreferences
 {
@@ -210,8 +215,63 @@
 			rect = NSMakeRect(0,0,width,height);
 			break;
 	}
+	if (pageString && !autoHidedPageString) {
+		NSRect stringRect = [self pageStringRect];
+		if (!NSIsEmptyRect(stringRect) && NSIntersectsRect(rect, stringRect)) {
+			rect.origin.x = stringRect.origin.x+COSettingPageStringTextLeftOffset();
+			rect.origin.y = NSMinY(stringRect)-rect.size.height-2;
+		}
+	}
 	return COIntRect(rect);
 }
+
+-(NSRect)pageStringRect
+{
+	NSRect contentFrame = [self frame];
+	NSRect rect = NSMakeRect(0,0,[pageString sizeWithBG].width,[pageString sizeWithBG].height);
+	rect.size.width = rect.size.width + 1;
+	rect.size.height = rect.size.height + 1;
+	switch (pageStringPosition) {
+		case 0:
+			rect.origin.x = pageMargin.x+2 +[self infoStringRect].size.width;
+			rect.origin.y = contentFrame.size.height-rect.size.height-pageMargin.y;
+			break;
+		case 1:
+			rect.origin.x = contentFrame.size.width-rect.size.width-pageMargin.x-2 -[self infoStringRect].size.width;
+			rect.origin.y = contentFrame.size.height-rect.size.height-pageMargin.y;
+			break;
+		case 2:
+			rect.origin.x = pageMargin.x+2 +[self infoStringRect].size.width;
+			rect.origin.y = 17+pageMargin.y+2;
+			break;
+		case 3:
+			rect.origin.x = contentFrame.size.width-rect.size.width-pageMargin.x-2 -[self infoStringRect].size.width;
+			rect.origin.y = 17+pageMargin.y+2;
+			break;
+		default:
+			break;
+	}
+	return COIntRect(rect);
+}
+
+-(void)resetPageNumberPositionToDefaults
+{
+	pageStringPosition = 0;
+	pageMargin = NSZeroPoint;
+	pageStringRect = [self pageStringRect];
+	[self display];
+}
+
+-(void)resetPageBarPositionAndSizeToDefaults
+{
+	pageBarPosition = 0;
+	pageBarMargin = NSZeroPoint;
+	pageBarWidth = 200;
+	pageBarHeight = 15;
+	pageBarRect = [self pageBarRect];
+	[self display];
+}
+
 -(void)setPositionSettingMode:(BOOL)b
 {
 	if (b) {

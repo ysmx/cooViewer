@@ -876,6 +876,17 @@ go to the last page always.</string>
                                                             <action selector="setPosition:" target="1673" id="2871"/>
                                                         </connections>
                                                     </button>
+                                                    <button verticalHuggingPriority="750" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="9004">
+                                                        <rect key="frame" x="158" y="60" width="70" height="28"/>
+                                                        <autoresizingMask key="autoresizingMask"/>
+                                                        <buttonCell key="cell" type="push" title="Reset" bezelStyle="rounded" alignment="center" controlSize="small" borderStyle="border" inset="2" id="9005">
+                                                            <behavior key="behavior" pushIn="YES" lightByBackground="YES" lightByGray="YES"/>
+                                                            <font key="font" metaFont="smallSystem"/>
+                                                        </buttonCell>
+                                                        <connections>
+                                                            <action selector="resetPageBarPositionAndSize:" target="1673" id="9006"/>
+                                                        </connections>
+                                                    </button>
                                                     <button fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="2796">
                                                         <rect key="frame" x="70" y="90" width="104" height="18"/>
                                                         <autoresizingMask key="autoresizingMask"/>
@@ -1011,6 +1022,17 @@ go to the last page always.</string>
                                                         </buttonCell>
                                                         <connections>
                                                             <action selector="setPosition:" target="1673" id="2862"/>
+                                                        </connections>
+                                                    </button>
+                                                    <button verticalHuggingPriority="750" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="9001">
+                                                        <rect key="frame" x="110" y="60" width="70" height="28"/>
+                                                        <autoresizingMask key="autoresizingMask"/>
+                                                        <buttonCell key="cell" type="push" title="Reset" bezelStyle="rounded" alignment="center" controlSize="small" borderStyle="border" inset="2" id="9002">
+                                                            <behavior key="behavior" pushIn="YES" lightByBackground="YES" lightByGray="YES"/>
+                                                            <font key="font" metaFont="smallSystem"/>
+                                                        </buttonCell>
+                                                        <connections>
+                                                            <action selector="resetPageNumberPosition:" target="1673" id="9003"/>
                                                         </connections>
                                                     </button>
                                                 </subviews>

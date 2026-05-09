@@ -1177,6 +1177,12 @@
 /* Class = "NSButtonCell"; title = "Reset..."; ObjectID = "4295"; */
 "4295.title" = "リセット...";
 
+/* Class = "NSButtonCell"; title = "Reset"; ObjectID = "9002"; */
+"9002.title" = "リセット";
+
+/* Class = "NSButtonCell"; title = "Reset"; ObjectID = "9005"; */
+"9005.title" = "リセット";
+
 /* Class = "NSTextFieldCell"; title = "**Action will change according to operation in right side or left side."; ObjectID = "4296"; */
 "4296.title" = "**画面の左右どちら側で操作するかによって動作が変化します";
 
@@ -1476,4 +1482,3 @@
 
 /* Class = "NSMenuItem"; title = "Filter"; ObjectID = "usF-pH-ycg"; */
 "usF-pH-ycg.title" = "フィルター";
-

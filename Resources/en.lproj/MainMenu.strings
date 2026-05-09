@@ -1217,6 +1217,12 @@
 /* Class = "NSButtonCell"; title = "Reset..."; ObjectID = "4295"; */
 "4295.title" = "Reset...";
 
+/* Class = "NSButtonCell"; title = "Reset"; ObjectID = "9002"; */
+"9002.title" = "Reset";
+
+/* Class = "NSButtonCell"; title = "Reset"; ObjectID = "9005"; */
+"9005.title" = "Reset";
+
 /* Class = "NSTextFieldCell"; title = "**Action will change according to operation in right side or left side."; ObjectID = "4296"; */
 "4296.title" = "**Action will change according to operation in right side or left side.";
 

@@ -3332,6 +3332,16 @@ static const int DIALOG_CANCEL	= 129;
 	[accessorySettingView drawAccessory];
 }
 
+- (IBAction)resetPageNumberPosition:(id)sender
+{
+	[accessorySettingView resetPageNumberPositionToDefaults];
+}
+
+- (IBAction)resetPageBarPositionAndSize:(id)sender
+{
+	[accessorySettingView resetPageBarPositionAndSizeToDefaults];
+}
+
 - (void)windowDidResignKey:(NSNotification *)aNotification
 {
 	//showFontPanelとsetPositionで使ってる
