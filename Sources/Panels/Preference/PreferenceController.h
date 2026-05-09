@@ -173,6 +173,8 @@
 	- (IBAction)setPosition:(id)sender;
 	- (IBAction)resetPageNumberPosition:(id)sender;
 	- (IBAction)resetPageBarPositionAndSize:(id)sender;
+	- (IBAction)resetPageNumberAppearance:(id)sender;
+	- (IBAction)resetPageBarAppearance:(id)sender;
 	- (BOOL)inKeyEdit;
 - (void)setKeyCharacters:(NSString*)characters;
 @end

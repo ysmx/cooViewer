@@ -1186,6 +1186,12 @@
 /* Class = "NSButtonCell"; title = "Reset"; ObjectID = "9005"; */
 "9005.title" = "リセット";
 
+/* Class = "NSButtonCell"; title = "Reset"; ObjectID = "pba-reset-cell-001"; */
+"pba-reset-cell-001.title" = "リセット";
+
+/* Class = "NSButtonCell"; title = "Reset"; ObjectID = "pna-reset-cell-001"; */
+"pna-reset-cell-001.title" = "リセット";
+
 /* Class = "NSTextFieldCell"; title = "**Action will change according to operation in right side or left side."; ObjectID = "4296"; */
 "4296.title" = "**画面の左右どちら側で操作するかによって動作が変化します";
 

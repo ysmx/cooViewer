@@ -2483,6 +2483,41 @@ static const int DIALOG_CANCEL	= 129;
 	[pageBarFontTextField setBackgroundColor:[sender currentColor]];
 }
 
+- (IBAction)resetPageNumberAppearance:(id)sender
+{
+	NSColor *fontColor = [NSColor whiteColor];
+	NSColor *backgroundColor = [[NSColor blackColor] colorWithAlphaComponent:0.8];
+	NSColor *borderColor = [[NSColor blackColor] colorWithAlphaComponent:0.8];
+	
+	[showPageNumCheck setState:NSControlStateValueOn];
+	[pageNumAutoHideCheck setState:NSControlStateValueOn];
+	[fontTextField setFont:[NSFont controlContentFontOfSize:11]];
+	[pageColor setCurrentColor:fontColor];
+	[fontTextField setTextColor:fontColor];
+	[pageBGColor setCurrentColor:backgroundColor];
+	[fontTextField setBackgroundColor:backgroundColor];
+	[pageBorderColor setCurrentColor:borderColor];
+}
+
+- (IBAction)resetPageBarAppearance:(id)sender
+{
+	NSColor *fontColor = [NSColor whiteColor];
+	NSColor *backgroundColor = [[NSColor blackColor] colorWithAlphaComponent:0.8];
+	NSColor *borderColor = [NSColor whiteColor];
+	NSColor *readColor = [[NSColor whiteColor] colorWithAlphaComponent:0.5];
+	
+	[showPageBarCheck setState:NSControlStateValueOn];
+	[pageBarAutoHideCheck setState:NSControlStateValueOn];
+	[pageBarShowThumbCheck setState:NSControlStateValueOn];
+	[pageBarFontTextField setFont:[NSFont userFontOfSize:14]];
+	[pageBarFontColor setCurrentColor:fontColor];
+	[pageBarFontTextField setTextColor:fontColor];
+	[pageBarBGColor setCurrentColor:backgroundColor];
+	[pageBarFontTextField setBackgroundColor:backgroundColor];
+	[pageBarBorderColor setCurrentColor:borderColor];
+	[pageBarReadedColor setCurrentColor:readColor];
+}
+
 - (NSFontPanelModeMask) validModesForFontPanel : (NSFontPanel *) fontPanel
 {
 #if MAC_OS_X_VERSION_MAX_ALLOWED >= 1040

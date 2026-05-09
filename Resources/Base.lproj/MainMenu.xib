@@ -873,6 +873,17 @@ go to the last page always.</string>
                                                             <font key="font" metaFont="system"/>
                                                         </buttonCell>
                                                     </button>
+                                                    <button verticalHuggingPriority="750" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="pba-reset-button-001">
+                                                        <rect key="frame" x="470" y="58" width="70" height="24"/>
+                                                        <autoresizingMask key="autoresizingMask"/>
+                                                        <buttonCell key="cell" type="push" title="Reset" bezelStyle="rounded" alignment="center" controlSize="small" borderStyle="border" inset="2" id="pba-reset-cell-001">
+                                                            <behavior key="behavior" pushIn="YES" lightByBackground="YES" lightByGray="YES"/>
+                                                            <font key="font" metaFont="smallSystem"/>
+                                                        </buttonCell>
+                                                        <connections>
+                                                            <action selector="resetPageBarAppearance:" target="1673" id="pba-reset-action-001"/>
+                                                        </connections>
+                                                    </button>
                                                 </subviews>
                                             </view>
                                         </box>
@@ -990,6 +1001,17 @@ go to the last page always.</string>
                                                             <behavior key="behavior" changeContents="YES" doesNotDimImage="YES" lightByContents="YES"/>
                                                             <font key="font" metaFont="system"/>
                                                         </buttonCell>
+                                                    </button>
+                                                    <button verticalHuggingPriority="750" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="pna-reset-button-001">
+                                                        <rect key="frame" x="470" y="58" width="70" height="24"/>
+                                                        <autoresizingMask key="autoresizingMask"/>
+                                                        <buttonCell key="cell" type="push" title="Reset" bezelStyle="rounded" alignment="center" controlSize="small" borderStyle="border" inset="2" id="pna-reset-cell-001">
+                                                            <behavior key="behavior" pushIn="YES" lightByBackground="YES" lightByGray="YES"/>
+                                                            <font key="font" metaFont="smallSystem"/>
+                                                        </buttonCell>
+                                                        <connections>
+                                                            <action selector="resetPageNumberAppearance:" target="1673" id="pna-reset-action-001"/>
+                                                        </connections>
                                                     </button>
                                                 </subviews>
                                             </view>
