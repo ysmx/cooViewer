@@ -1743,7 +1743,7 @@
 	<key>CFBundlePackageType</key>
 	<string>APPL</string>
 	<key>CFBundleShortVersionString</key>
-	<string>1.4.1</string>
+	<string>1.4.2</string>
 	<key>CFBundleSignature</key>
 	<string>COvw</string>
 	<key>CFBundleSupportedPlatforms</key>
@@ -1751,7 +1751,7 @@
 		<string>MacOSX</string>
 	</array>
 	<key>CFBundleVersion</key>
-	<string>1.4.1</string>
+	<string>1.4.2</string>
 	<key>DTCompiler</key>
 	<string>com.apple.compilers.llvm.clang.1_0</string>
 	<key>DTPlatformBuild</key>
