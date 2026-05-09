@@ -24,29 +24,58 @@ NSRect COIntRect(NSRect aRect)
 	return tempRect;
 }
 
+BOOL COAccessoryPlacementIsTop(int placement)
+{
+	return (placement == COAccessoryPlacementTopLeft ||
+			placement == COAccessoryPlacementTopRight ||
+			placement == COAccessoryPlacementTopCenter);
+}
+
+BOOL COAccessoryPlacementIsRight(int placement)
+{
+	return (placement == COAccessoryPlacementTopRight ||
+			placement == COAccessoryPlacementBottomRight);
+}
+
+BOOL COAccessoryPlacementIsCenter(int placement)
+{
+	return (placement == COAccessoryPlacementTopCenter ||
+			placement == COAccessoryPlacementBottomCenter);
+}
+
 static NSRect COPageBarLayoutRect(NSRect contentFrame, NSPoint margin, float widthValue, float heightValue, int position)
 {
 	float width = widthValue+1;
 	float height = heightValue+1;
 	NSRect rect;
 	switch (position) {
-		case 0:
+		case COAccessoryPlacementTopLeft:
 			rect = NSMakeRect(contentFrame.origin.x+margin.x+2,
 							  contentFrame.size.height-17-height-margin.y-3,
 							  width,height);
 			break;
-		case 1:
+		case COAccessoryPlacementTopRight:
 			rect = NSMakeRect(contentFrame.origin.x+contentFrame.size.width-width-margin.x-3,
 							  contentFrame.origin.y-17-height+contentFrame.size.height-margin.y-3,
 							  width,height);
 			break;
-		case 2:
+		case COAccessoryPlacementBottomLeft:
 			rect = NSMakeRect(contentFrame.origin.x+margin.x+2,
 							  contentFrame.origin.y+margin.y+2,
 							  width,height);
 			break;
-		case 3:
+		case COAccessoryPlacementBottomRight:
 			rect = NSMakeRect(contentFrame.origin.x+contentFrame.size.width-width-margin.x-3,
+							  contentFrame.origin.y+margin.y+2,
+							  width,height);
+			break;
+		case COAccessoryPlacementTopCenter:
+			rect = NSMakeRect(contentFrame.origin.x+(contentFrame.size.width-width)/2,
+							  contentFrame.size.height-17-height-margin.y-3,
+							  width,height);
+			break;
+		case COAccessoryPlacementBottomCenter:
+			rect = NSMakeRect(contentFrame.origin.x+(contentFrame.size.width-width)/2,
 							  contentFrame.origin.y+margin.y+2,
 							  width,height);
 			break;
@@ -113,20 +142,28 @@ static NSRect COPageStringLayoutRect(NSRect contentFrame, NSAttributedString *st
 	rect.size.width = rect.size.width + 1;
 	rect.size.height = rect.size.height + 1;
 	switch (position) {
-		case 0:
+		case COAccessoryPlacementTopLeft:
 			rect.origin.x = margin.x+2 +infoRect.size.width;
 			rect.origin.y = contentFrame.size.height-rect.size.height-margin.y;
 			break;
-		case 1:
+		case COAccessoryPlacementTopRight:
 			rect.origin.x = contentFrame.size.width-rect.size.width-margin.x-2 -infoRect.size.width;
 			rect.origin.y = contentFrame.size.height-rect.size.height-margin.y;
 			break;
-		case 2:
+		case COAccessoryPlacementBottomLeft:
 			rect.origin.x = margin.x+2 +infoRect.size.width;
 			rect.origin.y = 17+margin.y+2;
 			break;
-		case 3:
+		case COAccessoryPlacementBottomRight:
 			rect.origin.x = contentFrame.size.width-rect.size.width-margin.x-2 -infoRect.size.width;
+			rect.origin.y = 17+margin.y+2;
+			break;
+		case COAccessoryPlacementTopCenter:
+			rect.origin.x = (contentFrame.size.width-rect.size.width)/2;
+			rect.origin.y = contentFrame.size.height-rect.size.height-margin.y;
+			break;
+		case COAccessoryPlacementBottomCenter:
+			rect.origin.x = (contentFrame.size.width-rect.size.width)/2;
 			rect.origin.y = 17+margin.y+2;
 			break;
 		default:
@@ -425,18 +462,15 @@ static NSRect COPageStringLayoutRect(NSRect contentFrame, NSAttributedString *st
 			int twidth = 6;
 			int theight = 6;
 			int tMargin = 10;
-			int basemargin=7;
-			if (pageBarShowThumbnail) {
-				switch (pageBarPosition) {
-					case 0:case 1:
+				int basemargin=7;
+				if (pageBarShowThumbnail) {
+					if (COAccessoryPlacementIsTop(pageBarPosition)) {
 						pt.y+=tempRect.size.height/2;
-						break;
-					case 2:case 3:
+					} else {
 						pt.y-=5+tempRect.size.height/2;
-						break;
-				}
-				twidth = 10;
-				theight = 10;
+					}
+					twidth = 10;
+					theight = 10;
 				float rad = 10.0;
 				NSImage *thumbnail = [controller loadThumbnailImage:page];
 				
@@ -456,32 +490,24 @@ static NSRect COPageStringLayoutRect(NSRect contentFrame, NSAttributedString *st
 				}
 				width = (int)width;
 				height = (int)height;
-				
-				NSRect thumbnailRect=NSMakeRect(pt.x,pt.y,width+4+4,height+5+1+1+[string size].height);
-				NSRect imageRect = NSZeroRect;
-				
-				switch (pageBarPosition) {
-					case 0:
+					
+					NSRect thumbnailRect=NSMakeRect(pt.x,pt.y,width+4+4,height+5+1+1+[string size].height);
+					NSRect imageRect = NSZeroRect;
+					
+					if (COAccessoryPlacementIsTop(pageBarPosition)) {
 						thumbnailRect.origin.y -= thumbnailRect.size.height+theight;
-						thumbnailRect.origin.x -= tMargin+rad+twidth/2-basemargin;
-						break;
-					case 1:
-						thumbnailRect.origin.y -= thumbnailRect.size.height+theight;
-						thumbnailRect.origin.x -= thumbnailRect.size.width-tMargin-rad-twidth/2+basemargin;
-						break;
-					case 2:
+					} else {
 						thumbnailRect.origin.y += [self pageBarRect].size.height+theight;
-						thumbnailRect.origin.x -= tMargin+rad+twidth/2-basemargin;
-						break;
-					case 3:
-						thumbnailRect.origin.y += [self pageBarRect].size.height+theight;
+					}
+					if (COAccessoryPlacementIsRight(pageBarPosition)) {
 						thumbnailRect.origin.x -= thumbnailRect.size.width-tMargin-rad-twidth/2+basemargin;
-						break;
-					default:
-						break;
-				}
-				if ([string size].width > thumbnailRect.size.width) thumbnailRect.size.width=(int)[string size].width;
-				if (thumbnailRect.origin.x < 5) thumbnailRect.origin.x = 5;
+					} else if (COAccessoryPlacementIsCenter(pageBarPosition)) {
+						thumbnailRect.origin.x -= thumbnailRect.size.width/2;
+					} else {
+						thumbnailRect.origin.x -= tMargin+rad+twidth/2-basemargin;
+					}
+					if ([string size].width > thumbnailRect.size.width) thumbnailRect.size.width=(int)[string size].width;
+					if (thumbnailRect.origin.x < 5) thumbnailRect.origin.x = 5;
 				if (thumbnailRect.origin.x+thumbnailRect.size.width+5 > [self frame].size.width) {
 					float x = [self frame].size.width - (thumbnailRect.size.width+5);
 					thumbnailRect.origin.x = x;
@@ -497,20 +523,23 @@ static NSRect COPageStringLayoutRect(NSRect contentFrame, NSAttributedString *st
 				
 				NSBezierPath *bezier;				
 				NSPoint tl,tt,tr;
-				if (pageBarPosition < 2) {		
+				float arrowCenterX = mouseOrigin.x;
+				float minArrowX = thumbnailRect.origin.x+rad+tMargin+twidth/2;
+				float maxArrowX = thumbnailRect.origin.x+thumbnailRect.size.width-rad-tMargin-twidth/2;
+				if (arrowCenterX < minArrowX) arrowCenterX = minArrowX;
+				if (arrowCenterX > maxArrowX) arrowCenterX = maxArrowX;
+				if (COAccessoryPlacementIsTop(pageBarPosition)) {
 					bezier = [NSBezierPath bezierPathWithRectWithArc:thumbnailRect rad:rad open:1];		
 					tt = NSMakePoint(mouseOrigin.x,thumbnailRect.origin.y+thumbnailRect.size.height+theight);	
-					switch (pageBarPosition) {
-						case 0://左上
-							tl = NSMakePoint(thumbnailRect.origin.x+rad+tMargin,tt.y-theight);
-							tr = NSMakePoint(tl.x+twidth,tl.y);
-							break;
-						case 1://右上
-							tr = NSMakePoint(thumbnailRect.origin.x+thumbnailRect.size.width-rad-tMargin,tt.y-theight);
-							tl = NSMakePoint(tr.x-twidth,tr.y);
-							break;
-						default:
-							break;
+					if (COAccessoryPlacementIsRight(pageBarPosition)) {
+						tr = NSMakePoint(thumbnailRect.origin.x+thumbnailRect.size.width-rad-tMargin,tt.y-theight);
+						tl = NSMakePoint(tr.x-twidth,tr.y);
+					} else if (COAccessoryPlacementIsCenter(pageBarPosition)) {
+						tl = NSMakePoint(arrowCenterX-twidth/2,tt.y-theight);
+						tr = NSMakePoint(arrowCenterX+twidth/2,tl.y);
+					} else {
+						tl = NSMakePoint(thumbnailRect.origin.x+rad+tMargin,tt.y-theight);
+						tr = NSMakePoint(tl.x+twidth,tl.y);
 					}
 					[bezier appendBezierPathWithPoints:&tr count:1];
 					[bezier appendBezierPathWithPoints:&tt count:1];
@@ -518,17 +547,15 @@ static NSRect COPageStringLayoutRect(NSRect contentFrame, NSAttributedString *st
 				} else {
 					bezier = [NSBezierPath bezierPathWithRectWithArc:thumbnailRect rad:rad open:3];	
 					tt = NSMakePoint(mouseOrigin.x,thumbnailRect.origin.y-theight);
-					switch (pageBarPosition) {
-						case 2://左下
-							tl = NSMakePoint(thumbnailRect.origin.x+rad+tMargin,tt.y+theight);
-							tr = NSMakePoint(tl.x+twidth,tl.y);
-							break;
-						case 3://右下
-							tr = NSMakePoint(thumbnailRect.origin.x+thumbnailRect.size.width-rad-tMargin,tt.y+theight);
-							tl = NSMakePoint(tr.x-twidth,tr.y);
-							break;
-						default:
-							break;
+					if (COAccessoryPlacementIsRight(pageBarPosition)) {
+						tr = NSMakePoint(thumbnailRect.origin.x+thumbnailRect.size.width-rad-tMargin,tt.y+theight);
+						tl = NSMakePoint(tr.x-twidth,tr.y);
+					} else if (COAccessoryPlacementIsCenter(pageBarPosition)) {
+						tl = NSMakePoint(arrowCenterX-twidth/2,tt.y+theight);
+						tr = NSMakePoint(arrowCenterX+twidth/2,tl.y);
+					} else {
+						tl = NSMakePoint(thumbnailRect.origin.x+rad+tMargin,tt.y+theight);
+						tr = NSMakePoint(tl.x+twidth,tl.y);
 					}
 					[bezier appendBezierPathWithPoints:&tl count:1];
 					[bezier appendBezierPathWithPoints:&tt count:1];
@@ -550,43 +577,27 @@ static NSRect COPageStringLayoutRect(NSRect contentFrame, NSAttributedString *st
 							operation:NSCompositingOperationSourceOver fraction:1.0];
 				[string drawAtPoint:pt];
 			} else {
-				switch (pageBarPosition) {
-					case 0:case 1:
-						pt.y+=tempRect.size.height/2;
-						break;
-					case 2:case 3:
-						pt.y-=tempRect.size.height/2;
-						break;
+				if (COAccessoryPlacementIsTop(pageBarPosition)) {
+					pt.y+=tempRect.size.height/2;
+				} else {
+					pt.y-=tempRect.size.height/2;
 				}
 				int stringSize = [string size].width;
 				if (stringSize < twidth+tMargin*2) tMargin = (stringSize-twidth)/2;
-				switch (pageBarPosition) {
-					case 0:
-						pt.x += basemargin;
-						pt.y -= [string size].height+theight;
-						pt.x -= tMargin+twidth/2;
-						//pt.x += 15;
-						break;
-					case 1:
-						pt.x -= basemargin;
-						pt.y -= [string size].height+theight;
-						pt.x += tMargin+twidth/2;
-						pt.x -= stringSize;
-						//pt.x -= 10;
-						break;
-					case 2:
-						pt.x += basemargin;
-						pt.y += [self pageBarRect].size.height+1;
-						pt.x -= tMargin+twidth/2;
-						break;
-					case 3:
-						pt.x -= basemargin;
-						pt.y += [self pageBarRect].size.height+1;
-						pt.x += tMargin+twidth/2;
-						pt.x -= stringSize;
-						break;
-					default:
-						break;
+				if (COAccessoryPlacementIsTop(pageBarPosition)) {
+					pt.y -= [string size].height+theight;
+				} else {
+					pt.y += [self pageBarRect].size.height+1;
+				}
+				if (COAccessoryPlacementIsRight(pageBarPosition)) {
+					pt.x -= basemargin;
+					pt.x += tMargin+twidth/2;
+					pt.x -= stringSize;
+				} else if (COAccessoryPlacementIsCenter(pageBarPosition)) {
+					pt.x -= stringSize/2;
+				} else {
+					pt.x += basemargin;
+					pt.x -= tMargin+twidth/2;
 				}
 				if (pt.x < 5) pt.x = 5;
 				if (pt.x + stringSize + 5> [self frame].size.width) {
@@ -597,20 +608,23 @@ static NSRect COPageStringLayoutRect(NSRect contentFrame, NSAttributedString *st
 				NSBezierPath *bezier;
 				NSRect temp = NSMakeRect(pt.x,pt.y,[string size].width,[string size].height);
 				NSPoint tl,tt,tr;
-				if (pageBarPosition >= 2) {
+				float arrowCenterX = mouseOrigin.x;
+				float minArrowX = pt.x+tMargin+twidth/2;
+				float maxArrowX = pt.x+stringSize-tMargin-twidth/2;
+				if (arrowCenterX < minArrowX) arrowCenterX = minArrowX;
+				if (arrowCenterX > maxArrowX) arrowCenterX = maxArrowX;
+				if (!COAccessoryPlacementIsTop(pageBarPosition)) {
 					bezier = [NSBezierPath bezierPathWithRectWithArc:temp rad:0 open:3];
 					tt = NSMakePoint(mouseOrigin.x,pt.y-theight);
-					switch (pageBarPosition) {
-						case 2://左下
-							tl = NSMakePoint(pt.x+tMargin,tt.y+theight);
-							tr = NSMakePoint(tl.x+twidth,tl.y);
-							break;
-						case 3://右下
-							tr = NSMakePoint(pt.x+stringSize-tMargin,tt.y+theight);
-							tl = NSMakePoint(tr.x-twidth,tr.y);
-							break;
-						default:
-							break;
+					if (COAccessoryPlacementIsRight(pageBarPosition)) {
+						tr = NSMakePoint(pt.x+stringSize-tMargin,tt.y+theight);
+						tl = NSMakePoint(tr.x-twidth,tr.y);
+					} else if (COAccessoryPlacementIsCenter(pageBarPosition)) {
+						tl = NSMakePoint(arrowCenterX-twidth/2,tt.y+theight);
+						tr = NSMakePoint(arrowCenterX+twidth/2,tl.y);
+					} else {
+						tl = NSMakePoint(pt.x+tMargin,tt.y+theight);
+						tr = NSMakePoint(tl.x+twidth,tl.y);
 					}
 					[bezier appendBezierPathWithPoints:&tl count:1];
 					[bezier appendBezierPathWithPoints:&tt count:1];
@@ -618,17 +632,15 @@ static NSRect COPageStringLayoutRect(NSRect contentFrame, NSAttributedString *st
 				} else {					
 					bezier = [NSBezierPath bezierPathWithRectWithArc:temp rad:0 open:1];
 					tt = NSMakePoint(mouseOrigin.x,pt.y+[string size].height+theight);
-					switch (pageBarPosition) {
-						case 0://左上
-							tl = NSMakePoint(pt.x+tMargin,tt.y-theight);
-							tr = NSMakePoint(tl.x+twidth,tl.y);
-							break;
-						case 1://右上
-							tr = NSMakePoint(pt.x+stringSize-tMargin,tt.y-theight);
-							tl = NSMakePoint(tr.x-twidth,tr.y);
-							break;
-						default:
-							break;
+					if (COAccessoryPlacementIsRight(pageBarPosition)) {
+						tr = NSMakePoint(pt.x+stringSize-tMargin,tt.y-theight);
+						tl = NSMakePoint(tr.x-twidth,tr.y);
+					} else if (COAccessoryPlacementIsCenter(pageBarPosition)) {
+						tl = NSMakePoint(arrowCenterX-twidth/2,tt.y-theight);
+						tr = NSMakePoint(arrowCenterX+twidth/2,tl.y);
+					} else {
+						tl = NSMakePoint(pt.x+tMargin,tt.y-theight);
+						tr = NSMakePoint(tl.x+twidth,tl.y);
 					}
 					[bezier appendBezierPathWithPoints:&tr count:1];
 					[bezier appendBezierPathWithPoints:&tt count:1];
@@ -921,6 +933,11 @@ static NSRect COPageStringLayoutRect(NSRect contentFrame, NSAttributedString *st
 -(NSRect)pageStringRect
 {
 	NSRect contentFrame = [self frame];
+	return [self pageStringLayoutRectForContentFrame:contentFrame];
+}
+
+-(NSRect)pageStringLayoutRectForContentFrame:(NSRect)contentFrame
+{
 	return COPageStringLayoutRect(contentFrame,pageString,pageMargin,pageStringPosition,[self infoStringRect]);
 }
 
@@ -937,17 +954,39 @@ static NSRect COPageStringLayoutRect(NSRect contentFrame, NSAttributedString *st
 {
 	if ([controller indicator]) {		
 		NSRect contentFrame = [self frame];
-		NSRect rect = COPageBarLayoutRect(contentFrame,pageBarMargin,pageBarWidth,pageBarHeight,pageBarPosition);
-		if (pageString && !autoHidedPageString) {
-			NSRect stringRect = COPageStringLayoutRect(contentFrame,pageString,pageMargin,pageStringPosition,[self infoStringRect]);
-			if (!NSIsEmptyRect(stringRect) && NSIntersectsRect(rect, stringRect)) {
-				rect.origin.x = stringRect.origin.x+COPageStringTextLeftOffset();
-				rect.origin.y = NSMinY(stringRect)-rect.size.height-2;
-			}
-		}
-		return COIntRect(rect);
+		return [self pageBarLayoutRectForContentFrame:contentFrame avoidPageString:YES];
 	}
 	return NSZeroRect;
+}
+
+-(NSRect)pageBarLayoutRectForContentFrame:(NSRect)contentFrame avoidPageString:(BOOL)avoidPageString
+{
+	NSRect rect = COPageBarLayoutRect(contentFrame,pageBarMargin,pageBarWidth,pageBarHeight,pageBarPosition);
+	if (avoidPageString && pageString && !autoHidedPageString) {
+		NSRect stringRect = COPageStringLayoutRect(contentFrame,pageString,pageMargin,pageStringPosition,[self infoStringRect]);
+		if (!NSIsEmptyRect(stringRect) && pageStringPosition == pageBarPosition) {
+			if (COAccessoryPlacementIsRight(pageBarPosition)) {
+				rect.origin.x = NSMaxX(stringRect)-COPageStringTextLeftOffset()-rect.size.width;
+			} else if (COAccessoryPlacementIsCenter(pageBarPosition)) {
+				rect.origin.x = NSMidX(stringRect)-rect.size.width/2;
+			} else {
+				rect.origin.x = stringRect.origin.x+COPageStringTextLeftOffset();
+			}
+			if (COAccessoryPlacementIsTop(pageBarPosition)) {
+				rect.origin.y = NSMinY(stringRect)-rect.size.height-2;
+			} else {
+				rect.origin.y = NSMaxY(stringRect)+2;
+			}
+		} else if (!NSIsEmptyRect(stringRect) && NSIntersectsRect(rect, stringRect)) {
+			rect.origin.x = stringRect.origin.x+COPageStringTextLeftOffset();
+			if (COAccessoryPlacementIsTop(pageBarPosition)) {
+				rect.origin.y = NSMinY(stringRect)-rect.size.height-2;
+			} else {
+				rect.origin.y = NSMaxY(stringRect)+2;
+			}
+		}
+	}
+	return COIntRect(rect);
 }
 
 -(NSRect)pageMoverRect

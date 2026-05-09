@@ -3313,7 +3313,6 @@ static const int DIALOG_CANCEL	= 129;
 {
 	[accessorySettingPanel setWorksWhenModal:YES];
 	[accessorySettingPanel setBackgroundColor:[viewBackGroundColor currentColor]];
-	[accessorySettingView display];
 	[accessorySettingPanel setLevel:NSMainMenuWindowLevel];
 	[accessorySettingPanel setDelegate:(id)self];
 	
@@ -3326,10 +3325,11 @@ static const int DIALOG_CANCEL	= 129;
 	[accessorySettingView setTextBGColor:[pageBGColor currentColor]];
 	[accessorySettingView setTextBorderColor:[pageBorderColor currentColor]];
 	
-	[accessorySettingView setPositionSettingMode:YES];
-	[accessorySettingPanel makeKeyAndOrderFront:self];
 	[accessorySettingView setPageString:@"#1-2/345 (67.jpg | 89.jpg)"];
+	[accessorySettingView setPositionSettingMode:YES];
 	[accessorySettingView drawAccessory];
+	[accessorySettingView setNeedsDisplay:YES];
+	[accessorySettingPanel makeKeyAndOrderFront:self];
 }
 
 - (IBAction)resetPageNumberPosition:(id)sender

@@ -11,11 +11,10 @@
 #import "NSAttributedString_Adding.h"
 #import "Controller.h"
 
-
-static CGFloat COSettingPageStringTextLeftOffset(void)
-{
-	return 9.0;
-}
+@interface AccessorySettingView ()
+-(int)placementForPoint:(NSPoint)point;
+-(void)setAccessoryPlacement:(int)placement;
+@end
 
 @implementation AccessorySettingView
 -(void)setPreferences
@@ -67,6 +66,11 @@ static CGFloat COSettingPageStringTextLeftOffset(void)
 -(void)drawRect:(NSRect)frameRect
 {	
 	if (positionSettingMode>=0) {
+		NSColor *backgroundColor = [[self window] backgroundColor];
+		if (!backgroundColor) backgroundColor = [NSColor blackColor];
+		[backgroundColor set];
+		NSRectFill([self bounds]);
+		
 		pageBarRect = [self pageBarRect];
 		float pbWidth = pageBarRect.size.width;
 		
@@ -107,30 +111,38 @@ static CGFloat COSettingPageStringTextLeftOffset(void)
 		[resizeIndicator drawInRect:tempRect fromRect:NSMakeRect(0,0,15,15) operation:NSCompositingOperationSourceOver fraction:1.0];
 		
 		NSBezierPath *path = [NSBezierPath bezierPath];
-		switch (pageBarPosition) {
-			case 0:
-				[path moveToPoint:NSMakePoint(0,pageBarRect.origin.y+pageBarRect.size.height)];
-				[path lineToPoint:NSMakePoint(pageBarRect.origin.x,pageBarRect.origin.y+pageBarRect.size.height)];
-				[path moveToPoint:NSMakePoint(pageBarRect.origin.x,[self visibleRect].size.height)];
-				[path lineToPoint:NSMakePoint(pageBarRect.origin.x,pageBarRect.origin.y+pageBarRect.size.height)];
+			switch (pageBarPosition) {
+				case 0:
+					[path moveToPoint:NSMakePoint(0,pageBarRect.origin.y+pageBarRect.size.height)];
+					[path lineToPoint:NSMakePoint(pageBarRect.origin.x,pageBarRect.origin.y+pageBarRect.size.height)];
+					[path moveToPoint:NSMakePoint(pageBarRect.origin.x,[self visibleRect].size.height)];
+					[path lineToPoint:NSMakePoint(pageBarRect.origin.x,pageBarRect.origin.y+pageBarRect.size.height)];
+					break;
+				case COAccessoryPlacementTopCenter:
+					[path moveToPoint:NSMakePoint(NSMidX(pageBarRect),pageBarRect.origin.y+pageBarRect.size.height)];
+					[path lineToPoint:NSMakePoint(NSMidX(pageBarRect),[self visibleRect].size.height)];
+					break;
+				case 1:
+					[path moveToPoint:NSMakePoint([self visibleRect].size.width,pageBarRect.origin.y+pageBarRect.size.height)];
+					[path lineToPoint:NSMakePoint(pageBarRect.origin.x+pageBarRect.size.width,pageBarRect.origin.y+pageBarRect.size.height)];
+					[path moveToPoint:NSMakePoint(pageBarRect.origin.x+pageBarRect.size.width,[self visibleRect].size.height)];
+					[path lineToPoint:NSMakePoint(pageBarRect.origin.x+pageBarRect.size.width,pageBarRect.origin.y+pageBarRect.size.height)];
 				break;
-			case 1:
-				[path moveToPoint:NSMakePoint([self visibleRect].size.width,pageBarRect.origin.y+pageBarRect.size.height)];
-				[path lineToPoint:NSMakePoint(pageBarRect.origin.x+pageBarRect.size.width,pageBarRect.origin.y+pageBarRect.size.height)];
-				[path moveToPoint:NSMakePoint(pageBarRect.origin.x+pageBarRect.size.width,[self visibleRect].size.height)];
-				[path lineToPoint:NSMakePoint(pageBarRect.origin.x+pageBarRect.size.width,pageBarRect.origin.y+pageBarRect.size.height)];
-				break;
-			case 2:
-				[path moveToPoint:NSMakePoint(0,pageBarRect.origin.y)];
-				[path lineToPoint:NSMakePoint(pageBarRect.origin.x,pageBarRect.origin.y)];
-				[path moveToPoint:NSMakePoint(pageBarRect.origin.x,0)];
-				[path lineToPoint:NSMakePoint(pageBarRect.origin.x,pageBarRect.origin.y)];
-				break;
-			case 3:
-				[path moveToPoint:NSMakePoint([self visibleRect].size.width,pageBarRect.origin.y)];
-				[path lineToPoint:NSMakePoint(pageBarRect.origin.x+pageBarRect.size.width,pageBarRect.origin.y)];
-				[path moveToPoint:NSMakePoint(pageBarRect.origin.x+pageBarRect.size.width,0)];
-				[path lineToPoint:NSMakePoint(pageBarRect.origin.x+pageBarRect.size.width,pageBarRect.origin.y)];
+				case 2:
+					[path moveToPoint:NSMakePoint(0,pageBarRect.origin.y)];
+					[path lineToPoint:NSMakePoint(pageBarRect.origin.x,pageBarRect.origin.y)];
+					[path moveToPoint:NSMakePoint(pageBarRect.origin.x,0)];
+					[path lineToPoint:NSMakePoint(pageBarRect.origin.x,pageBarRect.origin.y)];
+					break;
+				case COAccessoryPlacementBottomCenter:
+					[path moveToPoint:NSMakePoint(NSMidX(pageBarRect),0)];
+					[path lineToPoint:NSMakePoint(NSMidX(pageBarRect),pageBarRect.origin.y)];
+					break;
+				case 3:
+					[path moveToPoint:NSMakePoint([self visibleRect].size.width,pageBarRect.origin.y)];
+					[path lineToPoint:NSMakePoint(pageBarRect.origin.x+pageBarRect.size.width,pageBarRect.origin.y)];
+					[path moveToPoint:NSMakePoint(pageBarRect.origin.x+pageBarRect.size.width,0)];
+					[path lineToPoint:NSMakePoint(pageBarRect.origin.x+pageBarRect.size.width,pageBarRect.origin.y)];
 				break;
 			default:
 				break;
@@ -146,30 +158,38 @@ static CGFloat COSettingPageStringTextLeftOffset(void)
 		pageStringRect = [self pageStringRect];
 		[pageString drawAtPoint:pageStringRect.origin bg:textBGColor border:textBorderColor];
 		path = [NSBezierPath bezierPath];
-		switch (pageStringPosition) {
-			case 0:
-				[path moveToPoint:NSMakePoint(0,pageStringRect.origin.y+pageStringRect.size.height)];
-				[path lineToPoint:NSMakePoint(pageStringRect.origin.x,pageStringRect.origin.y+pageStringRect.size.height)];
-				[path moveToPoint:NSMakePoint(pageStringRect.origin.x,[self visibleRect].size.height)];
-				[path lineToPoint:NSMakePoint(pageStringRect.origin.x,pageStringRect.origin.y+pageStringRect.size.height)];
+			switch (pageStringPosition) {
+				case 0:
+					[path moveToPoint:NSMakePoint(0,pageStringRect.origin.y+pageStringRect.size.height)];
+					[path lineToPoint:NSMakePoint(pageStringRect.origin.x,pageStringRect.origin.y+pageStringRect.size.height)];
+					[path moveToPoint:NSMakePoint(pageStringRect.origin.x,[self visibleRect].size.height)];
+					[path lineToPoint:NSMakePoint(pageStringRect.origin.x,pageStringRect.origin.y+pageStringRect.size.height)];
+					break;
+				case COAccessoryPlacementTopCenter:
+					[path moveToPoint:NSMakePoint(NSMidX(pageStringRect),pageStringRect.origin.y+pageStringRect.size.height)];
+					[path lineToPoint:NSMakePoint(NSMidX(pageStringRect),[self visibleRect].size.height)];
+					break;
+				case 1:
+					[path moveToPoint:NSMakePoint([self visibleRect].size.width,pageStringRect.origin.y+pageStringRect.size.height)];
+					[path lineToPoint:NSMakePoint(pageStringRect.origin.x+pageStringRect.size.width,pageStringRect.origin.y+pageStringRect.size.height)];
+					[path moveToPoint:NSMakePoint(pageStringRect.origin.x+pageStringRect.size.width,[self visibleRect].size.height)];
+					[path lineToPoint:NSMakePoint(pageStringRect.origin.x+pageStringRect.size.width,pageStringRect.origin.y+pageStringRect.size.height)];
 				break;
-			case 1:
-				[path moveToPoint:NSMakePoint([self visibleRect].size.width,pageStringRect.origin.y+pageStringRect.size.height)];
-				[path lineToPoint:NSMakePoint(pageStringRect.origin.x+pageStringRect.size.width,pageStringRect.origin.y+pageStringRect.size.height)];
-				[path moveToPoint:NSMakePoint(pageStringRect.origin.x+pageStringRect.size.width,[self visibleRect].size.height)];
-				[path lineToPoint:NSMakePoint(pageStringRect.origin.x+pageStringRect.size.width,pageStringRect.origin.y+pageStringRect.size.height)];
-				break;
-			case 2:
-				[path moveToPoint:NSMakePoint(0,pageStringRect.origin.y)];
-				[path lineToPoint:NSMakePoint(pageStringRect.origin.x,pageStringRect.origin.y)];
-				[path moveToPoint:NSMakePoint(pageStringRect.origin.x,0)];
-				[path lineToPoint:NSMakePoint(pageStringRect.origin.x,pageStringRect.origin.y)];
-				break;
-			case 3:
-				[path moveToPoint:NSMakePoint([self visibleRect].size.width,pageStringRect.origin.y)];
-				[path lineToPoint:NSMakePoint(pageStringRect.origin.x+pageStringRect.size.width,pageStringRect.origin.y)];
-				[path moveToPoint:NSMakePoint(pageStringRect.origin.x+pageStringRect.size.width,0)];
-				[path lineToPoint:NSMakePoint(pageStringRect.origin.x+pageStringRect.size.width,pageStringRect.origin.y)];
+				case 2:
+					[path moveToPoint:NSMakePoint(0,pageStringRect.origin.y)];
+					[path lineToPoint:NSMakePoint(pageStringRect.origin.x,pageStringRect.origin.y)];
+					[path moveToPoint:NSMakePoint(pageStringRect.origin.x,0)];
+					[path lineToPoint:NSMakePoint(pageStringRect.origin.x,pageStringRect.origin.y)];
+					break;
+				case COAccessoryPlacementBottomCenter:
+					[path moveToPoint:NSMakePoint(NSMidX(pageStringRect),0)];
+					[path lineToPoint:NSMakePoint(NSMidX(pageStringRect),pageStringRect.origin.y)];
+					break;
+				case 3:
+					[path moveToPoint:NSMakePoint([self visibleRect].size.width,pageStringRect.origin.y)];
+					[path lineToPoint:NSMakePoint(pageStringRect.origin.x+pageStringRect.size.width,pageStringRect.origin.y)];
+					[path moveToPoint:NSMakePoint(pageStringRect.origin.x+pageStringRect.size.width,0)];
+					[path lineToPoint:NSMakePoint(pageStringRect.origin.x+pageStringRect.size.width,pageStringRect.origin.y)];
 				break;
 			default:
 				break;
@@ -186,86 +206,25 @@ static CGFloat COSettingPageStringTextLeftOffset(void)
 
 -(NSRect)pageBarRect
 {	
-	float width = pageBarWidth+1;
-	float height = pageBarHeight+1;
-	NSRect rect;
 	NSRect contentFrame = [self frame];
-	switch (pageBarPosition) {
-		case 0:
-			rect = NSMakeRect(contentFrame.origin.x+pageBarMargin.x+2,
-							  contentFrame.origin.y-17-height+contentFrame.size.height-pageBarMargin.y-3,
-							  width,height);
-			break;
-		case 1:
-			rect = NSMakeRect(contentFrame.origin.x+contentFrame.size.width-width-pageBarMargin.x-3,
-							  contentFrame.origin.y-17-height+contentFrame.size.height-pageBarMargin.y-3,
-							  width,height);
-			break;
-		case 2:
-			rect = NSMakeRect(contentFrame.origin.x+pageBarMargin.x+2,
-							  contentFrame.origin.y+pageBarMargin.y+2,
-							  width,height);
-			break;
-		case 3:
-			rect = NSMakeRect(contentFrame.origin.x+contentFrame.size.width-width-pageBarMargin.x-3,
-							  contentFrame.origin.y+pageBarMargin.y+2,
-							  width,height);
-			break;
-		default:
-			rect = NSMakeRect(0,0,width,height);
-			break;
-	}
-	if (pageString && !autoHidedPageString) {
-		NSRect stringRect = [self pageStringRect];
-		if (!NSIsEmptyRect(stringRect) && NSIntersectsRect(rect, stringRect)) {
-			rect.origin.x = stringRect.origin.x+COSettingPageStringTextLeftOffset();
-			rect.origin.y = NSMinY(stringRect)-rect.size.height-2;
-		}
-	}
-	return COIntRect(rect);
+	return [self pageBarLayoutRectForContentFrame:contentFrame avoidPageString:YES];
 }
 
 -(NSRect)pageStringRect
 {
 	NSRect contentFrame = [self frame];
-	NSRect rect = NSMakeRect(0,0,[pageString sizeWithBG].width,[pageString sizeWithBG].height);
-	rect.size.width = rect.size.width + 1;
-	rect.size.height = rect.size.height + 1;
-	switch (pageStringPosition) {
-		case 0:
-			rect.origin.x = pageMargin.x+2 +[self infoStringRect].size.width;
-			rect.origin.y = contentFrame.size.height-rect.size.height-pageMargin.y;
-			break;
-		case 1:
-			rect.origin.x = contentFrame.size.width-rect.size.width-pageMargin.x-2 -[self infoStringRect].size.width;
-			rect.origin.y = contentFrame.size.height-rect.size.height-pageMargin.y;
-			break;
-		case 2:
-			rect.origin.x = pageMargin.x+2 +[self infoStringRect].size.width;
-			rect.origin.y = 17+pageMargin.y+2;
-			break;
-		case 3:
-			rect.origin.x = contentFrame.size.width-rect.size.width-pageMargin.x-2 -[self infoStringRect].size.width;
-			rect.origin.y = 17+pageMargin.y+2;
-			break;
-		default:
-			break;
-	}
-	return COIntRect(rect);
+	return [self pageStringLayoutRectForContentFrame:contentFrame];
 }
 
 -(void)resetPageNumberPositionToDefaults
 {
-	pageStringPosition = 0;
-	pageMargin = NSZeroPoint;
-	pageStringRect = [self pageStringRect];
+	[self setAccessoryPlacement:COAccessoryPlacementTopLeft];
 	[self display];
 }
 
 -(void)resetPageBarPositionAndSizeToDefaults
 {
-	pageBarPosition = 0;
-	pageBarMargin = NSZeroPoint;
+	[self setAccessoryPlacement:COAccessoryPlacementTopLeft];
 	pageBarWidth = 200;
 	pageBarHeight = 15;
 	pageBarRect = [self pageBarRect];
@@ -276,6 +235,10 @@ static CGFloat COSettingPageStringTextLeftOffset(void)
 {
 	if (b) {
 		positionSettingMode = 1;
+		if (pageStringPosition < COAccessoryPlacementTopLeft || pageStringPosition > COAccessoryPlacementBottomCenter) {
+			pageStringPosition = COAccessoryPlacementTopLeft;
+		}
+		[self setAccessoryPlacement:pageStringPosition];
 	} else {
 		positionSettingMode = 0;
 	}
@@ -312,99 +275,57 @@ static CGFloat COSettingPageStringTextLeftOffset(void)
 
 
 #pragma mark PositionSetting
+-(int)placementForPoint:(NSPoint)point
+{
+	NSRect rect = [self visibleRect];
+	CGFloat leftThird = NSMinX(rect)+NSWidth(rect)/3;
+	CGFloat rightThird = NSMinX(rect)+NSWidth(rect)*2/3;
+	BOOL top = (point.y >= NSMidY(rect));
+	
+	if (point.x < leftThird) {
+		return top ? COAccessoryPlacementTopLeft : COAccessoryPlacementBottomLeft;
+	}
+	if (point.x >= rightThird) {
+		return top ? COAccessoryPlacementTopRight : COAccessoryPlacementBottomRight;
+	}
+	return top ? COAccessoryPlacementTopCenter : COAccessoryPlacementBottomCenter;
+}
+
+-(void)setAccessoryPlacement:(int)placement
+{
+	pageStringPosition = placement;
+	pageBarPosition = placement;
+	pageMargin = NSZeroPoint;
+	pageBarMargin = NSZeroPoint;
+	pageStringRect = [self pageStringRect];
+	pageBarRect = [self pageBarRect];
+}
+
 -(void)mouseDown:(NSEvent*)event
 {
+	pageBarRect = [self pageBarRect];
 	NSRect tempRect = pageBarRect;
 	tempRect.origin.x += tempRect.size.width-10;
 	tempRect.size.width = 10;
 	tempRect.size.height = 10;
 	
-	mouseOldPoint = [event locationInWindow];
-	if (NSPointInRect(mouseOldPoint,[self pageStringRect])) {
-		positionSettingMode = 2;
-	} else if (NSPointInRect(mouseOldPoint,tempRect)) {
+	mouseOldPoint = [self convertPoint:[event locationInWindow] fromView:nil];
+	if (NSPointInRect(mouseOldPoint,tempRect)) {
 		positionSettingMode = 3;
-	} else if (NSPointInRect(mouseOldPoint,pageBarRect)) {
-		positionSettingMode = 4;
 	} else {
-		positionSettingMode = 1;
+		positionSettingMode = 2;
+		[self setAccessoryPlacement:[self placementForPoint:mouseOldPoint]];
+		[self display];
 	}
 	
 	//NSLog(@"mouseDown %i",positionSettingMode);
 }
 -(void)mouseDragged:(NSEvent *)theEvent
 {
-	NSPoint newMousePoint = [theEvent locationInWindow];
+	NSPoint newMousePoint = [self convertPoint:[theEvent locationInWindow] fromView:nil];
 	if (!NSPointInRect(newMousePoint,[self visibleRect])) return;;
-	NSRect luRect,ruRect,ldRect,rdRect;
-	
-	NSRect tmpL,tmpR;
-	NSDivideRect([self frame],&tmpL,&tmpR,[self frame].size.width/2,NSMinXEdge);
-	NSDivideRect(tmpL,&luRect,&ldRect,[self frame].size.height/2,NSMaxYEdge);
-	NSDivideRect(tmpR,&ruRect,&rdRect,[self frame].size.height/2,NSMaxYEdge);
-	
-	//NSLog(@"%@,%@",NSStringFromRect(luRect),NSStringFromRect(rdRect));
-	NSRect newRect,oldRect,tempRect;
-	NSPoint tempPageMargin = pageMargin;
-	NSPoint tempPageBarMargin = pageBarMargin;
-	NSPoint temppoint;
 	float xMoved = newMousePoint.x-mouseOldPoint.x;
-	float yMoved = newMousePoint.y-mouseOldPoint.y;
 	switch (positionSettingMode) {
-		case 2:
-			switch (pageStringPosition) {
-				case 0:
-					pageMargin.x += xMoved;
-					pageMargin.y -= yMoved;
-					break;
-				case 1:
-					pageMargin.x -= xMoved;
-					pageMargin.y -= yMoved;
-					break;
-				case 2:
-					pageMargin.x += xMoved;
-					pageMargin.y += yMoved;
-					break;
-				case 3:
-					pageMargin.x -= xMoved;
-					pageMargin.y += yMoved;
-					break;
-				default:
-					break;
-			}
-			oldRect = pageStringRect;
-			tempRect = [self pageStringRect];		
-			if (!NSContainsRect([self visibleRect],tempRect)) {
-				pageMargin = tempPageMargin;
-				
-				return;
-			}
-			pageMargin.x = 0;
-			pageMargin.y = 0;
-			temppoint = NSMakePoint(tempRect.origin.x+tempRect.size.width/2,tempRect.origin.y+tempRect.size.height/2);
-			if (NSPointInRect(temppoint,luRect)) {
-				pageStringPosition = 0;
-				newRect = [self pageStringRect];
-				pageMargin.x += tempRect.origin.x-newRect.origin.x;
-				pageMargin.y += newRect.origin.y-tempRect.origin.y;
-			} else if (NSPointInRect(temppoint,ruRect)) {
-				pageStringPosition = 1;
-				newRect = [self pageStringRect];
-				pageMargin.x -= tempRect.origin.x-newRect.origin.x;
-				pageMargin.y += newRect.origin.y-tempRect.origin.y;
-			} else if (NSPointInRect(temppoint,ldRect)) {
-				pageStringPosition = 2;
-				newRect = [self pageStringRect];
-				pageMargin.x += tempRect.origin.x-newRect.origin.x;
-				pageMargin.y -= newRect.origin.y-tempRect.origin.y;
-			} else if (NSPointInRect(temppoint,rdRect)) {
-				pageStringPosition = 3;
-				newRect = [self pageStringRect];
-				pageMargin.x -= tempRect.origin.x-newRect.origin.x;
-				pageMargin.y -= newRect.origin.y-tempRect.origin.y;
-			}
-			newRect = [self pageStringRect];
-			break;
 		case 3:
 			pageBarWidth += xMoved;
 			if (pageBarWidth <= 0) {
@@ -413,83 +334,16 @@ static CGFloat COSettingPageStringTextLeftOffset(void)
 			if (pageBarWidth < pageBarHeight) {
 				pageBarWidth = pageBarHeight;
 			} 
-			oldRect = pageBarRect;
-			tempRect = [self pageBarRect];
-			temppoint = NSMakePoint(tempRect.origin.x+tempRect.size.width/2,tempRect.origin.y+tempRect.size.height/2);
-			if (NSPointInRect(temppoint,luRect)) {
-				pageBarPosition = 0;
-			} else if (NSPointInRect(temppoint,ruRect)) {
-				pageBarPosition = 1;
-				pageBarMargin.x -= xMoved;
-			} else if (NSPointInRect(temppoint,ldRect)) {
-				pageBarPosition = 2;
-			} else if (NSPointInRect(temppoint,rdRect)) {
-				pageBarPosition = 3;
-				pageBarMargin.x -= xMoved;
-			}
-				
-			newRect = [self pageBarRect];
 			break;
-		case 4:
-			switch (pageBarPosition) {
-				case 0:
-					pageBarMargin.x += xMoved;
-					pageBarMargin.y -= yMoved;
-					break;
-				case 1:
-					pageBarMargin.x -= xMoved;
-					pageBarMargin.y -= yMoved;
-					break;
-				case 2:
-					pageBarMargin.x += xMoved;
-					pageBarMargin.y += yMoved;
-					break;
-				case 3:
-					pageBarMargin.x -= xMoved;
-					pageBarMargin.y += yMoved;
-					break;
-				default:
-					break;
-			}
-			oldRect = pageBarRect;
-			tempRect = [self pageBarRect];		
-			
-			if (!NSContainsRect([self visibleRect],tempRect)) {
-				pageBarMargin = tempPageBarMargin;
-				return;
-			}
-			pageBarMargin.x = 0;
-			pageBarMargin.y = 0;
-			temppoint = NSMakePoint(tempRect.origin.x+tempRect.size.width/2,tempRect.origin.y+tempRect.size.height/2);
-			if (NSPointInRect(temppoint,luRect)) {
-				pageBarPosition = 0;
-				newRect = [self pageBarRect];
-				pageBarMargin.x += tempRect.origin.x-newRect.origin.x;
-				pageBarMargin.y += newRect.origin.y-tempRect.origin.y;
-			} else if (NSPointInRect(temppoint,ruRect)) {
-				pageBarPosition = 1;
-				newRect = [self pageBarRect];
-				pageBarMargin.x -= tempRect.origin.x-newRect.origin.x;
-				pageBarMargin.y += newRect.origin.y-tempRect.origin.y;
-			} else if (NSPointInRect(temppoint,ldRect)) {
-				pageBarPosition = 2;
-				newRect = [self pageBarRect];
-				pageBarMargin.x += tempRect.origin.x-newRect.origin.x;
-				pageBarMargin.y -= newRect.origin.y-tempRect.origin.y;
-			} else if (NSPointInRect(temppoint,rdRect)) {
-				pageBarPosition = 3;
-				newRect = [self pageBarRect];
-				pageBarMargin.x -= tempRect.origin.x-newRect.origin.x;
-				pageBarMargin.y -= newRect.origin.y-tempRect.origin.y;
-			}
-			newRect = [self pageBarRect];
-			break;			
 		default:
+			[self setAccessoryPlacement:[self placementForPoint:newMousePoint]];
 			break;
 	}
+	pageStringRect = [self pageStringRect];
+	pageBarRect = [self pageBarRect];
 	[self display];
 	
-	mouseOldPoint = [theEvent locationInWindow];
+	mouseOldPoint = newMousePoint;
 	//NSLog(@"mouseDragged %i",positionSettingMode);
 }
 -(void)mouseUp:(NSEvent *)theEvent

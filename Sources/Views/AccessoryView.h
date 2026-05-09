@@ -67,7 +67,19 @@
 	int tempPageNum;
 	int pageStringPosition;
 }
+typedef NS_ENUM(NSInteger, COAccessoryPlacement) {
+	COAccessoryPlacementTopLeft = 0,
+	COAccessoryPlacementTopRight = 1,
+	COAccessoryPlacementBottomLeft = 2,
+	COAccessoryPlacementBottomRight = 3,
+	COAccessoryPlacementTopCenter = 4,
+	COAccessoryPlacementBottomCenter = 5
+};
+
 NSRect COIntRect(NSRect aRect);
+BOOL COAccessoryPlacementIsTop(int placement);
+BOOL COAccessoryPlacementIsRight(int placement);
+BOOL COAccessoryPlacementIsCenter(int placement);
 -(void)setPreferences;
 
 -(void)drawAccessory;
@@ -82,10 +94,12 @@ NSRect COIntRect(NSRect aRect);
 -(void)setPageString:(NSString*)string;
 -(NSString*)pageString;
 -(NSRect)pageStringRect;
+-(NSRect)pageStringLayoutRectForContentFrame:(NSRect)contentFrame;
 
 -(void)drawPageBarBubble;
 -(void)drawPageBar;
 -(NSRect)pageBarRect;
+-(NSRect)pageBarLayoutRectForContentFrame:(NSRect)contentFrame avoidPageString:(BOOL)avoidPageString;
 -(NSRect)pageMoverRect;
 -(void)drawPageMover:(int)page;
 -(BOOL)pageMover;
