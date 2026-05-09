@@ -407,10 +407,9 @@ static CGFloat COSettingPageStringTextLeftOffset(void)
 			break;
 		case 3:
 			pageBarWidth += xMoved;
-			pageBarHeight -= yMoved;
-			if (pageBarHeight<=0) {
-				pageBarHeight += yMoved;
-			} 
+			if (pageBarWidth <= 0) {
+				pageBarWidth -= xMoved;
+			}
 			if (pageBarWidth < pageBarHeight) {
 				pageBarWidth = pageBarHeight;
 			} 
@@ -424,10 +423,8 @@ static CGFloat COSettingPageStringTextLeftOffset(void)
 				pageBarMargin.x -= xMoved;
 			} else if (NSPointInRect(temppoint,ldRect)) {
 				pageBarPosition = 2;
-				pageBarMargin.y += yMoved;
 			} else if (NSPointInRect(temppoint,rdRect)) {
 				pageBarPosition = 3;
-				pageBarMargin.y += yMoved;
 				pageBarMargin.x -= xMoved;
 			}
 				
