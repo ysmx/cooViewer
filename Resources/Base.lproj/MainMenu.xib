@@ -729,10 +729,10 @@ go to the last page always.</string>
                                             </buttonCell>
                                         </button>
                                         <box fixedFrame="YES" title="Page Bar" translatesAutoresizingMaskIntoConstraints="NO" id="1970">
-                                            <rect key="frame" x="17" y="151" width="553" height="135"/>
+                                            <rect key="frame" x="17" y="148" width="553" height="104"/>
                                             <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
                                             <view key="contentView" id="QeR-FR-Gjo">
-                                                <rect key="frame" x="3" y="3" width="547" height="117"/>
+                                                <rect key="frame" x="3" y="3" width="547" height="86"/>
                                                 <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                                                 <subviews>
                                                     <textField verticalHuggingPriority="750" horizontalCompressionResistancePriority="250" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="1972">
@@ -763,7 +763,7 @@ go to the last page always.</string>
                                                         </textFieldCell>
                                                     </textField>
                                                     <popUpButton verticalHuggingPriority="750" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="2148" customClass="COColorPopUpButton">
-                                                        <rect key="frame" x="61" y="8" width="90" height="22"/>
+                                                        <rect key="frame" x="61" y="8" width="106" height="22"/>
                                                         <autoresizingMask key="autoresizingMask"/>
                                                         <popUpButtonCell key="cell" type="push" title="Other" bezelStyle="rounded" alignment="left" controlSize="small" lineBreakMode="truncatingTail" state="on" borderStyle="borderAndBezel" inset="2" arrowPosition="arrowAtCenter" preferredEdge="maxY" selectedItem="2150" id="4391">
                                                             <behavior key="behavior" lightByBackground="YES" lightByGray="YES"/>
@@ -776,7 +776,7 @@ go to the last page always.</string>
                                                         </popUpButtonCell>
                                                     </popUpButton>
                                                     <popUpButton verticalHuggingPriority="750" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="2152" customClass="COColorPopUpButton">
-                                                        <rect key="frame" x="243" y="8" width="90" height="22"/>
+                                                        <rect key="frame" x="243" y="8" width="106" height="22"/>
                                                         <autoresizingMask key="autoresizingMask"/>
                                                         <popUpButtonCell key="cell" type="push" title="Other" bezelStyle="rounded" alignment="left" controlSize="small" lineBreakMode="truncatingTail" state="on" borderStyle="borderAndBezel" inset="2" arrowPosition="arrowAtCenter" preferredEdge="maxY" selectedItem="2154" id="4392">
                                                             <behavior key="behavior" lightByBackground="YES" lightByGray="YES"/>
@@ -792,7 +792,7 @@ go to the last page always.</string>
                                                         </connections>
                                                     </popUpButton>
                                                     <popUpButton verticalHuggingPriority="750" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="2156" customClass="COColorPopUpButton">
-                                                        <rect key="frame" x="399" y="8" width="90" height="22"/>
+                                                        <rect key="frame" x="399" y="8" width="106" height="22"/>
                                                         <autoresizingMask key="autoresizingMask"/>
                                                         <popUpButtonCell key="cell" type="push" title="Other" bezelStyle="rounded" alignment="left" controlSize="small" lineBreakMode="truncatingTail" state="on" borderStyle="borderAndBezel" inset="2" arrowPosition="arrowAtCenter" preferredEdge="maxY" selectedItem="2158" id="4393">
                                                             <behavior key="behavior" lightByBackground="YES" lightByGray="YES"/>
@@ -805,7 +805,7 @@ go to the last page always.</string>
                                                         </popUpButtonCell>
                                                     </popUpButton>
                                                     <button fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="2270">
-                                                        <rect key="frame" x="178" y="90" width="127" height="18"/>
+                                                        <rect key="frame" x="178" y="60" width="127" height="18"/>
                                                         <autoresizingMask key="autoresizingMask"/>
                                                         <buttonCell key="cell" type="check" title="Show thumbnail" bezelStyle="regularSquare" imagePosition="left" alignment="left" inset="2" id="4394">
                                                             <behavior key="behavior" changeContents="YES" doesNotDimImage="YES" lightByContents="YES"/>
@@ -813,7 +813,7 @@ go to the last page always.</string>
                                                         </buttonCell>
                                                     </button>
                                                     <popUpButton verticalHuggingPriority="750" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="2824" customClass="COColorPopUpButton">
-                                                        <rect key="frame" x="257" y="36" width="90" height="22"/>
+                                                        <rect key="frame" x="257" y="36" width="106" height="22"/>
                                                         <autoresizingMask key="autoresizingMask"/>
                                                         <popUpButtonCell key="cell" type="push" title="Other" bezelStyle="rounded" alignment="left" controlSize="small" lineBreakMode="truncatingTail" state="on" borderStyle="borderAndBezel" inset="2" arrowPosition="arrowAtCenter" preferredEdge="maxY" selectedItem="2826" id="4396">
                                                             <behavior key="behavior" lightByBackground="YES" lightByGray="YES"/>
@@ -858,37 +858,15 @@ go to the last page always.</string>
                                                         </connections>
                                                     </button>
                                                     <button fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="2838">
-                                                        <rect key="frame" x="10" y="90" width="56" height="18"/>
+                                                        <rect key="frame" x="10" y="60" width="56" height="18"/>
                                                         <autoresizingMask key="autoresizingMask"/>
                                                         <buttonCell key="cell" type="check" title="Show" bezelStyle="regularSquare" imagePosition="left" alignment="left" inset="2" id="4400">
                                                             <behavior key="behavior" changeContents="YES" doesNotDimImage="YES" lightByContents="YES"/>
                                                             <font key="font" metaFont="system"/>
                                                         </buttonCell>
                                                     </button>
-                                                    <button verticalHuggingPriority="750" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="2870">
-                                                        <rect key="frame" x="7" y="60" width="148" height="28"/>
-                                                        <autoresizingMask key="autoresizingMask"/>
-                                                        <buttonCell key="cell" type="push" title="Set position and size..." bezelStyle="rounded" alignment="center" controlSize="small" borderStyle="border" inset="2" id="4401">
-                                                            <behavior key="behavior" pushIn="YES" lightByBackground="YES" lightByGray="YES"/>
-                                                            <font key="font" metaFont="smallSystem"/>
-                                                        </buttonCell>
-                                                        <connections>
-                                                            <action selector="setPosition:" target="1673" id="2871"/>
-                                                        </connections>
-                                                    </button>
-                                                    <button verticalHuggingPriority="750" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="9004">
-                                                        <rect key="frame" x="158" y="60" width="70" height="28"/>
-                                                        <autoresizingMask key="autoresizingMask"/>
-                                                        <buttonCell key="cell" type="push" title="Reset" bezelStyle="rounded" alignment="center" controlSize="small" borderStyle="border" inset="2" id="9005">
-                                                            <behavior key="behavior" pushIn="YES" lightByBackground="YES" lightByGray="YES"/>
-                                                            <font key="font" metaFont="smallSystem"/>
-                                                        </buttonCell>
-                                                        <connections>
-                                                            <action selector="resetPageBarPositionAndSize:" target="1673" id="9006"/>
-                                                        </connections>
-                                                    </button>
                                                     <button fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="2796">
-                                                        <rect key="frame" x="70" y="90" width="104" height="18"/>
+                                                        <rect key="frame" x="70" y="60" width="104" height="18"/>
                                                         <autoresizingMask key="autoresizingMask"/>
                                                         <buttonCell key="cell" type="check" title="Auto hide" bezelStyle="regularSquare" imagePosition="left" alignment="left" inset="2" id="4395">
                                                             <behavior key="behavior" changeContents="YES" doesNotDimImage="YES" lightByContents="YES"/>
@@ -899,14 +877,14 @@ go to the last page always.</string>
                                             </view>
                                         </box>
                                         <box fixedFrame="YES" title="Page Number" translatesAutoresizingMaskIntoConstraints="NO" id="1984">
-                                            <rect key="frame" x="17" y="290" width="553" height="134"/>
+                                            <rect key="frame" x="17" y="256" width="553" height="104"/>
                                             <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
                                             <view key="contentView" id="zur-GO-M3a">
-                                                <rect key="frame" x="3" y="3" width="547" height="116"/>
+                                                <rect key="frame" x="3" y="3" width="547" height="86"/>
                                                 <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                                                 <subviews>
                                                     <popUpButton verticalHuggingPriority="750" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="2138" customClass="COColorPopUpButton">
-                                                        <rect key="frame" x="450" y="35" width="90" height="22"/>
+                                                        <rect key="frame" x="441" y="35" width="106" height="22"/>
                                                         <autoresizingMask key="autoresizingMask"/>
                                                         <popUpButtonCell key="cell" type="push" title="Other" bezelStyle="rounded" alignment="left" controlSize="small" lineBreakMode="truncatingTail" state="on" borderStyle="borderAndBezel" inset="2" arrowPosition="arrowAtCenter" preferredEdge="maxY" selectedItem="2142" id="4402">
                                                             <behavior key="behavior" lightByBackground="YES" lightByGray="YES"/>
@@ -922,7 +900,7 @@ go to the last page always.</string>
                                                         </connections>
                                                     </popUpButton>
                                                     <textField verticalHuggingPriority="750" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="2769">
-                                                        <rect key="frame" x="65" y="37" width="293" height="21"/>
+                                                        <rect key="frame" x="65" y="37" width="280" height="21"/>
                                                         <autoresizingMask key="autoresizingMask"/>
                                                         <textFieldCell key="cell" scrollable="YES" lineBreakMode="clipping" sendsActionOnEndEditing="YES" state="on" borderStyle="bezel" alignment="center" title="#1-2/345 (67.jpg | 89.jpg)" drawsBackground="YES" id="4403">
                                                             <font key="font" metaFont="system"/>
@@ -931,7 +909,7 @@ go to the last page always.</string>
                                                         </textFieldCell>
                                                     </textField>
                                                     <button verticalHuggingPriority="750" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="2765">
-                                                        <rect key="frame" x="366" y="32" width="80" height="28"/>
+                                                        <rect key="frame" x="353" y="32" width="80" height="28"/>
                                                         <autoresizingMask key="autoresizingMask"/>
                                                         <buttonCell key="cell" type="push" title="Select..." bezelStyle="rounded" alignment="center" controlSize="small" borderStyle="border" inset="2" id="4404">
                                                             <behavior key="behavior" pushIn="YES" lightByBackground="YES" lightByGray="YES"/>
@@ -960,7 +938,7 @@ go to the last page always.</string>
                                                         </textFieldCell>
                                                     </textField>
                                                     <popUpButton verticalHuggingPriority="750" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="2786" customClass="COColorPopUpButton">
-                                                        <rect key="frame" x="244" y="8" width="90" height="22"/>
+                                                        <rect key="frame" x="244" y="8" width="106" height="22"/>
                                                         <autoresizingMask key="autoresizingMask"/>
                                                         <popUpButtonCell key="cell" type="push" title="Other" bezelStyle="rounded" alignment="left" controlSize="small" lineBreakMode="truncatingTail" state="on" borderStyle="borderAndBezel" inset="2" arrowPosition="arrowAtCenter" preferredEdge="maxY" selectedItem="2788" id="4407">
                                                             <behavior key="behavior" pushIn="YES" lightByBackground="YES" lightByGray="YES"/>
@@ -976,7 +954,7 @@ go to the last page always.</string>
                                                         </connections>
                                                     </popUpButton>
                                                     <button fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="2798">
-                                                        <rect key="frame" x="70" y="90" width="160" height="18"/>
+                                                        <rect key="frame" x="70" y="60" width="160" height="18"/>
                                                         <autoresizingMask key="autoresizingMask"/>
                                                         <buttonCell key="cell" type="check" title="Auto hide" bezelStyle="regularSquare" imagePosition="left" alignment="left" inset="2" id="4408">
                                                             <behavior key="behavior" changeContents="YES" doesNotDimImage="YES" lightByContents="YES"/>
@@ -993,7 +971,7 @@ go to the last page always.</string>
                                                         </textFieldCell>
                                                     </textField>
                                                     <popUpButton verticalHuggingPriority="750" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="2817" customClass="COColorPopUpButton">
-                                                        <rect key="frame" x="61" y="8" width="90" height="22"/>
+                                                        <rect key="frame" x="61" y="8" width="106" height="22"/>
                                                         <autoresizingMask key="autoresizingMask"/>
                                                         <popUpButtonCell key="cell" type="push" title="Other" bezelStyle="rounded" alignment="left" controlSize="small" lineBreakMode="truncatingTail" state="on" borderStyle="borderAndBezel" inset="2" arrowPosition="arrowAtCenter" preferredEdge="maxY" selectedItem="2819" id="4410">
                                                             <behavior key="behavior" lightByBackground="YES" lightByGray="YES"/>
@@ -1006,33 +984,43 @@ go to the last page always.</string>
                                                         </popUpButtonCell>
                                                     </popUpButton>
                                                     <button fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="2839">
-                                                        <rect key="frame" x="10" y="90" width="56" height="18"/>
+                                                        <rect key="frame" x="10" y="60" width="56" height="18"/>
                                                         <autoresizingMask key="autoresizingMask"/>
                                                         <buttonCell key="cell" type="check" title="Show" bezelStyle="regularSquare" imagePosition="left" alignment="left" inset="2" id="4411">
                                                             <behavior key="behavior" changeContents="YES" doesNotDimImage="YES" lightByContents="YES"/>
                                                             <font key="font" metaFont="system"/>
                                                         </buttonCell>
                                                     </button>
-                                                    <button verticalHuggingPriority="750" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="2861">
-                                                        <rect key="frame" x="7" y="60" width="100" height="28"/>
+                                                </subviews>
+                                            </view>
+                                        </box>
+                                        <box fixedFrame="YES" title="Page Indicator" translatesAutoresizingMaskIntoConstraints="NO" id="pgi-box-001">
+                                            <rect key="frame" x="17" y="364" width="553" height="60"/>
+                                            <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
+                                            <view key="contentView" id="pgi-content-001">
+                                                <rect key="frame" x="3" y="3" width="547" height="42"/>
+                                                <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
+                                                <subviews>
+                                                    <button verticalHuggingPriority="750" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="2870">
+                                                        <rect key="frame" x="7" y="7" width="148" height="28"/>
                                                         <autoresizingMask key="autoresizingMask"/>
-                                                        <buttonCell key="cell" type="push" title="Set position..." bezelStyle="rounded" alignment="center" controlSize="small" borderStyle="border" inset="2" id="4412">
+                                                        <buttonCell key="cell" type="push" title="Set position and bar size..." bezelStyle="rounded" alignment="center" controlSize="small" borderStyle="border" inset="2" id="4401">
                                                             <behavior key="behavior" pushIn="YES" lightByBackground="YES" lightByGray="YES"/>
                                                             <font key="font" metaFont="smallSystem"/>
                                                         </buttonCell>
                                                         <connections>
-                                                            <action selector="setPosition:" target="1673" id="2862"/>
+                                                            <action selector="setPosition:" target="1673" id="2871"/>
                                                         </connections>
                                                     </button>
-                                                    <button verticalHuggingPriority="750" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="9001">
-                                                        <rect key="frame" x="110" y="60" width="70" height="28"/>
+                                                    <button verticalHuggingPriority="750" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="9004">
+                                                        <rect key="frame" x="158" y="7" width="70" height="28"/>
                                                         <autoresizingMask key="autoresizingMask"/>
-                                                        <buttonCell key="cell" type="push" title="Reset" bezelStyle="rounded" alignment="center" controlSize="small" borderStyle="border" inset="2" id="9002">
+                                                        <buttonCell key="cell" type="push" title="Reset" bezelStyle="rounded" alignment="center" controlSize="small" borderStyle="border" inset="2" id="9005">
                                                             <behavior key="behavior" pushIn="YES" lightByBackground="YES" lightByGray="YES"/>
                                                             <font key="font" metaFont="smallSystem"/>
                                                         </buttonCell>
                                                         <connections>
-                                                            <action selector="resetPageNumberPosition:" target="1673" id="9003"/>
+                                                            <action selector="resetPageBarPositionAndSize:" target="1673" id="9006"/>
                                                         </connections>
                                                     </button>
                                                 </subviews>

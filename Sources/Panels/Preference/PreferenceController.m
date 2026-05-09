@@ -914,6 +914,7 @@ static const int DIALOG_CANCEL	= 129;
 	NSTextField *advancedThumbnailCacheLabel;
 	NSTextField *advancedOpenLinkLabel;
 	NSTextField *inputPrevPageActionLabel;
+	NSArray *appearanceColorPopUpButtons;
 	NSButton *pageNumberFontButton;
 	NSButton *pageBarFontButton;
 	NSButton *keyResetButton;
@@ -955,6 +956,21 @@ static const int DIALOG_CANCEL	= 129;
 	inputRootView = [inputTabView superview];
 	keyboardInputView = [[inputTabView tabViewItemAtIndex:0] view];
 	mouseInputView = [[inputTabView tabViewItemAtIndex:1] view];
+	appearanceColorPopUpButtons = [NSArray arrayWithObjects:
+								   viewBackGroundColor,
+								   pageColor,
+								   pageBGColor,
+								   pageBorderColor,
+								   pageBarFontColor,
+								   pageBarBGColor,
+								   pageBarBorderColor,
+								   pageBarReadedColor,
+								   nil];
+	for (NSView *colorPopUpButton in appearanceColorPopUpButtons) {
+		NSRect frame = [colorPopUpButton frame];
+		frame.size.width = MAX(frame.size.width, 106.0);
+		[colorPopUpButton setFrame:frame];
+	}
 
 		if (viewBackgroundLabel) {
 			[self co_sizeLabelToFit:viewBackgroundLabel];
@@ -1657,7 +1673,7 @@ static const int DIALOG_CANCEL	= 129;
 	if ([defaults objectForKey:@"TextBorderColor"]) {
 		textBorderColor = [NSUnarchiver unarchiveObjectWithData:[defaults objectForKey:@"TextBorderColor"]];
 	} else {
-		textBorderColor = [NSColor whiteColor];
+		textBorderColor = [[NSColor blackColor] colorWithAlphaComponent:0.8];
 	}
 	[pageBorderColor setCurrentColor:textBorderColor];
 	

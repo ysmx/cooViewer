@@ -1,7 +1,28 @@
 #import "COColorPopUpButton.h"
+#import <math.h>
 
 
 @implementation COColorPopUpButton
+- (BOOL)co_color:(NSColor *)color matchesPresetColor:(NSColor *)presetColor
+{
+	if (!color || !presetColor) return NO;
+	
+	NSColorSpace *colorSpace = [NSColorSpace genericRGBColorSpace];
+	NSColor *rgbColor = [color colorUsingColorSpace:colorSpace];
+	NSColor *rgbPresetColor = [presetColor colorUsingColorSpace:colorSpace];
+	if (!rgbColor || !rgbPresetColor) return [color isEqualTo:presetColor];
+	
+	CGFloat red, green, blue, alpha;
+	CGFloat presetRed, presetGreen, presetBlue, presetAlpha;
+	[rgbColor getRed:&red green:&green blue:&blue alpha:&alpha];
+	[rgbPresetColor getRed:&presetRed green:&presetGreen blue:&presetBlue alpha:&presetAlpha];
+	
+	return (fabs(red-presetRed) < 0.001 &&
+			fabs(green-presetGreen) < 0.001 &&
+			fabs(blue-presetBlue) < 0.001 &&
+			fabs(alpha-presetAlpha) < 0.001);
+}
+
 - (void)co_configureMenuItems
 {
 	NSImage *image;
@@ -13,10 +34,12 @@
 
 	[self removeAllItems];
 	[self addItemWithTitle:@"White"];
+	[self addItemWithTitle:@"White_0.5"];
 	[self addItemWithTitle:@"LightGray"];
 	[self addItemWithTitle:@"Gray"];
 	[self addItemWithTitle:@"DarkGray"];
 	[self addItemWithTitle:@"Black"];
+	[self addItemWithTitle:@"Black_0.8"];
 	[self addItemWithTitle:@"Blue"];
 	[self addItemWithTitle:@"Cyan"];
 	[self addItemWithTitle:@"Green"];
@@ -40,6 +63,8 @@
 			return;
 		} else if ([title isEqualToString:@"White"]) {
 			fillColor = [NSColor whiteColor];
+		} else if ([title isEqualToString:@"White_0.5"]) {
+			fillColor = [[NSColor whiteColor] colorWithAlphaComponent:0.5];
 		} else if ([title isEqualToString:@"LightGray"]) {
 			fillColor = [NSColor lightGrayColor];
 		} else if ([title isEqualToString:@"Gray"]) {
@@ -48,6 +73,8 @@
 			fillColor = [NSColor darkGrayColor];
 		} else if ([title isEqualToString:@"Black"]) {
 			fillColor = [NSColor blackColor];
+		} else if ([title isEqualToString:@"Black_0.8"]) {
+			fillColor = [[NSColor blackColor] colorWithAlphaComponent:0.8];
 		} else if ([title isEqualToString:@"Blue"]) {
 			fillColor = [NSColor blueColor];
 		} else if ([title isEqualToString:@"Brown"]) {
@@ -127,7 +154,7 @@
 	int i;
 	for (i=0;i<[itemArray count];i++) {
 		NSMenuItem *item = [self itemAtIndex:i];
-		if ([aColor isEqualTo:[item representedObject]]) {
+		if ([self co_color:aColor matchesPresetColor:[item representedObject]]) {
 			[self selectItemAtIndex:i];
 			item = (NSMenuItem*)[self lastItem];
 			[item setImage:nil];

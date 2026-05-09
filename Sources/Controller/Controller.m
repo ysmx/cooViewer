@@ -332,6 +332,11 @@ static const int DIALOG_CANCEL	= 129;
 		
 	[appDefault setObject:[NSNumber numberWithBool:YES] forKey:@"ShowPageBar"];
 	[appDefault setObject:[NSNumber numberWithBool:YES] forKey:@"ShowNumber"];
+	[appDefault setObject:[NSNumber numberWithBool:YES] forKey:@"PageNumAutoHide"];
+	[appDefault setObject:[NSNumber numberWithBool:YES] forKey:@"PageBarAutoHide"];
+	[appDefault setObject:[NSNumber numberWithBool:YES] forKey:@"PageBarShowThumbnail"];
+	[appDefault setObject:[NSNumber numberWithInt:400] forKey:@"LoupeSize"];
+	[appDefault setObject:[NSNumber numberWithFloat:4.0] forKey:@"LoupeRate"];
 	
 	[appDefault setObject:[NSNumber numberWithInt:10] forKey:@"OpenRecentLimit"];
 	
@@ -430,10 +435,10 @@ static const int DIALOG_CANCEL	= 129;
 	
 	/*loupe*/
 	int loupeSize = (int)[defaults integerForKey:@"LoupeSize"];
-	if (!loupeSize) loupeSize = 150;
+	if (!loupeSize) loupeSize = 400;
 	[defaults setInteger:loupeSize forKey:@"LoupeSize"];
 	float loupeRate = [defaults floatForKey:@"LoupeRate"];
-	if (!loupeRate) loupeRate = 1.0;
+	if (!loupeRate) loupeRate = 4.0;
 	[defaults setFloat:loupeRate forKey:@"LoupeRate"];
 	/*view*/
 	NSColor *viewBackGround;

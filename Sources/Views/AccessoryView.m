@@ -285,7 +285,7 @@ static NSRect COPageStringLayoutRect(NSRect contentFrame, NSAttributedString *st
 	if ([defaults objectForKey:@"TextBorderColor"]) {
 		textBorderColor = [[NSUnarchiver unarchiveObjectWithData:[defaults objectForKey:@"TextBorderColor"]] retain];
 	} else {
-		textBorderColor = [[NSColor whiteColor] retain];
+		textBorderColor = [[[NSColor blackColor] colorWithAlphaComponent:0.8] retain];
 	}
 	
 	

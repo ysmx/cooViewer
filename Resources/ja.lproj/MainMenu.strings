@@ -466,6 +466,9 @@
 /* Class = "NSBox"; title = "Page Number"; ObjectID = "1984"; */
 "1984.title" = "ページ数表示";
 
+/* Class = "NSBox"; title = "Page Indicator"; ObjectID = "pgi-box-001"; */
+"pgi-box-001.title" = "ページインジケータ";
+
 /* Class = "NSBox"; title = "Thumbnail View"; ObjectID = "1987"; */
 "1987.title" = "一覧表示";
 
@@ -1411,8 +1414,8 @@
 /* Class = "NSButtonCell"; title = "Show"; ObjectID = "4400"; */
 "4400.title" = "表示";
 
-/* Class = "NSButtonCell"; title = "Set position and size..."; ObjectID = "4401"; */
-"4401.title" = "位置とサイズの設定...";
+/* Class = "NSButtonCell"; title = "Set position and bar size..."; ObjectID = "4401"; */
+"4401.title" = "位置とバーサイズの設定...";
 
 /* Class = "NSTextFieldCell"; title = "#1-2/345 (67.jpg | 89.jpg)"; ObjectID = "4403"; */
 "4403.title" = "#1-2/345 (67.jpg | 89.jpg)";
