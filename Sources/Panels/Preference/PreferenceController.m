@@ -1957,8 +1957,12 @@ static const int DIALOG_CANCEL	= 129;
 		
 		
 		/*pageNum*/
-		[defaults setInteger:[accessorySettingView pageNumPosition] forKey:@"PageNumPosition"];
-		[defaults setObject:[accessorySettingView pageMargin] forKey:@"Margin_Page"];
+		int accessoryPlacement = [accessorySettingView pageNumPosition];
+		NSDictionary *zeroAccessoryMargin = [NSDictionary dictionaryWithObjectsAndKeys:
+											[NSNumber numberWithInt:0],@"x",
+											[NSNumber numberWithInt:0],@"y",nil];
+		[defaults setInteger:accessoryPlacement forKey:@"PageNumPosition"];
+		[defaults setObject:zeroAccessoryMargin forKey:@"Margin_Page"];
 		[defaults setObject:[NSArchiver archivedDataWithRootObject:[fontTextField font]] forKey:@"TextFont"];
 		[defaults setObject:[NSArchiver archivedDataWithRootObject:[pageColor currentColor]] forKey:@"TextColor"];
 		[defaults setObject:[NSArchiver archivedDataWithRootObject:[pageBGColor currentColor]] forKey:@"TextBGColor"];
@@ -1970,8 +1974,8 @@ static const int DIALOG_CANCEL	= 129;
 		}	
 		/*pageBar*/
 		//NSDictionary *pageBarDic;
-		[defaults setInteger:[accessorySettingView pageBarPosition] forKey:@"PageBarPosition"];
-		[defaults setObject:[accessorySettingView pageBarMargin] forKey:@"Margin_PageBar"];
+		[defaults setInteger:accessoryPlacement forKey:@"PageBarPosition"];
+		[defaults setObject:zeroAccessoryMargin forKey:@"Margin_PageBar"];
 		[defaults setObject:[accessorySettingView pageBarSize] forKey:@"PageBarSize"];
 		[defaults setObject:[NSArchiver archivedDataWithRootObject:[pageBarBGColor currentColor]] forKey:@"PageBarBGColor"];
 		[defaults setObject:[NSArchiver archivedDataWithRootObject:[pageBarBorderColor currentColor]] forKey:@"PageBarBorderColor"];
