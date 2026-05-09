@@ -919,17 +919,17 @@ static const int DIALOG_CANCEL	= 129;
 		timerSwitch=NO;
 	}
 	NSOpenPanel *openPanel = [NSOpenPanel openPanel];
-	int openPanelResult;
+	NSModalResponse openPanelResult;
 	
 	[openPanel setCanChooseDirectories:YES];
     NSMutableArray *tempArray = [NSMutableArray arrayWithArray:[COImageLoader fileTypes]];
     [openPanel setAllowedFileTypes:tempArray];
-	openPanelResult = (int)[openPanel runModal];
+	openPanelResult = [openPanel runModal];
 	
-	if (openPanelResult == NSCancelButton) {
+	if (openPanelResult == NSModalResponseCancel) {
 		return;
 	}
-	if (openPanelResult == NSOKButton) {
+	if (openPanelResult == NSModalResponseOK) {
 		if (timerSwitch) {
 			[timer invalidate];
 			timerSwitch=NO;
