@@ -8,16 +8,44 @@
 
 #import "XADWrapper.h"
 #import "XADItem.h"
+#import <errno.h>
 
 
 @implementation XADWrapper
+
+static BOOL COXADCanOpenArchivePath(NSString *path)
+{
+	if (![[NSFileManager defaultManager] isReadableFileAtPath:path]) {
+		NSLog(@"cooViewer XADWrapper open failed: path=%@ not readable", path);
+		return NO;
+	}
+	FILE *file = fopen([path fileSystemRepresentation], "rb");
+	if (!file) {
+		NSLog(@"cooViewer XADWrapper open failed: path=%@ errno=%d", path, errno);
+		return NO;
+	}
+	fclose(file);
+	return YES;
+}
 
 -(id)initWithPath:(NSString*)path{
     self = [super init];
     if (self) {
         NSTimeInterval archiveStartTime = [NSDate timeIntervalSinceReferenceDate];
         NSLog(@"cooViewer XADWrapper open begin: path=%@", path);
-        archive = [[XADArchive alloc] initWithFile:path];
+        if (!COXADCanOpenArchivePath(path)) {
+            [self release];
+            return nil;
+        }
+        XADError error = XADNoError;
+        archive = [[XADArchive alloc] initWithFile:path error:&error];
+        if (!archive) {
+            NSLog(@"cooViewer XADWrapper open failed: path=%@ error=%d",
+                  path,
+                  error);
+            [self release];
+            return nil;
+        }
         contentArray = [[NSMutableArray array] retain];
         contentIndexArray = [[NSMutableArray array] retain];
         filePath=[path retain];
@@ -49,7 +77,20 @@
     if (self) {
 		NSTimeInterval archiveStartTime = [NSDate timeIntervalSinceReferenceDate];
 		NSLog(@"cooViewer XADWrapper open begin: path=%@ encoding=%lu", path, (unsigned long)enc);
-		archive = [[XADArchive alloc] initWithFile:path];
+		if (!COXADCanOpenArchivePath(path)) {
+			[self release];
+			return nil;
+		}
+		XADError error = XADNoError;
+		archive = [[XADArchive alloc] initWithFile:path error:&error];
+		if (!archive) {
+			NSLog(@"cooViewer XADWrapper open failed: path=%@ encoding=%lu error=%d",
+				  path,
+				  (unsigned long)enc,
+				  error);
+			[self release];
+			return nil;
+		}
 		contentArray = [[NSMutableArray array] retain];
 		contentIndexArray = [[NSMutableArray array] retain];
 		filePath=[path retain];
@@ -84,7 +125,6 @@
 
 - (void)dealloc
 {
-	[archive init];
 	if(archive)[archive release];
 	if(filePath)[filePath release];
 	if(contentArray)[contentArray release];

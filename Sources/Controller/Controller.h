@@ -163,6 +163,8 @@
 	NSDate *lastSameFolderMenuUpdate;
 	BOOL pendingViewerActivation;
 	BOOL restoreFullscreenDeactivateState;
+	unsigned long openPageLoadSequence;
+	NSMutableArray *archiveNavigationStack;
 	
 }
 - (void)awakeFromNib;
@@ -176,6 +178,7 @@
 - (void)openFromSameDir:(id)sender last:(BOOL)isLast;
 - (void)openFromOpenRecent:(id)sender;
 - (void)openPage:(int)page last:(BOOL)last;
+- (BOOL)isCurrentOpenPageLoadSequence:(NSNumber *)sequenceNumber;
 
 - (void)askInArchivePassword:(COImageLoader*)loader;
 - (IBAction)sheetCancel:(id)sender;
@@ -240,6 +243,12 @@
 - (void)windowDidResize:(NSNotification *)aNotification;
 
 - (void)openLink:(NSURL *)url;
+- (NSString*)archivePathForDisplayedImageAtIndex:(int)displayedImageIndex;
+- (int)restorePageForCurrentDisplay;
+- (BOOL)openArchiveAtCurrentMouseLocation;
+- (BOOL)openArchiveAtPath:(NSString*)path;
+- (BOOL)openArchiveAtPath:(NSString*)path restorePage:(int)restorePage;
+- (BOOL)restorePreviousArchiveNavigation;
 
 - (int)maxEnlargement;
 - (int)readMode;

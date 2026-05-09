@@ -7,6 +7,8 @@
 @interface CustomImageView(private)
 -(void)setUrlRect;
 -(NSURL*)urlWithPoint:(NSPoint)pt;
+-(int)displayedImageIndexAtWindowPoint:(NSPoint)pt;
+-(void)setPendingDoubleClickArchivePath:(NSString*)path;
 @end
 
 @implementation CustomImageView
@@ -14,6 +16,7 @@
 {
     self = [super initWithFrame:frame];
     if (self) {
+		pendingDoubleClickRestorePage = -1;
         [self setWantsLayer:YES];
          
         [[NSNotificationCenter defaultCenter] addObserver:self
@@ -22,6 +25,11 @@
                                                    object:nil];
     }
     return self;
+}
+- (void)dealloc
+{
+	[pendingDoubleClickArchivePath release];
+	[super dealloc];
 }
 - (void)setTarget:(id)tar
 {
@@ -137,6 +145,26 @@
 	[self mouseUp:event];
 }
 
+- (int)displayedImageIndexAtWindowPoint:(NSPoint)pt
+{
+	NSPoint viewPoint = [self convertPoint:pt fromView:nil];
+	if (!NSIsEmptyRect(fRect) && NSPointInRect(viewPoint, fRect)) return 0;
+	if (!NSIsEmptyRect(sRect) && NSPointInRect(viewPoint, sRect)) return 1;
+	return -1;
+}
+
+- (int)displayedImageIndexAtCurrentMouseLocation
+{
+	if ([self window] == nil) return -1;
+	return [self displayedImageIndexAtWindowPoint:[[self window] mouseLocationOutsideOfEventStream]];
+}
+
+- (void)setPendingDoubleClickArchivePath:(NSString*)path
+{
+	if (pendingDoubleClickArchivePath == path) return;
+	[pendingDoubleClickArchivePath release];
+	pendingDoubleClickArchivePath = [path retain];
+}
 
 -(void)mouseDown:(NSEvent *)event
 {
@@ -145,6 +173,15 @@
 	oldPoint=[event locationInWindow];
 	
 	int button = (int)[event buttonNumber];
+	if (button == 0 && [event clickCount] == 1) {
+		NSString *path = nil;
+		int displayedIndex = [self displayedImageIndexAtWindowPoint:[event locationInWindow]];
+		if (displayedIndex >= 0) {
+			path = [target archivePathForDisplayedImageAtIndex:displayedIndex];
+		}
+		[self setPendingDoubleClickArchivePath:path];
+		pendingDoubleClickRestorePage = [target restorePageForCurrentDisplay];
+	}
 	
 	unsigned int cMod = 100;
 	if (([event modifierFlags] & NSEventModifierFlagShift))
@@ -249,6 +286,18 @@
 					[target openLink:url];
 					cursorMoved = NSMakePoint(0,0);
 					return;
+				}
+				if ([event clickCount] > 1 && pendingDoubleClickArchivePath != nil) {
+					NSString *path = [pendingDoubleClickArchivePath retain];
+					int restorePage = pendingDoubleClickRestorePage;
+					[self setPendingDoubleClickArchivePath:nil];
+					pendingDoubleClickRestorePage = -1;
+					if ([target openArchiveAtPath:path restorePage:restorePage]) {
+						[path release];
+						cursorMoved = NSMakePoint(0,0);
+						return;
+					}
+					[path release];
 				}
 			}
 			[target mouseAction:event];

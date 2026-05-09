@@ -66,6 +66,8 @@
 	float mt_rotation;
 	float mt_deltaZ;
 	BOOL mt_didAction;
+	NSString *pendingDoubleClickArchivePath;
+	int pendingDoubleClickRestorePage;
 }
 
 -(void)setScreenFitMode:(int)mode;
@@ -109,6 +111,7 @@
 -(void)setPageString:(NSString*)string;
 -(NSString*)pageString;
 
+-(int)displayedImageIndexAtCurrentMouseLocation;
 -(void)drawPageBar;
 -(void)setSlideshow:(BOOL)b;
 -(void)setInfoString:(NSString*)string;

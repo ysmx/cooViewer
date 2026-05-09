@@ -42,13 +42,16 @@
 	NSButton *button = [[[NSButton alloc] initWithFrame:NSMakeRect(sortFrame.origin.x, sortFrame.origin.y, 80, sortFrame.size.height)] autorelease];
 	[button setButtonType:NSButtonTypeSwitch];
 	[button setControlSize:NSControlSizeSmall];
+	[button setFont:[NSFont systemFontOfSize:[NSFont smallSystemFontSize]]];
 	[button setTitle:NSLocalizedString(@"Descending", @"")];
 	[button setTarget:self];
 	[button setAction:@selector(sortDescending:)];
+	[button setAutoresizingMask:NSViewMinXMargin | NSViewMinYMargin];
 	[button sizeToFit];
 	NSRect buttonFrame = [button frame];
 	buttonFrame.origin.x = NSMaxX(sortFrame) - buttonFrame.size.width;
-	buttonFrame.origin.y = sortFrame.origin.y - 1;
+	buttonFrame.origin.y = sortFrame.origin.y;
+	buttonFrame.size.height = sortFrame.size.height;
 	[button setFrame:buttonFrame];
 	sortFrame.size.width = buttonFrame.origin.x - sortFrame.origin.x - 4;
 	[sortPopUpButton setFrame:sortFrame];
@@ -70,7 +73,13 @@
 	//mangaMode = NO;
 	[sortPopUpButton selectItemAtIndex:0];
 	[sortDescendingButton setState:NSControlStateValueOff];
-	if (loader != imageLoader) [thumImageArray removeAllObjects];
+	if (loader != imageLoader) {
+		[NSObject cancelPreviousPerformRequestsWithTarget:self];
+		doCount = 0;
+		stop = NO;
+		cellCount = 0;
+		[thumImageArray removeAllObjects];
+	}
 	pathArray = [loader pathArray];
 	imageLoader = loader;
 	now = 0;
@@ -368,6 +377,7 @@
 #pragma mark -
 -(void)showBookmarkThumbnail
 {
+	[self setThumbnailControlsVisible:NO];
 	[self clearCell];
 	nowBookmarkPage = 1;
 	[panel makeKeyAndOrderFront:self];
@@ -393,6 +403,7 @@
 	if ([bookmarkArray count] == 0) {
 		doCount--;
 		[stateTextField setStringValue:@"no bookmark"];
+		[self setThumbnailControlsVisible:YES];
 		return;
 	}
 	
@@ -497,6 +508,11 @@
 #pragma mark -
 -(void)showThumbnail:(int)nowPage
 {
+	[NSObject cancelPreviousPerformRequestsWithTarget:self];
+	doCount = 0;
+	stop = NO;
+	cellCount = 0;
+	[self setThumbnailControlsVisible:NO];
 	if ([controller sortMode] == 0) {
 		sortMode = 0;
 		[sortPopUpButton selectItemAtIndex:0];
@@ -914,9 +930,21 @@
 	[cell setAction:@selector(imageSelected:)];
 	[cell setAlternateTitle:[NSString stringWithFormat:@"%i",nowI]];
 	[cell setRepresentedObject:string];
+	[self setThumbnailControlsVisible:YES];
 	
 	[matrix setNeedsDisplayInRect:[matrix cellFrameAtRow:row column:col]];
 	[image release];
+}
+
+-(void)setThumbnailControlsVisible:(BOOL)visible
+{
+	BOOL hidden = !visible;
+	[sortPopUpButton setHidden:hidden];
+	[sortDescendingButton setHidden:hidden];
+	[stateTextField setHidden:hidden];
+	[nameTextField setHidden:hidden];
+	[onlyBookmarkButton setHidden:hidden];
+	[comicModeButton setHidden:hidden];
 }
 
 

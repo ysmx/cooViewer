@@ -295,6 +295,8 @@ static const int DIALOG_CANCEL	= 129;
 	imageLoader = nil;
 	wheelUpTimer = nil;
 	wheelDownTimer = nil;
+	openPageLoadSequence = 0;
+	archiveNavigationStack = [[NSMutableArray alloc] init];
 	
 	lock = [[NSLock allocWithZone:NULL] init];
 	//lock = [[NSConditionLock allocWithZone:NULL] initWithCondition:0];
@@ -1022,7 +1024,66 @@ static const int DIALOG_CANCEL	= 129;
 		  page,
 		  last,
 		  readSubFolder);
-	COImageLoader *newImageLoader = [[COImageLoader alloc] initWithPath:currentBookPath readSubFolder:readSubFolder controller:self];
+	openPageLoadSequence++;
+	NSNumber *loadSequenceNumber = [NSNumber numberWithUnsignedLong:openPageLoadSequence];
+	NSNumber *pageNumber = [NSNumber numberWithInt:page];
+	NSNumber *lastNumber = [NSNumber numberWithBool:last];
+	NSNumber *readSubFolderNumber = [NSNumber numberWithBool:readSubFolder];
+	NSNumber *startTimeNumber = [NSNumber numberWithDouble:openPageStartTime];
+	NSMutableDictionary *loadInfo = [[NSMutableDictionary alloc] initWithObjectsAndKeys:
+									  loadSequenceNumber, @"sequence",
+									  currentBookPath, @"path",
+									  pageNumber, @"page",
+									  lastNumber, @"last",
+									  readSubFolderNumber, @"readSubFolder",
+									  startTimeNumber, @"startTime",
+									  nil];
+	if (fromFileName) {
+		[loadInfo setObject:fromFileName forKey:@"fromFileName"];
+		[fromFileName release];
+	}
+	[NSThread detachNewThreadSelector:@selector(openPageLoadThread:) toTarget:self withObject:loadInfo];
+	[loadInfo release];
+	return;
+}
+
+- (void)openPageLoadThread:(NSDictionary *)loadInfo
+{
+	NSAutoreleasePool *pool = [[NSAutoreleasePool alloc] init];
+	[[[NSThread currentThread] threadDictionary] setObject:[loadInfo objectForKey:@"sequence"] forKey:@"COOpenPageLoadSequence"];
+	NSString *path = [loadInfo objectForKey:@"path"];
+	BOOL loadReadSubFolder = [[loadInfo objectForKey:@"readSubFolder"] boolValue];
+	COImageLoader *newImageLoader = [[COImageLoader alloc] initWithPath:path readSubFolder:loadReadSubFolder controller:self];
+	NSMutableDictionary *resultInfo = [NSMutableDictionary dictionaryWithDictionary:loadInfo];
+	if (newImageLoader) {
+		[resultInfo setObject:newImageLoader forKey:@"loader"];
+	}
+	[self performSelectorOnMainThread:@selector(openPageLoadDidFinish:) withObject:resultInfo waitUntilDone:YES];
+	[newImageLoader release];
+	[pool release];
+}
+
+- (BOOL)isCurrentOpenPageLoadSequence:(NSNumber *)sequenceNumber
+{
+	if (!sequenceNumber) return YES;
+	return [sequenceNumber unsignedLongValue] == openPageLoadSequence;
+}
+
+- (void)openPageLoadDidFinish:(NSDictionary *)loadInfo
+{
+	unsigned long loadSequence = [[loadInfo objectForKey:@"sequence"] unsignedLongValue];
+	if (loadSequence != openPageLoadSequence) {
+		NSLog(@"cooViewer openPage ignore stale loader: path=%@ sequence=%lu current=%lu",
+			  [loadInfo objectForKey:@"path"],
+			  loadSequence,
+			  openPageLoadSequence);
+		return;
+	}
+	COImageLoader *newImageLoader = [[loadInfo objectForKey:@"loader"] retain];
+	int page = [[loadInfo objectForKey:@"page"] intValue];
+	BOOL last = [[loadInfo objectForKey:@"last"] boolValue];
+	NSString *fromFileName = [loadInfo objectForKey:@"fromFileName"];
+	NSTimeInterval openPageStartTime = [[loadInfo objectForKey:@"startTime"] doubleValue];
 	NSTimeInterval openPageElapsed = [NSDate timeIntervalSinceReferenceDate] - openPageStartTime;
 	if (openPageElapsed >= 1.0) {
 		NSLog(@"cooViewer openPage slow loader: path=%@ elapsed=%.3f mode=%d count=%d",
@@ -1284,7 +1345,6 @@ static const int DIALOG_CANCEL	= 129;
 	
 	if (fromFileName) {
 		page = (int)[completeMutableArray indexOfObject:fromFileName];
-		[fromFileName release];
 	}
 	if (last) {
 		int temp = (int)[completeMutableArray count];
@@ -1426,6 +1486,10 @@ static const int DIALOG_CANCEL	= 129;
 }
 - (void)askInArchivePassword:(COImageLoader*)loader
 {
+	if (![NSThread isMainThread]) {
+		[self performSelectorOnMainThread:@selector(askInArchivePassword:) withObject:loader waitUntilDone:YES];
+		return;
+	}
 	int passPanelResult;
 	[passPanel setTitle:[[loader displayPath] lastPathComponent]];
 	passPanelResult = (int)[NSApp runModalForWindow:passPanel];
@@ -1469,6 +1533,109 @@ static const int DIALOG_CANCEL	= 129;
 - (NSString*)pathAtIndex:(int)index
 {
 	return [completeMutableArray objectAtIndex:index];
+}
+
+- (void)pushArchiveNavigationPath:(NSString*)path page:(int)page
+{
+	if (path == nil) return;
+	if (archiveNavigationStack == nil) {
+		archiveNavigationStack = [[NSMutableArray alloc] init];
+	}
+	NSDictionary *entry = [NSDictionary dictionaryWithObjectsAndKeys:
+						   path, @"path",
+						   [NSNumber numberWithInt:page], @"page",
+						   nil];
+	[archiveNavigationStack addObject:entry];
+}
+
+- (BOOL)isOpenableArchiveItemPath:(NSString*)path
+{
+	if (path == nil) return NO;
+	if (currentBookPath != nil && COPathsEqualForHistoryLookup(path, currentBookPath)) return NO;
+	NSString *extension = [[path pathExtension] lowercaseString];
+	if (![[COImageLoader fileTypes] containsObject:extension]) return NO;
+	BOOL isDirectory = NO;
+	if (![[NSFileManager defaultManager] fileExistsAtPath:path isDirectory:&isDirectory]) return NO;
+	if (isDirectory) return NO;
+	return YES;
+}
+
+- (NSString*)archivePathForDisplayedImageAtIndex:(int)displayedImageIndex
+{
+	if (imageLoader == nil || completeMutableArray == nil) return nil;
+	int index;
+	if (secondImage) {
+		if (displayedImageIndex == 0) {
+			index = nowPage - 2;
+		} else if (displayedImageIndex == 1) {
+			index = nowPage - 1;
+		} else {
+			return nil;
+		}
+	} else {
+		if (displayedImageIndex != 0) return nil;
+		index = nowPage - 1;
+	}
+	if (index < 0 || index >= [completeMutableArray count]) return nil;
+	NSString *path = [imageLoader itemPathAtIndex:index];
+	if (![self isOpenableArchiveItemPath:path]) return nil;
+	return path;
+}
+
+- (BOOL)openArchiveAtCurrentMouseLocation
+{
+	int displayedIndex = [imageView displayedImageIndexAtCurrentMouseLocation];
+	if (displayedIndex < 0) return NO;
+	NSString *path = [self archivePathForDisplayedImageAtIndex:displayedIndex];
+	return [self openArchiveAtPath:path restorePage:[self restorePageForCurrentDisplay]];
+}
+
+- (int)restorePageForCurrentDisplay
+{
+	int page;
+	if (secondImage) {
+		page = nowPage - 2;
+	} else {
+		page = nowPage - 1;
+	}
+	if (page < 0) page = 0;
+	return page;
+}
+
+- (BOOL)openArchiveAtPath:(NSString*)path
+{
+	return [self openArchiveAtPath:path restorePage:[self restorePageForCurrentDisplay]];
+}
+
+- (BOOL)openArchiveAtPath:(NSString*)path restorePage:(int)restorePage
+{
+	if (![self isOpenableArchiveItemPath:path]) return NO;
+	NSLog(@"cooViewer open displayed archive item: path=%@", path);
+	[self pushArchiveNavigationPath:currentBookPath page:restorePage];
+	[self setCurrentBookPathAndOldBookPath:path];
+	[self openPage:0 last:NO];
+	return YES;
+}
+
+- (BOOL)restorePreviousArchiveNavigation
+{
+	while ([archiveNavigationStack count] > 0) {
+		NSDictionary *entry = [[archiveNavigationStack lastObject] retain];
+		[archiveNavigationStack removeLastObject];
+		NSString *path = [entry objectForKey:@"path"];
+		int page = [[entry objectForKey:@"page"] intValue];
+		BOOL isDirectory = NO;
+		BOOL exists = [[NSFileManager defaultManager] fileExistsAtPath:path isDirectory:&isDirectory];
+		if (exists) {
+			NSLog(@"cooViewer restore archive navigation: path=%@ page=%d", path, page);
+			[self setCurrentBookPathAndOldBookPath:path];
+			[self openPage:page last:NO];
+			[entry release];
+			return YES;
+		}
+		[entry release];
+	}
+	return NO;
 }
 
 - (NSImage*)loadThumbnailImage:(int)index

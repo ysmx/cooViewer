@@ -5,6 +5,7 @@
 
 @interface COImageLoader(private)
 -(void)content;
+-(BOOL)shouldCancelContentLoad;
 -(BOOL)checkArchiveContainer:(int)index;
 -(BOOL)uncompressToTempDir:(NSString*)file;
 //-(BOOL)uncompressAllFileToTempDir;
@@ -212,7 +213,14 @@ static NSArray *_COImageLoader_archiveTypes=nil;
 			}
 		}
 	} else {
-		NSImage *image = [[[NSImage allocWithZone:NULL] initWithContentsOfFile:[contentPathArray objectAtIndex:index]] autorelease];
+		NSString *path = [contentPathArray objectAtIndex:index];
+		if ([[COImageLoader fileTypes] containsObject:[[path pathExtension] lowercaseString]]) {
+			COImageLoader *inLoader = [[[COImageLoader alloc] initWithPath:path readSubFolder:NO controller:controller] autorelease];
+			if (inLoader && [inLoader mode] >= 0 && [inLoader itemCount] > 0) {
+				return [inLoader itemAtIndex:0];
+			}
+		}
+		NSImage *image = [[[NSImage allocWithZone:NULL] initWithContentsOfFile:path] autorelease];
 		if(image && [image isValid] && [image representations]){
 			return image;
 		}
@@ -371,6 +379,15 @@ static NSArray *_COImageLoader_archiveTypes=nil;
 @end
 
 @implementation COImageLoader(private)
+- (BOOL)shouldCancelContentLoad
+{
+	NSNumber *sequenceNumber = [[[NSThread currentThread] threadDictionary] objectForKey:@"COOpenPageLoadSequence"];
+	if (!sequenceNumber || !controller || ![controller respondsToSelector:@selector(isCurrentOpenPageLoadSequence:)]) {
+		return NO;
+	}
+	return ![controller isCurrentOpenPageLoadSequence:sequenceNumber];
+}
+
 - (void)content
 {
 	NSTimeInterval contentStartTime = [NSDate timeIntervalSinceReferenceDate];
@@ -380,6 +397,10 @@ static NSArray *_COImageLoader_archiveTypes=nil;
 		  readSubFolder);
 	if (![[NSFileManager defaultManager] fileExistsAtPath:filePath]) {
 		NSLog(@"cooViewer loader content missing path: path=%@", filePath);
+		return;
+	}
+	if ([self shouldCancelContentLoad]) {
+		NSLog(@"cooViewer loader content cancelled before load: path=%@", filePath);
 		return;
 	}
 	
@@ -407,6 +428,10 @@ static NSArray *_COImageLoader_archiveTypes=nil;
 		NSLog(@"cooViewer loader content branch: archive path=%@", filePath);
 		mode=2;
         archiveContainer=[[XADWrapper alloc] initWithPath:filePath];
+		if (!archiveContainer) {
+			mode = -1;
+			return;
+		}
 		[self checkArchiveContainer:0];
 		NSTimeInterval elapsed = [NSDate timeIntervalSinceReferenceDate] - contentStartTime;
 		if (elapsed >= 1.0) {
@@ -460,10 +485,13 @@ static NSArray *_COImageLoader_archiveTypes=nil;
 			NSEnumerator *enu=[completeArray objectEnumerator];
 			id path;
 			while (path = [enu nextObject]) {
+				if ([self shouldCancelContentLoad]) {
+					NSLog(@"cooViewer loader content cancelled in savedSearch: path=%@", filePath);
+					mode = -1;
+					return;
+				}
 				if([[COImageLoader fileTypes] containsObject:[[path pathExtension] lowercaseString]]){
-					COImageLoader *inLoader = [[[COImageLoader alloc] initWithPath:path readSubFolder:NO controller:controller] autorelease];
-					[pathArray addObjectsFromArray:[inLoader pathArray]];
-					[inArchiveArray addObject:inLoader];
+					[pathArray addObject:path];
 				} else if (path) {
 					[pathArray addObject:path];
 				}
@@ -488,11 +516,14 @@ static NSArray *_COImageLoader_archiveTypes=nil;
 			NSEnumerator *enu=[completeArray objectEnumerator];
 			id path;
 			while (path = [enu nextObject]) {
+				if ([self shouldCancelContentLoad]) {
+					NSLog(@"cooViewer loader content cancelled in directory: path=%@", filePath);
+					mode = -1;
+					return;
+				}
 				path = [filePath stringByAppendingPathComponent:path];
 				if([[COImageLoader fileTypes] containsObject:[[path pathExtension] lowercaseString]]){
-					COImageLoader *inLoader = [[[COImageLoader alloc] initWithPath:path readSubFolder:NO controller:controller] autorelease];
-					[pathArray addObjectsFromArray:[inLoader pathArray]];
-					[inArchiveArray addObject:inLoader];
+					[pathArray addObject:path];
 				} else if (path) {
 					[pathArray addObject:path];
 				}
@@ -553,6 +584,11 @@ static NSArray *_COImageLoader_archiveTypes=nil;
 	NSEnumerator *enu = [items objectEnumerator];
 	id object;
 	while (object = [enu nextObject]) {
+		if ([self shouldCancelContentLoad]) {
+			NSLog(@"cooViewer loader content cancelled in archive: path=%@", filePath);
+			mode = -1;
+			return NO;
+		}
 		NSString *path = [object path];
 		if (path) {
 			[rawContentPathArray addObject:path];
@@ -565,9 +601,11 @@ static NSArray *_COImageLoader_archiveTypes=nil;
 																	   displayPath:[displayPath stringByAppendingPathComponent:path]
 																	 readSubFolder:NO
 																		controller:controller] autorelease];
-					[inLoader setInTempDir:YES];
-					[pathArray addObjectsFromArray:[inLoader pathArray]];
-					[inArchiveArray addObject:inLoader];
+					if (inLoader && [inLoader mode] >= 0) {
+						[inLoader setInTempDir:YES];
+						[pathArray addObjectsFromArray:[inLoader pathArray]];
+						[inArchiveArray addObject:inLoader];
+					}
 				}
 			} else {
 				NSString *inPath = [NSString stringWithFormat:@"%@/%@",displayPath,path];

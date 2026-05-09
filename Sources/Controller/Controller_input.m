@@ -150,6 +150,16 @@ static BOOL appleRemoteHoldDown = NO;
 		[window performClose:self];
 		return;
 	}
+	if (![imageView pageMover] &&
+		(character == NSCarriageReturnCharacter || character == NSEnterCharacter) &&
+		(cMod == 0 || cMod == COKeyModifierNumeric)) {
+		if ([self openArchiveAtCurrentMouseLocation]) return;
+	}
+	if (![imageView pageMover] &&
+		(character == NSDeleteCharacter || character == NSBackspaceCharacter) &&
+		cMod == 0) {
+		if ([self restorePreviousArchiveNavigation]) return;
+	}
 	
 	if (fitScreenMode == 0) {
 		[self getKeyAction:character mod:cMod mode:0 slideshow:slideshow];

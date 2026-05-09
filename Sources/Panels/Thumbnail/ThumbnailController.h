@@ -66,6 +66,7 @@
 -(void)setImageCellWithInfo:(id)info;
 
 -(void)setImageToCellAtRow:(int)row column:(int)col back:(BOOL)back;
+-(void)setThumbnailControlsVisible:(BOOL)visible;
 
 -(void)clearCell;
 -(void)clearAll;
