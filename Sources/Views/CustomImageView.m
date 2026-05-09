@@ -1438,7 +1438,6 @@ NSTimeInterval elapsed=0;
 												   backing:NSBackingStoreBuffered
 													 defer:NO];
 		[lensWindow setReleasedWhenClosed:YES];
-		[lensWindow setOneShot:YES];
 		[lensWindow setBackgroundColor:[NSColor clearColor]];
 		[lensWindow setOpaque:NO];
 		[lensWindow setIgnoresMouseEvents:YES];
