@@ -7,7 +7,7 @@ https://coo-ona.github.io/cooViewer/
 
 ## 開発・ビルド環境
 
-現在の更新版は、macOS Sequoia 以降および Apple Silicon / Intel Mac の両対応を目的として保守しています。
+現在の更新版は、Apple Silicon / Intel Mac の両対応を目的として保守しつつ、細かな修正を加えています。
 
 **動作環境: macOS 10.14 Mojave 以降**
 
