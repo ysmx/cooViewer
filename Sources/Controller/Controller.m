@@ -3670,6 +3670,20 @@ static const int DIALOG_CANCEL	= 129;
 	return temp;
 }
 
+// -imageDisplay/-returnComposeImage:and: lay a spread out using the raw
+// `nowPage` ivar, not the -nowPage accessor above (which is offset by one in
+// spread mode) - these mirror that same raw-ivar arithmetic so callers don't
+// have to know which "nowPage" is the right one to use.
+-(int)co_firstImagePageIndex
+{
+	return secondImage ? (nowPage - 2) : (nowPage - 1);
+}
+
+-(int)co_secondImagePageIndex
+{
+	return nowPage - 1;
+}
+
 -(int)pageCount
 {
 	return (int)[completeMutableArray count];
