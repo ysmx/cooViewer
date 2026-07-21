@@ -21,6 +21,7 @@
 	NSRect pageMoverRect;
 	NSRect pageStringRect;
 	NSRect infoStringRect;
+	NSRect infoBarAnchorRect;
 	BOOL slideshow;
 	
 	
