@@ -825,6 +825,13 @@ static NSRect COPageStringLayoutRect(NSRect contentFrame, NSAttributedString *st
 	if (!string) {
 		return;
 	}
+	// -hideAccessory and the mouse-moved auto-hide-wake handler both call
+	// this with the *same* string just to force a redraw when
+	// autoHidedPageString flips - not to show new content. Only re-snapshot
+	// the bar anchor below on a genuine content change, so that flip (which
+	// changes what -pageBarRect itself returns) can't jerk an
+	// already-visible notice out from under itself.
+	BOOL isNewContent = !infoString || ![[infoString string] isEqualToString:string];
 	NSRect oldRect=NSUnionRect(infoStringRect,pageStringRect);
 
 	if (!infoString) {
@@ -833,16 +840,18 @@ static NSRect COPageStringLayoutRect(NSRect contentFrame, NSAttributedString *st
 		[infoString initWithString:string attributes:pageStringAttr];
 	}
 
-	// Snapshot where the status bar actually renders right now (including
-	// its pageString-avoidance offset) so -infoStringRect can anchor the
-	// notice next to it without overlap. Freezing it here, rather than
-	// recomputing on every -infoStringRect call, keeps the notice still
-	// while it's shown even if the bar's own position later shifts (e.g.
-	// pageString auto-hiding mid-display).
-	NSRect contentFrame = [self frame];
-	infoBarAnchorRect = [self pageBarRect];
-	if (NSIsEmptyRect(infoBarAnchorRect)) {
-		infoBarAnchorRect = COPageBarLayoutRect(contentFrame,pageBarMargin,pageBarWidth,pageBarHeight,pageBarPosition);
+	if (isNewContent) {
+		// Snapshot where the status bar actually renders right now
+		// (including its pageString-avoidance offset) so -infoStringRect
+		// can anchor the notice next to it without overlap. Freezing it
+		// here, rather than recomputing on every -infoStringRect call,
+		// keeps the notice still while it's shown even if the bar's own
+		// position later shifts (e.g. pageString auto-hiding mid-display).
+		NSRect contentFrame = [self frame];
+		infoBarAnchorRect = [self pageBarRect];
+		if (NSIsEmptyRect(infoBarAnchorRect)) {
+			infoBarAnchorRect = COPageBarLayoutRect(contentFrame,pageBarMargin,pageBarWidth,pageBarHeight,pageBarPosition);
+		}
 	}
 
 	if (NSIsEmptyRect(oldRect)) {
