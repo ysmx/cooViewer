@@ -194,9 +194,10 @@ static NSRect COPageStringLayoutRect(NSRect contentFrame, NSAttributedString *st
 		pageString = nil;
 		infoString = nil;
 		
-		pageBarRect = NSZeroRect;	
+		pageBarRect = NSZeroRect;
 		pageStringRect = NSZeroRect;
 		infoStringRect = NSZeroRect;
+		infoBarAnchorRect = NSZeroRect;
 		pageMoverRect = NSZeroRect;
 		pageBarStringRect = NSZeroRect;
 		
@@ -825,12 +826,25 @@ static NSRect COPageStringLayoutRect(NSRect contentFrame, NSAttributedString *st
 		return;
 	}
 	NSRect oldRect=NSUnionRect(infoStringRect,pageStringRect);
-	
+
 	if (!infoString) {
 		infoString = [[NSAttributedString alloc] initWithString:string attributes:pageStringAttr];
 	} else {
 		[infoString initWithString:string attributes:pageStringAttr];
 	}
+
+	// Snapshot where the status bar actually renders right now (including
+	// its pageString-avoidance offset) so -infoStringRect can anchor the
+	// notice next to it without overlap. Freezing it here, rather than
+	// recomputing on every -infoStringRect call, keeps the notice still
+	// while it's shown even if the bar's own position later shifts (e.g.
+	// pageString auto-hiding mid-display).
+	NSRect contentFrame = [self frame];
+	infoBarAnchorRect = [self pageBarRect];
+	if (NSIsEmptyRect(infoBarAnchorRect)) {
+		infoBarAnchorRect = COPageBarLayoutRect(contentFrame,pageBarMargin,pageBarWidth,pageBarHeight,pageBarPosition);
+	}
+
 	if (NSIsEmptyRect(oldRect)) {
 		[self displayRect:NSUnionRect([self infoStringRect],[self pageStringRect])];
 	} else {
@@ -851,11 +865,12 @@ static NSRect COPageStringLayoutRect(NSRect contentFrame, NSAttributedString *st
 	// (pageBarPosition), not wherever the page number (pageStringPosition)
 	// happens to be, so it stays in view and never overlaps the bar.
 	//
-	// Anchor to the unadjusted bar geometry rather than -pageBarRect: the
-	// latter shifts horizontally based on whether pageString is currently
-	// autoHidedPageString, which flips on the same auto-hide timer as the
-	// bar itself, so a still-visible notice would jump position mid-fade.
-	NSRect barRect = COPageBarLayoutRect(contentFrame,pageBarMargin,pageBarWidth,pageBarHeight,pageBarPosition);
+	// Use the anchor snapshotted in -setInfoString: (the bar's real,
+	// pageString-avoidance-adjusted rect at the moment the notice was
+	// shown) rather than recomputing -pageBarRect fresh here: that rect
+	// shifts whenever pageString auto-hides, which would jerk a
+	// still-visible notice out from under itself.
+	NSRect barRect = infoBarAnchorRect;
 	CGFloat gap = 4;
 
 	if (COAccessoryPlacementIsRight(pageBarPosition)) {
