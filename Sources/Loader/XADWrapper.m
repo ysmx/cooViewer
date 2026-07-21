@@ -72,57 +72,6 @@ static BOOL COXADCanOpenArchivePath(NSString *path)
     }
     return self;
 }
--(id)initWithPath:(NSString*)path nameEncoding:(NSStringEncoding)enc{
-    self = [super init];
-    if (self) {
-		NSTimeInterval archiveStartTime = [NSDate timeIntervalSinceReferenceDate];
-		NSLog(@"cooViewer XADWrapper open begin: path=%@ encoding=%lu", path, (unsigned long)enc);
-		if (!COXADCanOpenArchivePath(path)) {
-			[self release];
-			return nil;
-		}
-		XADError error = XADNoError;
-		archive = [[XADArchive alloc] initWithFile:path error:&error];
-		if (!archive) {
-			NSLog(@"cooViewer XADWrapper open failed: path=%@ encoding=%lu error=%d",
-				  path,
-				  (unsigned long)enc,
-				  error);
-			[self release];
-			return nil;
-		}
-		contentArray = [[NSMutableArray array] retain];
-		contentIndexArray = [[NSMutableArray array] retain];
-		filePath=[path retain];
-		
-		if (enc) [archive setNameEncoding:enc];
-		password=nil;
-		
-		if ([archive nameOfEntry:0] == nil) {
-			[archive setNameEncoding:(NSStringEncoding)0];
-		}
-		int i;
-		for (i=0; i<[archive numberOfEntries]; i++) {
-			[contentIndexArray addObject:[archive nameOfEntry:i]];
-			if (![archive entryIsDirectory:i] && [archive sizeOfEntry:i] != 0) {
-				[contentArray addObject:[[XADItem alloc] initWithPath:[archive nameOfEntry:i] andWrapper:self]];
-			} else {
-				//NSLog(@"isdir %@",[archive nameOfEntry:i]);
-			}
-		}
-		NSTimeInterval elapsed = [NSDate timeIntervalSinceReferenceDate] - archiveStartTime;
-		if (elapsed >= 1.0) {
-			NSLog(@"cooViewer XADWrapper open slow: path=%@ encoding=%lu elapsed=%.3f entries=%d contents=%lu",
-				  path,
-				  (unsigned long)enc,
-				  elapsed,
-				  [archive numberOfEntries],
-				  (unsigned long)[contentArray count]);
-		}
-	}
-    return self;
-}
-
 - (void)dealloc
 {
 	if(archive)[archive release];
@@ -198,19 +147,6 @@ static BOOL COXADCanOpenArchivePath(NSString *path)
 	}
 }
 
-	//パスワードを設定してあっていればYES,間違ってればNOを返す
--(BOOL)checkAndSetPassword:(NSString *)newPassword
-{
-	if ([self itemCount]==0) return NO;
-	
-	[self setPassword:newPassword];
-	NSData *temp = [self itemAtIndex:0];
-	//NSLog(@"%@",[archive describeLastError]);
-	if (temp) {
-		return YES;
-	} 
-	return NO;
-}
 -(XADArchive*)archive
 {
 	return archive;
@@ -219,11 +155,6 @@ static BOOL COXADCanOpenArchivePath(NSString *path)
 -(NSStringEncoding)encoding
 {
 	return [archive nameEncoding];
-}
-
--(BOOL)uncompress:(int)index toTempDir:(NSString*)dir
-{
-	return [archive extractEntry:[self xadIndexOfName:[[contentArray objectAtIndex:index] path]] to:dir];
 }
 
 -(BOOL)uncompress:(int)index as:(NSString*)fileName

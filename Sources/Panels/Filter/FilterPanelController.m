@@ -1026,8 +1026,12 @@ static CGFloat COVRectIntersectionArea(NSRect rectA, NSRect rectB)
         [filterPanel setContentSize:NSMakeSize(minContentSize.width, currentContentSize.height)];
     }
 }
+// Dev-only filter preset/dump harness, gated on DEBUG so none of it — including the hardcoded
+// /tmp dump paths below — ships in Release builds. Triggered via env var, launch argument, or
+// NSUserDefaults toggle; see individual methods.
 - (void)applyDebugPresetIfNeeded
 {
+#if DEBUG
     NSUserDefaults *defaults = [NSUserDefaults standardUserDefaults];
     NSString *preset = [[[NSProcessInfo processInfo] environment] objectForKey:@"COOVIEWER_FILTER_DEBUG_PRESET"];
     if ([preset length] == 0) {
@@ -1091,9 +1095,11 @@ static CGFloat COVRectIntersectionArea(NSRect rectA, NSRect rectB)
         [self dumpDebugFilterPickerIfNeeded];
     }
     [self dumpDebugPanelIfNeeded];
+#endif
 }
 - (void)dumpDebugPanelIfNeeded
 {
+#if DEBUG
     NSUserDefaults *defaults = [NSUserDefaults standardUserDefaults];
     NSArray *arguments = [[NSProcessInfo processInfo] arguments];
     if ([arguments containsObject:@"--dump-filter-panel"] == NO
@@ -1108,9 +1114,11 @@ static CGFloat COVRectIntersectionArea(NSRect rectA, NSRect rectB)
         [defaults removeObjectForKey:@"FilterPanelDumpOnLaunch"];
         [defaults synchronize];
     });
+#endif
 }
 - (void)dumpDebugFilterPickerIfNeeded
 {
+#if DEBUG
     NSUserDefaults *defaults = [NSUserDefaults standardUserDefaults];
     if ([defaults boolForKey:@"FilterPanelDumpPickerOnLaunch"] == NO) return;
 
@@ -1123,6 +1131,7 @@ static CGFloat COVRectIntersectionArea(NSRect rectA, NSRect rectB)
         [defaults removeObjectForKey:@"FilterPanelDumpPickerOnLaunch"];
         [defaults synchronize];
     });
+#endif
 }
 - (void)setUserDefaults
 {

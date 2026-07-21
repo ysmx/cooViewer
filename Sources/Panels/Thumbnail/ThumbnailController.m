@@ -970,17 +970,6 @@
 	[self setCellRow:rowCount column:colCount];
 	
 	now = 0;
-
-	/*
-	if (pathArray) {
-		[pathArray release];
-		pathArray = nil;
-	}
-	if (pathDic) {
-		[pathDic release]
-		pathDic = nil;
-	}
-	 */
 }
 
 -(void)setCellRow:(int)rowI column:(int)columnI
@@ -996,18 +985,6 @@
 	NSRect rect = [matrix frame];
 	[matrix sizeToFit];
 	[matrix setFrame:rect];
-}
-
--(void)clearAll
-{
-	if (pathArray) {
-		//[pathArray release];
-		pathArray = nil;
-	}
-	if (pathDic) {
-		[pathDic release];
-		pathDic = nil;
-	}
 }
 
 
