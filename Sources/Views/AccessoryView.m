@@ -135,7 +135,7 @@ static void CODrawPageStringAtPoint(NSAttributedString *string, NSPoint pt, NSCo
 	[string drawInRect:stringRect];
 }
 
-static NSRect COPageStringLayoutRect(NSRect contentFrame, NSAttributedString *string, NSPoint margin, int position, NSRect infoRect)
+static NSRect COPageStringLayoutRect(NSRect contentFrame, NSAttributedString *string, NSPoint margin, int position)
 {
 	NSSize pageStringSize = COPageStringSizeWithBG(string);
 	NSRect rect = NSMakeRect(0,0,pageStringSize.width,pageStringSize.height);
@@ -143,19 +143,19 @@ static NSRect COPageStringLayoutRect(NSRect contentFrame, NSAttributedString *st
 	rect.size.height = rect.size.height + 1;
 	switch (position) {
 		case COAccessoryPlacementTopLeft:
-			rect.origin.x = margin.x+2 +infoRect.size.width;
+			rect.origin.x = margin.x+2;
 			rect.origin.y = contentFrame.size.height-rect.size.height-margin.y;
 			break;
 		case COAccessoryPlacementTopRight:
-			rect.origin.x = contentFrame.size.width-rect.size.width-margin.x-2 -infoRect.size.width;
+			rect.origin.x = contentFrame.size.width-rect.size.width-margin.x-2;
 			rect.origin.y = contentFrame.size.height-rect.size.height-margin.y;
 			break;
 		case COAccessoryPlacementBottomLeft:
-			rect.origin.x = margin.x+2 +infoRect.size.width;
+			rect.origin.x = margin.x+2;
 			rect.origin.y = 17+margin.y+2;
 			break;
 		case COAccessoryPlacementBottomRight:
-			rect.origin.x = contentFrame.size.width-rect.size.width-margin.x-2 -infoRect.size.width;
+			rect.origin.x = contentFrame.size.width-rect.size.width-margin.x-2;
 			rect.origin.y = 17+margin.y+2;
 			break;
 		case COAccessoryPlacementTopCenter:
@@ -841,31 +841,40 @@ static NSRect COPageStringLayoutRect(NSRect contentFrame, NSAttributedString *st
 -(NSRect)infoStringRect
 {
 	if (!infoString) return NSZeroRect;
-	
+
 	NSRect contentFrame = [self frame];
 	NSRect rect = NSMakeRect(0,0,[infoString sizeWithBG].width,[infoString sizeWithBG].height);
 	rect.size.width = (int)rect.size.width + 1;
 	rect.size.height = (int)rect.size.height + 1;
-	switch (pageStringPosition) {
-		case 0:
-			rect.origin.x = pageMargin.x+2;
-			rect.origin.y = contentFrame.size.height-(int)rect.size.height-pageMargin.y;
-			break;
-		case 1:
-			rect.origin.x = contentFrame.size.width-(int)rect.size.width-pageMargin.x-2;
-			rect.origin.y = contentFrame.size.height-(int)rect.size.height-pageMargin.y;
-			break;
-		case 2:
-			rect.origin.x = pageMargin.x+2;
-			rect.origin.y = 17+pageMargin.y+2;
-			break;
-		case 3:
-			rect.origin.x = contentFrame.size.width-(int)rect.size.width-pageMargin.x-2;
-			rect.origin.y = 17+pageMargin.y+2;
-			break;
-		default:
-			break;
+
+	// The slideshow start/stop notice should appear near the status bar
+	// (pageBarPosition), not wherever the page number (pageStringPosition)
+	// happens to be, so it stays in view and never overlaps the bar.
+	NSRect barRect = [self pageBarRect];
+	if (NSIsEmptyRect(barRect)) {
+		barRect = COPageBarLayoutRect(contentFrame,pageBarMargin,pageBarWidth,pageBarHeight,pageBarPosition);
 	}
+	CGFloat gap = 4;
+
+	if (COAccessoryPlacementIsRight(pageBarPosition)) {
+		rect.origin.x = NSMaxX(barRect)-rect.size.width;
+	} else if (COAccessoryPlacementIsCenter(pageBarPosition)) {
+		rect.origin.x = NSMidX(barRect)-rect.size.width/2;
+	} else {
+		rect.origin.x = NSMinX(barRect);
+	}
+
+	if (COAccessoryPlacementIsTop(pageBarPosition)) {
+		rect.origin.y = NSMinY(barRect)-rect.size.height-gap;
+	} else {
+		rect.origin.y = NSMaxY(barRect)+gap;
+	}
+
+	if (rect.origin.x < 2) rect.origin.x = 2;
+	if (NSMaxX(rect) > contentFrame.size.width-2) rect.origin.x = contentFrame.size.width-rect.size.width-2;
+	if (rect.origin.y < 2) rect.origin.y = 2;
+	if (NSMaxY(rect) > contentFrame.size.height-2) rect.origin.y = contentFrame.size.height-rect.size.height-2;
+
 	return COIntRect(rect);
 }
 
@@ -938,7 +947,7 @@ static NSRect COPageStringLayoutRect(NSRect contentFrame, NSAttributedString *st
 
 -(NSRect)pageStringLayoutRectForContentFrame:(NSRect)contentFrame
 {
-	return COPageStringLayoutRect(contentFrame,pageString,pageMargin,pageStringPosition,[self infoStringRect]);
+	return COPageStringLayoutRect(contentFrame,pageString,pageMargin,pageStringPosition);
 }
 
 #pragma mark pageBar
@@ -963,7 +972,7 @@ static NSRect COPageStringLayoutRect(NSRect contentFrame, NSAttributedString *st
 {
 	NSRect rect = COPageBarLayoutRect(contentFrame,pageBarMargin,pageBarWidth,pageBarHeight,pageBarPosition);
 	if (avoidPageString && pageString && !autoHidedPageString) {
-		NSRect stringRect = COPageStringLayoutRect(contentFrame,pageString,pageMargin,pageStringPosition,[self infoStringRect]);
+		NSRect stringRect = COPageStringLayoutRect(contentFrame,pageString,pageMargin,pageStringPosition);
 		if (!NSIsEmptyRect(stringRect) && pageStringPosition == pageBarPosition) {
 			if (COAccessoryPlacementIsRight(pageBarPosition)) {
 				rect.origin.x = NSMaxX(stringRect)-COPageStringTextLeftOffset()-rect.size.width;
