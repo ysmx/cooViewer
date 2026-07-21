@@ -216,7 +216,7 @@ cask "$CASK_TOKEN" do
 
   url "https://github.com/$GITHUB_REPO/releases/download/v#{version}/$APP_NAME.zip"
   name "$APP_NAME"
-  desc "macOS image viewer for comics/manga. macOS 10.14+　Universal binary. Supports ZIP, RAR, CBZ, CBR, 7Z, PDF, etc."
+  desc "macOS image viewer for comics/manga. macOS 10.14+ Universal binary. Supports ZIP, RAR, CBZ, CBR, 7Z, PDF, etc."
   homepage "https://github.com/$GITHUB_REPO"
 
   app "$APP_NAME.app"
