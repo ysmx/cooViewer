@@ -20,6 +20,8 @@
 		7601F5F907D5508700457A5B /* CustomImageView.m in Sources */ = {isa = PBXBuildFile; fileRef = 7601F5F707D5508700457A5B /* CustomImageView.m */; };
 		761B469E0D61E95D00667B2A /* AccessoryView.h in Headers */ = {isa = PBXBuildFile; fileRef = 761B469C0D61E95D00667B2A /* AccessoryView.h */; };
 		761B469F0D61E95D00667B2A /* AccessoryView.m in Sources */ = {isa = PBXBuildFile; fileRef = 761B469D0D61E95D00667B2A /* AccessoryView.m */; };
+		13F55E4E41A24AA19C9B9769 /* ViewerPageGeometry.swift in Sources */ = {isa = PBXBuildFile; fileRef = 69661E1AA37C4876894F1180 /* ViewerPageGeometry.swift */; };
+		31FD081B418E48ABA13ECEFC /* ViewerPageGeometry.swift in Sources */ = {isa = PBXBuildFile; fileRef = 69661E1AA37C4876894F1180 /* ViewerPageGeometry.swift */; };
 		AD05A8BEDADF47AC85E70A3D /* AccessoryGeometry.h in Headers */ = {isa = PBXBuildFile; fileRef = EF975869F00B4F319CDA9B3B /* AccessoryGeometry.h */; };
 		9265DED0A68145A1B6677098 /* AccessoryGeometry.m in Sources */ = {isa = PBXBuildFile; fileRef = AEF0D05A3AC34B82A1B5FC0E /* AccessoryGeometry.m */; };
 		CF2D54B6155E4DEA8ADE3095 /* AccessoryGeometry.m in Sources */ = {isa = PBXBuildFile; fileRef = AEF0D05A3AC34B82A1B5FC0E /* AccessoryGeometry.m */; };
@@ -144,6 +146,7 @@
 		76181B7D08BE17BC000A527E /* Resources/Credits.rtf */ = {isa = PBXFileReference; lastKnownFileType = text.rtf; path = Resources/Credits.rtf; sourceTree = "<group>"; };
 		761B469C0D61E95D00667B2A /* AccessoryView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = AccessoryView.h; sourceTree = "<group>"; };
 		761B469D0D61E95D00667B2A /* AccessoryView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = AccessoryView.m; sourceTree = "<group>"; };
+		69661E1AA37C4876894F1180 /* ViewerPageGeometry.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ViewerPageGeometry.swift; sourceTree = "<group>"; };
 		EF975869F00B4F319CDA9B3B /* AccessoryGeometry.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = AccessoryGeometry.h; sourceTree = "<group>"; };
 		AEF0D05A3AC34B82A1B5FC0E /* AccessoryGeometry.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = AccessoryGeometry.m; sourceTree = "<group>"; };
 		761B46A20D61E97900667B2A /* AccessoryWindow.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = AccessoryWindow.h; sourceTree = "<group>"; };
@@ -459,6 +462,7 @@
 				76B19AC107C9C15A00A6FB97 /* Controller.h */,
 				76B19AC207C9C15A00A6FB97 /* Controller.m */,
 				76CB9073097B9E100009A972 /* Controller_input.m */,
+				69661E1AA37C4876894F1180 /* ViewerPageGeometry.swift */,
 			);
 			name = mainController;
 			path = Sources/Controller;
@@ -746,6 +750,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				CF2D54B6155E4DEA8ADE3095 /* AccessoryGeometry.m in Sources */,
+				31FD081B418E48ABA13ECEFC /* ViewerPageGeometry.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -781,6 +786,7 @@
 				767EEA220D5F6C8800522A56 /* NSAttributedString_Adding.m in Sources */,
 				761B469F0D61E95D00667B2A /* AccessoryView.m in Sources */,
 				9265DED0A68145A1B6677098 /* AccessoryGeometry.m in Sources */,
+				13F55E4E41A24AA19C9B9769 /* ViewerPageGeometry.swift in Sources */,
 				761B46A50D61E97900667B2A /* AccessoryWindow.m in Sources */,
 				A31C5A9A23CA3D6300DD4E70 /* FilterPanelController.m in Sources */,
 				769762A80D657268009CFDBE /* AccessorySettingView.m in Sources */,
@@ -880,6 +886,7 @@
 				MTL_FAST_MATH = YES;
 				ONLY_ACTIVE_ARCH = YES;
 				HEADER_SEARCH_PATHS = "$(SRCROOT)/Sources/Views";
+				SWIFT_VERSION = 5.0;
 				PRODUCT_BUNDLE_IDENTIFIER = jp.coo.cooViewerTests;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SDKROOT = macosx;
@@ -920,6 +927,7 @@
 				MTL_ENABLE_DEBUG_INFO = NO;
 				MTL_FAST_MATH = YES;
 				HEADER_SEARCH_PATHS = "$(SRCROOT)/Sources/Views";
+				SWIFT_VERSION = 5.0;
 				PRODUCT_BUNDLE_IDENTIFIER = jp.coo.cooViewerTests;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SDKROOT = macosx;
@@ -960,6 +968,7 @@
 				MTL_ENABLE_DEBUG_INFO = NO;
 				MTL_FAST_MATH = YES;
 				HEADER_SEARCH_PATHS = "$(SRCROOT)/Sources/Views";
+				SWIFT_VERSION = 5.0;
 				PRODUCT_BUNDLE_IDENTIFIER = jp.coo.cooViewerTests;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SDKROOT = macosx;
@@ -1030,6 +1039,7 @@
 				MTL_FAST_MATH = YES;
 				ONLY_ACTIVE_ARCH = YES;
 				HEADER_SEARCH_PATHS = "$(SRCROOT)/Sources/Views";
+				SWIFT_VERSION = 5.0;
 				PRODUCT_BUNDLE_IDENTIFIER = jp.coo.cooViewerTests;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SDKROOT = macosx;
@@ -1070,6 +1080,7 @@
 				MTL_ENABLE_DEBUG_INFO = NO;
 				MTL_FAST_MATH = YES;
 				HEADER_SEARCH_PATHS = "$(SRCROOT)/Sources/Views";
+				SWIFT_VERSION = 5.0;
 				PRODUCT_BUNDLE_IDENTIFIER = jp.coo.cooViewerTests;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SDKROOT = macosx;
@@ -1110,6 +1121,7 @@
 				MTL_ENABLE_DEBUG_INFO = NO;
 				MTL_FAST_MATH = YES;
 				HEADER_SEARCH_PATHS = "$(SRCROOT)/Sources/Views";
+				SWIFT_VERSION = 5.0;
 				PRODUCT_BUNDLE_IDENTIFIER = jp.coo.cooViewerTests;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SDKROOT = macosx;
@@ -1188,6 +1200,9 @@
 				INFOPLIST_FILE = info.plist;
 				OTHER_CFLAGS = "";
 				OTHER_LDFLAGS = "";
+				CLANG_ENABLE_MODULES = YES;
+				SWIFT_OBJC_BRIDGING_HEADER = "Sources/cooViewer-Bridging-Header.h";
+				SWIFT_VERSION = 5.0;
 				PRODUCT_BUNDLE_IDENTIFIER = jp.coo.cooViewer;
 				PRODUCT_NAME = cooViewer;
 				ZERO_LINK = YES;
@@ -1257,6 +1272,9 @@
 				INFOPLIST_FILE = info.plist;
 				OTHER_CFLAGS = "";
 				OTHER_LDFLAGS = "";
+				CLANG_ENABLE_MODULES = YES;
+				SWIFT_OBJC_BRIDGING_HEADER = "Sources/cooViewer-Bridging-Header.h";
+				SWIFT_VERSION = 5.0;
 				PRODUCT_BUNDLE_IDENTIFIER = jp.coo.cooViewer;
 				PRODUCT_NAME = cooViewer;
 				ZERO_LINK = YES;
@@ -1328,6 +1346,9 @@
 				INFOPLIST_FILE = info.plist;
 				OTHER_CFLAGS = "";
 				OTHER_LDFLAGS = "";
+				CLANG_ENABLE_MODULES = YES;
+				SWIFT_OBJC_BRIDGING_HEADER = "Sources/cooViewer-Bridging-Header.h";
+				SWIFT_VERSION = 5.0;
 				PRODUCT_BUNDLE_IDENTIFIER = jp.coo.cooViewer;
 				PRODUCT_NAME = cooViewer;
 				ZERO_LINK = NO;
@@ -1359,6 +1380,9 @@
 				INFOPLIST_FILE = info.plist;
 				OTHER_CFLAGS = "";
 				OTHER_LDFLAGS = "";
+				CLANG_ENABLE_MODULES = YES;
+				SWIFT_OBJC_BRIDGING_HEADER = "Sources/cooViewer-Bridging-Header.h";
+				SWIFT_VERSION = 5.0;
 				PRODUCT_BUNDLE_IDENTIFIER = jp.coo.cooViewer;
 				PRODUCT_NAME = cooViewer;
 				ZERO_LINK = NO;
@@ -1382,6 +1406,9 @@
 				INFOPLIST_FILE = info.plist;
 				OTHER_CFLAGS = "";
 				OTHER_LDFLAGS = "";
+				CLANG_ENABLE_MODULES = YES;
+				SWIFT_OBJC_BRIDGING_HEADER = "Sources/cooViewer-Bridging-Header.h";
+				SWIFT_VERSION = 5.0;
 				PRODUCT_BUNDLE_IDENTIFIER = jp.coo.cooViewer;
 				PRODUCT_NAME = cooViewer;
 			};
@@ -1478,6 +1505,9 @@
 				INFOPLIST_FILE = info.plist;
 				OTHER_CFLAGS = "";
 				OTHER_LDFLAGS = "";
+				CLANG_ENABLE_MODULES = YES;
+				SWIFT_OBJC_BRIDGING_HEADER = "Sources/cooViewer-Bridging-Header.h";
+				SWIFT_VERSION = 5.0;
 				PRODUCT_BUNDLE_IDENTIFIER = jp.coo.cooViewer;
 				PRODUCT_NAME = cooViewer;
 				ZERO_LINK = NO;

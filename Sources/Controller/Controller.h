@@ -259,6 +259,8 @@
 - (BOOL)indicator;
 - (float)nowPar;
 - (int)nowPage;
+- (int)co_firstImagePageIndex;
+- (int)co_secondImagePageIndex;
 - (int)pageCount;
 - (NSArray*)bookmarkArray;
 - (id)openSameFolderMenuItem;

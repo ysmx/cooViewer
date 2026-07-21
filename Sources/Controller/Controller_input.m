@@ -1,4 +1,5 @@
 #import "Controller.h"
+#import "cooViewer-Swift.h"
 #import "CustomWindow.h"
 #import "BookmarkController.h"
 #import "CustomImageView.h"
@@ -1214,6 +1215,7 @@ static BOOL appleRemoteHoldDown = NO;
 						[self lookahead];
 						[self imageDisplay];
 					}
+					break;
 				case 6:
 					//nextpage
 					[lock lock];
@@ -3105,25 +3107,19 @@ static NSTimer* dontSleepTimer = nil;
 }
 - (void)trashLeft
 {
-	int i;
-	if (!secondImage) {
-		i = nowPage - 1;
-	} else {
-		i = nowPage - 1;
-	}
+	int i = [ViewerPageGeometry trashIndexWithIsLeft:YES
+										readFromLeft:[self readFromLeft]
+								 firstImagePageIndex:[self co_firstImagePageIndex]
+								secondImagePageIndex:[self co_secondImagePageIndex]];
 	[self trashFile:[imageLoader itemPathAtIndex:i]];
 }
 - (void)trashRight
 {
-	int i;
-	if (!secondImage) {
-		i = nowPage - 1;
-	} else {
-		i = nowPage - 2;
-	}
+	int i = [ViewerPageGeometry trashIndexWithIsLeft:NO
+										readFromLeft:[self readFromLeft]
+								 firstImagePageIndex:[self co_firstImagePageIndex]
+								secondImagePageIndex:[self co_secondImagePageIndex]];
 	[self trashFile:[imageLoader itemPathAtIndex:i]];
-	
-	
 }
 - (void)trashFile:(NSString*)path
 {
