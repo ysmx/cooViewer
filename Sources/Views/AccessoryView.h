@@ -7,8 +7,9 @@
 //
 
 #import <Cocoa/Cocoa.h>
+#import "AccessoryGeometry.h"
 
-@interface AccessoryView : NSView 
+@interface AccessoryView : NSView
 {	
 	NSTimer *infoStringTimer;
 	NSTimer *accessoryTimer;
@@ -68,19 +69,6 @@
 	int tempPageNum;
 	int pageStringPosition;
 }
-typedef NS_ENUM(NSInteger, COAccessoryPlacement) {
-	COAccessoryPlacementTopLeft = 0,
-	COAccessoryPlacementTopRight = 1,
-	COAccessoryPlacementBottomLeft = 2,
-	COAccessoryPlacementBottomRight = 3,
-	COAccessoryPlacementTopCenter = 4,
-	COAccessoryPlacementBottomCenter = 5
-};
-
-NSRect COIntRect(NSRect aRect);
-BOOL COAccessoryPlacementIsTop(int placement);
-BOOL COAccessoryPlacementIsRight(int placement);
-BOOL COAccessoryPlacementIsCenter(int placement);
 -(void)setPreferences;
 
 -(void)drawAccessory;
