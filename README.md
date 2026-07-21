@@ -1,103 +1,103 @@
 # cooViewer
 
-🇯🇵 日本語 | 🇺🇸 [English](README.en.md)
+🇯🇵 [日本語](README.ja.md) | 🇺🇸 English
 
-cooViewer は macOS 向けの画像ビューアです。
+cooViewer is an image viewer for macOS.
 
-オリジナル版:
+Original version:
 https://coo-ona.github.io/cooViewer/
 
-## 動作環境
+## Requirements
 
-macOS 10.14 Mojave 以降
+macOS 10.14 Mojave or later
 
-## 主な改善点
+## Key improvements
 
-#### 新しいmacOSへの対応
-- Apple Silicon / Intel 両対応の Universal Binary 化
-- macOS Sequoia 以降でのフルスクリーン表示、複数ディスプレイ環境での表示を改善
+#### Support for newer macOS
+- Universal Binary supporting both Apple Silicon and Intel
+- Improved full-screen display on macOS Sequoia and later, and improved display in multi-display setups
 
-#### 対応フォーマットの追加
-- HEIC/HEIF, WebP, AVIF, PSD に対応
-- 主要なカメラ RAW 形式に対応
+#### Additional supported formats
+- Support for HEIC/HEIF, WebP, AVIF, PSD
+- Support for major camera RAW formats
 
-#### 大量ファイル環境での安定性向上
-- 大量のフォルダや CBZ/CBR がある環境でも固まりにくいよう改善
-- 壊れたアーカイブや読めないファイルが混ざっていても、操作不能になりにくいよう調整
+#### Improved stability with large numbers of files
+- Improved responsiveness in environments with a large number of folders or CBZ/CBR files
+- Adjusted so the app is less likely to become unresponsive when corrupted or unreadable archives are present
 
-#### 閲覧操作の改善
-- シャッフル表示の偏りや、切り替え時の不具合を修正
-- ソートに降順を追加
-- サムネイル一覧からアーカイブを開く（Return / Enter）/ 戻る（Backspace）操作を追加
-- ページ数表示とページバーの見た目・配置設定を変更
+#### Improved viewing operations
+- Fixed bias in shuffle display and issues when toggling it
+- Added descending sort order
+- Added opening an archive from the thumbnail list (Return / Enter) and going back (Backspace)
+- Changed the appearance and placement settings for the page number display and page bar
 
-#### 日本語ファイル名への対応
-- 濁点・半濁点を含むファイル名でも、履歴や前回のページ位置を復元しやすいよう改善
+#### Support for Japanese filenames
+- Improved restoration of history and the last-viewed page position for filenames containing dakuten/handakuten (Japanese diacritical marks)
 
-#### インストール方法の追加
-- Homebrew Cask からインストール可能に
+#### Additional install method
+- Can now be installed via Homebrew Cask
 
-#### アイコンの変更
-- アプリと書類のアイコンを変更
+#### Icon change
+- Changed the app and document icons
 
-## インストール
+## Installation
 
-[Homebrew](https://brew.sh/) を使ってインストールできます。公式tap以外のcaskなので、まず`brew trust`で信頼してください。
+You can install it using [Homebrew](https://brew.sh/). Since this is a cask from a non-official tap, trust it first with `brew trust`.
 
 ```bash
 brew trust --cask ysmx/cooviewer/cooviewer
 ```
 
-そのあと、以下のいずれかでインストールします。
+Then install it with either of the following.
 
 ```bash
 brew install --cask ysmx/cooviewer/cooviewer
 ```
 
-または：
+or:
 
 ```bash
 brew tap ysmx/cooviewer
 brew install --cask cooviewer
 ```
 
-## 対応フォーマット
+## Supported formats
 
-#### アーカイブ
-ZIP, RAR, CBZ, CBR, 7Z, TAR, GZ, BZ2, XZ, LZH/LHA, CAB など
+#### Archives
+ZIP, RAR, CBZ, CBR, 7Z, TAR, GZ, BZ2, XZ, LZH/LHA, CAB, etc.
 
-#### 画像
-JPEG, PNG, GIF, BMP, TIFF, PDF, HEIC/HEIF, WebP, AVIF, PSD など
+#### Images
+JPEG, PNG, GIF, BMP, TIFF, PDF, HEIC/HEIF, WebP, AVIF, PSD, etc.
 
-#### RAW形式
-DNG, CR2/CR3, NEF/NRW, ARW/SR2, RAF, RW2, ORF, PEF など
+#### RAW formats
+DNG, CR2/CR3, NEF/NRW, ARW/SR2, RAF, RW2, ORF, PEF, etc.
 
-## 操作方法
+## Usage
 https://coo-ona.github.io/cooViewer/manual.html
 
-## 更新履歴
+## Changelog
 
-詳細は以下にまとめています。
+See the details here.
 
 [update-notes.md](update-notes.md)
 
-## アンインストール
-・アプリ本体<br>
-・/Users/(ユーザー名)/ライブラリ/Preferences/jp.coo.cooViewer.plist<br>
-を消してください
+## Uninstallation
+Please delete:<br>
+・The app itself<br>
+・/Users/(your username)/Library/Preferences/jp.coo.cooViewer.plist<br>
 
-## 著作権、免責等
-cooViewerはMITライセンスです。
-ライセンスについては添付のLicence.txtを参照してください。
-オリジナルはcoo氏によって作成されました。
+## Copyright, disclaimer, etc.
+cooViewer is licensed under the MIT License.
+Please refer to the attached Licence.txt for license details.
+The original was created by coo.
 
-このソフトウェアはXAD library system ( http://sourceforge.net/projects/libxad/ ) を使用しています。<br>
-ライセンスについては添付のLicence_xad.txtを参照してください。
+This software uses the XAD library system ( http://sourceforge.net/projects/libxad/ ).<br>
+Please refer to the attached Licence_xad.txt for license details.
 
-このソフトウェアはRemote Control Wrapper ( http://www.martinkahr.com/source-code/ ) を使用しています。<br>
-ライセンスについては添付のLicence_RemoteControlWrapper.txtを参照してください。
+This software uses Remote Control Wrapper ( http://www.martinkahr.com/source-code/ ).<br>
+Please refer to the attached Licence_RemoteControlWrapper.txt for license details.
 
-アプリアイコンは [macOS App Icons](https://macosicons.com/) に掲載されている vladlucha 氏のアイコンを使用しています。<br>
+The app icon uses an icon by vladlucha, published on [macOS App Icons](https://macosicons.com/).<br>
 https://macosicons.com/?icon=XsWGbR0OuK
 
-書類アイコンは macOS の自動合成（アプリアイコン＋拡張子バッジ）を使用しています。
+The document icon uses macOS's automatic icon composition (app icon + extension badge).
