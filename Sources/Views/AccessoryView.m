@@ -850,10 +850,12 @@ static NSRect COPageStringLayoutRect(NSRect contentFrame, NSAttributedString *st
 	// The slideshow start/stop notice should appear near the status bar
 	// (pageBarPosition), not wherever the page number (pageStringPosition)
 	// happens to be, so it stays in view and never overlaps the bar.
-	NSRect barRect = [self pageBarRect];
-	if (NSIsEmptyRect(barRect)) {
-		barRect = COPageBarLayoutRect(contentFrame,pageBarMargin,pageBarWidth,pageBarHeight,pageBarPosition);
-	}
+	//
+	// Anchor to the unadjusted bar geometry rather than -pageBarRect: the
+	// latter shifts horizontally based on whether pageString is currently
+	// autoHidedPageString, which flips on the same auto-hide timer as the
+	// bar itself, so a still-visible notice would jump position mid-fade.
+	NSRect barRect = COPageBarLayoutRect(contentFrame,pageBarMargin,pageBarWidth,pageBarHeight,pageBarPosition);
 	CGFloat gap = 4;
 
 	if (COAccessoryPlacementIsRight(pageBarPosition)) {
