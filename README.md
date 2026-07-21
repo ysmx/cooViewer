@@ -1,5 +1,7 @@
 # cooViewer
 
+🇯🇵 日本語 | 🇺🇸 [English](README.en.md)
+
 cooViewer は macOS 向けの画像ビューアです。
 
 オリジナル版:
