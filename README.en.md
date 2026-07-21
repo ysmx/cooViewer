@@ -42,7 +42,13 @@ macOS 10.14 Mojave or later
 
 ## Installation
 
-You can install it using [Homebrew](https://brew.sh/).
+You can install it using [Homebrew](https://brew.sh/). Since this is a cask from a non-official tap, trust it first with `brew trust`.
+
+```bash
+brew trust --cask ysmx/cooviewer/cooviewer
+```
+
+Then install it with either of the following.
 
 ```bash
 brew install --cask ysmx/cooviewer/cooviewer
