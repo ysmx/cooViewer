@@ -1418,8 +1418,28 @@ static const int DIALOG_CANCEL	= 129;
 
 
 #pragma mark preferences
+// Shared by -preferences' DIALOG_CANCEL, DIALOG_OK, and NSRunAbortedResponse branches, which
+// each released and nil'd out this same set of key/mouse binding arrays identically.
+- (void)co_releaseInputArrays
+{
+	[keyArray release];
+	keyArray = nil;
+	[keyArrayMode2 release];
+	keyArrayMode2 = nil;
+	[keyArrayMode3 release];
+	keyArrayMode3 = nil;
+	[mouseArray release];
+	mouseArray = nil;
+	[mouseArrayMode2 release];
+	mouseArrayMode2 = nil;
+	[mouseArrayMode3 release];
+	mouseArrayMode3 = nil;
+	currentKeyArray = nil;
+	currentMouseArray = nil;
+}
+
 - (void)preferences
-{	
+{
 	[accessorySettingView setPreferences];
 	[self co_installAppearanceLayoutIfNeeded];
 	
@@ -1808,20 +1828,7 @@ static const int DIALOG_CANCEL	= 129;
 	[preferences orderOut:self];
 	
 	if(result == DIALOG_CANCEL) {
-		[keyArray release];
-		keyArray = nil;
-		[keyArrayMode2 release];
-		keyArrayMode2 = nil;
-		[keyArrayMode3 release];
-		keyArrayMode3 = nil;
-		[mouseArray release];
-		mouseArray = nil;
-		[mouseArrayMode2 release];
-		mouseArrayMode2 = nil;
-		[mouseArrayMode3 release];
-		mouseArrayMode3 = nil;
-		currentKeyArray = nil;
-		currentMouseArray = nil;
+		[self co_releaseInputArrays];
         return;
     } else if(result == DIALOG_OK) {
 		if ([fitOriginalCheck state] == NSControlStateValueOn) {
@@ -2099,20 +2106,7 @@ static const int DIALOG_CANCEL	= 129;
 		
 		
 		
-		[keyArray release];
-		keyArray = nil;
-		[keyArrayMode2 release];
-		keyArrayMode2 = nil;
-		[keyArrayMode3 release];
-		keyArrayMode3 = nil;
-		[mouseArray release];
-		mouseArray = nil;
-		[mouseArrayMode2 release];
-		mouseArrayMode2 = nil;
-		[mouseArrayMode3 release];
-		mouseArrayMode3 = nil;
-		currentKeyArray = nil;
-		currentMouseArray = nil;
+		[self co_releaseInputArrays];
 		
 		
 		if ([window isVisible]) {
@@ -2121,20 +2115,7 @@ static const int DIALOG_CANCEL	= 129;
 		[controller setPreferences];
 		return;
     } else if(result == NSRunAbortedResponse) {
-		[keyArray release];
-		keyArray = nil;
-		[keyArrayMode2 release];
-		keyArrayMode2 = nil;
-		[keyArrayMode3 release];
-		keyArrayMode3 = nil;
-		[mouseArray release];
-		mouseArray = nil;
-		[mouseArrayMode2 release];
-		mouseArrayMode2 = nil;
-		[mouseArrayMode3 release];
-		mouseArrayMode3 = nil;
-		currentKeyArray = nil;
-		currentMouseArray = nil;
+		[self co_releaseInputArrays];
 		[[NSApp keyWindow] makeKeyAndOrderFront:self];
 		return;
     }
@@ -2729,42 +2710,46 @@ static const int DIALOG_CANCEL	= 129;
 
 
 
-- (IBAction)mouseReset:(id)sender
+// Shared by -mouseReset:/-keyReset:, which differ only in which mode popup they read and in
+// which of two already-localized message/title string pairs they use. The message/title
+// NSLocalizedString calls stay in each caller (rather than being merged into one templated
+// string here) since ja.lproj has separate translations keyed on the exact original English
+// strings; templating them would silently fall back to English for existing translations.
+- (NSString*)co_modeLabelForResetModeIndex:(int)mode
 {
-	int mode = (int)[mouseModePopUpButton indexOfSelectedItem];
-	NSString *title,*message;
 	switch (mode) {
-		case 0:
-			message = [NSString stringWithFormat:NSLocalizedString(@"Are you sure you want to reset the %@ mode mouse setting?",@""),
-				NSLocalizedString(@"Fit to Screen",@"")];
-			title = [NSString stringWithFormat:NSLocalizedString(@"Reset mouse setting",@"")];
-			break;
-		case 1:
-			message = [NSString stringWithFormat:NSLocalizedString(@"Are you sure you want to reset the %@ mode mouse setting?",@""),
-				NSLocalizedString(@"Fit to Screen Width",@"")];
-			title = [NSString stringWithFormat:NSLocalizedString(@"Reset mouse setting",@"")];
-			break;
-		case 2:
-			message = [NSString stringWithFormat:NSLocalizedString(@"Are you sure you want to reset the %@ mode mouse setting?",@""),
-				NSLocalizedString(@"No Scale",@"")];
-			title = [NSString stringWithFormat:NSLocalizedString(@"Reset mouse setting",@"")];
-			break;
-		default:
-			NSBeep();
-			return;
+		case 0: return NSLocalizedString(@"Fit to Screen",@"");
+		case 1: return NSLocalizedString(@"Fit to Screen Width",@"");
+		case 2: return NSLocalizedString(@"No Scale",@"");
+		default: return nil;
 	}
-	
-	
+}
+
+- (void)co_showResetConfirmationWithTitle:(NSString*)title message:(NSString*)message context:(NSString*)context
+{
 	NSBeginAlertSheet(title,
-					  NSLocalizedString(@"OK",@""), 
-					  NSLocalizedString(@"Cancel",@""), 
+					  NSLocalizedString(@"OK",@""),
+					  NSLocalizedString(@"Cancel",@""),
 					  nil,
 					  preferences,
 					  self,
-					  @selector(runAlertSheetDidEnd:returnCode:contextInfo:), 
-					  nil, 
-					  @"mouse", 
+					  @selector(runAlertSheetDidEnd:returnCode:contextInfo:),
+					  nil,
+					  context,
                       @"%@", message);
+}
+
+- (IBAction)mouseReset:(id)sender
+{
+	int mode = (int)[mouseModePopUpButton indexOfSelectedItem];
+	NSString *modeLabel = [self co_modeLabelForResetModeIndex:mode];
+	if (!modeLabel) {
+		NSBeep();
+		return;
+	}
+	NSString *message = [NSString stringWithFormat:NSLocalizedString(@"Are you sure you want to reset the %@ mode mouse setting?",@""), modeLabel];
+	NSString *title = [NSString stringWithFormat:NSLocalizedString(@"Reset mouse setting",@"")];
+	[self co_showResetConfirmationWithTitle:title message:message context:@"mouse"];
 }
 
 #pragma mark keyConfig
@@ -3109,43 +3094,15 @@ static const int DIALOG_CANCEL	= 129;
 
 - (IBAction)keyReset:(id)sender
 {
-	/* Reset 000
-	Are you sure you want to reset the Junk Mail database?*/
-	/* 000のリセット
-	000をリセットしてもよろしいですか?*/
-	
 	int mode = (int)[keyModePopUpButton indexOfSelectedItem];
-	NSString *title,*message;
-	switch (mode) {
-		case 0:
-			message = [NSString stringWithFormat:NSLocalizedString(@"Are you sure you want to reset the %@ mode key setting?",@""),
-				NSLocalizedString(@"Fit to Screen",@"")];
-			title = [NSString stringWithFormat:NSLocalizedString(@"Reset key setting",@"")];
-			break;
-		case 1:
-			message = [NSString stringWithFormat:NSLocalizedString(@"Are you sure you want to reset the %@ mode key setting?",@""),
-				NSLocalizedString(@"Fit to Screen Width",@"")];
-			title = [NSString stringWithFormat:NSLocalizedString(@"Reset key setting",@"")];
-			break;
-		case 2:
-			message = [NSString stringWithFormat:NSLocalizedString(@"Are you sure you want to reset the %@ mode key setting?",@""),
-				NSLocalizedString(@"No Scale",@"")];
-			title = [NSString stringWithFormat:NSLocalizedString(@"Reset key setting",@"")];
-			break;
-		default:
-			NSBeep();
-			return;
+	NSString *modeLabel = [self co_modeLabelForResetModeIndex:mode];
+	if (!modeLabel) {
+		NSBeep();
+		return;
 	}
-	NSBeginAlertSheet(title,
-					  NSLocalizedString(@"OK",@""), 
-					  NSLocalizedString(@"Cancel",@""), 
-					  nil,
-					  preferences,
-					  self,
-					  @selector(runAlertSheetDidEnd:returnCode:contextInfo:), 
-					  nil, 
-					  @"key", 
-                      @"%@", message);	
+	NSString *message = [NSString stringWithFormat:NSLocalizedString(@"Are you sure you want to reset the %@ mode key setting?",@""), modeLabel];
+	NSString *title = [NSString stringWithFormat:NSLocalizedString(@"Reset key setting",@"")];
+	[self co_showResetConfirmationWithTitle:title message:message context:@"key"];
 }
 #pragma mark key&mouseEdit
 - (BOOL)tableView:(NSTableView *)aTableView shouldEditTableColumn:(NSTableColumn *)aTableColumn row:(int)rowIndex

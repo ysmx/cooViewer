@@ -23,6 +23,22 @@
 			fabs(alpha-presetAlpha) < 0.001);
 }
 
+// Shared by the non-Clear branch of -co_configureMenuItems, -setCurrentColor:, and
+// -changeColor:, which all drew this same gray-framed, solid-filled 12x12 swatch inline.
+// The Clear item's swatch is drawn separately below since it's a genuinely different
+// shape (a diagonal strike, not a fill).
+- (NSImage*)co_swatchImageForColor:(NSColor*)color
+{
+	NSImage *image = [[[NSImage alloc] initWithSize:NSMakeSize(12,12)] autorelease];
+	[image lockFocus];
+	[[NSColor grayColor] set];
+	NSFrameRect(NSMakeRect(0,0,12,12));
+	[color set];
+	NSRectFill(NSMakeRect(1,1,10,10));
+	[image unlockFocus];
+	return image;
+}
+
 - (void)co_configureMenuItems
 {
 	NSImage *image;
@@ -77,8 +93,6 @@
 			fillColor = [[NSColor blackColor] colorWithAlphaComponent:0.8];
 		} else if ([title isEqualToString:@"Blue"]) {
 			fillColor = [NSColor blueColor];
-		} else if ([title isEqualToString:@"Brown"]) {
-			fillColor = [NSColor brownColor];
 		} else if ([title isEqualToString:@"Cyan"]) {
 			fillColor = [NSColor cyanColor];
 		} else if ([title isEqualToString:@"Green"]) {
@@ -114,18 +128,11 @@
 			[image release];
 			[path release];
 		} else {
-			image = [[NSImage alloc] initWithSize:NSMakeSize(12,12)];
-			[image lockFocus];
-			[frameColor set];
-			NSFrameRect(NSMakeRect(0,0,12,12));
-			[fillColor set];
-			NSRectFill(NSMakeRect(1,1,10,10));
-			[image unlockFocus];
+			image = [self co_swatchImageForColor:fillColor];
 			[item setImage:image];
 			[item setAction:@selector(selectItem:)];
 			[item setTarget:self];
 			[item setRepresentedObject:fillColor];
-			[image release];
 		}
 	}
 }
@@ -163,15 +170,8 @@
 	}
 	
 	NSMenuItem *item = [self lastItem];
-	NSImage *image = [[NSImage alloc] initWithSize:NSMakeSize(12,12)];
-	[image lockFocus];
-	[[NSColor grayColor] set];
-	NSFrameRect(NSMakeRect(0,0,12,12));
-	[currentColor set];
-	NSRectFill(NSMakeRect(1,1,10,10));
-	[image unlockFocus];
+	NSImage *image = [self co_swatchImageForColor:currentColor];
 	[item setImage:image];
-	[image release];
 	[self selectItemAtIndex:[self numberOfItems]-1];
 }
 
@@ -185,17 +185,10 @@
 	currentColor = [[sender color] retain];
 	
 	NSMenuItem *item = [self lastItem];
-	NSImage *image = [[NSImage alloc] initWithSize:NSMakeSize(12,12)];
-	[image lockFocus];
-	[[NSColor grayColor] set];
-	NSFrameRect(NSMakeRect(0,0,12,12));
-	[currentColor set];
-	NSRectFill(NSMakeRect(1,1,10,10));
-	[image unlockFocus];
+	NSImage *image = [self co_swatchImageForColor:currentColor];
 	[item setImage:image];
-	[image release];
 	[self selectItemAtIndex:[self numberOfItems]-1];
-	
+
 	[[self target] performSelector:[self action] withObject:self];
 }
 
