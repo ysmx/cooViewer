@@ -2,6 +2,15 @@
 #import "COPDFImage.h"
 #import "COPDFImageRep.h"
 
+// Value 1 ("hetimazip") is reserved/disabled; nothing in this class ever sets it.
+typedef NS_ENUM(NSInteger, COImageLoaderMode) {
+	COImageLoaderModeError = -1,
+	COImageLoaderModeDirectory = 0,
+	COImageLoaderModeArchive = 2,
+	COImageLoaderModeSavedSearch = 3,
+	COImageLoaderModePDF = 4,
+};
+
 @interface COImageLoader : NSObject {
 	BOOL inTempDir;
 	BOOL rightPassward;
@@ -22,11 +31,10 @@
 	//NSStringEncoding	nameEncoding;
 	NSString *password;
 	id archiveContainer;
-	id subArchiveContainer;
 	NSArray *filterArray;
 	
 	BOOL readSubFolder;
-	int mode;
+	COImageLoaderMode mode;
 	
 	
 	COPDFImageRep	*pdfRep;
@@ -62,8 +70,7 @@
 - (BOOL)checkPassword;
 - (BOOL)checkAndSetPassword:(NSString *)newPassword;
 
-//(-1=err),0=dir,1=zip,2=rar,3=savedSearch,4=pdf
-- (int)mode;
+- (COImageLoaderMode)mode;
 
 - (int)nextFolder:(int)now;
 - (int)prevFolder:(int)now;
