@@ -1,7 +1,30 @@
 #import "ThumbnailPanel.h"
 
 @implementation ThumbnailPanel
-//-(BOOL)canBecomeKeyWindow{return YES;}
+
+- (id)initWithContentRect:(NSRect)contentRect styleMask:(NSWindowStyleMask)styleMask backing:(NSBackingStoreType)bufferingType defer:(BOOL)deferCreation
+{
+	self = [super initWithContentRect:contentRect
+							styleMask:NSWindowStyleMaskBorderless
+							  backing:bufferingType
+								defer:deferCreation
+		];
+	return self;
+}
+
+- (id)initWithContentRect:(NSRect)contentRect styleMask:(NSWindowStyleMask)styleMask backing:(NSBackingStoreType)bufferingType defer:(BOOL)deferCreation screen:(NSScreen *)screen
+{
+	self = [super initWithContentRect:contentRect
+							styleMask:NSWindowStyleMaskBorderless
+							  backing:bufferingType
+								defer:deferCreation
+							   screen:screen
+		];
+	return self;
+}
+
+-(BOOL)canBecomeKeyWindow{return YES;}
+
 -(void)awakeFromNib
 {
 	[self setAcceptsMouseMovedEvents:YES];
@@ -44,17 +67,14 @@
 		result.size.height -= 6;
 		return result;
 	}
-	//NSRect result = [[NSScreen mainScreen] frame];
-	NSRect result=[super constrainFrameRect:[[NSScreen mainScreen] frame] toScreen:aScreen];
-	result.size.height+= 16;
-	return result;
+	return [super constrainFrameRect:[[NSScreen mainScreen] frame] toScreen:aScreen];
 }
 
 
 
 - (void)performClose:(id)sender
 {
-	[super performClose:sender];
+	[self close];
 	[target performSelector:@selector(clearCell)];
 }
 
