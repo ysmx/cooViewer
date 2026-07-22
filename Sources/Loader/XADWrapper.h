@@ -20,7 +20,6 @@
 }
 
 -(id)initWithPath:(NSString*)path;
--(id)initWithPath:(NSString*)path nameEncoding:(NSStringEncoding)enc;
 
 	
 	//access
@@ -38,12 +37,8 @@
 -(NSString *)password;
 -(void)setPassword:(NSString *)inStr;
 
-	//パスワードを設定してあっていればYES,間違ってればNOを返す
--(BOOL)checkAndSetPassword:(NSString *)newPassword;
-
 -(NSStringEncoding)encoding;
 
--(BOOL)uncompress:(int)index toTempDir:(NSString*)dir;
 -(BOOL)uncompress:(int)index as:(NSString*)fileName;
 -(XADArchive*)archive;
 @end

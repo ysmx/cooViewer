@@ -23,7 +23,6 @@
     IBOutlet id panel;
 	
 	NSMutableArray *pathArray;
-	NSMutableDictionary *pathDic;
 	int now;
 	int sortMode;
     IBOutlet id sortPopUpButton;
@@ -69,7 +68,6 @@
 -(void)setThumbnailControlsVisible:(BOOL)visible;
 
 -(void)clearCell;
--(void)clearAll;
 - (void)imageSelected:(id)sender;
 -(void)appleRemoteAction:(NSString*)characters;
 -(void)action:(NSEvent*)event;

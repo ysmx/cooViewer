@@ -582,17 +582,6 @@ static const int DIALOG_CANCEL	= 129;
 
 #pragma mark tableDataSource_drag&drop
 
-/*
--(BOOL)tableView:(NSTableView *)tv writeRows:(NSArray*)rows toPasteboard:(NSPasteboard*)pboard
-{
-	if (tv == allBookmarkTableView || tv == bookmarkTableView) {
-		[pboard declareTypes:[NSArray arrayWithObject:@"row"] owner:self];
-		[pboard setPropertyList:rows forType:@"row"];
-		return YES;
-	}
-	return NO;
-}
-*/
 - (BOOL)tableView:(NSTableView *)tv writeRowsWithIndexes:(NSIndexSet *)rowIndexes toPasteboard:(NSPasteboard *)pboard
 {
     if (tv == allBookmarkTableView || tv == bookmarkTableView) {
@@ -618,87 +607,71 @@ static const int DIALOG_CANCEL	= 129;
 		return NSDragOperationNone;
 	}
 }
+#pragma mark -
+// Splices the rows named in pboard's "row" property list out of array and reinserts them
+// starting at row, then reflects the new order in tv's selection. Shared by both drag-drop
+// destinations below, which differ only in where their backing array lives.
+-(BOOL)co_reorderArray:(NSMutableArray*)array toRow:(int)row dropOperation:(NSTableViewDropOperation)op pasteboard:(NSPasteboard*)pboard tableView:(NSTableView*)tv
+{
+	if (op != NSTableViewDropAbove || [pboard availableTypeFromArray:[NSArray arrayWithObject:@"row"]] == nil) {
+		return NO;
+	}
+
+	NSMutableArray *upperArray=[NSMutableArray arrayWithArray:[array subarrayWithRange:NSMakeRange(0,row)]];
+	NSMutableArray *lowerArray=[NSMutableArray arrayWithArray:[array subarrayWithRange:NSMakeRange(row,([array count] - row))]];
+	NSMutableArray *middleArray=[NSMutableArray arrayWithCapacity:0];
+
+	NSEnumerator *e=[[pboard propertyListForType:@"row"] objectEnumerator];
+	NSNumber *number;
+	id object;
+	while ((number=[e nextObject]) != nil) {
+		object=[array objectAtIndex:[number intValue]];
+		[middleArray addObject:object];
+		[upperArray removeObject:object];
+		[lowerArray removeObject:object];
+	}
+
+	[array removeAllObjects];
+	[array addObjectsFromArray:upperArray];
+	[array addObjectsFromArray:middleArray];
+	[array addObjectsFromArray:lowerArray];
+
+	[tv reloadData];
+	[tv deselectAll:nil];
+
+	int i;
+	for (i=(int)[upperArray count];i<([upperArray count] + [middleArray count]);i++) {
+		[tv selectRowIndexes:[NSIndexSet indexSetWithIndex:i] byExtendingSelection:[tv allowsMultipleSelection]];
+	}
+
+	return YES;
+}
+
 -(BOOL)tableView:(NSTableView*)tv acceptDrop:(id <NSDraggingInfo>)info row:(int)row dropOperation:(NSTableViewDropOperation)op
 {
 	NSPasteboard *pboard=[info draggingPasteboard];
-	NSEnumerator *e=[[pboard propertyListForType:@"row"] objectEnumerator];
-	NSNumber *number;
-	
+
 	if (tv == bookmarkTableView) {
-		if (bookmarkArray) {			
-			NSMutableArray *upperArray=[NSMutableArray arrayWithArray:[bookmarkArray subarrayWithRange:NSMakeRange(0,row)]];
-			NSMutableArray *lowerArray=[NSMutableArray arrayWithArray:[bookmarkArray subarrayWithRange:NSMakeRange(row,([bookmarkArray count] - row))]];
-			NSMutableArray *middleArray=[NSMutableArray arrayWithCapacity:0];
-			id object;
-			int i;
-			
-			if (op == NSTableViewDropAbove && [pboard availableTypeFromArray:[NSArray arrayWithObject:@"row"]] != nil) {
-				while ((number=[e nextObject]) != nil) {
-					object=[bookmarkArray objectAtIndex:[number intValue]];
-					[middleArray addObject:object];
-					[upperArray removeObject:object];
-					[lowerArray removeObject:object];
-				}
-				
-				[bookmarkArray removeAllObjects];
-				
-				[bookmarkArray addObjectsFromArray:upperArray];
-				[bookmarkArray addObjectsFromArray:middleArray];
-				[bookmarkArray addObjectsFromArray:lowerArray];
-				
-				[tv reloadData];
-				[tv deselectAll:nil];
-				
-				for (i=(int)[upperArray count];i<([upperArray count] + [middleArray count]);i++) {
-                    [tv selectRowIndexes:[NSIndexSet indexSetWithIndex:i] byExtendingSelection:[tv allowsMultipleSelection]];
-				}
-				
-				return YES;
-			} else {
-				return NO;
-			}
+		if (!bookmarkArray) {
+			return NO;
 		}
+		return [self co_reorderArray:bookmarkArray toRow:row dropOperation:op pasteboard:pboard tableView:tv];
 	} else if (tv == allBookmarkTableView) {
 		id dic = [allBookmark objectForKey:[bookNameArray objectAtIndex:[allBookNameTableView selectedRow]]];
 		NSMutableDictionary *cDic = [NSMutableDictionary dictionaryWithDictionary:dic];
 		id array = [cDic objectForKey:@"bookmarks"];
 		NSMutableArray *newArray = [NSMutableArray arrayWithArray:array];
-		
-		
-		NSMutableArray *upperArray=[NSMutableArray arrayWithArray:[newArray subarrayWithRange:NSMakeRange(0,row)]];
-		NSMutableArray *lowerArray=[NSMutableArray arrayWithArray:[newArray subarrayWithRange:NSMakeRange(row,([newArray count] - row))]];
-		NSMutableArray *middleArray=[NSMutableArray arrayWithCapacity:0];
-		id object;
-		int i;	
-		if (op == NSTableViewDropAbove && [pboard availableTypeFromArray:[NSArray arrayWithObject:@"row"]] != nil) {
-			while ((number=[e nextObject]) != nil) {
-				object=[newArray objectAtIndex:[number intValue]];
-				[middleArray addObject:object];
-				[upperArray removeObject:object];
-				[lowerArray removeObject:object];
-			}
-			
-			[newArray removeAllObjects];
-			
-			[newArray addObjectsFromArray:upperArray];
-			[newArray addObjectsFromArray:middleArray];
-			[newArray addObjectsFromArray:lowerArray];
-			[cDic setObject:newArray forKey:@"bookmarks"];
-			[allBookmark setObject:cDic forKey:[bookNameArray objectAtIndex:[allBookNameTableView selectedRow]]];
-			
-			[tv reloadData];
-			[tv deselectAll:nil];
-			
-			for (i=(int)[upperArray count];i<([upperArray count] + [middleArray count]);i++) {
-                [tv selectRowIndexes:[NSIndexSet indexSetWithIndex:i] byExtendingSelection:[tv allowsMultipleSelection]];
-			}
-			
-			return YES;
-		} else {
-			return NO;
-		}
-		
-		
+
+		// Wire newArray into the backing store *before* reordering it: allBookmarkTableView's
+		// data source reads straight from allBookmark/cDic, and -co_reorderArray:...  reloads
+		// tv as part of the splice, so the backing store has to already hold this same array
+		// object by the time that reload happens. removeAllObjects/addObjectsFromArray: below
+		// mutate newArray in place, so cDic/allBookmark automatically pick up the new order -
+		// no need to write them again afterward.
+		[cDic setObject:newArray forKey:@"bookmarks"];
+		[allBookmark setObject:cDic forKey:[bookNameArray objectAtIndex:[allBookNameTableView selectedRow]]];
+
+		return [self co_reorderArray:newArray toRow:row dropOperation:op pasteboard:pboard tableView:tv];
 	}
 	return NO;
 }
