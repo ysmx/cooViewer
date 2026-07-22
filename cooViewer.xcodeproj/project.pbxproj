@@ -6,6 +6,24 @@
 	objectVersion = 70;
 	objects = {
 
+/* Begin PBXContainerItemProxy section */
+		B5740CFECDEC490483DD3FEA /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 29B97313FDCFA39411CA2CEA /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = 8D1107260486CEB800E47090;
+			remoteInfo = cooViewer;
+		};
+/* End PBXContainerItemProxy section */
+
+/* Begin PBXTargetDependency section */
+		91BF7CF84B2C4B899FFDEB97 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = 8D1107260486CEB800E47090 /* cooViewer */;
+			targetProxy = B5740CFECDEC490483DD3FEA /* PBXContainerItemProxy */;
+		};
+/* End PBXTargetDependency section */
+
 /* Begin PBXBuildFile section */
 		372911581316C60C0040B910 /* empty.png in Resources */ = {isa = PBXBuildFile; fileRef = 372911571316C60C0040B910 /* empty.png */; };
 		373D3539130F075E0037F8DD /* GlobalKeyboardDevice.h in Headers */ = {isa = PBXBuildFile; fileRef = 373D3537130F075E0037F8DD /* GlobalKeyboardDevice.h */; };
@@ -24,6 +42,13 @@
 		31FD081B418E48ABA13ECEFC /* ViewerPageGeometry.swift in Sources */ = {isa = PBXBuildFile; fileRef = 69661E1AA37C4876894F1180 /* ViewerPageGeometry.swift */; };
 		62DD493C50994A40BA43E38C /* ViewerActionResolver.swift in Sources */ = {isa = PBXBuildFile; fileRef = 778685921B8543A1AF67D061 /* ViewerActionResolver.swift */; };
 		5680D3FBE37D4F65917A9204 /* ViewerActionResolver.swift in Sources */ = {isa = PBXBuildFile; fileRef = 778685921B8543A1AF67D061 /* ViewerActionResolver.swift */; };
+		646858750305401D9CDA569D /* COImageLoader.m in Sources */ = {isa = PBXBuildFile; fileRef = 76344C0909595C74003761DA /* COImageLoader.m */; settings = {COMPILER_FLAGS = "-fno-objc-arc"; }; };
+		6EACAA1DF1944C7889C55F47 /* COPDFImage.m in Sources */ = {isa = PBXBuildFile; fileRef = 76B88ED0097FC1D8006DDB12 /* COPDFImage.m */; settings = {COMPILER_FLAGS = "-fno-objc-arc"; }; };
+		97290FC3596143A491D2C5CB /* COPDFImageRep.m in Sources */ = {isa = PBXBuildFile; fileRef = 7655CDCE09806A8F00465FD1 /* COPDFImageRep.m */; settings = {COMPILER_FLAGS = "-fno-objc-arc"; }; };
+		4D6361A2D0844ACDA261931A /* XADWrapper.m in Sources */ = {isa = PBXBuildFile; fileRef = 76225B4E0D435F9400161AC8 /* XADWrapper.m */; settings = {COMPILER_FLAGS = "-fno-objc-arc"; }; };
+		EB7A76F765C04375BEF74C21 /* XADItem.m in Sources */ = {isa = PBXBuildFile; fileRef = 76225CA30D43756000161AC8 /* XADItem.m */; settings = {COMPILER_FLAGS = "-fno-objc-arc"; }; };
+		2A6E44EB712842E7924FED6E /* Frameworks/XADMaster.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 37BB53451312C01C001710B4 /* Frameworks/XADMaster.framework */; };
+		6E30881A052A48099A4F9EE9 /* Frameworks/UniversalDetector.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 37BB532B1312C017001710B4 /* Frameworks/UniversalDetector.framework */; };
 		AD05A8BEDADF47AC85E70A3D /* AccessoryGeometry.h in Headers */ = {isa = PBXBuildFile; fileRef = EF975869F00B4F319CDA9B3B /* AccessoryGeometry.h */; };
 		9265DED0A68145A1B6677098 /* AccessoryGeometry.m in Sources */ = {isa = PBXBuildFile; fileRef = AEF0D05A3AC34B82A1B5FC0E /* AccessoryGeometry.m */; };
 		CF2D54B6155E4DEA8ADE3095 /* AccessoryGeometry.m in Sources */ = {isa = PBXBuildFile; fileRef = AEF0D05A3AC34B82A1B5FC0E /* AccessoryGeometry.m */; };
@@ -250,6 +275,8 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				2A6E44EB712842E7924FED6E /* Frameworks/XADMaster.framework in Frameworks */,
+				6E30881A052A48099A4F9EE9 /* Frameworks/UniversalDetector.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -650,6 +677,7 @@
 			buildRules = (
 			);
 			dependencies = (
+				91BF7CF84B2C4B899FFDEB97 /* PBXTargetDependency */,
 			);
 			fileSystemSynchronizedGroups = (
 				30DE82CB300F8D2200FEA0DE /* cooViewerTests */,
@@ -756,6 +784,11 @@
 				CF2D54B6155E4DEA8ADE3095 /* AccessoryGeometry.m in Sources */,
 				31FD081B418E48ABA13ECEFC /* ViewerPageGeometry.swift in Sources */,
 				5680D3FBE37D4F65917A9204 /* ViewerActionResolver.swift in Sources */,
+				646858750305401D9CDA569D /* COImageLoader.m in Sources */,
+				6EACAA1DF1944C7889C55F47 /* COPDFImage.m in Sources */,
+				97290FC3596143A491D2C5CB /* COPDFImageRep.m in Sources */,
+				4D6361A2D0844ACDA261931A /* XADWrapper.m in Sources */,
+				EB7A76F765C04375BEF74C21 /* XADItem.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -833,6 +866,11 @@
 		30DE82CE300F8D2200FEA0DE /* Development */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
+				BUNDLE_LOADER = "$(TEST_HOST)";
+				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/cooViewer.app/Contents/MacOS/cooViewer";
+				FRAMEWORK_SEARCH_PATHS = (
+					"$(SRCROOT)/Frameworks",
+				);
 				ALWAYS_SEARCH_USER_PATHS = NO;
 				ASSETCATALOG_COMPILER_GENERATE_SWIFT_ASSET_SYMBOL_EXTENSIONS = YES;
 				CLANG_ANALYZER_NONNULL = YES;
@@ -904,6 +942,11 @@
 		30DE82CF300F8D2200FEA0DE /* Deployment */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
+				BUNDLE_LOADER = "$(TEST_HOST)";
+				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/cooViewer.app/Contents/MacOS/cooViewer";
+				FRAMEWORK_SEARCH_PATHS = (
+					"$(SRCROOT)/Frameworks",
+				);
 				ASSETCATALOG_COMPILER_GENERATE_SWIFT_ASSET_SYMBOL_EXTENSIONS = YES;
 				CLANG_ANALYZER_NONNULL = YES;
 				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
@@ -945,6 +988,11 @@
 		30DE82D0300F8D2200FEA0DE /* Release */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
+				BUNDLE_LOADER = "$(TEST_HOST)";
+				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/cooViewer.app/Contents/MacOS/cooViewer";
+				FRAMEWORK_SEARCH_PATHS = (
+					"$(SRCROOT)/Frameworks",
+				);
 				ASSETCATALOG_COMPILER_GENERATE_SWIFT_ASSET_SYMBOL_EXTENSIONS = YES;
 				CLANG_ANALYZER_NONNULL = YES;
 				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
@@ -986,6 +1034,11 @@
 		30DE82D1300F8D2200FEA0DE /* Development2 */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
+				BUNDLE_LOADER = "$(TEST_HOST)";
+				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/cooViewer.app/Contents/MacOS/cooViewer";
+				FRAMEWORK_SEARCH_PATHS = (
+					"$(SRCROOT)/Frameworks",
+				);
 				ALWAYS_SEARCH_USER_PATHS = NO;
 				ASSETCATALOG_COMPILER_GENERATE_SWIFT_ASSET_SYMBOL_EXTENSIONS = YES;
 				CLANG_ANALYZER_NONNULL = YES;
@@ -1057,6 +1110,11 @@
 		30DE82D2300F8D2200FEA0DE /* Deployment2 */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
+				BUNDLE_LOADER = "$(TEST_HOST)";
+				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/cooViewer.app/Contents/MacOS/cooViewer";
+				FRAMEWORK_SEARCH_PATHS = (
+					"$(SRCROOT)/Frameworks",
+				);
 				ASSETCATALOG_COMPILER_GENERATE_SWIFT_ASSET_SYMBOL_EXTENSIONS = YES;
 				CLANG_ANALYZER_NONNULL = YES;
 				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
@@ -1098,6 +1156,11 @@
 		30DE82D3300F8D2200FEA0DE /* Default */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
+				BUNDLE_LOADER = "$(TEST_HOST)";
+				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/cooViewer.app/Contents/MacOS/cooViewer";
+				FRAMEWORK_SEARCH_PATHS = (
+					"$(SRCROOT)/Frameworks",
+				);
 				ASSETCATALOG_COMPILER_GENERATE_SWIFT_ASSET_SYMBOL_EXTENSIONS = YES;
 				CLANG_ANALYZER_NONNULL = YES;
 				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
