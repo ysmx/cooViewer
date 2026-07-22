@@ -336,6 +336,13 @@
 - (void)co_performShowInFinderRight;
 - (void)co_performShowInFinderLeft;
 
+// Materializes a COPDFImage into a plain bitmap-backed NSImage for
+// -[FullImageView setImage:] (a bare NSImageView) - its default drawing
+// pipeline doesn't invoke COPDFImage's custom NSImage overrides, so PDF
+// pages render blank there otherwise. Returns the input unchanged for
+// any other image (already draws fine as-is). See #52.
+- (NSImage *)co_imageForFullSizeDisplay:(NSImage *)image;
+
 - (void)goToPar:(float)par;
 - (void)addBookmark;
 - (BOOL)isBookmarkedPage:(int)page;
