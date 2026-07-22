@@ -42,6 +42,10 @@
 		691E06277FDE4F3E9D57C5B4 /* ViewerSortModeTransition.swift in Sources */ = {isa = PBXBuildFile; fileRef = 249AF7B85D724090B7B5910F /* ViewerSortModeTransition.swift */; };
 		1897CF615057443BA3A2E9B1 /* ViewerScrollDelta.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8D68CDB42A784129A61341A4 /* ViewerScrollDelta.swift */; };
 		00585B35313448F283290898 /* ViewerScrollDelta.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8D68CDB42A784129A61341A4 /* ViewerScrollDelta.swift */; };
+		F4B3A9CC299C4C9CAE8044D8 /* ViewerFitScreenTransition.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3782D0A7273D4D8FBF5A556F /* ViewerFitScreenTransition.swift */; };
+		1AD8F77891334D61BC0EFF90 /* ViewerFitScreenTransition.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3782D0A7273D4D8FBF5A556F /* ViewerFitScreenTransition.swift */; };
+		656040A4BE5B434E906C786B /* ViewerLoupeRate.swift in Sources */ = {isa = PBXBuildFile; fileRef = DB7BEE3AAFD54F27B68CDD09 /* ViewerLoupeRate.swift */; };
+		D64D49E4AE2641C6A72539D9 /* ViewerLoupeRate.swift in Sources */ = {isa = PBXBuildFile; fileRef = DB7BEE3AAFD54F27B68CDD09 /* ViewerLoupeRate.swift */; };
 		62DD493C50994A40BA43E38C /* ViewerActionResolver.swift in Sources */ = {isa = PBXBuildFile; fileRef = 778685921B8543A1AF67D061 /* ViewerActionResolver.swift */; };
 		5680D3FBE37D4F65917A9204 /* ViewerActionResolver.swift in Sources */ = {isa = PBXBuildFile; fileRef = 778685921B8543A1AF67D061 /* ViewerActionResolver.swift */; };
 		A4628D60A8774FAA97251505 /* NSDictionary_Adding.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1BA89CF8F4C9476896015379 /* NSDictionary_Adding.swift */; };
@@ -177,6 +181,8 @@
 		69661E1AA37C4876894F1180 /* ViewerPageGeometry.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ViewerPageGeometry.swift; sourceTree = "<group>"; };
 		249AF7B85D724090B7B5910F /* ViewerSortModeTransition.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ViewerSortModeTransition.swift; sourceTree = "<group>"; };
 		8D68CDB42A784129A61341A4 /* ViewerScrollDelta.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ViewerScrollDelta.swift; sourceTree = "<group>"; };
+		3782D0A7273D4D8FBF5A556F /* ViewerFitScreenTransition.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ViewerFitScreenTransition.swift; sourceTree = "<group>"; };
+		DB7BEE3AAFD54F27B68CDD09 /* ViewerLoupeRate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ViewerLoupeRate.swift; sourceTree = "<group>"; };
 		778685921B8543A1AF67D061 /* ViewerActionResolver.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ViewerActionResolver.swift; sourceTree = "<group>"; };
 		1BA89CF8F4C9476896015379 /* NSDictionary_Adding.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NSDictionary_Adding.swift; sourceTree = "<group>"; };
 		E0003A0A3D534073B29AC5A7 /* NSBezierPath_Adding.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NSBezierPath_Adding.swift; sourceTree = "<group>"; };
@@ -496,6 +502,8 @@
 				778685921B8543A1AF67D061 /* ViewerActionResolver.swift */,
 				249AF7B85D724090B7B5910F /* ViewerSortModeTransition.swift */,
 				8D68CDB42A784129A61341A4 /* ViewerScrollDelta.swift */,
+				3782D0A7273D4D8FBF5A556F /* ViewerFitScreenTransition.swift */,
+				DB7BEE3AAFD54F27B68CDD09 /* ViewerLoupeRate.swift */,
 			);
 			name = mainController;
 			path = Sources/Controller;
@@ -780,6 +788,8 @@
 				5680D3FBE37D4F65917A9204 /* ViewerActionResolver.swift in Sources */,
 				691E06277FDE4F3E9D57C5B4 /* ViewerSortModeTransition.swift in Sources */,
 				00585B35313448F283290898 /* ViewerScrollDelta.swift in Sources */,
+				1AD8F77891334D61BC0EFF90 /* ViewerFitScreenTransition.swift in Sources */,
+				D64D49E4AE2641C6A72539D9 /* ViewerLoupeRate.swift in Sources */,
 				C179A0F9BFD64B31A22DB0EB /* NSDictionary_Adding.swift in Sources */,
 				4F815D169F52411692A9EAE7 /* NSBezierPath_Adding.swift in Sources */,
 				0148FE5C5EBD467A9B564DD1 /* NSAttributedString_Adding.swift in Sources */,
@@ -824,6 +834,8 @@
 				13F55E4E41A24AA19C9B9769 /* ViewerPageGeometry.swift in Sources */,
 				D216E5475ACC4284AB36EBB1 /* ViewerSortModeTransition.swift in Sources */,
 				1897CF615057443BA3A2E9B1 /* ViewerScrollDelta.swift in Sources */,
+				F4B3A9CC299C4C9CAE8044D8 /* ViewerFitScreenTransition.swift in Sources */,
+				656040A4BE5B434E906C786B /* ViewerLoupeRate.swift in Sources */,
 				43EF8EBCB597415C91395559 /* NSBezierPath_Adding.swift in Sources */,
 				BD80065A1F404FC28C7F55C8 /* NSAttributedString_Adding.swift in Sources */,
 				62DD493C50994A40BA43E38C /* ViewerActionResolver.swift in Sources */,

@@ -313,6 +313,16 @@
 - (void)co_performScrollToEnd;
 - (void)co_performScrollWithValue:(int)value dx:(int)dx dy:(int)dy;
 
+// Shared by the key/mouse action switches' changeViewMode/enlargeViewMode/
+// reduceViewMode and loupeRatePlus/loupeRateMinus cases. direction matches
+// ViewerFitScreenDirection's raw values (0=cycle, 1=enlarge, 2=reduce) -
+// declared as a plain int here rather than the Swift enum type so this
+// header stays importable from targets without cooViewer's generated
+// Swift header (e.g. cooViewerTests).
+- (void)co_performFitScreenTransition:(int)direction;
+- (void)co_performLoupeRatePlus:(float)value;
+- (void)co_performLoupeRateMinus:(float)value;
+
 - (void)goToPar:(float)par;
 - (void)addBookmark;
 - (BOOL)isBookmarkedPage:(int)page;

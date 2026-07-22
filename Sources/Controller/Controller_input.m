@@ -65,6 +65,41 @@ static BOOL appleRemoteHoldDown = NO;
 	[imageView scrollTo:[ViewerScrollDelta pointWithValue:value dx:dx dy:dy]];
 }
 
+- (void)co_performFitScreenTransition:(int)direction
+{
+	[self setPageTextField];
+	NSNumber *target = [ViewerFitScreenTransition targetWithCurrent:fitScreenMode direction:(ViewerFitScreenDirection)direction];
+	if (!target) return;
+	switch ([target intValue]) {
+		case 0:
+			[self fitToScreen:nil];
+			break;
+		case 1:
+			[self fitToScreenWidth:nil];
+			break;
+		case 2:
+			[self noScale:nil];
+			break;
+		case 3:
+			[self fitToScreenWidthDivide:nil];
+			break;
+		default:
+			break;
+	}
+}
+
+- (void)co_performLoupeRatePlus:(float)value
+{
+	[defaults setFloat:[ViewerLoupeRate increasedWithCurrent:[defaults floatForKey:@"LoupeRate"] by:value] forKey:@"LoupeRate"];
+	[imageView setLoupeRate];
+}
+
+- (void)co_performLoupeRateMinus:(float)value
+{
+	[defaults setFloat:[ViewerLoupeRate decreasedWithCurrent:[defaults floatForKey:@"LoupeRate"] by:value] forKey:@"LoupeRate"];
+	[imageView setLoupeRate];
+}
+
 #pragma mark action
 - (void)remoteButton:(RemoteControlEventIdentifier)buttonIdentifier pressedDown: (BOOL) pressedDown clickCount: (unsigned int)clickCount
 {
@@ -660,17 +695,11 @@ static BOOL appleRemoteHoldDown = NO;
 					break;
 				case 37:
 					//loupeRatePlus
-					[defaults setFloat:[defaults floatForKey:@"LoupeRate"]+[[dic objectForKey:@"value"] floatValue] forKey:@"LoupeRate"];
-					[imageView setLoupeRate];
+					[self co_performLoupeRatePlus:[[dic objectForKey:@"value"] floatValue]];
 					break;
 				case 38:
 					//loupeRateMinus
-					if ([defaults floatForKey:@"LoupeRate"]-[[dic objectForKey:@"value"] floatValue]>1.0) {
-						[defaults setFloat:[defaults floatForKey:@"LoupeRate"]-[[dic objectForKey:@"value"] floatValue] forKey:@"LoupeRate"];
-					} else {
-						[defaults setFloat:1.0 forKey:@"LoupeRate"];
-					}
-					[imageView setLoupeRate];
+					[self co_performLoupeRateMinus:[[dic objectForKey:@"value"] floatValue]];
 					break;
 				case 39:
 					//goto%
@@ -686,57 +715,15 @@ static BOOL appleRemoteHoldDown = NO;
 					break;
 				case 42:
 					//changeViewMode
-					[self setPageTextField];
-					switch (fitScreenMode) {
-						case 0:
-							[self fitToScreenWidth:nil];
-							break;
-						case 1:
-							[self fitToScreenWidthDivide:nil];
-							break;
-						case 2:
-							[self fitToScreen:nil];
-							break;
-						case 3:
-							[self noScale:nil];
-							break;
-						default:
-							break;
-					}
+					[self co_performFitScreenTransition:ViewerFitScreenDirectionCycle];
 					break;
 				case 51:
 					//enlargeViewMode
-					[self setPageTextField];
-					switch (fitScreenMode) {
-						case 0:
-							[self fitToScreenWidth:nil];
-							break;
-						case 1:
-							[self fitToScreenWidthDivide:nil];
-							break;
-						case 3:
-							[self noScale:nil];
-							break;
-						default:
-							break;
-					}
+					[self co_performFitScreenTransition:ViewerFitScreenDirectionEnlarge];
 					break;
 				case 52:
 					//reduceViewMode
-					[self setPageTextField];
-					switch (fitScreenMode) {
-						case 1:
-							[self fitToScreen:nil];
-							break;
-						case 2:
-							[self fitToScreenWidthDivide:nil];
-							break;
-						case 3:
-							[self fitToScreenWidth:nil];
-							break;
-						default:
-							break;
-					}
+					[self co_performFitScreenTransition:ViewerFitScreenDirectionReduce];
 					break;
 				case 43:
 					//trashRight
@@ -1558,17 +1545,11 @@ static BOOL appleRemoteHoldDown = NO;
 					break;
 				case 47:
 					//loupeRatePlus
-					[defaults setFloat:[defaults floatForKey:@"LoupeRate"]+[[dic objectForKey:@"value"] floatValue] forKey:@"LoupeRate"];
-					[imageView setLoupeRate];
+					[self co_performLoupeRatePlus:[[dic objectForKey:@"value"] floatValue]];
 					break;
 				case 48:
 					//loupeRateMinus
-					if ([defaults floatForKey:@"LoupeRate"]-[[dic objectForKey:@"value"] floatValue]>1.0) {
-						[defaults setFloat:[defaults floatForKey:@"LoupeRate"]-[[dic objectForKey:@"value"] floatValue] forKey:@"LoupeRate"];
-					} else {
-						[defaults setFloat:1.0 forKey:@"LoupeRate"];
-					}
-					[imageView setLoupeRate];
+					[self co_performLoupeRateMinus:[[dic objectForKey:@"value"] floatValue]];
 					break;
 				
 				case 49:
@@ -1581,57 +1562,15 @@ static BOOL appleRemoteHoldDown = NO;
 					break;
 				case 51:
 					//changeViewMode
-					[self setPageTextField];
-					switch (fitScreenMode) {
-						case 0:
-							[self fitToScreenWidth:nil];
-							break;
-						case 1:
-							[self fitToScreenWidthDivide:nil];
-							break;
-						case 2:
-							[self fitToScreen:nil];
-							break;
-						case 3:
-							[self noScale:nil];
-							break;
-						default:
-							break;
-					}
+					[self co_performFitScreenTransition:ViewerFitScreenDirectionCycle];
 					break;
 				case 63:
 					//enlargeViewMode
-					[self setPageTextField];
-					switch (fitScreenMode) {
-						case 0:
-							[self fitToScreenWidth:nil];
-							break;
-						case 1:
-							[self fitToScreenWidthDivide:nil];
-							break;
-						case 3:
-							[self noScale:nil];
-							break;
-						default:
-							break;
-					}
+					[self co_performFitScreenTransition:ViewerFitScreenDirectionEnlarge];
 					break;
 				case 64:
 					//reduceViewMode
-					[self setPageTextField];
-					switch (fitScreenMode) {
-						case 1:
-							[self fitToScreen:nil];
-							break;
-						case 2:
-							[self fitToScreenWidthDivide:nil];
-							break;
-						case 3:
-							[self fitToScreenWidth:nil];
-							break;
-						default:
-							break;
-					}
+					[self co_performFitScreenTransition:ViewerFitScreenDirectionReduce];
 					break;
 				case 52:
 					//trashRight
