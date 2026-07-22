@@ -22,6 +22,49 @@ static BOOL appleRemoteHoldDown = NO;
 	}
 }
 
+- (void)co_performPageUp
+{
+	[imageView scrollUp];
+}
+
+- (void)co_performPageDown
+{
+	[imageView scrollDown];
+}
+
+- (void)co_performPageUpAndPrevPage
+{
+	if ([imageView prev] == YES) {
+		if (prevPageMode == 1) [imageView setStartFromEnd:YES];
+		[self prevPage];
+	}
+}
+
+- (void)co_performPageDownAndNextPage
+{
+	if ([imageView next] == YES) {
+		[lock lock];
+		[lock unlock];
+		useComposedImage = YES;
+		[self imageDisplay];
+	}
+}
+
+- (void)co_performScrollToTop
+{
+	[imageView scrollToTop];
+}
+
+- (void)co_performScrollToEnd
+{
+	[imageView scrollToLast];
+}
+
+- (void)co_performScrollWithValue:(int)value dx:(int)dx dy:(int)dy
+{
+	[imageView scrollTo:[ViewerScrollDelta pointWithValue:value dx:dx dy:dy]];
+}
+
 #pragma mark action
 - (void)remoteButton:(RemoteControlEventIdentifier)buttonIdentifier pressedDown: (BOOL) pressedDown clickCount: (unsigned int)clickCount
 {
@@ -565,53 +608,43 @@ static BOOL appleRemoteHoldDown = NO;
 					break;
 				case 24:
 					//PageUp
-					[imageView scrollUp];
+					[self co_performPageUp];
 					break;
 				case 25:
 					//PageDown
-					[imageView scrollDown];
+					[self co_performPageDown];
 					break;
 				case 26:
 					//PageUp + PrevPage
-					if ([imageView prev] == YES) {
-						//[lock lock];
-						//[lock unlock];
-						if (prevPageMode == 1) [imageView setStartFromEnd:YES];
-						[self prevPage];
-					}
+					[self co_performPageUpAndPrevPage];
 					break;
 				case 27:
 					//PageDown + NextPage
-					if ([imageView next] == YES) {
-						[lock lock];
-						[lock unlock];
-						useComposedImage = YES;
-						[self imageDisplay];
-					}
+					[self co_performPageDownAndNextPage];
 					break;
 				case 28:
 					//ScrollToTop
-					[imageView scrollToTop];
+					[self co_performScrollToTop];
 					break;
 				case 29:
 					//ScrollToEnd
-					[imageView scrollToLast];
+					[self co_performScrollToEnd];
 					break;
 				case 30:
 					//ScrollUp
-					[imageView scrollTo:NSMakePoint(0,-1*([[dic objectForKey:@"value"] intValue]))];
+					[self co_performScrollWithValue:[[dic objectForKey:@"value"] intValue] dx:0 dy:-1];
 					break;
 				case 31:
 					//ScrollDown
-					[imageView scrollTo:NSMakePoint(0,[[dic objectForKey:@"value"] intValue])];
+					[self co_performScrollWithValue:[[dic objectForKey:@"value"] intValue] dx:0 dy:1];
 					break;
 				case 32:
 					//ScrollLeft
-					[imageView scrollTo:NSMakePoint([[dic objectForKey:@"value"] intValue],0)];
+					[self co_performScrollWithValue:[[dic objectForKey:@"value"] intValue] dx:1 dy:0];
 					break;
 				case 33:
 					//ScrollRight
-					[imageView scrollTo:NSMakePoint((-1*[[dic objectForKey:@"value"] intValue]),0)];
+					[self co_performScrollWithValue:[[dic objectForKey:@"value"] intValue] dx:-1 dy:0];
 					break;
 				case 34:
 					//loupe
@@ -1449,73 +1482,58 @@ static BOOL appleRemoteHoldDown = NO;
 					break;
 				case 31:
 					//PageUp
-					[imageView scrollUp];
+					[self co_performPageUp];
 					break;
 				case 32:
 					//PageDown
-					[imageView scrollDown];
+					[self co_performPageDown];
 					break;
 				case 33:
 					//PageUp + PrevPage
-					if ([imageView prev] == YES) {
-						//[lock lock];
-						//[lock unlock];
-						if (prevPageMode == 1) [imageView setStartFromEnd:YES];
-						[self prevPage];
-					}
+					[self co_performPageUpAndPrevPage];
 					break;
 				case 34:
 					//PageDown + NextPage
-					if ([imageView next] == YES) {
-						[lock lock];
-						[lock unlock];
-						useComposedImage = YES;
-						[self imageDisplay];
-					}
+					[self co_performPageDownAndNextPage];
 					break;
 				case 35:
 					//ScrollToTop
-					[imageView scrollToTop];
+					[self co_performScrollToTop];
 					break;
 				case 36:
 					//ScrollToEnd
-					[imageView scrollToLast];
+					[self co_performScrollToEnd];
 					break;
 				case 37:
 					//ScrollUp
-					[imageView scrollTo:NSMakePoint(0,-1*([[dic objectForKey:@"value"] intValue]))];
+					[self co_performScrollWithValue:[[dic objectForKey:@"value"] intValue] dx:0 dy:-1];
 					break;
 				case 38:
 					//ScrollDown
-					[imageView scrollTo:NSMakePoint(0,[[dic objectForKey:@"value"] intValue])];
+					[self co_performScrollWithValue:[[dic objectForKey:@"value"] intValue] dx:0 dy:1];
 					break;
 				case 39:
 					//ScrollLeft
-					[imageView scrollTo:NSMakePoint([[dic objectForKey:@"value"] intValue],0)];
+					[self co_performScrollWithValue:[[dic objectForKey:@"value"] intValue] dx:1 dy:0];
 					break;
 				case 40:
 					//ScrollRight
-					[imageView scrollTo:NSMakePoint((-1*[[dic objectForKey:@"value"] intValue]),0)];
+					[self co_performScrollWithValue:[[dic objectForKey:@"value"] intValue] dx:-1 dy:0];
 					break;
 				case 41:
-					//DragScroll
+					//DragScroll - intentionally a no-op. Selectable in Preferences
+					//(see PreferenceController.m's action-name table), but actual
+					//click-and-drag scrolling is handled entirely by
+					//-[CustomImageView dragScroll:] via real-time mouse tracking,
+					//not through this discrete action dispatch. No history exists
+					//explaining why this action number is otherwise unimplemented.
 					break;
 				case 42:
 					//PageUp/Down + Prev/NextPage
 					if (left) {
-						if ([imageView next] == YES) {
-							[lock lock];
-							[lock unlock];
-							useComposedImage = YES;
-							[self imageDisplay];
-						}
+						[self co_performPageDownAndNextPage];
 					} else {
-						if ([imageView prev] == YES) {
-							//[lock lock];
-							//[lock unlock];
-							if (prevPageMode == 1) [imageView setStartFromEnd:YES];
-							[self prevPage];
-						}
+						[self co_performPageUpAndPrevPage];
 					}
 					break;
 				case 43:
