@@ -34,4 +34,46 @@ import Foundation
 		let rightIndex = readFromLeft ? secondImagePageIndex : firstImagePageIndex
 		return isLeft ? leftIndex : rightIndex
 	}
+
+	/// The page to land on after a forward "skip" by `skipValue` pages,
+	/// clamped so the resulting spread never runs past the end of the book.
+	/// Mirrors -nextBookmark/-backBookmark's sibling duplicated skip case:
+	/// current + (skipValue - 2), pulled back to count - 2 if that would
+	/// overrun.
+	@objc static func skipTarget(current: Int32, count: Int32, skipValue: Int32) -> Int32 {
+		var target = current + (skipValue - 2)
+		if target >= count {
+			target = count - 2
+		}
+		return target
+	}
+
+	/// The page to land on after a backward "skip" by skipValue pages,
+	/// floored at 0.
+	@objc static func backskipTarget(current: Int32, skipValue: Int32) -> Int32 {
+		let target = current - (skipValue + 2)
+		return max(target, 0)
+	}
+
+	/// The page corresponding to jumping to a given percentage through the
+	/// book, floored at 0.
+	@objc static func gotoPercentTarget(count: Int32, percent: Float) -> Int32 {
+		let target = Int32(Float(count) * percent)
+		return max(target, 0)
+	}
+
+	/// Whether the current page is far enough past the start of the book
+	/// that "top page" should actually jump (as opposed to already being
+	/// there). The threshold is 2 when a second (spread) image is showing,
+	/// 1 otherwise - the destination is always page 0.
+	@objc static func shouldJumpToTopPage(current: Int32, hasSecondImage: Bool) -> Bool {
+		return current > (hasSecondImage ? 2 : 1)
+	}
+
+	/// Whether "half next page" should load and prepend one more page to
+	/// the buffer (true only in spread mode, and only if there's a next
+	/// page left to show).
+	@objc static func shouldLoadHalfNextPage(current: Int32, count: Int32, hasSecondImage: Bool) -> Bool {
+		return hasSecondImage && current < count
+	}
 }
