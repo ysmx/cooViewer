@@ -323,6 +323,19 @@
 - (void)co_performLoupeRatePlus:(float)value;
 - (void)co_performLoupeRateMinus:(float)value;
 
+// Shared by the key/mouse action switches' switchSingle/shownumber/
+// showThumbnail/changeReadMode/showPageBar/origRight/origLeft/
+// showInFinderR/showInFinderL cases.
+- (void)co_performSwitchSingle;
+- (void)co_performShowNumber;
+- (void)co_performShowThumbnail;
+- (void)co_performChangeReadMode;
+- (void)co_performShowPageBar;
+- (void)co_performOrigRight;
+- (void)co_performOrigLeft;
+- (void)co_performShowInFinderRight;
+- (void)co_performShowInFinderLeft;
+
 - (void)goToPar:(float)par;
 - (void)addBookmark;
 - (BOOL)isBookmarkedPage:(int)page;
