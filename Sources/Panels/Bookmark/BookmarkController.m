@@ -662,12 +662,16 @@ static const int DIALOG_CANCEL	= 129;
 		id array = [cDic objectForKey:@"bookmarks"];
 		NSMutableArray *newArray = [NSMutableArray arrayWithArray:array];
 
-		BOOL didReorder = [self co_reorderArray:newArray toRow:row dropOperation:op pasteboard:pboard tableView:tv];
-		if (didReorder) {
-			[cDic setObject:newArray forKey:@"bookmarks"];
-			[allBookmark setObject:cDic forKey:[bookNameArray objectAtIndex:[allBookNameTableView selectedRow]]];
-		}
-		return didReorder;
+		// Wire newArray into the backing store *before* reordering it: allBookmarkTableView's
+		// data source reads straight from allBookmark/cDic, and -co_reorderArray:...  reloads
+		// tv as part of the splice, so the backing store has to already hold this same array
+		// object by the time that reload happens. removeAllObjects/addObjectsFromArray: below
+		// mutate newArray in place, so cDic/allBookmark automatically pick up the new order -
+		// no need to write them again afterward.
+		[cDic setObject:newArray forKey:@"bookmarks"];
+		[allBookmark setObject:cDic forKey:[bookNameArray objectAtIndex:[allBookNameTableView selectedRow]]];
+
+		return [self co_reorderArray:newArray toRow:row dropOperation:op pasteboard:pboard tableView:tv];
 	}
 	return NO;
 }
