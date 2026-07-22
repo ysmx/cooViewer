@@ -9,6 +9,11 @@
 - (BOOL)co_sortModeSupportsDescending:(int)mode;
 @end
 
+@interface Controller (ViewerPageNavigationHostConformance) <ViewerPageNavigationHost>
+@end
+@implementation Controller (ViewerPageNavigationHostConformance)
+@end
+
 @implementation Controller (Input)
 
 static BOOL appleRemoteHoldDown = NO;
@@ -183,6 +188,92 @@ static BOOL appleRemoteHoldDown = NO;
 	} else {
 		[self showInFinderSecond:self];
 	}
+}
+
+#pragma mark ViewerPageNavigationHost
+
+- (void)setNowPage:(int)page
+{
+	nowPage = page;
+}
+
+- (BOOL)hasSecondImage
+{
+	return secondImage != nil;
+}
+
+- (int)bufferedImageCount
+{
+	return (int)[imageMutableArray count];
+}
+
+- (void)cancelInFlightLoadAndClearBuffer
+{
+	threadStop = YES;
+	[lock lock];
+	[lock unlock];
+	threadStop = NO;
+	[imageMutableArray removeAllObjects];
+}
+
+- (void)waitForInFlightLoad
+{
+	[lock lock];
+	[lock unlock];
+}
+
+- (void)clearComposedImage
+{
+	[composedImage release];
+	composedImage = nil;
+}
+
+- (NSImage *)bufferedImageAtIndex:(int)index
+{
+	if (index < 0 || index >= [imageMutableArray count]) {
+		return nil;
+	}
+	return [imageMutableArray objectAtIndex:index];
+}
+
+- (void)insertImageAtFrontOfBuffer:(NSImage *)image
+{
+	[imageMutableArray insertObject:image atIndex:0];
+}
+
+- (void)removeFirstImageFromBuffer
+{
+	[imageMutableArray removeObjectAtIndex:0];
+}
+
+#pragma mark page navigation (nextpage/halfnext/toppage/skip/backskip)
+
+- (void)co_performNextPage
+{
+	[lock lock];
+	[lock unlock];
+	useComposedImage = YES;
+	[self imageDisplay];
+}
+
+- (void)co_performHalfNext
+{
+	[ViewerPageNavigation performHalfNextWithHost:self];
+}
+
+- (void)co_performTopPage
+{
+	[ViewerPageNavigation performTopPageWithHost:self];
+}
+
+- (void)co_performSkip:(int)value
+{
+	[ViewerPageNavigation performSkipWithHost:self value:value];
+}
+
+- (void)co_performBackskip:(int)value
+{
+	[ViewerPageNavigation performBackskipWithHost:self value:value];
 }
 
 #pragma mark action
@@ -373,85 +464,49 @@ static BOOL appleRemoteHoldDown = NO;
 			switch (action) {
 				case 0:
 					//nextpage
-					[lock lock];
-					[lock unlock];
-					useComposedImage = YES;
-					[self imageDisplay];
+					[self co_performNextPage];
 					break;
-					
-					
+
+
 				case 1:
 					//prevpage
 					//[lock lock];
 					//[lock unlock];
 					[self prevPage];
 					break;
-					
-					
-					
+
+
+
 				case 2:
 					//halfnext
-					[lock lock];
-					[lock unlock];
-					if (nowPage < [completeMutableArray count]) {
-						if (secondImage){
-							nowPage--;
-							[lock lock];
-							[lock unlock];
-							[imageMutableArray insertObject:[self loadImage:nowPage] atIndex:0];
-							//[imageMutableArray insertObject:secondImage atIndex:0];
-						}
-					}
-						[self imageDisplay];
+					[self co_performHalfNext];
 					break;
-					
-					
-					
+
+
+
 				case 3:
 					//halfprev
 					[lock lock];
 					[lock unlock];
 					[self halfprevPage];
 					break;
-					
-					
-					
+
+
+
 				case 4:
 					//lastpage
 					[self goToLast];
 					break;
-					
-					
-					
+
+
+
 				case 5:
 					//toppage
-					if (secondImage) {
-						if (nowPage > 2) {
-							threadStop = YES;
-							[lock lock];
-							[lock unlock];
-							threadStop = NO;
-							[imageMutableArray removeAllObjects];
-							nowPage = 0;
-							[self lookahead];
-							[self imageDisplay];
-						}
-					} else {
-						if (nowPage > 1) {
-							threadStop = YES;
-							[lock lock];
-							[lock unlock];
-							threadStop = NO;
-							[imageMutableArray removeAllObjects];
-							nowPage = 0;
-							[self lookahead];
-							[self imageDisplay];
-						}
-					}		
+					[self co_performTopPage];
 					break;
-					
-					
-					
+
+
+
 				case 6:
 					//nextbookmark
 					[lock lock];
@@ -511,61 +566,18 @@ static BOOL appleRemoteHoldDown = NO;
 					
 				case 13:
 					//skip
-					threadStop = YES;
-					[lock lock];
-					[lock unlock];
-					threadStop = NO;
-					[imageMutableArray removeAllObjects];
-					int skipI = [[dic objectForKey:@"value"] intValue];
-					skipI -= 2;
-					if (!secondImage) {
-						//skipI += 1;
-					}
-						nowPage += skipI;
-					if (nowPage >= [completeMutableArray count]) {
-						nowPage = (int)[completeMutableArray count];
-						nowPage -= 2;
-					}
-						[self lookahead];
-					if ([imageMutableArray count] > 1) {
-						if ([self isSmallImage:[imageMutableArray objectAtIndex:0] page:nowPage+1] == NO) {
-							[imageMutableArray removeObjectAtIndex:0];
-							nowPage++;
-						} else if ([self isSmallImage:[imageMutableArray objectAtIndex:1] page:nowPage+2] == NO) {
-							[imageMutableArray removeObjectAtIndex:0];
-							nowPage++;
-						}
-					}
-						
-						[self imageDisplay];
-					
+					[self co_performSkip:[[dic objectForKey:@"value"] intValue]];
 					break;
-					
-					
-					
+
+
+
 				case 14:
 					//backskip
-					threadStop = YES;
-					[lock lock];
-					[lock unlock];
-					threadStop = NO;
-					[imageMutableArray removeAllObjects];
-					int bskipI = [[dic objectForKey:@"value"] intValue];
-					bskipI += 2;
-					if (!secondImage) {
-						//bskipI -= 1;
-					}
-						nowPage -= bskipI;
-					if (nowPage < 0) {
-						nowPage = 0;
-					}
-						[self lookahead];
-					[self imageDisplay];
-					
+					[self co_performBackskip:[[dic objectForKey:@"value"] intValue]];
 					break;
-					
-					
-					
+
+
+
 				case 15:
 					//origRight
 					[self co_performOrigRight];
@@ -1023,10 +1035,7 @@ static BOOL appleRemoteHoldDown = NO;
 				case 0:
 					//next/prevpage
 					if (left) {
-						[lock lock];
-						[lock unlock];
-						useComposedImage = YES;
-						[self imageDisplay];
+						[self co_performNextPage];
 					} else {
 						//[lock lock];
 						//[lock unlock];
@@ -1035,71 +1044,20 @@ static BOOL appleRemoteHoldDown = NO;
 						break;
 				case 1:
 					//halfnext/prevpage
-					[lock lock];
-					[lock unlock];
 					if (left) {
-						if (nowPage < [completeMutableArray count]) {
-							if (secondImage){
-								nowPage--;
-								[imageMutableArray insertObject:[self loadImage:nowPage] atIndex:0];
-								//[imageMutableArray insertObject:secondImage atIndex:0];
-							}
-						}
-						[self imageDisplay];
+						[self co_performHalfNext];
 					} else {
+						[lock lock];
+						[lock unlock];
 						[self halfprevPage];
 					}
 						break;
 				case 2:
 					//lastpage/toppage
 					if (left) {
-						if (nowPage < [completeMutableArray count]) {
-							threadStop = YES;
-							[lock lock];
-							[lock unlock];
-							threadStop = NO;
-							[imageMutableArray removeAllObjects];
-							nowPage = (int)[completeMutableArray count];
-							if (readMode > 1) {
-								nowPage--;
-								[self lookahead];
-							} else {
-								nowPage -= 2;
-								[self lookahead];
-								if ([self isSmallImage:[imageMutableArray objectAtIndex:0] page:nowPage+1] == NO) {
-									[imageMutableArray removeObjectAtIndex:0];
-									nowPage++;
-								} else if ([self isSmallImage:[imageMutableArray objectAtIndex:1] page:nowPage+2] == NO) {
-									[imageMutableArray removeObjectAtIndex:0];
-									nowPage++;
-								}
-							}
-							[self imageDisplay];
-						}
+						[self goToLast];
 					} else {
-						if (secondImage) {
-							if (nowPage > 2) {
-								threadStop = YES;
-								[lock lock];
-								[lock unlock];
-								threadStop = NO;
-								[imageMutableArray removeAllObjects];
-								nowPage = 0;
-								[self lookahead];
-								[self imageDisplay];
-							}
-						} else {
-							if (nowPage > 1) {
-								threadStop = YES;
-								[lock lock];
-								[lock unlock];
-								threadStop = NO;
-								[imageMutableArray removeAllObjects];
-								nowPage = 0;
-								[self lookahead];
-								[self imageDisplay];
-							}
-						}	
+						[self co_performTopPage];
 					}
 					break;
 				case 3:
@@ -1125,70 +1083,24 @@ static BOOL appleRemoteHoldDown = NO;
 				case 5:
 					//skip/backskip
 					if (left) {
-						threadStop = YES;
-						[lock lock];
-						[lock unlock];
-						threadStop = NO;
-						[imageMutableArray removeAllObjects];
-						int skipI = [[dic objectForKey:@"value"] intValue];
-						skipI -= 2;
-						nowPage += skipI;
-						if (nowPage >= [completeMutableArray count]) {
-							nowPage = (int)[completeMutableArray count];
-							nowPage -= 2;
-						}
-						[self lookahead];
-						if ([imageMutableArray count] > 1) {
-							if ([self isSmallImage:[imageMutableArray objectAtIndex:0] page:nowPage+1] == NO) {
-								[imageMutableArray removeObjectAtIndex:0];
-								nowPage++;
-							} else if ([self isSmallImage:[imageMutableArray objectAtIndex:1] page:nowPage+2] == NO) {
-								[imageMutableArray removeObjectAtIndex:0];
-								nowPage++;
-							}
-						}
-						[self imageDisplay];
+						[self co_performSkip:[[dic objectForKey:@"value"] intValue]];
 					} else {
-						threadStop = YES;
-						[lock lock];
-						[lock unlock];
-						threadStop = NO;
-						[imageMutableArray removeAllObjects];
-						int bskipI = [[dic objectForKey:@"value"] intValue];
-						bskipI += 2;
-						nowPage -= bskipI;
-						if (nowPage < 0) {
-							nowPage = 0;
-						}
-						[self lookahead];
-						[self imageDisplay];
+						[self co_performBackskip:[[dic objectForKey:@"value"] intValue]];
 					}
 					break;
 				case 6:
 					//nextpage
-					[lock lock];
-					[lock unlock];
-					useComposedImage = YES;
-					[self imageDisplay];
+					[self co_performNextPage];
 					break;
 				case 7:
-					//prevpage 
+					//prevpage
 					//[lock lock];
 					//[lock unlock];
 					[self prevPage];
 					break;
 				case 8:
 					//halfnext
-					[lock lock];
-					[lock unlock];
-					if (nowPage < [completeMutableArray count]) {
-						if (secondImage){
-							nowPage--;
-							[imageMutableArray insertObject:[self loadImage:nowPage] atIndex:0];
-							//[imageMutableArray insertObject:secondImage atIndex:0];
-						}
-					}
-					[self imageDisplay];
+					[self co_performHalfNext];
 					break;
 				case 9:
 					//halfprev
@@ -1202,30 +1114,7 @@ static BOOL appleRemoteHoldDown = NO;
 					break;
 				case 11:
 					//toppage
-					if (secondImage) {
-						if (nowPage > 2) {
-							threadStop = YES;
-							[lock lock];
-							[lock unlock];
-							threadStop = NO;
-							[imageMutableArray removeAllObjects];
-							nowPage = 0;
-							[self lookahead];
-							[self imageDisplay];
-						}
-					} else {
-						if (nowPage > 1) {
-							threadStop = YES;
-							[lock lock];
-							[lock unlock];
-							threadStop = NO;
-							[imageMutableArray removeAllObjects];
-							nowPage = 0;
-							[self lookahead];
-							[self imageDisplay];
-						}
-					}		
-					
+					[self co_performTopPage];
 					break;
 				case 12:
 					//nextbookmark	
@@ -1268,50 +1157,11 @@ static BOOL appleRemoteHoldDown = NO;
 					break;
 				case 19:
 					//skip
-					threadStop = YES;
-					[lock lock];
-					[lock unlock];
-					threadStop = NO;
-					[imageMutableArray removeAllObjects];
-					int skipI = [[dic objectForKey:@"value"] intValue];
-					skipI -= 2;
-					nowPage += skipI;
-					if (nowPage >= [completeMutableArray count]) {
-						nowPage = (int)[completeMutableArray count];
-						nowPage -= 2;
-					}
-						[self lookahead];
-					if ([imageMutableArray count] > 1) {
-						if ([self isSmallImage:[imageMutableArray objectAtIndex:0] page:nowPage+1] == NO) {
-							[imageMutableArray removeObjectAtIndex:0];
-							nowPage++;
-						} else if ([self isSmallImage:[imageMutableArray objectAtIndex:1] page:nowPage+2] == NO) {
-							[imageMutableArray removeObjectAtIndex:0];
-							nowPage++;
-						}
-					}
-						
-						[self imageDisplay];
-					
-					
+					[self co_performSkip:[[dic objectForKey:@"value"] intValue]];
 					break;
 				case 20:
 					//backskip
-					threadStop = YES;
-					[lock lock];
-					[lock unlock];
-					threadStop = NO;
-					[imageMutableArray removeAllObjects];
-					int bskipI = [[dic objectForKey:@"value"] intValue];
-					bskipI += 2;
-					nowPage -= bskipI;
-					if (nowPage < 0) {
-						nowPage = 0;
-					}
-						[self lookahead];
-					[self imageDisplay];
-					
-					
+					[self co_performBackskip:[[dic objectForKey:@"value"] intValue]];
 					break;
 				case 21:
 					//origRight
@@ -2590,22 +2440,7 @@ static BOOL appleRemoteHoldDown = NO;
 
 - (void)goToPar:(float)par
 {
-	threadStop = YES;
-	[lock lock];
-	[lock unlock];
-	threadStop = NO;
-	
-	float temp = (int)[completeMutableArray count]*par;
-	int page = (int)temp;
-	nowPage = page;
-	if (nowPage < 0) {
-		nowPage = 0;
-	}
-	[composedImage release];
-	composedImage = nil;
-	[imageMutableArray removeAllObjects];
-	[self lookahead];
-	[self imageDisplay];
+	[ViewerPageNavigation performGotoPercentWithHost:self percent:par];
 }
 
 

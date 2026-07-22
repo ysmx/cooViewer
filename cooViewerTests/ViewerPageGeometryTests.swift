@@ -38,4 +38,54 @@ final class ViewerPageGeometryTests: XCTestCase {
 			ViewerPageGeometry.trashIndex(isLeft: false, readFromLeft: false, firstImagePageIndex: 10, secondImagePageIndex: 11),
 			10)
 	}
+
+	// MARK: - skipTarget
+
+	func testSkipTargetAdvancesByValueMinusTwo() {
+		XCTAssertEqual(ViewerPageGeometry.skipTarget(current: 10, count: 100, skipValue: 5), 13)
+	}
+
+	func testSkipTargetClampsToCountMinusTwoWhenPastTheEnd() {
+		XCTAssertEqual(ViewerPageGeometry.skipTarget(current: 90, count: 100, skipValue: 20), 98)
+	}
+
+	// MARK: - backskipTarget
+
+	func testBackskipTargetRetreatsByValuePlusTwo() {
+		XCTAssertEqual(ViewerPageGeometry.backskipTarget(current: 10, skipValue: 5), 3)
+	}
+
+	func testBackskipTargetFloorsAtZero() {
+		XCTAssertEqual(ViewerPageGeometry.backskipTarget(current: 3, skipValue: 5), 0)
+	}
+
+	// MARK: - gotoPercentTarget
+
+	func testGotoPercentTargetComputesProportionalPage() {
+		XCTAssertEqual(ViewerPageGeometry.gotoPercentTarget(count: 200, percent: 0.5), 100)
+	}
+
+	func testGotoPercentTargetFloorsAtZeroForNegativePercent() {
+		XCTAssertEqual(ViewerPageGeometry.gotoPercentTarget(count: 200, percent: -0.1), 0)
+	}
+
+	// MARK: - shouldJumpToTopPage
+
+	func testShouldJumpToTopPageUsesThresholdTwoWithSecondImage() {
+		XCTAssertFalse(ViewerPageGeometry.shouldJumpToTopPage(current: 2, hasSecondImage: true))
+		XCTAssertTrue(ViewerPageGeometry.shouldJumpToTopPage(current: 3, hasSecondImage: true))
+	}
+
+	func testShouldJumpToTopPageUsesThresholdOneWithoutSecondImage() {
+		XCTAssertFalse(ViewerPageGeometry.shouldJumpToTopPage(current: 1, hasSecondImage: false))
+		XCTAssertTrue(ViewerPageGeometry.shouldJumpToTopPage(current: 2, hasSecondImage: false))
+	}
+
+	// MARK: - shouldLoadHalfNextPage
+
+	func testShouldLoadHalfNextPageRequiresSecondImageAndRoomToAdvance() {
+		XCTAssertTrue(ViewerPageGeometry.shouldLoadHalfNextPage(current: 5, count: 10, hasSecondImage: true))
+		XCTAssertFalse(ViewerPageGeometry.shouldLoadHalfNextPage(current: 5, count: 10, hasSecondImage: false))
+		XCTAssertFalse(ViewerPageGeometry.shouldLoadHalfNextPage(current: 10, count: 10, hasSecondImage: true))
+	}
 }

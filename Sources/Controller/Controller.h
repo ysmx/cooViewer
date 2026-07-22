@@ -336,6 +336,30 @@
 - (void)co_performShowInFinderRight;
 - (void)co_performShowInFinderLeft;
 
+// Backs the ViewerPageNavigationHost protocol (see
+// ViewerPageNavigationHost.swift) - declared as plain ObjC methods here
+// rather than importing the protocol type, for the same cooViewerTests
+// reason as co_performFitScreenTransition:. Controller's actual conformance
+// declaration lives in Controller_input.m, which does import the generated
+// Swift header.
+- (void)setNowPage:(int)page;
+- (BOOL)hasSecondImage;
+- (int)bufferedImageCount;
+- (void)cancelInFlightLoadAndClearBuffer;
+- (void)waitForInFlightLoad;
+- (void)clearComposedImage;
+- (NSImage *)bufferedImageAtIndex:(int)index;
+- (void)insertImageAtFrontOfBuffer:(NSImage *)image;
+- (void)removeFirstImageFromBuffer;
+
+// Shared by the key/mouse action switches' nextpage/halfnext/toppage/
+// skip/backskip cases (and goToPar:/goto%, via ViewerPageNavigation.swift).
+- (void)co_performNextPage;
+- (void)co_performHalfNext;
+- (void)co_performTopPage;
+- (void)co_performSkip:(int)value;
+- (void)co_performBackskip:(int)value;
+
 // Materializes a COPDFImage into a plain bitmap-backed NSImage for
 // -[FullImageView setImage:] (a bare NSImageView) - its default drawing
 // pipeline doesn't invoke COPDFImage's custom NSImage overrides, so PDF
