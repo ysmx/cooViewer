@@ -177,46 +177,27 @@ static BOOL appleRemoteHoldDown = NO;
 
 - (BOOL)getKeyAction:(unichar)character mod:(int)cMod mode:(int)mode slideshow:(BOOL)slideshow
 {
-	
-    NSEnumerator *enu = nil;
+	NSArray *bindings = nil;
 	switch (mode) {
 		case 0:
-			enu = [keyArray objectEnumerator];
+			bindings = keyArray;
 			break;
 		case 1:
-			enu = [keyArrayMode2 objectEnumerator];
+			bindings = keyArrayMode2;
 			break;
 		case 2:
-			enu = [keyArrayMode3 objectEnumerator];
+			bindings = keyArrayMode3;
 			break;
 		default:break;
 	}
-	id dic;
-	while (dic = [enu nextObject]) {
-		if (character == [[dic objectForKey:@"key"] characterAtIndex:0] && cMod == [[dic objectForKey:@"modifier"] intValue]){
-			int action = [[dic objectForKey:@"action"] intValue];
-			if ([[dic objectForKey:@"switchAction"] boolValue] == YES && [self readFromLeft]) {
-				switch (action) {
-					case 0: action=1; break;
-					case 1: action=0; break;
-					case 2: action=3; break;
-					case 3: action=2; break;
-					case 4: action=5; break;
-					case 5: action=4; break;
-					case 6: action=7; break;
-					case 7: action=6; break;
-					case 8: action=9; break;
-					case 9: action=8; break;
-					case 13: action=14; break;
-					case 14: action=13; break;
-					case 26: action=27; break;
-					case 27: action=26; break;
-					case 35: action=36; break;
-					case 36: action=35; break;
-				default:
-					break;
-				}
-			}
+	{
+		ViewerActionResolution *resolution = [ViewerActionResolver resolveKeyActionWithCharacter:character
+																						  modifier:cMod
+																						  bindings:bindings ?: @[]
+																					  readFromLeft:[self readFromLeft]];
+		if (resolution) {
+			int action = resolution.action;
+			NSDictionary *dic = resolution.binding;
 			switch (action) {
 				case 0:
 					//nextpage
@@ -1032,45 +1013,27 @@ static BOOL appleRemoteHoldDown = NO;
 
 - (BOOL)getMouseAction:(int)button mod:(int)cMod mode:(int)mode left:(BOOL)left
 {
-    NSEnumerator *enu = nil;
+	NSArray *bindings = nil;
 	switch (mode) {
 		case 0:
-			enu = [mouseArray objectEnumerator];
+			bindings = mouseArray;
 			break;
 		case 1:
-			enu = [mouseArrayMode2 objectEnumerator];
+			bindings = mouseArrayMode2;
 			break;
 		case 2:
-			enu = [mouseArrayMode3 objectEnumerator];
+			bindings = mouseArrayMode3;
 			break;
 		default:break;
 	}
-	id dic;	
-	while (dic = [enu nextObject]) {
-		if (button == [[dic objectForKey:@"button"] intValue] && cMod == [[dic objectForKey:@"modifier"] intValue]){
-			int action = [[dic objectForKey:@"action"] intValue];
-			if ([[dic objectForKey:@"switchAction"] boolValue] == YES && [self readFromLeft]) {
-				switch (action) {
-					case 6: action=7; break;
-					case 7: action=6; break;
-					case 8: action=9; break;
-					case 9: action=8; break;
-					case 10: action=11; break;
-					case 11: action=10; break;
-					case 12: action=13; break;
-					case 13: action=12; break;
-					case 14: action=15; break;
-					case 15: action=14; break;
-					case 19: action=20; break;
-					case 20: action=19; break;
-					case 33: action=34; break;
-					case 34: action=33; break;
-					case 44: action=45; break;
-					case 45: action=44; break;
-					default:
-						break;
-				}
-			}
+	{
+		ViewerActionResolution *resolution = [ViewerActionResolver resolveMouseActionWithButton:button
+																						 modifier:cMod
+																						 bindings:bindings ?: @[]
+																					 readFromLeft:[self readFromLeft]];
+		if (resolution) {
+			int action = resolution.action;
+			NSDictionary *dic = resolution.binding;
 			switch (action) {
 				case 0:
 					//next/prevpage
