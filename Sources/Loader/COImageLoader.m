@@ -9,6 +9,7 @@
 -(BOOL)checkArchiveContainer:(int)index;
 -(BOOL)uncompressToTempDir:(NSString*)file;
 //-(BOOL)uncompressAllFileToTempDir;
+-(BOOL)co_appendFilteredPaths:(NSArray*)candidateArray toArray:(NSMutableArray*)pathArray pathPrefix:(NSString*)pathPrefix cancelContext:(NSString*)context;
 @end
 static NSArray *_COImageLoader_fileTypes=nil;
 static NSArray *_COImageLoader_archiveTypes=nil;
@@ -69,12 +70,11 @@ static NSArray *_COImageLoader_archiveTypes=nil;
 		
 		filterArray = [[NSArray arrayWithArray:tempArray] retain];
 		readSubFolder=boo;
-		mode=-1;
+		mode=COImageLoaderModeError;
 		password=nil;
 		filePath=[path retain];
 		displayPath = [dispPath retain];
 		archiveContainer = nil;
-		subArchiveContainer = nil;
 		contentPathArray = [[NSMutableArray alloc] init];
 		contentPathDic = [[NSMutableDictionary alloc] init];
 		rawContentPathArray = [[NSMutableArray alloc] init];
@@ -83,9 +83,9 @@ static NSArray *_COImageLoader_archiveTypes=nil;
 		[self content];
 	}
 	if ([self itemCount]==0) {
-		NSLog(@"cooViewer loader content empty placeholder: path=%@ mode=%d readSubFolder=%d",
+		NSLog(@"cooViewer loader content empty placeholder: path=%@ mode=%ld readSubFolder=%d",
 			  filePath,
-			  mode,
+			  (long)mode,
 			  readSubFolder);
 		[contentPathArray addObject:[[NSBundle mainBundle] pathForResource:@"empty" ofType:@"png"]];
 	}
@@ -110,7 +110,6 @@ static NSArray *_COImageLoader_archiveTypes=nil;
 	if(displayPath)[displayPath release];
 	if(password)[password release];
 	if(archiveContainer)[archiveContainer release];
-	if(subArchiveContainer)[subArchiveContainer release];
 	if(contentPathArray)[contentPathArray release];
 	if(contentPathDic)[contentPathDic release];
 	if(filterArray)[filterArray release];
@@ -131,9 +130,8 @@ static NSArray *_COImageLoader_archiveTypes=nil;
 	if(contentPathArray)	return (int)[contentPathArray count];
 	return 0;
 }
-- (int)mode
+- (COImageLoaderMode)mode
 {
-	//0:fold 1:hetimazip=>disable 2:xad 3:savedSearch 4:pdf 5:dummy
 	return mode;
 }
 
@@ -149,7 +147,7 @@ static NSArray *_COImageLoader_archiveTypes=nil;
 			}
 		}
 	}
-	if (mode==0 || mode==3 || mode==5) {
+	if (mode==COImageLoaderModeDirectory || mode==COImageLoaderModeSavedSearch) {
 		return [contentPathArray objectAtIndex:index];
 	} else {
 		return filePath;
@@ -166,7 +164,7 @@ static NSArray *_COImageLoader_archiveTypes=nil;
 	if ([inArchiveArray count]>0) {
 		return NO;
 	}
-	if (mode==0 || mode==3) {
+	if (mode==COImageLoaderModeDirectory || mode==COImageLoaderModeSavedSearch) {
 		return YES;
 	}
 	return NO;
@@ -194,9 +192,9 @@ static NSArray *_COImageLoader_archiveTypes=nil;
 			}
 		}
 	}
-	if (mode==4) {
+	if (mode==COImageLoaderModePDF) {
 		return [[[COPDFImage alloc] initWithPDFRep:pdfRep page:index] autorelease];
-	} else if(mode==2) {
+	} else if(mode==COImageLoaderModeArchive) {
 		NSString *rawName = [contentPathDic objectForKey:[contentPathArray objectAtIndex:index]];
 		NSArray*    items=[archiveContainer contents];
 		
@@ -321,15 +319,15 @@ static NSArray *_COImageLoader_archiveTypes=nil;
 
 - (BOOL)crypted
 {
-	if (mode==2)
+	if (mode==COImageLoaderModeArchive)
 		return [archiveContainer crypted];
-	
+
 	return NO;
 }
 
 - (void)setPassword:(NSString *)inStr
 {
-	if (mode==2) {
+	if (mode==COImageLoaderModeArchive) {
 		if(password)[password release];
 		password=nil;
 		if(inStr){
@@ -341,13 +339,13 @@ static NSArray *_COImageLoader_archiveTypes=nil;
 
 - (BOOL)checkPassword
 {
-	if (rightPassward || !(mode==2) || ![self crypted]) return YES;
+	if (rightPassward || !(mode==COImageLoaderModeArchive) || ![self crypted]) return YES;
 	if (password==nil) return NO;
 	
 	NSData *tempData = [[[archiveContainer contents] objectAtIndex:0] data];
 	//tempData = nil;
 	if (!tempData || [tempData length]<=0 || [[[archiveContainer contents] objectAtIndex:0] path]==nil) {
-		if (mode == 2) {
+		if (mode == COImageLoaderModeArchive) {
 			if (![[archiveContainer archive] describeLastError]) {
 				rightPassward = YES;
 				return YES;
@@ -388,6 +386,29 @@ static NSArray *_COImageLoader_archiveTypes=nil;
 	return ![controller isCurrentOpenPageLoadSequence:sequenceNumber];
 }
 
+// Shared by the directory and savedSearch branches of -content: both enumerate an
+// already-extension-filtered candidate list, checking for cancellation on every item since
+// these arrays can be large, and append the (optionally prefix-resolved) result. Returns NO if
+// the load was cancelled mid-enumeration, in which case mode has already been reset to
+// COImageLoaderModeError and the caller must return from -content immediately.
+- (BOOL)co_appendFilteredPaths:(NSArray*)candidateArray toArray:(NSMutableArray*)pathArray pathPrefix:(NSString*)pathPrefix cancelContext:(NSString*)context
+{
+	NSEnumerator *enu = [candidateArray objectEnumerator];
+	id path;
+	while (path = [enu nextObject]) {
+		if ([self shouldCancelContentLoad]) {
+			NSLog(@"cooViewer loader content cancelled in %@: path=%@", context, filePath);
+			mode = COImageLoaderModeError;
+			return NO;
+		}
+		if (pathPrefix) {
+			path = [pathPrefix stringByAppendingPathComponent:path];
+		}
+		[pathArray addObject:path];
+	}
+	return YES;
+}
+
 - (void)content
 {
 	NSTimeInterval contentStartTime = [NSDate timeIntervalSinceReferenceDate];
@@ -407,7 +428,7 @@ static NSArray *_COImageLoader_archiveTypes=nil;
 	NSMutableArray *pathArray = [NSMutableArray array];
 	if ([[filePath pathExtension] compare:@"pdf" options:NSCaseInsensitiveSearch] == NSOrderedSame) {
 		NSLog(@"cooViewer loader content branch: pdf path=%@", filePath);
-		mode=4;
+		mode=COImageLoaderModePDF;
 		pdfRep = [(COPDFImageRep *)[COPDFImageRep imageRepWithContentsOfFile:filePath] retain];
 		int pages = (int)[pdfRep pageCount];
 		
@@ -426,10 +447,10 @@ static NSArray *_COImageLoader_archiveTypes=nil;
 		
 	} else if([[COImageLoader archiveTypes] containsObject:[[filePath pathExtension] lowercaseString]]) {
 		NSLog(@"cooViewer loader content branch: archive path=%@", filePath);
-		mode=2;
+		mode=COImageLoaderModeArchive;
         archiveContainer=[[XADWrapper alloc] initWithPath:filePath];
 		if (!archiveContainer) {
-			mode = -1;
+			mode = COImageLoaderModeError;
 			return;
 		}
 		[self checkArchiveContainer:0];
@@ -445,10 +466,10 @@ static NSArray *_COImageLoader_archiveTypes=nil;
 		
 	} else if([[filePath pathExtension] compare:@"savedSearch" options:NSCaseInsensitiveSearch] == NSOrderedSame){
 		NSLog(@"cooViewer loader content branch: savedSearch path=%@", filePath);
-		mode=-1;
+		mode=COImageLoaderModeError;
 #if MAC_OS_X_VERSION_MAX_ALLOWED >= 1040
 		if([NSObject respondsToSelector:@selector(finalize)]){
-			mode=3;
+			mode=COImageLoaderModeSavedSearch;
 			NSDictionary *doc = [NSDictionary dictionaryWithContentsOfFile:filePath];
 			NSString *raw = [doc objectForKey:@"RawQuery"];
 			NSArray *scope = [[doc objectForKey:@"SearchCriteria"] objectForKey:@"FXScopeArrayOfPaths"];
@@ -481,26 +502,15 @@ static NSArray *_COImageLoader_archiveTypes=nil;
 			CFRelease(query);
 			NSArray *completeArray;
 			completeArray = [temp pathsMatchingExtensions:filterArray];
-			
-			NSEnumerator *enu=[completeArray objectEnumerator];
-			id path;
-			while (path = [enu nextObject]) {
-				if ([self shouldCancelContentLoad]) {
-					NSLog(@"cooViewer loader content cancelled in savedSearch: path=%@", filePath);
-					mode = -1;
-					return;
-				}
-				if([[COImageLoader fileTypes] containsObject:[[path pathExtension] lowercaseString]]){
-					[pathArray addObject:path];
-				} else if (path) {
-					[pathArray addObject:path];
-				}
+
+			if (![self co_appendFilteredPaths:completeArray toArray:pathArray pathPrefix:nil cancelContext:@"savedSearch"]) {
+				return;
 			}
 			[contentPathArray addObjectsFromArray:pathArray];
 		}
 #endif
 	} else {
-		mode=0;
+		mode=COImageLoaderModeDirectory;
 		BOOL isDir;
 		[[NSFileManager defaultManager] fileExistsAtPath:filePath isDirectory:&isDir];
 		if (isDir) {
@@ -512,34 +522,22 @@ static NSArray *_COImageLoader_archiveTypes=nil;
                 completeArray = [NSArray arrayWithArray:[[NSFileManager defaultManager] contentsOfDirectoryAtPath:filePath error:nil]];
 			}
 			completeArray = [completeArray pathsMatchingExtensions:filterArray];
-			
-			NSEnumerator *enu=[completeArray objectEnumerator];
-			id path;
-			while (path = [enu nextObject]) {
-				if ([self shouldCancelContentLoad]) {
-					NSLog(@"cooViewer loader content cancelled in directory: path=%@", filePath);
-					mode = -1;
-					return;
-				}
-				path = [filePath stringByAppendingPathComponent:path];
-				if([[COImageLoader fileTypes] containsObject:[[path pathExtension] lowercaseString]]){
-					[pathArray addObject:path];
-				} else if (path) {
-					[pathArray addObject:path];
-				}
+
+			if (![self co_appendFilteredPaths:completeArray toArray:pathArray pathPrefix:filePath cancelContext:@"directory"]) {
+				return;
 			}
 			[contentPathArray addObjectsFromArray:pathArray];
 		} else {
 			NSLog(@"cooViewer loader content branch: unsupported path=%@", filePath);
-			mode=-1;
+			mode=COImageLoaderModeError;
 		}
 	}
 	[contentPathArray sortUsingSelector:@selector(finderCompareS:)];
 	NSTimeInterval elapsed = [NSDate timeIntervalSinceReferenceDate] - contentStartTime;
 	if (elapsed >= 1.0) {
-		NSLog(@"cooViewer loader content slow: path=%@ mode=%d elapsed=%.3f count=%lu raw=%lu",
+		NSLog(@"cooViewer loader content slow: path=%@ mode=%ld elapsed=%.3f count=%lu raw=%lu",
 			  filePath,
-			  mode,
+			  (long)mode,
 			  elapsed,
 			  (unsigned long)[contentPathArray count],
 			  (unsigned long)[rawContentPathArray count]);
@@ -562,14 +560,14 @@ static NSArray *_COImageLoader_archiveTypes=nil;
 		NSData* tempData = [[[archiveContainer contents] objectAtIndex:index] data];
 		//tempData = nil;
 		if (!tempData || [tempData length]<=0 || [[[archiveContainer contents] objectAtIndex:0] path]==nil) {
-			if (mode == 2) {
+			if (mode == COImageLoaderModeArchive) {
 				if (![[archiveContainer archive] describeLastError]) {
 					rightPassward = YES;
 				}
 			}
 			if (!rightPassward || [[[archiveContainer contents] objectAtIndex:index] path]==nil) {
 				//NSLog(@"noPassArchive_no");
-				mode = -1;
+				mode = COImageLoaderModeError;
 				return NO;
 			}
 		}
@@ -586,7 +584,7 @@ static NSArray *_COImageLoader_archiveTypes=nil;
 	while (object = [enu nextObject]) {
 		if ([self shouldCancelContentLoad]) {
 			NSLog(@"cooViewer loader content cancelled in archive: path=%@", filePath);
-			mode = -1;
+			mode = COImageLoaderModeError;
 			return NO;
 		}
 		NSString *path = [object path];
@@ -648,7 +646,7 @@ static NSArray *_COImageLoader_archiveTypes=nil;
 	if ([rawContentPathArray indexOfObject:fileName] != NSNotFound) {
 		[self createDir:[[tempDir stringByAppendingPathComponent:fileName] stringByDeletingLastPathComponent]];
 		
-		if (mode == 2) {
+		if (mode == COImageLoaderModeArchive) {
 			return [archiveContainer uncompress:(int)[rawContentPathArray indexOfObject:fileName] as:[tempDir stringByAppendingPathComponent:fileName]];
 		}
 	} else {
