@@ -2,7 +2,6 @@
 #import "COColorPopUpButton.h"
 #import "Controller.h"
 #import "AccessorySettingView.h"
-#import "NSDictionary_Adding.h"
 
 @interface PreferenceController ()
 {
