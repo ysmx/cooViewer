@@ -303,6 +303,16 @@
 // by the key/mouse action switches for openTheLastPage/switchFullScreen/minimizeWindow.
 + (void)co_performMenuActionInMenu:(NSMenu*)rootMenu parentTitle:(NSString*)parentTitle itemTitle:(NSString*)itemTitle;
 
+// Shared by the key/mouse action switches' PageUp/PageDown/ScrollToTop/
+// ScrollToEnd/Scroll*/boundary-triggered-page-turn cases.
+- (void)co_performPageUp;
+- (void)co_performPageDown;
+- (void)co_performPageUpAndPrevPage;
+- (void)co_performPageDownAndNextPage;
+- (void)co_performScrollToTop;
+- (void)co_performScrollToEnd;
+- (void)co_performScrollWithValue:(int)value dx:(int)dx dy:(int)dy;
+
 - (void)goToPar:(float)par;
 - (void)addBookmark;
 - (BOOL)isBookmarkedPage:(int)page;
