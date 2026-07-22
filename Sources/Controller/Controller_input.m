@@ -715,25 +715,8 @@ static BOOL appleRemoteHoldDown = NO;
 					break;
 				case 45:
 					//changeSortMode
-					if ([imageLoader canSortByDate]) {
-						switch (sortMode) {
-							case 0:sortMode = 2;break;
-							case 1:sortMode = 0;break;
-							case 2:sortMode = 3;break;
-							case 3:sortMode = 1;break;
-							default:break;
-						}
-						[self setSortMode:sortMode page:0];
-					} else {
-						switch (sortMode) {
-							case 0:sortMode = 1;break;
-							case 1:sortMode = 0;break;
-							case 2:sortMode = 0;break;
-							case 3:sortMode = 0;break;
-							default:break;
-						}
-						[self setSortMode:sortMode page:0];
-					}	
+					sortMode = [ViewerSortModeTransition nextWithCurrent:sortMode canSortByDate:[imageLoader canSortByDate]];
+					[self setSortMode:sortMode page:0];
 					break;
 				case 46:
 					//close
@@ -1658,26 +1641,9 @@ static BOOL appleRemoteHoldDown = NO;
 					break;
 				case 56:
 					//changeSortMode
-					if ([imageLoader canSortByDate]) {
-						switch (sortMode) {
-							case 0:sortMode = 2;break;
-							case 1:sortMode = 0;break;
-							case 2:sortMode = 3;break;
-							case 3:sortMode = 1;break;
-							default:break;
-						}
-						[self setSortMode:sortMode page:0];
-					} else {
-						switch (sortMode) {
-							case 0:sortMode = 1;break;
-							case 1:sortMode = 0;break;
-							case 2:sortMode = 0;break;
-							case 3:sortMode = 0;break;
-							default:break;
-						}
-						[self setSortMode:sortMode page:0];
-					}					
-					break;	
+					sortMode = [ViewerSortModeTransition nextWithCurrent:sortMode canSortByDate:[imageLoader canSortByDate]];
+					[self setSortMode:sortMode page:0];
+					break;
 				case 57:
 					//close
 					threadStop = YES;
