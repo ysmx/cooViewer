@@ -26,8 +26,6 @@
 
 /* Begin PBXBuildFile section */
 		372911581316C60C0040B910 /* empty.png in Resources */ = {isa = PBXBuildFile; fileRef = 372911571316C60C0040B910 /* empty.png */; };
-		373D3539130F075E0037F8DD /* GlobalKeyboardDevice.h in Headers */ = {isa = PBXBuildFile; fileRef = 373D3537130F075E0037F8DD /* GlobalKeyboardDevice.h */; };
-		373D353A130F075E0037F8DD /* GlobalKeyboardDevice.m in Sources */ = {isa = PBXBuildFile; fileRef = 373D3538130F075E0037F8DD /* GlobalKeyboardDevice.m */; };
 		3740B9351311708D0084326B /* Localizable.strings in Resources */ = {isa = PBXBuildFile; fileRef = 3740B9341311708D0084326B /* Localizable.strings */; };
 		37AD8316131AA9E600F0123C /* Quartz.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 37AD8315131AA9E600F0123C /* Quartz.framework */; settings = {ATTRIBUTES = (Weak, ); }; };
 		37BB532C1312C017001710B4 /* Frameworks/UniversalDetector.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 37BB532B1312C017001710B4 /* Frameworks/UniversalDetector.framework */; };
@@ -166,8 +164,6 @@
 		30DE82CA300F8D2200FEA0DE /* cooViewerTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = cooViewerTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		32CA4F630368D1EE00C91783 /* cooViewer_Prefix.pch */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = cooViewer_Prefix.pch; sourceTree = "<group>"; };
 		372911571316C60C0040B910 /* empty.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = empty.png; sourceTree = "<group>"; };
-		373D3537130F075E0037F8DD /* GlobalKeyboardDevice.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = GlobalKeyboardDevice.h; sourceTree = "<group>"; };
-		373D3538130F075E0037F8DD /* GlobalKeyboardDevice.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = GlobalKeyboardDevice.m; sourceTree = "<group>"; };
 		37AD8315131AA9E600F0123C /* Quartz.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Quartz.framework; path = /System/Library/Frameworks/Quartz.framework; sourceTree = "<absolute>"; };
 		37BB532B1312C017001710B4 /* Frameworks/UniversalDetector.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; path = Frameworks/UniversalDetector.framework; sourceTree = "<group>"; };
 		37BB53451312C01C001710B4 /* Frameworks/XADMaster.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; path = Frameworks/XADMaster.framework; sourceTree = "<group>"; };
@@ -558,8 +554,6 @@
 		76D5AA480D69E42D0057EF7A /* Devices */ = {
 			isa = PBXGroup;
 			children = (
-				373D3537130F075E0037F8DD /* GlobalKeyboardDevice.h */,
-				373D3538130F075E0037F8DD /* GlobalKeyboardDevice.m */,
 				76D5AA490D69E42D0057EF7A /* AppleRemote.h */,
 				76D5AA4A0D69E42D0057EF7A /* AppleRemote.m */,
 				76D5AA4B0D69E42D0057EF7A /* KeyspanFrontRowControl.h */,
@@ -659,7 +653,6 @@
 				76D5AA510D69E42D0057EF7A /* AppleRemote.h in Headers */,
 				76D5AA530D69E42D0057EF7A /* KeyspanFrontRowControl.h in Headers */,
 				76E56F520D74647100128802 /* MultiClickRemoteBehavior.h in Headers */,
-				373D3539130F075E0037F8DD /* GlobalKeyboardDevice.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -839,7 +832,6 @@
 				76D5AA520D69E42D0057EF7A /* AppleRemote.m in Sources */,
 				76D5AA540D69E42D0057EF7A /* KeyspanFrontRowControl.m in Sources */,
 				76E56F530D74647400128802 /* MultiClickRemoteBehavior.m in Sources */,
-				373D353A130F075E0037F8DD /* GlobalKeyboardDevice.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
