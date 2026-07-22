@@ -78,8 +78,11 @@ static const int DIALOG_CANCEL	= 129;
     [bookmarkPanel setAction:@selector(keyDown:)];
 	bookName = [[directoryPath lastPathComponent] retain];
 	//	bookmarkArray = [[defaults objectForKey:bookName] retain];
-	bookmarkArray = [array retain];
-	
+	// Edit a working copy so Cancel can discard in-progress edits without
+	// touching Controller's live bookmarkArray; OK writes the copy back below.
+	sourceBookmarkArray = [array retain];
+	bookmarkArray = [[NSMutableArray alloc] initWithArray:array];
+
     [bookmarkTableView setDataSource:(id)self];
     [bookmarkTableView setDelegate:(id)self];
 	[bookmarkTableView reloadData];
@@ -105,10 +108,15 @@ static const int DIALOG_CANCEL	= 129;
 		[bookName release];
 		[bookmarkArray release];
 		bookmarkArray = nil;
+		[sourceBookmarkArray release];
+		sourceBookmarkArray = nil;
     } else if(returnCode == DIALOG_OK) {
 		[bookName release];
+		[sourceBookmarkArray setArray:bookmarkArray];
 		[bookmarkArray release];
 		bookmarkArray = nil;
+		[sourceBookmarkArray release];
+		sourceBookmarkArray = nil;
 		[controller setBookmarkMenu];
     }
 }

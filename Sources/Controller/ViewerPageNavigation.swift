@@ -59,6 +59,18 @@ import Foundation
 		host.imageDisplay()
 	}
 
+	// -nextBookmark/-backBookmark already wait on the lock themselves before
+	// calling this (see their [lock lock]/[lock unlock] in the key/mouse
+	// switches), so unlike the transitions above, this never cancels an
+	// in-flight load - it only clears the buffer.
+	@objc static func performBookmarkJump(host: ViewerPageNavigationHost, page: Int32, title: String?) {
+		host.nowPage = page - 1
+		host.clearBuffer()
+		host.lookahead()
+		host.imageDisplay()
+		host.setInfoString(title)
+	}
+
 	// After a skip lands, -lookahead may have buffered a page that's too
 	// small to stand alone in spread mode; if so, drop it and advance by
 	// one so the spread re-pairs correctly. Only skip does this (not

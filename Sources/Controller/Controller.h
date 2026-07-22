@@ -347,10 +347,12 @@
 - (int)bufferedImageCount;
 - (void)cancelInFlightLoadAndClearBuffer;
 - (void)waitForInFlightLoad;
+- (void)clearBuffer;
 - (void)clearComposedImage;
 - (NSImage *)bufferedImageAtIndex:(int)index;
 - (void)insertImageAtFrontOfBuffer:(NSImage *)image;
 - (void)removeFirstImageFromBuffer;
+- (void)setInfoString:(NSString *)string;
 
 // Shared by the key/mouse action switches' nextpage/halfnext/toppage/
 // skip/backskip cases (and goToPar:/goto%, via ViewerPageNavigation.swift).

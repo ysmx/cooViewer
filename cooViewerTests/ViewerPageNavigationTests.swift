@@ -191,4 +191,38 @@ final class ViewerPageNavigationTests: XCTestCase {
 		XCTAssertEqual(host.lookaheadCallCount, 1)
 		XCTAssertEqual(host.imageDisplayCallCount, 1)
 	}
+
+	// MARK: - performBookmarkJump
+
+	func testBookmarkJumpLandsOnPageMinusOneAndShowsTheTitle() {
+		let host = FakeViewerPageNavigationHost()
+		host.nowPage = 5
+		host.buffer = [NSImage(), NSImage()]
+
+		ViewerPageNavigation.performBookmarkJump(host: host, page: 30, title: "chapter 3")
+
+		XCTAssertEqual(host.nowPage, 29)
+		XCTAssertEqual(host.buffer.count, 0)
+		XCTAssertEqual(host.clearBufferCallCount, 1)
+		XCTAssertEqual(host.lookaheadCallCount, 1)
+		XCTAssertEqual(host.imageDisplayCallCount, 1)
+		XCTAssertEqual(host.infoStrings, ["chapter 3"])
+	}
+
+	func testBookmarkJumpNeverCancelsAnInFlightLoad() {
+		let host = FakeViewerPageNavigationHost()
+
+		ViewerPageNavigation.performBookmarkJump(host: host, page: 1, title: nil)
+
+		XCTAssertEqual(host.cancelInFlightLoadAndClearBufferCallCount, 0)
+		XCTAssertEqual(host.waitForInFlightLoadCallCount, 0)
+	}
+
+	func testBookmarkJumpPassesThroughANilTitle() {
+		let host = FakeViewerPageNavigationHost()
+
+		ViewerPageNavigation.performBookmarkJump(host: host, page: 1, title: nil)
+
+		XCTAssertEqual(host.infoStrings, [nil])
+	}
 }
