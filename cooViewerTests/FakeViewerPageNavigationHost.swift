@@ -31,10 +31,12 @@ final class FakeViewerPageNavigationHost: NSObject, ViewerPageNavigationHost {
 
 	private(set) var cancelInFlightLoadAndClearBufferCallCount = 0
 	private(set) var waitForInFlightLoadCallCount = 0
+	private(set) var clearBufferCallCount = 0
 	private(set) var clearComposedImageCallCount = 0
 	private(set) var lookaheadCallCount = 0
 	private(set) var imageDisplayCallCount = 0
 	private(set) var loadedPages: [Int32] = []
+	private(set) var infoStrings: [String?] = []
 
 	func cancelInFlightLoadAndClearBuffer() {
 		cancelInFlightLoadAndClearBufferCallCount += 1
@@ -45,8 +47,17 @@ final class FakeViewerPageNavigationHost: NSObject, ViewerPageNavigationHost {
 		waitForInFlightLoadCallCount += 1
 	}
 
+	func clearBuffer() {
+		clearBufferCallCount += 1
+		buffer.removeAll()
+	}
+
 	func clearComposedImage() {
 		clearComposedImageCallCount += 1
+	}
+
+	func setInfoString(_ string: String?) {
+		infoStrings.append(string)
 	}
 
 	func lookahead() {

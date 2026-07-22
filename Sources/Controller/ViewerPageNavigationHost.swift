@@ -26,9 +26,18 @@ import AppKit
 	/// in-flight background load without cancelling it.
 	func waitForInFlightLoad()
 
+	/// Discards the current image buffer without the threadStop/lock dance
+	/// cancelInFlightLoadAndClearBuffer() does - matches -co_jumpToBookmarkPage:,
+	/// which never cancelled an in-flight load (its callers already wait on
+	/// the lock themselves before invoking it).
+	func clearBuffer()
+
 	func clearComposedImage()
 	func lookahead()
 	func imageDisplay()
+
+	@objc(setInfoString:)
+	func setInfoString(_ string: String?)
 
 	@objc(loadImage:)
 	func loadImage(_ page: Int32) -> NSImage?

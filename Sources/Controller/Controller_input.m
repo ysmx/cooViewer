@@ -222,6 +222,11 @@ static BOOL appleRemoteHoldDown = NO;
 	[lock unlock];
 }
 
+- (void)clearBuffer
+{
+	[imageMutableArray removeAllObjects];
+}
+
 - (void)clearComposedImage
 {
 	[composedImage release];
@@ -244,6 +249,11 @@ static BOOL appleRemoteHoldDown = NO;
 - (void)removeFirstImageFromBuffer
 {
 	[imageMutableArray removeObjectAtIndex:0];
+}
+
+- (void)setInfoString:(NSString *)string
+{
+	[imageView setInfoString:string];
 }
 
 #pragma mark page navigation (nextpage/halfnext/toppage/skip/backskip)
@@ -619,7 +629,13 @@ static BOOL appleRemoteHoldDown = NO;
 					[self co_performShowPageBar];
 					break;
 				case 21:
-					//showPageMover
+					//showPageMover - key-only, no mouse equivalent, so there's
+					//no key/mouse duplication to remove here. Considered a
+					//ViewerPageMoverHost protocol (see #58) but decided against
+					//it: only one call site, and the only branching is two
+					//boolean checks on imageView's own (already strongly-typed)
+					//pageMover/tempPageNum state - not enough to justify a new
+					//protocol + fake.
 					if (![imageView pageMover]) {
 						[imageView drawPageMover:0];
 					} else {
@@ -2140,11 +2156,7 @@ static BOOL appleRemoteHoldDown = NO;
 
 - (void)co_jumpToBookmarkPage:(int)page
 {
-	nowPage = page - 1;
-	[imageMutableArray removeAllObjects];
-	[self lookahead];
-	[self imageDisplay];
-	[imageView setInfoString:[self co_bookmarkTitleForPage:page]];
+	[ViewerPageNavigation performBookmarkJumpWithHost:self page:page title:[self co_bookmarkTitleForPage:page]];
 }
 
 -(void)nextBookmark
