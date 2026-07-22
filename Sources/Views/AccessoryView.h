@@ -7,7 +7,6 @@
 //
 
 #import <Cocoa/Cocoa.h>
-#import "AccessoryGeometry.h"
 
 @interface AccessoryView : NSView
 {	

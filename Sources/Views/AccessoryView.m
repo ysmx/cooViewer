@@ -7,7 +7,7 @@
 //
 
 #import "AccessoryView.h"
-#import "AccessoryGeometry.h"
+#import "cooViewer-Swift.h"
 #import "Controller.h"
 #import "CustomImageView.h"
 #import "NSBezierPath_Adding.h"
@@ -309,7 +309,7 @@
 			int tMargin = 10;
 				int basemargin=7;
 				if (pageBarShowThumbnail) {
-					if (COAccessoryPlacementIsTop(pageBarPosition)) {
+					if ([ViewerAccessoryGeometry placementIsTop:pageBarPosition]) {
 						pt.y+=tempRect.size.height/2;
 					} else {
 						pt.y-=5+tempRect.size.height/2;
@@ -339,14 +339,14 @@
 					NSRect thumbnailRect=NSMakeRect(pt.x,pt.y,width+4+4,height+5+1+1+[string size].height);
 					NSRect imageRect = NSZeroRect;
 					
-					if (COAccessoryPlacementIsTop(pageBarPosition)) {
+					if ([ViewerAccessoryGeometry placementIsTop:pageBarPosition]) {
 						thumbnailRect.origin.y -= thumbnailRect.size.height+theight;
 					} else {
 						thumbnailRect.origin.y += [self pageBarRect].size.height+theight;
 					}
-					if (COAccessoryPlacementIsRight(pageBarPosition)) {
+					if ([ViewerAccessoryGeometry placementIsRight:pageBarPosition]) {
 						thumbnailRect.origin.x -= thumbnailRect.size.width-tMargin-rad-twidth/2+basemargin;
-					} else if (COAccessoryPlacementIsCenter(pageBarPosition)) {
+					} else if ([ViewerAccessoryGeometry placementIsCenter:pageBarPosition]) {
 						thumbnailRect.origin.x -= thumbnailRect.size.width/2;
 					} else {
 						thumbnailRect.origin.x -= tMargin+rad+twidth/2-basemargin;
@@ -373,13 +373,13 @@
 				float maxArrowX = thumbnailRect.origin.x+thumbnailRect.size.width-rad-tMargin-twidth/2;
 				if (arrowCenterX < minArrowX) arrowCenterX = minArrowX;
 				if (arrowCenterX > maxArrowX) arrowCenterX = maxArrowX;
-				if (COAccessoryPlacementIsTop(pageBarPosition)) {
+				if ([ViewerAccessoryGeometry placementIsTop:pageBarPosition]) {
 					bezier = [NSBezierPath bezierPathWithRectWithArc:thumbnailRect rad:rad open:1];		
 					tt = NSMakePoint(mouseOrigin.x,thumbnailRect.origin.y+thumbnailRect.size.height+theight);	
-					if (COAccessoryPlacementIsRight(pageBarPosition)) {
+					if ([ViewerAccessoryGeometry placementIsRight:pageBarPosition]) {
 						tr = NSMakePoint(thumbnailRect.origin.x+thumbnailRect.size.width-rad-tMargin,tt.y-theight);
 						tl = NSMakePoint(tr.x-twidth,tr.y);
-					} else if (COAccessoryPlacementIsCenter(pageBarPosition)) {
+					} else if ([ViewerAccessoryGeometry placementIsCenter:pageBarPosition]) {
 						tl = NSMakePoint(arrowCenterX-twidth/2,tt.y-theight);
 						tr = NSMakePoint(arrowCenterX+twidth/2,tl.y);
 					} else {
@@ -392,10 +392,10 @@
 				} else {
 					bezier = [NSBezierPath bezierPathWithRectWithArc:thumbnailRect rad:rad open:3];	
 					tt = NSMakePoint(mouseOrigin.x,thumbnailRect.origin.y-theight);
-					if (COAccessoryPlacementIsRight(pageBarPosition)) {
+					if ([ViewerAccessoryGeometry placementIsRight:pageBarPosition]) {
 						tr = NSMakePoint(thumbnailRect.origin.x+thumbnailRect.size.width-rad-tMargin,tt.y+theight);
 						tl = NSMakePoint(tr.x-twidth,tr.y);
-					} else if (COAccessoryPlacementIsCenter(pageBarPosition)) {
+					} else if ([ViewerAccessoryGeometry placementIsCenter:pageBarPosition]) {
 						tl = NSMakePoint(arrowCenterX-twidth/2,tt.y+theight);
 						tr = NSMakePoint(arrowCenterX+twidth/2,tl.y);
 					} else {
@@ -407,7 +407,7 @@
 					[bezier appendBezierPathWithPoints:&tr count:1];
 				}				
 				[bezier closePath];
-				pageBarStringRect = NSInsetRect(COIntRect([bezier bounds]),-3,-3);
+				pageBarStringRect = NSInsetRect([ViewerAccessoryGeometry intRect:[bezier bounds]],-3,-3);
 				
                 if (![pageBarBGColor isEqualTo:[NSColor clearColor]]) {
 					[pageBarBGColor set];
@@ -422,23 +422,23 @@
 							operation:NSCompositingOperationSourceOver fraction:1.0];
 				[string drawAtPoint:pt];
 			} else {
-				if (COAccessoryPlacementIsTop(pageBarPosition)) {
+				if ([ViewerAccessoryGeometry placementIsTop:pageBarPosition]) {
 					pt.y+=tempRect.size.height/2;
 				} else {
 					pt.y-=tempRect.size.height/2;
 				}
 				int stringSize = [string size].width;
 				if (stringSize < twidth+tMargin*2) tMargin = (stringSize-twidth)/2;
-				if (COAccessoryPlacementIsTop(pageBarPosition)) {
+				if ([ViewerAccessoryGeometry placementIsTop:pageBarPosition]) {
 					pt.y -= [string size].height+theight;
 				} else {
 					pt.y += [self pageBarRect].size.height+1;
 				}
-				if (COAccessoryPlacementIsRight(pageBarPosition)) {
+				if ([ViewerAccessoryGeometry placementIsRight:pageBarPosition]) {
 					pt.x -= basemargin;
 					pt.x += tMargin+twidth/2;
 					pt.x -= stringSize;
-				} else if (COAccessoryPlacementIsCenter(pageBarPosition)) {
+				} else if ([ViewerAccessoryGeometry placementIsCenter:pageBarPosition]) {
 					pt.x -= stringSize/2;
 				} else {
 					pt.x += basemargin;
@@ -458,13 +458,13 @@
 				float maxArrowX = pt.x+stringSize-tMargin-twidth/2;
 				if (arrowCenterX < minArrowX) arrowCenterX = minArrowX;
 				if (arrowCenterX > maxArrowX) arrowCenterX = maxArrowX;
-				if (!COAccessoryPlacementIsTop(pageBarPosition)) {
+				if (![ViewerAccessoryGeometry placementIsTop:pageBarPosition]) {
 					bezier = [NSBezierPath bezierPathWithRectWithArc:temp rad:0 open:3];
 					tt = NSMakePoint(mouseOrigin.x,pt.y-theight);
-					if (COAccessoryPlacementIsRight(pageBarPosition)) {
+					if ([ViewerAccessoryGeometry placementIsRight:pageBarPosition]) {
 						tr = NSMakePoint(pt.x+stringSize-tMargin,tt.y+theight);
 						tl = NSMakePoint(tr.x-twidth,tr.y);
-					} else if (COAccessoryPlacementIsCenter(pageBarPosition)) {
+					} else if ([ViewerAccessoryGeometry placementIsCenter:pageBarPosition]) {
 						tl = NSMakePoint(arrowCenterX-twidth/2,tt.y+theight);
 						tr = NSMakePoint(arrowCenterX+twidth/2,tl.y);
 					} else {
@@ -477,10 +477,10 @@
 				} else {					
 					bezier = [NSBezierPath bezierPathWithRectWithArc:temp rad:0 open:1];
 					tt = NSMakePoint(mouseOrigin.x,pt.y+[string size].height+theight);
-					if (COAccessoryPlacementIsRight(pageBarPosition)) {
+					if ([ViewerAccessoryGeometry placementIsRight:pageBarPosition]) {
 						tr = NSMakePoint(pt.x+stringSize-tMargin,tt.y-theight);
 						tl = NSMakePoint(tr.x-twidth,tr.y);
-					} else if (COAccessoryPlacementIsCenter(pageBarPosition)) {
+					} else if ([ViewerAccessoryGeometry placementIsCenter:pageBarPosition]) {
 						tl = NSMakePoint(arrowCenterX-twidth/2,tt.y-theight);
 						tr = NSMakePoint(arrowCenterX+twidth/2,tl.y);
 					} else {
@@ -493,7 +493,7 @@
 				}
 				
 				[bezier closePath];
-				pageBarStringRect = NSInsetRect(COIntRect([bezier bounds]),-5,-5);
+				pageBarStringRect = NSInsetRect([ViewerAccessoryGeometry intRect:[bezier bounds]],-5,-5);
 				
                 if (![pageBarBGColor isEqualTo:[NSColor clearColor]]) {
 					[pageBarBGColor set];
@@ -606,7 +606,7 @@
 	if (pageString && [imageView image]) {
 		if (!autoHidedPageString) {			
 			pageStringRect = [self pageStringRect];
-			CODrawPageStringAtPoint(pageString, pageStringRect.origin, textBGColor, textBorderColor);
+			[ViewerAccessoryGeometry drawPageString:pageString atPoint: pageStringRect.origin background: textBGColor border: textBorderColor];
 		} else {
 			pageStringRect = NSZeroRect;
 		}
@@ -694,7 +694,7 @@
 		NSRect contentFrame = [self frame];
 		infoBarAnchorRect = [self pageBarRect];
 		if (NSIsEmptyRect(infoBarAnchorRect)) {
-			infoBarAnchorRect = COPageBarLayoutRect(contentFrame,pageBarMargin,pageBarWidth,pageBarHeight,pageBarPosition);
+			infoBarAnchorRect = [ViewerAccessoryGeometry pageBarLayoutRectWithContentFrame:contentFrame margin:pageBarMargin widthValue:pageBarWidth heightValue:pageBarHeight position:pageBarPosition];
 		}
 	}
 
@@ -726,15 +726,15 @@
 	NSRect barRect = infoBarAnchorRect;
 	CGFloat gap = 4;
 
-	if (COAccessoryPlacementIsRight(pageBarPosition)) {
+	if ([ViewerAccessoryGeometry placementIsRight:pageBarPosition]) {
 		rect.origin.x = NSMaxX(barRect)-rect.size.width;
-	} else if (COAccessoryPlacementIsCenter(pageBarPosition)) {
+	} else if ([ViewerAccessoryGeometry placementIsCenter:pageBarPosition]) {
 		rect.origin.x = NSMidX(barRect)-rect.size.width/2;
 	} else {
 		rect.origin.x = NSMinX(barRect);
 	}
 
-	if (COAccessoryPlacementIsTop(pageBarPosition)) {
+	if ([ViewerAccessoryGeometry placementIsTop:pageBarPosition]) {
 		rect.origin.y = NSMinY(barRect)-rect.size.height-gap;
 	} else {
 		rect.origin.y = NSMaxY(barRect)+gap;
@@ -745,7 +745,7 @@
 	if (rect.origin.y < 2) rect.origin.y = 2;
 	if (NSMaxY(rect) > contentFrame.size.height-2) rect.origin.y = contentFrame.size.height-rect.size.height-2;
 
-	return COIntRect(rect);
+	return [ViewerAccessoryGeometry intRect:rect];
 }
 
 #pragma mark accessory
@@ -817,7 +817,7 @@
 
 -(NSRect)pageStringLayoutRectForContentFrame:(NSRect)contentFrame
 {
-	return COPageStringLayoutRect(contentFrame,pageString,pageMargin,pageStringPosition);
+	return [ViewerAccessoryGeometry pageStringLayoutRectWithContentFrame:contentFrame string:pageString margin:pageMargin position:pageStringPosition];
 }
 
 #pragma mark pageBar
@@ -840,32 +840,32 @@
 
 -(NSRect)pageBarLayoutRectForContentFrame:(NSRect)contentFrame avoidPageString:(BOOL)avoidPageString
 {
-	NSRect rect = COPageBarLayoutRect(contentFrame,pageBarMargin,pageBarWidth,pageBarHeight,pageBarPosition);
+	NSRect rect = [ViewerAccessoryGeometry pageBarLayoutRectWithContentFrame:contentFrame margin:pageBarMargin widthValue:pageBarWidth heightValue:pageBarHeight position:pageBarPosition];
 	if (avoidPageString && pageString && !autoHidedPageString) {
-		NSRect stringRect = COPageStringLayoutRect(contentFrame,pageString,pageMargin,pageStringPosition);
+		NSRect stringRect = [ViewerAccessoryGeometry pageStringLayoutRectWithContentFrame:contentFrame string:pageString margin:pageMargin position:pageStringPosition];
 		if (!NSIsEmptyRect(stringRect) && pageStringPosition == pageBarPosition) {
-			if (COAccessoryPlacementIsRight(pageBarPosition)) {
-				rect.origin.x = NSMaxX(stringRect)-COPageStringTextLeftOffset()-rect.size.width;
-			} else if (COAccessoryPlacementIsCenter(pageBarPosition)) {
+			if ([ViewerAccessoryGeometry placementIsRight:pageBarPosition]) {
+				rect.origin.x = NSMaxX(stringRect)-[ViewerAccessoryGeometry pageStringTextLeftOffset]-rect.size.width;
+			} else if ([ViewerAccessoryGeometry placementIsCenter:pageBarPosition]) {
 				rect.origin.x = NSMidX(stringRect)-rect.size.width/2;
 			} else {
-				rect.origin.x = stringRect.origin.x+COPageStringTextLeftOffset();
+				rect.origin.x = stringRect.origin.x+[ViewerAccessoryGeometry pageStringTextLeftOffset];
 			}
-			if (COAccessoryPlacementIsTop(pageBarPosition)) {
+			if ([ViewerAccessoryGeometry placementIsTop:pageBarPosition]) {
 				rect.origin.y = NSMinY(stringRect)-rect.size.height-2;
 			} else {
 				rect.origin.y = NSMaxY(stringRect)+2;
 			}
 		} else if (!NSIsEmptyRect(stringRect) && NSIntersectsRect(rect, stringRect)) {
-			rect.origin.x = stringRect.origin.x+COPageStringTextLeftOffset();
-			if (COAccessoryPlacementIsTop(pageBarPosition)) {
+			rect.origin.x = stringRect.origin.x+[ViewerAccessoryGeometry pageStringTextLeftOffset];
+			if ([ViewerAccessoryGeometry placementIsTop:pageBarPosition]) {
 				rect.origin.y = NSMinY(stringRect)-rect.size.height-2;
 			} else {
 				rect.origin.y = NSMaxY(stringRect)+2;
 			}
 		}
 	}
-	return COIntRect(rect);
+	return [ViewerAccessoryGeometry intRect:rect];
 }
 
 -(NSRect)pageMoverRect

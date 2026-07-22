@@ -38,6 +38,8 @@
 		761B469F0D61E95D00667B2A /* AccessoryView.m in Sources */ = {isa = PBXBuildFile; fileRef = 761B469D0D61E95D00667B2A /* AccessoryView.m */; };
 		13F55E4E41A24AA19C9B9769 /* ViewerPageGeometry.swift in Sources */ = {isa = PBXBuildFile; fileRef = 69661E1AA37C4876894F1180 /* ViewerPageGeometry.swift */; };
 		31FD081B418E48ABA13ECEFC /* ViewerPageGeometry.swift in Sources */ = {isa = PBXBuildFile; fileRef = 69661E1AA37C4876894F1180 /* ViewerPageGeometry.swift */; };
+		791D1850761348F5A17B9594 /* ViewerAccessoryGeometry.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1EAD25AE59DE41CD92F8993A /* ViewerAccessoryGeometry.swift */; };
+		6A15DCB5E75249A2BE1ED6C2 /* ViewerAccessoryGeometry.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1EAD25AE59DE41CD92F8993A /* ViewerAccessoryGeometry.swift */; };
 		D216E5475ACC4284AB36EBB1 /* ViewerSortModeTransition.swift in Sources */ = {isa = PBXBuildFile; fileRef = 249AF7B85D724090B7B5910F /* ViewerSortModeTransition.swift */; };
 		691E06277FDE4F3E9D57C5B4 /* ViewerSortModeTransition.swift in Sources */ = {isa = PBXBuildFile; fileRef = 249AF7B85D724090B7B5910F /* ViewerSortModeTransition.swift */; };
 		1897CF615057443BA3A2E9B1 /* ViewerScrollDelta.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8D68CDB42A784129A61341A4 /* ViewerScrollDelta.swift */; };
@@ -71,9 +73,6 @@
 		EB7A76F765C04375BEF74C21 /* XADItem.m in Sources */ = {isa = PBXBuildFile; fileRef = 76225CA30D43756000161AC8 /* XADItem.m */; settings = {COMPILER_FLAGS = "-fno-objc-arc"; }; };
 		2A6E44EB712842E7924FED6E /* Frameworks/XADMaster.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 37BB53451312C01C001710B4 /* Frameworks/XADMaster.framework */; };
 		6E30881A052A48099A4F9EE9 /* Frameworks/UniversalDetector.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 37BB532B1312C017001710B4 /* Frameworks/UniversalDetector.framework */; };
-		AD05A8BEDADF47AC85E70A3D /* AccessoryGeometry.h in Headers */ = {isa = PBXBuildFile; fileRef = EF975869F00B4F319CDA9B3B /* AccessoryGeometry.h */; };
-		9265DED0A68145A1B6677098 /* AccessoryGeometry.m in Sources */ = {isa = PBXBuildFile; fileRef = AEF0D05A3AC34B82A1B5FC0E /* AccessoryGeometry.m */; };
-		CF2D54B6155E4DEA8ADE3095 /* AccessoryGeometry.m in Sources */ = {isa = PBXBuildFile; fileRef = AEF0D05A3AC34B82A1B5FC0E /* AccessoryGeometry.m */; };
 		761B46A40D61E97900667B2A /* AccessoryWindow.h in Headers */ = {isa = PBXBuildFile; fileRef = 761B46A20D61E97900667B2A /* AccessoryWindow.h */; };
 		761B46A50D61E97900667B2A /* AccessoryWindow.m in Sources */ = {isa = PBXBuildFile; fileRef = 761B46A30D61E97900667B2A /* AccessoryWindow.m */; };
 		7621F56808C5719B006A9301 /* InfoPlist.strings in Resources */ = {isa = PBXBuildFile; fileRef = 089C165DFE840E0CC02AAC07 /* InfoPlist.strings */; };
@@ -187,6 +186,7 @@
 		761B469C0D61E95D00667B2A /* AccessoryView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = AccessoryView.h; sourceTree = "<group>"; };
 		761B469D0D61E95D00667B2A /* AccessoryView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = AccessoryView.m; sourceTree = "<group>"; };
 		69661E1AA37C4876894F1180 /* ViewerPageGeometry.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ViewerPageGeometry.swift; sourceTree = "<group>"; };
+		1EAD25AE59DE41CD92F8993A /* ViewerAccessoryGeometry.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ViewerAccessoryGeometry.swift; sourceTree = "<group>"; };
 		249AF7B85D724090B7B5910F /* ViewerSortModeTransition.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ViewerSortModeTransition.swift; sourceTree = "<group>"; };
 		8D68CDB42A784129A61341A4 /* ViewerScrollDelta.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ViewerScrollDelta.swift; sourceTree = "<group>"; };
 		3782D0A7273D4D8FBF5A556F /* ViewerFitScreenTransition.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ViewerFitScreenTransition.swift; sourceTree = "<group>"; };
@@ -201,8 +201,6 @@
 		177E1B9468B04895B5CAFC6B /* NSAttributedString_Adding.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NSAttributedString_Adding.swift; sourceTree = "<group>"; };
 		3F6343820A9B43298B5ACCB0 /* NSBezierPath_Adding.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = NSBezierPath_Adding.h; sourceTree = "<group>"; };
 		820C26D9FF6348CB8FD4FBEC /* NSAttributedString_Adding.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = NSAttributedString_Adding.h; sourceTree = "<group>"; };
-		EF975869F00B4F319CDA9B3B /* AccessoryGeometry.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = AccessoryGeometry.h; sourceTree = "<group>"; };
-		AEF0D05A3AC34B82A1B5FC0E /* AccessoryGeometry.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = AccessoryGeometry.m; sourceTree = "<group>"; };
 		761B46A20D61E97900667B2A /* AccessoryWindow.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = AccessoryWindow.h; sourceTree = "<group>"; };
 		761B46A30D61E97900667B2A /* AccessoryWindow.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = AccessoryWindow.m; sourceTree = "<group>"; };
 		7622420C095288F600C888E4 /* cross.tiff */ = {isa = PBXFileReference; lastKnownFileType = image.tiff; path = cross.tiff; sourceTree = "<group>"; };
@@ -536,10 +534,9 @@
 				761B46A30D61E97900667B2A /* AccessoryWindow.m */,
 				761B469C0D61E95D00667B2A /* AccessoryView.h */,
 				761B469D0D61E95D00667B2A /* AccessoryView.m */,
-				EF975869F00B4F319CDA9B3B /* AccessoryGeometry.h */,
-				AEF0D05A3AC34B82A1B5FC0E /* AccessoryGeometry.m */,
 				769762A50D657268009CFDBE /* AccessorySettingView.h */,
 				769762A60D657268009CFDBE /* AccessorySettingView.m */,
+				1EAD25AE59DE41CD92F8993A /* ViewerAccessoryGeometry.swift */,
 				A39D6C3223BEB590002FD912 /* LoupeView.h */,
 				A39D6C3423BEB597002FD912 /* LoupeView.m */,
 			);
@@ -670,7 +667,6 @@
 				761B469E0D61E95D00667B2A /* AccessoryView.h in Headers */,
 				F094903CDAF9480A9C6912FE /* NSBezierPath_Adding.h in Headers */,
 				3444741418E34476AF5EBECA /* NSAttributedString_Adding.h in Headers */,
-				AD05A8BEDADF47AC85E70A3D /* AccessoryGeometry.h in Headers */,
 				761B46A40D61E97900667B2A /* AccessoryWindow.h in Headers */,
 				769762A70D657268009CFDBE /* AccessorySettingView.h in Headers */,
 				76F2B6440D67329C003269BB /* COTextView.h in Headers */,
@@ -799,8 +795,8 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				CF2D54B6155E4DEA8ADE3095 /* AccessoryGeometry.m in Sources */,
 				31FD081B418E48ABA13ECEFC /* ViewerPageGeometry.swift in Sources */,
+				791D1850761348F5A17B9594 /* ViewerAccessoryGeometry.swift in Sources */,
 				5680D3FBE37D4F65917A9204 /* ViewerActionResolver.swift in Sources */,
 				691E06277FDE4F3E9D57C5B4 /* ViewerSortModeTransition.swift in Sources */,
 				00585B35313448F283290898 /* ViewerScrollDelta.swift in Sources */,
@@ -850,8 +846,8 @@
 				76225B500D435F9400161AC8 /* XADWrapper.m in Sources */,
 				76225CA50D43756000161AC8 /* XADItem.m in Sources */,
 				761B469F0D61E95D00667B2A /* AccessoryView.m in Sources */,
-				9265DED0A68145A1B6677098 /* AccessoryGeometry.m in Sources */,
 				13F55E4E41A24AA19C9B9769 /* ViewerPageGeometry.swift in Sources */,
+				6A15DCB5E75249A2BE1ED6C2 /* ViewerAccessoryGeometry.swift in Sources */,
 				D216E5475ACC4284AB36EBB1 /* ViewerSortModeTransition.swift in Sources */,
 				1897CF615057443BA3A2E9B1 /* ViewerScrollDelta.swift in Sources */,
 				F4B3A9CC299C4C9CAE8044D8 /* ViewerFitScreenTransition.swift in Sources */,
