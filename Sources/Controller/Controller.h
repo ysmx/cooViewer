@@ -299,6 +299,10 @@
 - (IBAction)contextAction:(id)sender;
 - (void)wheelAction:(NSEvent*)event;
 
+// Looks up rootMenu>parentTitle>itemTitle and performs it if enabled - shared
+// by the key/mouse action switches for openTheLastPage/switchFullScreen/minimizeWindow.
++ (void)co_performMenuActionInMenu:(NSMenu*)rootMenu parentTitle:(NSString*)parentTitle itemTitle:(NSString*)itemTitle;
+
 - (void)goToPar:(float)par;
 - (void)addBookmark;
 - (BOOL)isBookmarkedPage:(int)page;

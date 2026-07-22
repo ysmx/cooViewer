@@ -13,6 +13,15 @@
 
 static BOOL appleRemoteHoldDown = NO;
 
++ (void)co_performMenuActionInMenu:(NSMenu*)rootMenu parentTitle:(NSString*)parentTitle itemTitle:(NSString*)itemTitle
+{
+	NSMenu *menu = [[rootMenu itemWithTitle:parentTitle] submenu];
+	NSMenuItem *item = [menu itemWithTitle:itemTitle];
+	if ([item isEnabled]) {
+		[menu performActionForItemAtIndex:[menu indexOfItem:item]];
+	}
+}
+
 #pragma mark action
 - (void)remoteButton:(RemoteControlEventIdentifier)buttonIdentifier pressedDown: (BOOL) pressedDown clickCount: (unsigned int)clickCount
 {
@@ -740,33 +749,15 @@ static BOOL appleRemoteHoldDown = NO;
 					break;
 				case 48:
 					//openTheLastPage
-					{
-						NSMenu *menu = [[[NSApp mainMenu] itemWithTitle:NSLocalizedString(@"File", @"")] submenu];
-						NSMenuItem *item = [menu itemWithTitle:NSLocalizedString(@"Open the last page", @"")];
-						if ([item isEnabled]) {
-							[menu performActionForItemAtIndex:[menu indexOfItem:item]];
-						}
-					}
+					[Controller co_performMenuActionInMenu:[NSApp mainMenu] parentTitle:NSLocalizedString(@"File", @"") itemTitle:NSLocalizedString(@"Open the last page", @"")];
 					break;
 				case 49:
 					//switchFullScreen
-					{
-						NSMenu *menu = [[[NSApp mainMenu] itemWithTitle:NSLocalizedString(@"Window", @"")] submenu];
-						NSMenuItem *item = [menu itemWithTitle:NSLocalizedString(@"Fullscreen", @"")];
-						if ([item isEnabled]) {
-							[menu performActionForItemAtIndex:[menu indexOfItem:item]];
-						}
-					}
+					[Controller co_performMenuActionInMenu:[NSApp mainMenu] parentTitle:NSLocalizedString(@"Window", @"") itemTitle:NSLocalizedString(@"Fullscreen", @"")];
 					break;
 				case 50:
 					//minimizeWindow
-					{
-						NSMenu *menu = [[[NSApp mainMenu] itemWithTitle:NSLocalizedString(@"Window", @"")] submenu];
-						NSMenuItem *item = [menu itemWithTitle:NSLocalizedString(@"Minimize", @"")];
-						if ([item isEnabled]) {
-							[menu performActionForItemAtIndex:[menu indexOfItem:item]];
-						}
-					}
+					[Controller co_performMenuActionInMenu:[NSApp mainMenu] parentTitle:NSLocalizedString(@"Window", @"") itemTitle:NSLocalizedString(@"Minimize", @"")];
 					break;
 				default:
 					break;
@@ -1705,33 +1696,15 @@ static BOOL appleRemoteHoldDown = NO;
 					break;
 				case 60:
 					//openTheLastPage
-				{
-					NSMenu *menu = [[[NSApp mainMenu] itemWithTitle:NSLocalizedString(@"File", @"")] submenu];
-					NSMenuItem *item = [menu itemWithTitle:NSLocalizedString(@"Open the last page", @"")];
-					if ([item isEnabled]) {
-						[menu performActionForItemAtIndex:[menu indexOfItem:item]];
-					}
-				}
+					[Controller co_performMenuActionInMenu:[NSApp mainMenu] parentTitle:NSLocalizedString(@"File", @"") itemTitle:NSLocalizedString(@"Open the last page", @"")];
 					break;
 				case 61:
 					//switchFullScreen
-				{
-					NSMenu *menu = [[[NSApp mainMenu] itemWithTitle:NSLocalizedString(@"Window", @"")] submenu];
-					NSMenuItem *item = [menu itemWithTitle:NSLocalizedString(@"Fullscreen", @"")];
-					if ([item isEnabled]) {
-						[menu performActionForItemAtIndex:[menu indexOfItem:item]];
-					}
-				}
+					[Controller co_performMenuActionInMenu:[NSApp mainMenu] parentTitle:NSLocalizedString(@"Window", @"") itemTitle:NSLocalizedString(@"Fullscreen", @"")];
 					break;
 				case 62:
 					//minimizeWindow
-				{
-					NSMenu *menu = [[[NSApp mainMenu] itemWithTitle:NSLocalizedString(@"Window", @"")] submenu];
-					NSMenuItem *item = [menu itemWithTitle:NSLocalizedString(@"Minimize", @"")];
-					if ([item isEnabled]) {
-						[menu performActionForItemAtIndex:[menu indexOfItem:item]];
-					}
-				}
+					[Controller co_performMenuActionInMenu:[NSApp mainMenu] parentTitle:NSLocalizedString(@"Window", @"") itemTitle:NSLocalizedString(@"Minimize", @"")];
 					break;
 				default:
 					break;
