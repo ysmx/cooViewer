@@ -1,0 +1,35 @@
+name: CI
+
+on:
+  push:
+    branches: ["**"]
+  pull_request:
+
+permissions:
+  contents: read
+
+jobs:
+  build-and-test:
+    runs-on: macos-latest
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Show Xcode version
+        run: xcodebuild -version
+
+      - name: Build app (Development configuration)
+        run: |
+          xcodebuild \
+            -project cooViewer.xcodeproj \
+            -scheme cooViewer \
+            -configuration Development \
+            build
+
+      - name: Run cooViewerTests
+        run: |
+          xcodebuild \
+            -project cooViewer.xcodeproj \
+            -scheme cooViewerTests \
+            test
