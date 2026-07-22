@@ -102,4 +102,48 @@
 	XCTAssertEqual([loader itemCount], 3);
 }
 
+#pragma mark - savedSearch mode
+
+// A .savedSearch file's scope only makes sense as an absolute path fixed at
+// test-run time, so it's synthesized here rather than checked in as a static
+// fixture - the loader reads RawQuery/SearchCriteria.FXScopeArrayOfPaths
+// straight out of the plist and hands them to MDQueryCreate/
+// MDQuerySetSearchScope (see -[COImageLoader content:]'s savedSearch branch).
+- (NSString *)makeSavedSearchFileScopedToDirectory:(NSString *)directory
+{
+	NSDictionary *doc = @{
+		@"RawQuery": @"kMDItemFSName = '*.png'",
+		@"SearchCriteria": @{@"FXScopeArrayOfPaths": @[directory]},
+	};
+	NSString *path = [directory stringByAppendingPathComponent:@"query.savedSearch"];
+	XCTAssertTrue([doc writeToFile:path atomically:YES], @"failed to write .savedSearch fixture");
+	return path;
+}
+
+// MDQueryExecute(kMDQuerySynchronous) only searches whatever mdworker has
+// already indexed - it does not wait for indexing to catch up, and a
+// directory created moments ago by this same test may not be searchable yet
+// (more so on a fresh CI checkout, where Spotlight indexing can even be
+// disabled entirely). Poll briefly for the index to catch up; skip (rather
+// than fail) if it never does, since that reflects the test environment, not
+// -[COImageLoader content:]'s own correctness.
+- (void)testSavedSearchModeFindsScopedResults
+{
+	NSString *directory = [self makeTempDirectoryWithSampleImages];
+	NSString *savedSearchPath = [self makeSavedSearchFileScopedToDirectory:directory];
+
+	COImageLoader *loader = nil;
+	NSDate *deadline = [NSDate dateWithTimeIntervalSinceNow:3.0];
+	do {
+		loader = [[COImageLoader alloc] initWithPath:savedSearchPath readSubFolder:NO controller:nil];
+		if ([loader itemCount] == 3) break;
+		[NSThread sleepForTimeInterval:0.5];
+	} while ([[NSDate date] compare:deadline] == NSOrderedAscending);
+
+	if ([loader itemCount] != 3) {
+		XCTSkip(@"Spotlight/mdworker hadn't indexed the fixture directory within 3s - inconclusive in this environment, not a loader failure");
+	}
+	XCTAssertEqual([loader mode], COImageLoaderModeSavedSearch);
+}
+
 @end
