@@ -841,7 +841,15 @@
 -(NSRect)pageBarLayoutRectForContentFrame:(NSRect)contentFrame avoidPageString:(BOOL)avoidPageString
 {
 	NSRect rect = [ViewerAccessoryGeometry pageBarLayoutRectWithContentFrame:contentFrame margin:pageBarMargin widthValue:pageBarWidth heightValue:pageBarHeight position:pageBarPosition];
-	if (avoidPageString && pageString && !autoHidedPageString) {
+	// Deliberately ignores autoHidedPageString: this rect also backs
+	// -setInfoString:'s notice anchor (infoBarAnchorRect), which is
+	// re-snapshotted whenever the notice's text changes (e.g. "start
+	// slideshow" -> "stop slideshow"). If the shift here depended on the
+	// page string's momentary auto-hidden state, those two snapshots could
+	// land on different base positions (shifted vs. default) whenever the
+	// string happened to auto-hide in between, making the notice jump to
+	// sit right on top of the page bar/page string's slot. See #62.
+	if (avoidPageString && pageString) {
 		NSRect stringRect = [ViewerAccessoryGeometry pageStringLayoutRectWithContentFrame:contentFrame string:pageString margin:pageMargin position:pageStringPosition];
 		if (!NSIsEmptyRect(stringRect) && pageStringPosition == pageBarPosition) {
 			if ([ViewerAccessoryGeometry placementIsRight:pageBarPosition]) {
