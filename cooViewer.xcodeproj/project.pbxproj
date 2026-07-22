@@ -42,6 +42,8 @@
 		31FD081B418E48ABA13ECEFC /* ViewerPageGeometry.swift in Sources */ = {isa = PBXBuildFile; fileRef = 69661E1AA37C4876894F1180 /* ViewerPageGeometry.swift */; };
 		62DD493C50994A40BA43E38C /* ViewerActionResolver.swift in Sources */ = {isa = PBXBuildFile; fileRef = 778685921B8543A1AF67D061 /* ViewerActionResolver.swift */; };
 		5680D3FBE37D4F65917A9204 /* ViewerActionResolver.swift in Sources */ = {isa = PBXBuildFile; fileRef = 778685921B8543A1AF67D061 /* ViewerActionResolver.swift */; };
+		A4628D60A8774FAA97251505 /* NSDictionary_Adding.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1BA89CF8F4C9476896015379 /* NSDictionary_Adding.swift */; };
+		C179A0F9BFD64B31A22DB0EB /* NSDictionary_Adding.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1BA89CF8F4C9476896015379 /* NSDictionary_Adding.swift */; };
 		646858750305401D9CDA569D /* COImageLoader.m in Sources */ = {isa = PBXBuildFile; fileRef = 76344C0909595C74003761DA /* COImageLoader.m */; settings = {COMPILER_FLAGS = "-fno-objc-arc"; }; };
 		6EACAA1DF1944C7889C55F47 /* COPDFImage.m in Sources */ = {isa = PBXBuildFile; fileRef = 76B88ED0097FC1D8006DDB12 /* COPDFImage.m */; settings = {COMPILER_FLAGS = "-fno-objc-arc"; }; };
 		97290FC3596143A491D2C5CB /* COPDFImageRep.m in Sources */ = {isa = PBXBuildFile; fileRef = 7655CDCE09806A8F00465FD1 /* COPDFImageRep.m */; settings = {COMPILER_FLAGS = "-fno-objc-arc"; }; };
@@ -94,8 +96,6 @@
 		76A68049080A8E6E00440F6B /* icon.icns in Resources */ = {isa = PBXBuildFile; fileRef = 76A68048080A8E6E00440F6B /* icon.icns */; };
 		76B19AC307C9C15A00A6FB97 /* Controller.h in Headers */ = {isa = PBXBuildFile; fileRef = 76B19AC107C9C15A00A6FB97 /* Controller.h */; };
 		76B19AC407C9C15A00A6FB97 /* Controller.m in Sources */ = {isa = PBXBuildFile; fileRef = 76B19AC207C9C15A00A6FB97 /* Controller.m */; };
-		76B85F8D099BB20B0077A211 /* NSDictionary_Adding.h in Headers */ = {isa = PBXBuildFile; fileRef = 76B85F8B099BB20B0077A211 /* NSDictionary_Adding.h */; };
-		76B85F8E099BB20B0077A211 /* NSDictionary_Adding.m in Sources */ = {isa = PBXBuildFile; fileRef = 76B85F8C099BB20B0077A211 /* NSDictionary_Adding.m */; };
 		76B88ED1097FC1D8006DDB12 /* COPDFImage.h in Headers */ = {isa = PBXBuildFile; fileRef = 76B88ECF097FC1D8006DDB12 /* COPDFImage.h */; };
 		76B88ED2097FC1D8006DDB12 /* COPDFImage.m in Sources */ = {isa = PBXBuildFile; fileRef = 76B88ED0097FC1D8006DDB12 /* COPDFImage.m */; };
 		76C6BEA708C2927300377076 /* PreferenceController.h in Headers */ = {isa = PBXBuildFile; fileRef = 76C6BEA508C2927300377076 /* PreferenceController.h */; };
@@ -175,6 +175,7 @@
 		761B469D0D61E95D00667B2A /* AccessoryView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = AccessoryView.m; sourceTree = "<group>"; };
 		69661E1AA37C4876894F1180 /* ViewerPageGeometry.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ViewerPageGeometry.swift; sourceTree = "<group>"; };
 		778685921B8543A1AF67D061 /* ViewerActionResolver.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ViewerActionResolver.swift; sourceTree = "<group>"; };
+		1BA89CF8F4C9476896015379 /* NSDictionary_Adding.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NSDictionary_Adding.swift; sourceTree = "<group>"; };
 		EF975869F00B4F319CDA9B3B /* AccessoryGeometry.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = AccessoryGeometry.h; sourceTree = "<group>"; };
 		AEF0D05A3AC34B82A1B5FC0E /* AccessoryGeometry.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = AccessoryGeometry.m; sourceTree = "<group>"; };
 		761B46A20D61E97900667B2A /* AccessoryWindow.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = AccessoryWindow.h; sourceTree = "<group>"; };
@@ -217,8 +218,6 @@
 		76A68048080A8E6E00440F6B /* icon.icns */ = {isa = PBXFileReference; lastKnownFileType = image.icns; path = icon.icns; sourceTree = "<group>"; };
 		76B19AC107C9C15A00A6FB97 /* Controller.h */ = {isa = PBXFileReference; fileEncoding = 0; lastKnownFileType = sourcecode.c.h; path = Controller.h; sourceTree = "<group>"; };
 		76B19AC207C9C15A00A6FB97 /* Controller.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = Controller.m; sourceTree = "<group>"; };
-		76B85F8B099BB20B0077A211 /* NSDictionary_Adding.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = NSDictionary_Adding.h; sourceTree = "<group>"; };
-		76B85F8C099BB20B0077A211 /* NSDictionary_Adding.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = NSDictionary_Adding.m; sourceTree = "<group>"; };
 		76B88ECF097FC1D8006DDB12 /* COPDFImage.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = COPDFImage.h; sourceTree = "<group>"; };
 		76B88ED0097FC1D8006DDB12 /* COPDFImage.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = COPDFImage.m; sourceTree = "<group>"; };
 		76C6BEA508C2927300377076 /* PreferenceController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PreferenceController.h; sourceTree = "<group>"; };
@@ -596,8 +595,7 @@
 				761C25AC0D5F4D9F0038687B /* NSBezierPath_Adding.m */,
 				76705AE40885785900FEF4E2 /* NSString_Compare.h */,
 				76705AE50885785900FEF4E2 /* NSString_Compare.m */,
-				76B85F8B099BB20B0077A211 /* NSDictionary_Adding.h */,
-				76B85F8C099BB20B0077A211 /* NSDictionary_Adding.m */,
+				1BA89CF8F4C9476896015379 /* NSDictionary_Adding.swift */,
 				762259610D426E3800161AC8 /* NSNumberFormatter_Adding.h */,
 				762259620D426E3800161AC8 /* NSNumberFormatter_Adding.m */,
 				767EEA1F0D5F6C8800522A56 /* NSAttributedString_Adding.h */,
@@ -640,7 +638,6 @@
 				76B88ED1097FC1D8006DDB12 /* COPDFImage.h in Headers */,
 				7655CDCF09806A8F00465FD1 /* COPDFImageRep.h in Headers */,
 				766DE03809936CF5004DD915 /* COColorPopUpButton.h in Headers */,
-				76B85F8D099BB20B0077A211 /* NSDictionary_Adding.h in Headers */,
 				A31C5A9923CA3D6300DD4E70 /* FilterPanelController.h in Headers */,
 				7696BFDD0C369D6F0081E12E /* COPopUpTextField.h in Headers */,
 				763759390C3913050047DF92 /* ThumbnailMatrix.h in Headers */,
@@ -784,6 +781,7 @@
 				CF2D54B6155E4DEA8ADE3095 /* AccessoryGeometry.m in Sources */,
 				31FD081B418E48ABA13ECEFC /* ViewerPageGeometry.swift in Sources */,
 				5680D3FBE37D4F65917A9204 /* ViewerActionResolver.swift in Sources */,
+				C179A0F9BFD64B31A22DB0EB /* NSDictionary_Adding.swift in Sources */,
 				646858750305401D9CDA569D /* COImageLoader.m in Sources */,
 				6EACAA1DF1944C7889C55F47 /* COPDFImage.m in Sources */,
 				97290FC3596143A491D2C5CB /* COPDFImageRep.m in Sources */,
@@ -813,7 +811,6 @@
 				76B88ED2097FC1D8006DDB12 /* COPDFImage.m in Sources */,
 				7655CDD009806A8F00465FD1 /* COPDFImageRep.m in Sources */,
 				766DE03909936CF5004DD915 /* COColorPopUpButton.m in Sources */,
-				76B85F8E099BB20B0077A211 /* NSDictionary_Adding.m in Sources */,
 				7696BFDE0C369D6F0081E12E /* COPopUpTextField.m in Sources */,
 				7637593A0C3913050047DF92 /* ThumbnailMatrix.m in Sources */,
 				763EFA1C0D3B27FB0014522D /* ThumbnailController.m in Sources */,
@@ -826,6 +823,7 @@
 				9265DED0A68145A1B6677098 /* AccessoryGeometry.m in Sources */,
 				13F55E4E41A24AA19C9B9769 /* ViewerPageGeometry.swift in Sources */,
 				62DD493C50994A40BA43E38C /* ViewerActionResolver.swift in Sources */,
+				A4628D60A8774FAA97251505 /* NSDictionary_Adding.swift in Sources */,
 				761B46A50D61E97900667B2A /* AccessoryWindow.m in Sources */,
 				A31C5A9A23CA3D6300DD4E70 /* FilterPanelController.m in Sources */,
 				769762A80D657268009CFDBE /* AccessorySettingView.m in Sources */,
