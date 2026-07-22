@@ -115,8 +115,6 @@
 		76D5AA470D69E41C0057EF7A /* HIDRemoteControlDevice.m in Sources */ = {isa = PBXBuildFile; fileRef = 76D5AA430D69E41C0057EF7A /* HIDRemoteControlDevice.m */; };
 		76D5AA510D69E42D0057EF7A /* AppleRemote.h in Headers */ = {isa = PBXBuildFile; fileRef = 76D5AA490D69E42D0057EF7A /* AppleRemote.h */; };
 		76D5AA520D69E42D0057EF7A /* AppleRemote.m in Sources */ = {isa = PBXBuildFile; fileRef = 76D5AA4A0D69E42D0057EF7A /* AppleRemote.m */; };
-		76D5AA530D69E42D0057EF7A /* KeyspanFrontRowControl.h in Headers */ = {isa = PBXBuildFile; fileRef = 76D5AA4B0D69E42D0057EF7A /* KeyspanFrontRowControl.h */; };
-		76D5AA540D69E42D0057EF7A /* KeyspanFrontRowControl.m in Sources */ = {isa = PBXBuildFile; fileRef = 76D5AA4C0D69E42D0057EF7A /* KeyspanFrontRowControl.m */; };
 		76D80A360C36499800A5E84C /* up.tiff in Resources */ = {isa = PBXBuildFile; fileRef = 76D80A340C36499800A5E84C /* up.tiff */; };
 		76E56F520D74647100128802 /* MultiClickRemoteBehavior.h in Headers */ = {isa = PBXBuildFile; fileRef = 76D5AA3D0D69E3FC0057EF7A /* MultiClickRemoteBehavior.h */; };
 		76E56F530D74647400128802 /* MultiClickRemoteBehavior.m in Sources */ = {isa = PBXBuildFile; fileRef = 76D5AA3E0D69E3FC0057EF7A /* MultiClickRemoteBehavior.m */; };
@@ -237,8 +235,6 @@
 		76D5AA430D69E41C0057EF7A /* HIDRemoteControlDevice.m */ = {isa = PBXFileReference; fileEncoding = 0; lastKnownFileType = sourcecode.c.objc; path = HIDRemoteControlDevice.m; sourceTree = "<group>"; };
 		76D5AA490D69E42D0057EF7A /* AppleRemote.h */ = {isa = PBXFileReference; fileEncoding = 0; lastKnownFileType = sourcecode.c.h; path = AppleRemote.h; sourceTree = "<group>"; };
 		76D5AA4A0D69E42D0057EF7A /* AppleRemote.m */ = {isa = PBXFileReference; fileEncoding = 0; lastKnownFileType = sourcecode.c.objc; path = AppleRemote.m; sourceTree = "<group>"; };
-		76D5AA4B0D69E42D0057EF7A /* KeyspanFrontRowControl.h */ = {isa = PBXFileReference; fileEncoding = 0; lastKnownFileType = sourcecode.c.h; path = KeyspanFrontRowControl.h; sourceTree = "<group>"; };
-		76D5AA4C0D69E42D0057EF7A /* KeyspanFrontRowControl.m */ = {isa = PBXFileReference; fileEncoding = 0; lastKnownFileType = sourcecode.c.objc; path = KeyspanFrontRowControl.m; sourceTree = "<group>"; };
 		76D80A340C36499800A5E84C /* up.tiff */ = {isa = PBXFileReference; lastKnownFileType = image.tiff; path = up.tiff; sourceTree = "<group>"; };
 		76EA136407E3FC39008EB0E1 /* BookmarkPanel.h */ = {isa = PBXFileReference; fileEncoding = 0; lastKnownFileType = sourcecode.c.h; path = BookmarkPanel.h; sourceTree = "<group>"; };
 		76EA136507E3FC39008EB0E1 /* BookmarkPanel.m */ = {isa = PBXFileReference; fileEncoding = 0; lastKnownFileType = sourcecode.c.objc; path = BookmarkPanel.m; sourceTree = "<group>"; };
@@ -556,8 +552,6 @@
 			children = (
 				76D5AA490D69E42D0057EF7A /* AppleRemote.h */,
 				76D5AA4A0D69E42D0057EF7A /* AppleRemote.m */,
-				76D5AA4B0D69E42D0057EF7A /* KeyspanFrontRowControl.h */,
-				76D5AA4C0D69E42D0057EF7A /* KeyspanFrontRowControl.m */,
 			);
 			name = Devices;
 			path = Sources/Remote;
@@ -651,7 +645,6 @@
 				76D5AA440D69E41C0057EF7A /* RemoteControl.h in Headers */,
 				76D5AA460D69E41C0057EF7A /* HIDRemoteControlDevice.h in Headers */,
 				76D5AA510D69E42D0057EF7A /* AppleRemote.h in Headers */,
-				76D5AA530D69E42D0057EF7A /* KeyspanFrontRowControl.h in Headers */,
 				76E56F520D74647100128802 /* MultiClickRemoteBehavior.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -830,7 +823,6 @@
 				76D5AA450D69E41C0057EF7A /* RemoteControl.m in Sources */,
 				76D5AA470D69E41C0057EF7A /* HIDRemoteControlDevice.m in Sources */,
 				76D5AA520D69E42D0057EF7A /* AppleRemote.m in Sources */,
-				76D5AA540D69E42D0057EF7A /* KeyspanFrontRowControl.m in Sources */,
 				76E56F530D74647400128802 /* MultiClickRemoteBehavior.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
