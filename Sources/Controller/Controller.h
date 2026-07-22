@@ -9,7 +9,6 @@
 #import "COImageLoader.h"
 
 #import "AppleRemote.h"
-#import "KeyspanFrontRowControl.h"
 #import "MultiClickRemoteBehavior.h"
 
 @class RemoteControl;
