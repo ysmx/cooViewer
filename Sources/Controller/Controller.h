@@ -1,9 +1,6 @@
 /* Controller */
 
 #import <Cocoa/Cocoa.h>
-#import "ThumbnailController.h"
-#import "BookmarkController.h"
-#import "PreferenceController.h"
 #import "NSString_Compare.h"
 
 #import "COImageLoader.h"
@@ -11,8 +8,22 @@
 #import "AppleRemote.h"
 #import "MultiClickRemoteBehavior.h"
 
+// Forward-declared (not #import-ed) to avoid the circular #import these
+// headers each have back to Controller.h: ThumbnailController.h/
+// BookmarkController.h/PreferenceController.h all #import "Controller.h"
+// themselves, and whichever of the two headers a given translation unit
+// includes first "wins" the include-guard race, leaving the other's class
+// undeclared at the point Controller's ivars need it. See Controller.m/
+// Controller_input.m for the real #import of these headers.
 @class RemoteControl;
 @class MultiClickRemoteBehavior;
+@class FullImagePanel;
+@class FullImageView;
+@class CustomImageView;
+@class CustomWindow;
+@class ThumbnailController;
+@class BookmarkController;
+@class PreferenceController;
 
 @interface Controller : NSObject
 {
@@ -35,9 +46,9 @@
 	NSMutableArray *screenCacheArray;
 	
 	//NSWindow *accWindow;
-	IBOutlet id progressIndicator;
+	IBOutlet NSProgressIndicator *progressIndicator;
 	int rotateMode;
-	IBOutlet id openRecentMenuItem;	
+	IBOutlet NSMenuItem *openRecentMenuItem;
 	
 	BOOL alwaysRememberLastPage;
 	
@@ -49,7 +60,7 @@
 	
 	COImageLoader *imageLoader;
 	
-	IBOutlet id prefController;	
+	IBOutlet PreferenceController *prefController;
 	
 	int bufferingMode;
 	
@@ -76,7 +87,7 @@
 	
 	
 	
-	IBOutlet id thumController;
+	IBOutlet ThumbnailController *thumController;
 	
 	float wheelSensitivity;
 
@@ -85,31 +96,29 @@
 	
 	NSTimer *wheelUpTimer;
 	NSTimer *wheelDownTimer;
-	IBOutlet id bookmarkController;
+	IBOutlet BookmarkController *bookmarkController;
 	BOOL readSubFolder;
-	
-    IBOutlet id normalWindow;
-	
+
 	int loopCheck;
-	
-	IBOutlet id fullImagePanel;
-    IBOutlet id fullImageView;
-	
-	
-	IBOutlet id openSameFolderMenuItem;
-	
-	
-	IBOutlet id passPanel;
-    IBOutlet id passTextField;
-	
+
+	IBOutlet FullImagePanel *fullImagePanel;
+    IBOutlet FullImageView *fullImageView;
+
+
+	IBOutlet NSMenuItem *openSameFolderMenuItem;
+
+
+	IBOutlet NSPanel *passPanel;
+    IBOutlet NSTextField *passTextField;
+
     //IBOutlet id pageTextField;
-	
-    IBOutlet id imageView;
-    IBOutlet id window;
-	
+
+    IBOutlet CustomImageView *imageView;
+    IBOutlet CustomWindow *window;
+
 	int maxEnlargement;
-	
-    IBOutlet id bookmarkMenuItem;
+
+    IBOutlet NSMenu *bookmarkMenuItem;
 	
 	
 	NSUserDefaults *defaults;

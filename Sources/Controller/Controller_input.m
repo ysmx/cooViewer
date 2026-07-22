@@ -4,6 +4,9 @@
 #import "BookmarkController.h"
 #import "CustomImageView.h"
 #import "FullImagePanel.h"
+#import "FullImageView.h"
+#import "ThumbnailController.h"
+#import "PreferenceController.h"
 
 @interface Controller (SortPrivate)
 - (BOOL)co_sortModeSupportsDescending:(int)mode;
