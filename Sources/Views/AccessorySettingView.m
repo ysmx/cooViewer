@@ -7,6 +7,7 @@
 //
 
 #import "AccessorySettingView.h"
+#import "cooViewer-Swift.h"
 #import "NSBezierPath_Adding.h"
 #import "NSAttributedString_Adding.h"
 #import "Controller.h"
@@ -118,7 +119,7 @@
 					[path moveToPoint:NSMakePoint(pageBarRect.origin.x,[self visibleRect].size.height)];
 					[path lineToPoint:NSMakePoint(pageBarRect.origin.x,pageBarRect.origin.y+pageBarRect.size.height)];
 					break;
-				case COAccessoryPlacementTopCenter:
+				case 4:
 					[path moveToPoint:NSMakePoint(NSMidX(pageBarRect),pageBarRect.origin.y+pageBarRect.size.height)];
 					[path lineToPoint:NSMakePoint(NSMidX(pageBarRect),[self visibleRect].size.height)];
 					break;
@@ -134,7 +135,7 @@
 					[path moveToPoint:NSMakePoint(pageBarRect.origin.x,0)];
 					[path lineToPoint:NSMakePoint(pageBarRect.origin.x,pageBarRect.origin.y)];
 					break;
-				case COAccessoryPlacementBottomCenter:
+				case 5:
 					[path moveToPoint:NSMakePoint(NSMidX(pageBarRect),0)];
 					[path lineToPoint:NSMakePoint(NSMidX(pageBarRect),pageBarRect.origin.y)];
 					break;
@@ -165,7 +166,7 @@
 					[path moveToPoint:NSMakePoint(pageStringRect.origin.x,[self visibleRect].size.height)];
 					[path lineToPoint:NSMakePoint(pageStringRect.origin.x,pageStringRect.origin.y+pageStringRect.size.height)];
 					break;
-				case COAccessoryPlacementTopCenter:
+				case 4:
 					[path moveToPoint:NSMakePoint(NSMidX(pageStringRect),pageStringRect.origin.y+pageStringRect.size.height)];
 					[path lineToPoint:NSMakePoint(NSMidX(pageStringRect),[self visibleRect].size.height)];
 					break;
@@ -181,7 +182,7 @@
 					[path moveToPoint:NSMakePoint(pageStringRect.origin.x,0)];
 					[path lineToPoint:NSMakePoint(pageStringRect.origin.x,pageStringRect.origin.y)];
 					break;
-				case COAccessoryPlacementBottomCenter:
+				case 5:
 					[path moveToPoint:NSMakePoint(NSMidX(pageStringRect),0)];
 					[path lineToPoint:NSMakePoint(NSMidX(pageStringRect),pageStringRect.origin.y)];
 					break;
@@ -218,13 +219,13 @@
 
 -(void)resetPageNumberPositionToDefaults
 {
-	[self setAccessoryPlacement:COAccessoryPlacementTopLeft];
+	[self setAccessoryPlacement:[ViewerAccessoryGeometry placementTopLeft]];
 	[self display];
 }
 
 -(void)resetPageBarPositionAndSizeToDefaults
 {
-	[self setAccessoryPlacement:COAccessoryPlacementTopLeft];
+	[self setAccessoryPlacement:[ViewerAccessoryGeometry placementTopLeft]];
 	pageBarWidth = 200;
 	pageBarHeight = 15;
 	pageBarRect = [self pageBarRect];
@@ -235,8 +236,8 @@
 {
 	if (b) {
 		positionSettingMode = 1;
-		if (pageStringPosition < COAccessoryPlacementTopLeft || pageStringPosition > COAccessoryPlacementBottomCenter) {
-			pageStringPosition = COAccessoryPlacementTopLeft;
+		if (pageStringPosition < [ViewerAccessoryGeometry placementTopLeft] || pageStringPosition > [ViewerAccessoryGeometry placementBottomCenter]) {
+			pageStringPosition = [ViewerAccessoryGeometry placementTopLeft];
 		}
 		[self setAccessoryPlacement:pageStringPosition];
 	} else {
@@ -283,12 +284,12 @@
 	BOOL top = (point.y >= NSMidY(rect));
 	
 	if (point.x < leftThird) {
-		return top ? COAccessoryPlacementTopLeft : COAccessoryPlacementBottomLeft;
+		return top ? [ViewerAccessoryGeometry placementTopLeft] : [ViewerAccessoryGeometry placementBottomLeft];
 	}
 	if (point.x >= rightThird) {
-		return top ? COAccessoryPlacementTopRight : COAccessoryPlacementBottomRight;
+		return top ? [ViewerAccessoryGeometry placementTopRight] : [ViewerAccessoryGeometry placementBottomRight];
 	}
-	return top ? COAccessoryPlacementTopCenter : COAccessoryPlacementBottomCenter;
+	return top ? [ViewerAccessoryGeometry placementTopCenter] : [ViewerAccessoryGeometry placementBottomCenter];
 }
 
 -(void)setAccessoryPlacement:(int)placement
