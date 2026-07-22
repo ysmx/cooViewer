@@ -47,6 +47,17 @@
 	return [pdfRep size];
 }
 
+// NSImageView's default drawing (used by FullImageView for "View at Original
+// Size") calls this single-rect convenience method rather than the legacy
+// 4-arg one below, so without this override PDF pages render blank there -
+// CustomImageView's own -drawRect: calls the 4-arg version directly and was
+// never affected. Forward with an empty srcRect, matching how the 4-arg
+// version's own NSIsEmptyRect(srcRect) branch already draws a full page.
+- (void)drawInRect:(NSRect)dstRect
+{
+	[self drawInRect:dstRect fromRect:NSZeroRect operation:NSCompositingOperationSourceOver fraction:1.0];
+}
+
 - (void)drawInRect:(NSRect)dstRect fromRect:(NSRect)srcRect operation:(NSCompositingOperation)op fraction:(CGFloat)delta
 {
 	[pdfRep setCurrentPage:page];

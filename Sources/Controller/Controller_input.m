@@ -1709,6 +1709,19 @@ static BOOL appleRemoteHoldDown = NO;
 	}*/
 }
 
+- (NSImage *)co_imageForFullSizeDisplay:(NSImage *)image
+{
+	if (![image isKindOfClass:[COPDFImage class]]) {
+		return image;
+	}
+	NSSize size = [image size];
+	NSImage *raster = [[[NSImage alloc] initWithSize:size] autorelease];
+	[raster lockFocus];
+	[image drawInRect:NSMakeRect(0, 0, size.width, size.height) fromRect:NSZeroRect operation:NSCompositingOperationSourceOver fraction:1.0];
+	[raster unlockFocus];
+	return raster;
+}
+
 - (IBAction)viewAtOriginalSizeFirst:(id)sender
 {
 	if (timerSwitch) {
@@ -1720,14 +1733,15 @@ static BOOL appleRemoteHoldDown = NO;
 	[fullImageView setImage:nil];
 	[fullImageView setImageScaling:NSImageScaleNone];
 	int i;
+	NSImage *displayImage = [self co_imageForFullSizeDisplay:firstImage];
 	if (!secondImage) {
 		i = nowPage - 1;
-		[fullImageView setImage:firstImage];
+		[fullImageView setImage:displayImage];
 	} else {
 		i = nowPage - 2;
-		[fullImageView setImage:firstImage];
+		[fullImageView setImage:displayImage];
 	}
-	
+
     NSSize theScrollViewSize = [NSScrollView
                                 frameSizeForContentSize:[fullImageView frame].size
                                 horizontalScrollerClass:nil
@@ -1774,10 +1788,10 @@ static BOOL appleRemoteHoldDown = NO;
 	int i;
 	if (!secondImage) {
 		i = nowPage - 1;
-		[fullImageView setImage:firstImage];
+		[fullImageView setImage:[self co_imageForFullSizeDisplay:firstImage]];
 	} else {
 		i = nowPage - 1;
-		[fullImageView setImage:secondImage];
+		[fullImageView setImage:[self co_imageForFullSizeDisplay:secondImage]];
 	}
     NSSize theScrollViewSize = [NSScrollView
                                 frameSizeForContentSize:[fullImageView frame].size
