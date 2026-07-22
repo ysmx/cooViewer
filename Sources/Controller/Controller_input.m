@@ -2262,79 +2262,59 @@ static BOOL appleRemoteHoldDown = NO;
 	}
 }
 
+- (NSString *)co_bookmarkTitleForPage:(int)page
+{
+	NSEnumerator *enumerator = [bookmarkArray objectEnumerator];
+	id object;
+	while (object = [enumerator nextObject]) {
+		if ([[object objectForKey:@"page"] intValue] == page) {
+			return [object objectForKey:@"name"];
+		}
+	}
+	return nil;
+}
+
+- (void)co_jumpToBookmarkPage:(int)page
+{
+	nowPage = page - 1;
+	[imageMutableArray removeAllObjects];
+	[self lookahead];
+	[self imageDisplay];
+	[imageView setInfoString:[self co_bookmarkTitleForPage:page]];
+}
+
 -(void)nextBookmark
 {
 	useComposedImage = NO;
-	NSMutableArray *oldArray = [NSMutableArray array];
+	NSMutableArray *pages = [NSMutableArray array];
 	int i;
 	for (i = 0; i < [bookmarkArray count]; i++) {
-		NSNumber *number = [NSNumber numberWithInt:[ [[bookmarkArray objectAtIndex:i] objectForKey:@"page"] intValue]];
-		[oldArray addObject:number];
+		[pages addObject:[NSNumber numberWithInt:[[[bookmarkArray objectAtIndex:i] objectForKey:@"page"] intValue]]];
 	}
-	NSArray *newArray = [oldArray sortedArrayUsingSelector:@selector(compare:)];
-	for (i = 0; i<[newArray count]; i++) {
-		int iS = [[newArray objectAtIndex:i] intValue];
-		int iSS = nowPage;
-		if (secondImage) {
-			iSS--;
-		}
-		if (iS > iSS) {
-			NSEnumerator *enumerator = [bookmarkArray objectEnumerator];
-			id object;
-            NSString *bookmarkTitle = nil;
-			while (object = [enumerator nextObject]) {
-				if ([[object objectForKey:@"page"] intValue] == iS){
-					bookmarkTitle = [object objectForKey:@"name"];
-					break;
-				}
-			}
-			
-			nowPage = iS - 1;
-			[imageMutableArray removeAllObjects];
-			[self lookahead];
-			[self imageDisplay];
-			[imageView setInfoString:bookmarkTitle];
-			break;
-		}
+	int currentEffectivePage = nowPage;
+	if (secondImage) {
+		currentEffectivePage--;
 	}
+	NSNumber *target = [ViewerBookmarkSearch nextBookmarkPageWithBookmarkPages:pages currentEffectivePage:currentEffectivePage];
+	if (!target) return;
+	[self co_jumpToBookmarkPage:[target intValue]];
 }
 
 -(void)backBookmark
 {
 	useComposedImage = NO;
-	NSMutableArray *oldArray = [NSMutableArray array];
+	NSMutableArray *pages = [NSMutableArray array];
 	int i;
 	for (i = 0; i < [bookmarkArray count]; i++) {
-		NSNumber *number = [NSNumber numberWithInt:[ [[bookmarkArray objectAtIndex:i] objectForKey:@"page"] intValue]];
-		[oldArray addObject:number];
+		[pages addObject:[NSNumber numberWithInt:[[[bookmarkArray objectAtIndex:i] objectForKey:@"page"] intValue]]];
 	}
-	NSArray *newArray = [oldArray sortedArrayUsingSelector:@selector(compare:)];
-	for (i = (int)[newArray count]-1; i >= 0; i--) {
-		int iS = [[newArray objectAtIndex:i] intValue];
-		int iSS = nowPage;
-		if (secondImage) {
-			iSS--;
-		}
-		if (iS < iSS) {
-			
-			NSEnumerator *enumerator = [bookmarkArray objectEnumerator];
-			id object;
-            NSString *bookmarkTitle = nil;
-			while (object = [enumerator nextObject]) {
-				if ([[object objectForKey:@"page"] intValue] == iS){
-					bookmarkTitle = [object objectForKey:@"name"];
-					break;
-				}
-			}
-			
-			nowPage = iS - 1;
-			[imageMutableArray removeAllObjects];
-			[self lookahead];
-			[self imageDisplay];
-			[imageView setInfoString:bookmarkTitle];
-			break;
-		}
+	int currentEffectivePage = nowPage;
+	if (secondImage) {
+		currentEffectivePage--;
 	}
+	NSNumber *target = [ViewerBookmarkSearch previousBookmarkPageWithBookmarkPages:pages currentEffectivePage:currentEffectivePage];
+	if (!target) return;
+	[self co_jumpToBookmarkPage:[target intValue]];
 }
 
 -(void)nextFolder
