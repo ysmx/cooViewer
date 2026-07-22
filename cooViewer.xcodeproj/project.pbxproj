@@ -84,7 +84,8 @@
 		766DE03809936CF5004DD915 /* COColorPopUpButton.h in Headers */ = {isa = PBXBuildFile; fileRef = 766DE03609936CF4004DD915 /* COColorPopUpButton.h */; };
 		766DE03909936CF5004DD915 /* COColorPopUpButton.m in Sources */ = {isa = PBXBuildFile; fileRef = 766DE03709936CF4004DD915 /* COColorPopUpButton.m */; };
 		76705AE60885785900FEF4E2 /* NSString_Compare.h in Headers */ = {isa = PBXBuildFile; fileRef = 76705AE40885785900FEF4E2 /* NSString_Compare.h */; };
-		76705AE70885785900FEF4E2 /* NSString_Compare.m in Sources */ = {isa = PBXBuildFile; fileRef = 76705AE50885785900FEF4E2 /* NSString_Compare.m */; };
+		862D970B2CF3409D9C9E1295 /* NSString_Compare.swift in Sources */ = {isa = PBXBuildFile; fileRef = FFA68B8189844D70B893336F /* NSString_Compare.swift */; };
+		77D9DD3BE1444DA0A9B79999 /* NSString_Compare.swift in Sources */ = {isa = PBXBuildFile; fileRef = FFA68B8189844D70B893336F /* NSString_Compare.swift */; };
 		768C80130838765500E6C5C8 /* left.tiff in Resources */ = {isa = PBXBuildFile; fileRef = 768C80120838765500E6C5C8 /* left.tiff */; };
 		768C802F0838777900E6C5C8 /* right.tiff in Resources */ = {isa = PBXBuildFile; fileRef = 768C802E0838777900E6C5C8 /* right.tiff */; };
 		768E1DEC07CC6B740023AF61 /* CustomWindow.h in Headers */ = {isa = PBXBuildFile; fileRef = 768E1DEA07CC6B740023AF61 /* CustomWindow.h */; };
@@ -206,7 +207,7 @@
 		766DE03609936CF4004DD915 /* COColorPopUpButton.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = COColorPopUpButton.h; sourceTree = "<group>"; };
 		766DE03709936CF4004DD915 /* COColorPopUpButton.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = COColorPopUpButton.m; sourceTree = "<group>"; };
 		76705AE40885785900FEF4E2 /* NSString_Compare.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = NSString_Compare.h; sourceTree = "<group>"; };
-		76705AE50885785900FEF4E2 /* NSString_Compare.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = NSString_Compare.m; sourceTree = "<group>"; };
+		FFA68B8189844D70B893336F /* NSString_Compare.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NSString_Compare.swift; sourceTree = "<group>"; };
 		768C80120838765500E6C5C8 /* left.tiff */ = {isa = PBXFileReference; lastKnownFileType = image.tiff; path = left.tiff; sourceTree = "<group>"; };
 		768C802E0838777900E6C5C8 /* right.tiff */ = {isa = PBXFileReference; lastKnownFileType = image.tiff; path = right.tiff; sourceTree = "<group>"; };
 		768E1DEA07CC6B740023AF61 /* CustomWindow.h */ = {isa = PBXFileReference; fileEncoding = 0; lastKnownFileType = sourcecode.c.h; path = CustomWindow.h; sourceTree = "<group>"; };
@@ -596,7 +597,7 @@
 				3F6343820A9B43298B5ACCB0 /* NSBezierPath_Adding.h */,
 				E0003A0A3D534073B29AC5A7 /* NSBezierPath_Adding.swift */,
 				76705AE40885785900FEF4E2 /* NSString_Compare.h */,
-				76705AE50885785900FEF4E2 /* NSString_Compare.m */,
+				FFA68B8189844D70B893336F /* NSString_Compare.swift */,
 				1BA89CF8F4C9476896015379 /* NSDictionary_Adding.swift */,
 				762259610D426E3800161AC8 /* NSNumberFormatter_Adding.h */,
 				762259620D426E3800161AC8 /* NSNumberFormatter_Adding.m */,
@@ -786,6 +787,7 @@
 				C179A0F9BFD64B31A22DB0EB /* NSDictionary_Adding.swift in Sources */,
 				4F815D169F52411692A9EAE7 /* NSBezierPath_Adding.swift in Sources */,
 				0148FE5C5EBD467A9B564DD1 /* NSAttributedString_Adding.swift in Sources */,
+				77D9DD3BE1444DA0A9B79999 /* NSString_Compare.swift in Sources */,
 				646858750305401D9CDA569D /* COImageLoader.m in Sources */,
 				6EACAA1DF1944C7889C55F47 /* COPDFImage.m in Sources */,
 				97290FC3596143A491D2C5CB /* COPDFImageRep.m in Sources */,
@@ -807,7 +809,7 @@
 				76EF3E3607FC11CB008D6B37 /* FullImageView.m in Sources */,
 				76EF3EFA07FC33DB008D6B37 /* FullImagePanel.m in Sources */,
 				76D3F8D1082F6A5100B9E97E /* ThumbnailPanel.m in Sources */,
-				76705AE70885785900FEF4E2 /* NSString_Compare.m in Sources */,
+				862D970B2CF3409D9C9E1295 /* NSString_Compare.swift in Sources */,
 				A39D6C3523BEB597002FD912 /* LoupeView.m in Sources */,
 				76C6BEA808C2927300377076 /* PreferenceController.m in Sources */,
 				76344C0B09595C74003761DA /* COImageLoader.m in Sources */,
