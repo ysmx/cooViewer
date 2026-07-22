@@ -2642,7 +2642,7 @@ Gw
                         </connections>
                     </matrix>
                     <button fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="1345">
-                        <rect key="frame" x="141" y="362" width="25" height="25"/>
+                        <rect key="frame" x="141" y="359" width="25" height="25"/>
                         <autoresizingMask key="autoresizingMask" flexibleMinX="YES" flexibleMinY="YES"/>
                         <buttonCell key="cell" type="square" bezelStyle="shadowlessSquare" image="left" imagePosition="only" alignment="center" inset="2" id="4344">
                             <behavior key="behavior" lightByContents="YES"/>
@@ -2653,7 +2653,7 @@ Gw
                         </connections>
                     </button>
                     <button fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="1346">
-                        <rect key="frame" x="165" y="362" width="25" height="25"/>
+                        <rect key="frame" x="165" y="359" width="25" height="25"/>
                         <autoresizingMask key="autoresizingMask" flexibleMinX="YES" flexibleMinY="YES"/>
                         <buttonCell key="cell" type="square" bezelStyle="shadowlessSquare" image="right" imagePosition="only" alignment="center" inset="2" id="4345">
                             <behavior key="behavior" lightByContents="YES"/>
@@ -2664,7 +2664,7 @@ Gw
                         </connections>
                     </button>
                     <button fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="1558">
-                        <rect key="frame" x="4" y="365" width="20" height="20"/>
+                        <rect key="frame" x="4" y="362" width="20" height="20"/>
                         <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
                         <buttonCell key="cell" type="square" bezelStyle="shadowlessSquare" image="close" imagePosition="only" alignment="center" inset="2" id="4346">
                             <behavior key="behavior" lightByContents="YES"/>
@@ -2675,7 +2675,7 @@ Gw
                         </connections>
                     </button>
                     <textField verticalHuggingPriority="750" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="1243">
-                        <rect key="frame" x="483" y="366" width="122" height="19"/>
+                        <rect key="frame" x="483" y="363" width="122" height="19"/>
                         <autoresizingMask key="autoresizingMask" flexibleMinX="YES" flexibleMinY="YES"/>
                         <textFieldCell key="cell" controlSize="small" scrollable="YES" lineBreakMode="clipping" sendsActionOnEndEditing="YES" state="on" borderStyle="bezel" alignment="center" title="0" bezelStyle="round" id="4341">
                             <font key="font" metaFont="smallSystem"/>
@@ -2684,7 +2684,7 @@ Gw
                         </textFieldCell>
                     </textField>
                     <textField hidden="YES" verticalHuggingPriority="750" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="2201" customClass="COPopUpTextField">
-                        <rect key="frame" x="30" y="364" width="119" height="19"/>
+                        <rect key="frame" x="30" y="361" width="119" height="19"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" flexibleMinY="YES"/>
                         <textFieldCell key="cell" controlSize="small" lineBreakMode="truncatingMiddle" sendsActionOnEndEditing="YES" state="on" baseWritingDirection="leftToRight" alignment="left" title="0" id="4347">
                             <font key="font" metaFont="smallSystem"/>
@@ -2693,12 +2693,12 @@ Gw
                         </textFieldCell>
                     </textField>
                     <imageView fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="2278">
-                        <rect key="frame" x="198" y="362" width="60" height="25"/>
+                        <rect key="frame" x="198" y="359" width="60" height="25"/>
                         <autoresizingMask key="autoresizingMask" flexibleMinX="YES" flexibleMinY="YES"/>
                         <imageCell key="cell" refusesFirstResponder="YES" alignment="left" animates="YES" imageScaling="axesIndependently" image="base" id="4350"/>
                     </imageView>
                     <button fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="2249">
-                        <rect key="frame" x="207" y="362" width="24" height="24"/>
+                        <rect key="frame" x="207" y="359" width="24" height="24"/>
                         <autoresizingMask key="autoresizingMask" flexibleMinX="YES" flexibleMinY="YES"/>
                         <buttonCell key="cell" type="bevel" bezelStyle="regularSquare" image="comic" imagePosition="only" alignment="left" alternateImage="comic_a" inset="2" id="4349">
                             <behavior key="behavior" pushIn="YES" changeContents="YES" lightByContents="YES"/>
@@ -2709,7 +2709,7 @@ Gw
                         </connections>
                     </button>
                     <button fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="2232">
-                        <rect key="frame" x="230" y="362" width="24" height="24"/>
+                        <rect key="frame" x="230" y="359" width="24" height="24"/>
                         <autoresizingMask key="autoresizingMask" flexibleMinX="YES" flexibleMinY="YES"/>
                         <buttonCell key="cell" type="bevel" bezelStyle="regularSquare" image="bookmark" imagePosition="only" alignment="left" alternateImage="bookmark_a" inset="2" id="4348">
                             <behavior key="behavior" pushIn="YES" changeContents="YES" lightByContents="YES"/>
@@ -2720,7 +2720,7 @@ Gw
                         </connections>
                     </button>
                     <popUpButton verticalHuggingPriority="750" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="1245">
-                        <rect key="frame" x="309" y="363" width="169" height="22"/>
+                        <rect key="frame" x="309" y="360" width="169" height="22"/>
                         <autoresizingMask key="autoresizingMask" flexibleMinX="YES" flexibleMinY="YES"/>
                         <popUpButtonCell key="cell" type="push" title="Name" bezelStyle="rounded" alignment="left" controlSize="small" lineBreakMode="clipping" state="on" borderStyle="borderAndBezel" inset="2" arrowPosition="arrowAtCenter" preferredEdge="maxY" selectedItem="1247" id="4342">
                             <behavior key="behavior" pushIn="YES" lightByBackground="YES" lightByGray="YES"/>
@@ -2747,7 +2747,7 @@ Gw
                         </popUpButtonCell>
                     </popUpButton>
                     <textField verticalHuggingPriority="750" horizontalCompressionResistancePriority="250" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="1250">
-                        <rect key="frame" x="254" y="368" width="53" height="14"/>
+                        <rect key="frame" x="254" y="365" width="53" height="14"/>
                         <autoresizingMask key="autoresizingMask" flexibleMinX="YES" flexibleMinY="YES"/>
                         <textFieldCell key="cell" sendsActionOnEndEditing="YES" alignment="right" title="sort :" id="4343">
                             <font key="font" metaFont="smallSystem"/>

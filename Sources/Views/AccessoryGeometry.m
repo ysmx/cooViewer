@@ -45,12 +45,12 @@ NSRect COPageBarLayoutRect(NSRect contentFrame, NSPoint margin, float widthValue
 	switch (position) {
 		case COAccessoryPlacementTopLeft:
 			rect = NSMakeRect(contentFrame.origin.x+margin.x+2,
-							  contentFrame.size.height-17-height-margin.y-3,
+							  contentFrame.size.height-height-margin.y-3,
 							  width,height);
 			break;
 		case COAccessoryPlacementTopRight:
 			rect = NSMakeRect(contentFrame.origin.x+contentFrame.size.width-width-margin.x-3,
-							  contentFrame.origin.y-17-height+contentFrame.size.height-margin.y-3,
+							  contentFrame.origin.y-height+contentFrame.size.height-margin.y-3,
 							  width,height);
 			break;
 		case COAccessoryPlacementBottomLeft:
@@ -65,7 +65,7 @@ NSRect COPageBarLayoutRect(NSRect contentFrame, NSPoint margin, float widthValue
 			break;
 		case COAccessoryPlacementTopCenter:
 			rect = NSMakeRect(contentFrame.origin.x+(contentFrame.size.width-width)/2,
-							  contentFrame.size.height-17-height-margin.y-3,
+							  contentFrame.size.height-height-margin.y-3,
 							  width,height);
 			break;
 		case COAccessoryPlacementBottomCenter:

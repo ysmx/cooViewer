@@ -43,7 +43,8 @@
 	[button setButtonType:NSButtonTypeSwitch];
 	[button setControlSize:NSControlSizeSmall];
 	[button setFont:[NSFont systemFontOfSize:[NSFont smallSystemFontSize]]];
-	[button setTitle:NSLocalizedString(@"Descending", @"")];
+	NSDictionary *titleAttrs = @{NSFontAttributeName: [button font], NSForegroundColorAttributeName: [NSColor whiteColor]};
+	[button setAttributedTitle:[[[NSAttributedString alloc] initWithString:NSLocalizedString(@"Descending", @"") attributes:titleAttrs] autorelease]];
 	[button setTarget:self];
 	[button setAction:@selector(sortDescending:)];
 	[button setAutoresizingMask:NSViewMinXMargin | NSViewMinYMargin];
