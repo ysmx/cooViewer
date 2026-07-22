@@ -23,7 +23,8 @@
 
 	NSUserDefaults *defaults;
 	NSMutableArray *bookmarkArray;
-	
+	NSMutableArray *sourceBookmarkArray;
+
 	NSMutableDictionary *allBookmark;
 	NSMutableArray *bookNameArray;
 	
