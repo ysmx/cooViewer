@@ -100,6 +100,91 @@ static BOOL appleRemoteHoldDown = NO;
 	[imageView setLoupeRate];
 }
 
+- (void)co_performSwitchSingle
+{
+	[lock lock];
+	[lock unlock];
+	[self switchSingle:nil];
+}
+
+- (void)co_performShowNumber
+{
+	if (numberSwitch) {
+		[imageView setPageString:nil];
+		numberSwitch = NO;
+		[defaults setBool:numberSwitch forKey:@"ShowNumber"];
+	} else {
+		numberSwitch = YES;
+		[self setPageTextField];
+		[defaults setBool:numberSwitch forKey:@"ShowNumber"];
+	}
+}
+
+- (void)co_performShowThumbnail
+{
+	if (secondImage) {
+		int temp = nowPage;
+		temp--;
+		[thumController showThumbnail:temp];
+	} else {
+		[thumController showThumbnail:nowPage];
+	}
+}
+
+- (void)co_performChangeReadMode
+{
+	[lock lock];
+	[lock unlock];
+	[self changeReadMode:[ViewerReadMode nextWithCurrent:readMode]];
+}
+
+- (void)co_performShowPageBar
+{
+	if (pageBar) {
+		pageBar = NO;
+	} else {
+		pageBar = YES;
+	}
+	[defaults setBool:pageBar forKey:@"ShowPageBar"];
+	[imageView drawPageBar];
+}
+
+- (void)co_performOrigRight
+{
+	if ([self readFromLeft]) {
+		[self viewAtOriginalSizeSecond:self];
+	} else {
+		[self viewAtOriginalSizeFirst:self];
+	}
+}
+
+- (void)co_performOrigLeft
+{
+	if ([self readFromLeft]) {
+		[self viewAtOriginalSizeFirst:self];
+	} else {
+		[self viewAtOriginalSizeSecond:self];
+	}
+}
+
+- (void)co_performShowInFinderRight
+{
+	if ([self readFromLeft]) {
+		[self showInFinderSecond:self];
+	} else {
+		[self showInFinderFirst:self];
+	}
+}
+
+- (void)co_performShowInFinderLeft
+{
+	if ([self readFromLeft]) {
+		[self showInFinderFirst:self];
+	} else {
+		[self showInFinderSecond:self];
+	}
+}
+
 #pragma mark action
 - (void)remoteButton:(RemoteControlEventIdentifier)buttonIdentifier pressedDown: (BOOL) pressedDown clickCount: (unsigned int)clickCount
 {
@@ -412,25 +497,14 @@ static BOOL appleRemoteHoldDown = NO;
 					
 				case 11:
 					//switchSingle
-					[lock lock];
-					[lock unlock];
-					[self switchSingle:nil];
+					[self co_performSwitchSingle];
 					break;
-					
-					
-					
+
+
+
 				case 12:
 					//shownumber
-					if (numberSwitch) {
-						[imageView setPageString:nil];
-						numberSwitch = NO;
-						[defaults setBool:numberSwitch forKey:@"ShowNumber"];
-					} else {
-						numberSwitch = YES;
-						[self setPageTextField];
-						[defaults setBool:numberSwitch forKey:@"ShowNumber"];
-					}
-					//[imageView setNeedsDisplay];					
+					[self co_performShowNumber];
 					break;
 					
 					
@@ -494,45 +568,14 @@ static BOOL appleRemoteHoldDown = NO;
 					
 				case 15:
 					//origRight
-					switch (readMode) {
-						case 0:
-							[self viewAtOriginalSizeFirst:self];
-							break;
-						case 1:
-							[self viewAtOriginalSizeSecond:self];
-							break;
-						case 2:
-							[self viewAtOriginalSizeFirst:self];
-							break;
-						case 3:
-							[self viewAtOriginalSizeSecond:self];
-							break;
-						default:
-							break;
-					}
-					
+					[self co_performOrigRight];
 					break;
-					
-					
-					
+
+
+
 				case 16:
 					//origLeft
-					switch (readMode) {
-						case 0:
-							[self viewAtOriginalSizeSecond:self];
-							break;
-						case 1:
-							[self viewAtOriginalSizeFirst:self];
-							break;
-						case 2:
-							[self viewAtOriginalSizeSecond:self];
-							break;
-						case 3:
-							[self viewAtOriginalSizeFirst:self];
-							break;
-						default:
-							break;
-					}
+					[self co_performOrigLeft];
 					break;
 					
 					
@@ -549,41 +592,19 @@ static BOOL appleRemoteHoldDown = NO;
 					
 				case 18:
 					//showThumbnail
-					if (secondImage) {
-						int temp = nowPage;
-						temp--;
-						[thumController showThumbnail:temp];
-					} else {
-						[thumController showThumbnail:nowPage];
-					}
+					[self co_performShowThumbnail];
 					break;
-					
-					
-					
+
+
+
 				case 19:
-					//changeReadMode 
-					[lock lock];
-					[lock unlock];
-					if (readMode == 0) {
-						[self changeReadMode:1];
-					} else if (readMode == 1) {
-						[self changeReadMode:2];
-					} else if (readMode == 2) {
-						[self changeReadMode:3];
-					} else if (readMode == 3) {
-						[self changeReadMode:0];
-					}
+					//changeReadMode
+					[self co_performChangeReadMode];
 					break;
-					
+
 				case 20:
 					//showPageBar
-					if (pageBar) {
-						pageBar = NO;
-					} else {
-						pageBar = YES;
-					}
-					[defaults setBool:pageBar forKey:@"ShowPageBar"];
-					[imageView drawPageBar];
+					[self co_performShowPageBar];
 					break;
 				case 21:
 					//showPageMover
@@ -605,41 +626,11 @@ static BOOL appleRemoteHoldDown = NO;
 					break;
 				case 22:
 					//show in finder R
-					switch (readMode) {
-						case 0:
-							[self showInFinderFirst:self];
-							break;
-						case 1:
-							[self showInFinderSecond:self];
-							break;
-						case 2:
-							[self showInFinderFirst:self];
-							break;
-						case 3:
-							[self showInFinderSecond:self];
-							break;
-						default:
-							break;
-					}
+					[self co_performShowInFinderRight];
 					break;
 				case 23:
 					//showInFinderL
-					switch (readMode) {
-						case 0:
-							[self showInFinderSecond:self];
-							break;
-						case 1:
-							[self showInFinderFirst:self];
-							break;
-						case 2:
-							[self showInFinderSecond:self];
-							break;
-						case 3:
-							[self showInFinderFirst:self];
-							break;
-						default:
-							break;
-					}
+					[self co_performShowInFinderLeft];
 					break;
 				case 24:
 					//PageUp
@@ -1269,23 +1260,11 @@ static BOOL appleRemoteHoldDown = NO;
 					break;
 				case 17:
 					//switchSingle
-					[lock lock];
-					[lock unlock];
-					[self switchSingle:nil];
-					
+					[self co_performSwitchSingle];
 					break;
 				case 18:
 					//shownumber
-					if (numberSwitch) {
-						[imageView setPageString:nil];
-						numberSwitch = NO;
-						[defaults setBool:numberSwitch forKey:@"ShowNumber"];
-					} else {
-						numberSwitch = YES;
-						[self setPageTextField];
-						[defaults setBool:numberSwitch forKey:@"ShowNumber"];
-					}
-					//[imageView setNeedsDisplay];		
+					[self co_performShowNumber];
 					break;
 				case 19:
 					//skip
@@ -1336,42 +1315,11 @@ static BOOL appleRemoteHoldDown = NO;
 					break;
 				case 21:
 					//origRight
-					switch (readMode) {
-						case 0:
-							[self viewAtOriginalSizeFirst:self];
-							break;
-						case 1:
-							[self viewAtOriginalSizeSecond:self];
-							break;
-						case 2:
-							[self viewAtOriginalSizeFirst:self];
-							break;
-						case 3:
-							[self viewAtOriginalSizeSecond:self];
-							break;
-						default:
-							break;
-					}
+					[self co_performOrigRight];
 					break;
 				case 22:
 					//origLeft
-					switch (readMode) {
-						case 0:
-							[self viewAtOriginalSizeSecond:self];
-							break;
-						case 1:
-							[self viewAtOriginalSizeFirst:self];
-							break;
-						case 2:
-							[self viewAtOriginalSizeSecond:self];
-							break;
-						case 3:
-							[self viewAtOriginalSizeFirst:self];
-							break;
-						default:
-							break;
-					}
-					
+					[self co_performOrigLeft];
 					break;
 				case 23:
 					//slideshow	
@@ -1380,38 +1328,15 @@ static BOOL appleRemoteHoldDown = NO;
 					break;
 				case 24:
 					//showThumbnail
-					if (secondImage) {
-						int temp = nowPage;
-						temp--;
-						[thumController showThumbnail:temp];
-					} else {
-						[thumController showThumbnail:nowPage];
-					}
-					
+					[self co_performShowThumbnail];
 					break;
 				case 25:
-					//changeReadMode 
-					[lock lock];
-					[lock unlock];
-					if (readMode == 0) {
-						[self changeReadMode:1];
-					} else if (readMode == 1) {
-						[self changeReadMode:2];
-					} else if (readMode == 2) {
-						[self changeReadMode:3];
-					} else if (readMode == 3) {
-						[self changeReadMode:0];
-					}
+					//changeReadMode
+					[self co_performChangeReadMode];
 					break;
 				case 26:
 					//showPageBar
-					if (pageBar) {
-						pageBar = NO;
-					} else {
-						pageBar = YES;
-					}
-					[defaults setBool:pageBar forKey:@"ShowPageBar"];
-					[imageView drawPageBar];
+					[self co_performShowPageBar];
 					break;
 				case 27:
 					//viewOriginalL/R
@@ -1423,41 +1348,11 @@ static BOOL appleRemoteHoldDown = NO;
 					break;
 				case 28:
 					//showInFinderR
-					switch (readMode) {
-						case 0:
-							[self showInFinderFirst:self];
-							break;
-						case 1:
-							[self showInFinderSecond:self];
-							break;
-						case 2:
-							[self showInFinderFirst:self];
-							break;
-						case 3:
-							[self showInFinderSecond:self];
-							break;
-						default:
-							break;
-					}
+					[self co_performShowInFinderRight];
 					break;
 				case 29:
 					//showInFinderL
-					switch (readMode) {
-						case 0:
-							[self showInFinderSecond:self];
-							break;
-						case 1:
-							[self showInFinderFirst:self];
-							break;
-						case 2:
-							[self showInFinderSecond:self];
-							break;
-						case 3:
-							[self showInFinderFirst:self];
-							break;
-						default:
-							break;
-					}
+					[self co_performShowInFinderLeft];
 					break;
 				case 30:
 					//showInFinderL/R
