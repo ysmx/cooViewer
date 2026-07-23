@@ -2481,39 +2481,60 @@ static const int DIALOG_CANCEL	= 129;
 	[self co_setBackgroundColor:[sender currentColor] forTextField:pageBarFontTextField];
 }
 
+/*
+ Shared reset-to-defaults plumbing for -resetPageNumberAppearance:/
+ -resetPageBarAppearance:: set a font on a text field, then restore its
+ text/background colors along with the matching color-swatch buttons,
+ and a separate border-color swatch. The two callers differ in which
+ checkboxes they flip on, which font/colors they reset to, and (Page
+ Bar only) an extra "read" color swatch, so those stay in each
+ IBAction - only this text-field/color-swatch part is identical.
+ */
+- (void)co_resetTextField:(NSTextField *)textField
+					  font:(NSFont *)font
+				 fontColor:(NSColor *)fontColor
+		   fontColorSwatch:(id)fontColorSwatch
+		   backgroundColor:(NSColor *)backgroundColor
+	 backgroundColorSwatch:(id)backgroundColorSwatch
+			   borderColor:(NSColor *)borderColor
+		 borderColorSwatch:(id)borderColorSwatch
+{
+	[textField setFont:font];
+	[fontColorSwatch setCurrentColor:fontColor];
+	[textField setTextColor:fontColor];
+	[backgroundColorSwatch setCurrentColor:backgroundColor];
+	[textField setBackgroundColor:backgroundColor];
+	[borderColorSwatch setCurrentColor:borderColor];
+}
+
 - (IBAction)resetPageNumberAppearance:(id)sender
 {
-	NSColor *fontColor = [NSColor whiteColor];
-	NSColor *backgroundColor = [[NSColor blackColor] colorWithAlphaComponent:0.8];
-	NSColor *borderColor = [[NSColor blackColor] colorWithAlphaComponent:0.8];
-	
 	[showPageNumCheck setState:NSControlStateValueOn];
 	[pageNumAutoHideCheck setState:NSControlStateValueOn];
-	[fontTextField setFont:[NSFont controlContentFontOfSize:11]];
-	[pageColor setCurrentColor:fontColor];
-	[fontTextField setTextColor:fontColor];
-	[pageBGColor setCurrentColor:backgroundColor];
-	[fontTextField setBackgroundColor:backgroundColor];
-	[pageBorderColor setCurrentColor:borderColor];
+	[self co_resetTextField:fontTextField
+						font:[NSFont controlContentFontOfSize:11]
+				   fontColor:[NSColor whiteColor]
+			 fontColorSwatch:pageColor
+			 backgroundColor:[[NSColor blackColor] colorWithAlphaComponent:0.8]
+	   backgroundColorSwatch:pageBGColor
+				 borderColor:[[NSColor blackColor] colorWithAlphaComponent:0.8]
+		   borderColorSwatch:pageBorderColor];
 }
 
 - (IBAction)resetPageBarAppearance:(id)sender
 {
-	NSColor *fontColor = [NSColor whiteColor];
-	NSColor *backgroundColor = [[NSColor blackColor] colorWithAlphaComponent:0.8];
-	NSColor *borderColor = [NSColor whiteColor];
-	NSColor *readColor = [[NSColor whiteColor] colorWithAlphaComponent:0.5];
-	
 	[showPageBarCheck setState:NSControlStateValueOn];
 	[pageBarAutoHideCheck setState:NSControlStateValueOn];
 	[pageBarShowThumbCheck setState:NSControlStateValueOn];
-	[pageBarFontTextField setFont:[NSFont userFontOfSize:14]];
-	[pageBarFontColor setCurrentColor:fontColor];
-	[pageBarFontTextField setTextColor:fontColor];
-	[pageBarBGColor setCurrentColor:backgroundColor];
-	[pageBarFontTextField setBackgroundColor:backgroundColor];
-	[pageBarBorderColor setCurrentColor:borderColor];
-	[pageBarReadedColor setCurrentColor:readColor];
+	[self co_resetTextField:pageBarFontTextField
+						font:[NSFont userFontOfSize:14]
+				   fontColor:[NSColor whiteColor]
+			 fontColorSwatch:pageBarFontColor
+			 backgroundColor:[[NSColor blackColor] colorWithAlphaComponent:0.8]
+	   backgroundColorSwatch:pageBarBGColor
+				 borderColor:[NSColor whiteColor]
+		   borderColorSwatch:pageBarBorderColor];
+	[pageBarReadedColor setCurrentColor:[[NSColor whiteColor] colorWithAlphaComponent:0.5]];
 }
 
 - (NSFontPanelModeMask) validModesForFontPanel : (NSFontPanel *) fontPanel
