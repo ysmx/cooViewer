@@ -3,7 +3,6 @@
 #import "NSAttributedString_Adding.h"
 #import "AccessoryView.h"
 #import "AccessoryWindow.h"
-//#import "QuartzCore/CIFilter.h"
 
 @interface CustomImageView(private)
 -(void)setUrlRect;
@@ -516,26 +515,12 @@
 	return NO;
 }
 
-NSTimeInterval elapsed=0;
 - (void)_scrollToPoint:(NSPoint)point
 {
-	/*
-	NSTimeInterval start,stop;
-	start=[NSDate timeIntervalSinceReferenceDate];
-	*/
-	
-	
 	NSClipView *clipView = [[self enclosingScrollView] contentView];
-	
+
 	[clipView scrollToPoint:point];
-	//[self setNeedsDisplayInRect:[self visibleRect]];
 	[self displayIfNeededInRect:[self visibleRect]];
-	 
-	/*
-	stop=[NSDate timeIntervalSinceReferenceDate];
-	elapsed+=stop-start;
-	NSLog(@"%f",elapsed);
-	*/
 }
 
 - (void)scrollUp
@@ -1605,163 +1590,6 @@ NSTimeInterval elapsed=0;
 {
 	return accessoryView;
 }
-
-#pragma mark labo
-/*
- - (void)fillBG:(NSImage*)left and:(NSImage*)right
- {
-	 float r,g,b = 255;
-	 NSRect rightRect,leftRect;
-	 NSRect fullRect = [self bounds];
-	 if (rotateMode==1||rotateMode==3) {
-		 fullRect = NSMakeRect(fullRect.origin.x,fullRect.origin.y,fullRect.size.height,fullRect.size.width);
-	 }
-	 NSDivideRect (fullRect, &leftRect, &rightRect, fullRect.size.width/2, NSMinXEdge);
-	 NSBitmapImageRep *myImageRep;
-	 unsigned char *srcData;
-	 int w,h,x,y;
-	 if (right) {
-		 NSArray *repArray = [left representations];
-		 int i;
-		 for (i=0;i<[repArray count];i++) {
-			 if ([[repArray objectAtIndex:i] isKindOfClass:[NSBitmapImageRep class]]) {
-				 break;
-			 }
-			 if (i==[repArray count]-1){
-				 return;
-			 }
-		 }
-		 myImageRep = [NSBitmapImageRep imageRepWithData:[left TIFFRepresentation]];
-		 srcData = [myImageRep bitmapData];		
-		 w = [myImageRep pixelsWide];
-		 h = [myImageRep pixelsHigh];
-		 x = 1;
-		 y = h/2;
-		 if( x < w && w > 0 && y < h && y > 0 ) {
-			 int n = [myImageRep bitsPerPixel] / 8;
-			 unsigned char *sample = srcData + n * ( y * w + x);
-			 r = (float)*sample;
-			 g = (float)*(sample + 1);
-			 b = (float)*(sample + 2);
-		 }
-		 [[NSColor colorWithCalibratedRed:r/255 green:g/255 blue:b/255 alpha:1.0] set];
-		 NSRectFillUsingOperation(leftRect,NSCompositingOperationSourceOver);
-		 
-		 
-		 repArray = [right representations];
-		 i;
-		 for (i=0;i<[repArray count];i++) {
-			 if ([[repArray objectAtIndex:i] isKindOfClass:[NSBitmapImageRep class]]) {
-				 break;
-			 }
-			 if (i==[repArray count]-1){
-				 return;
-			 }
-		 }
-		 myImageRep = [NSBitmapImageRep imageRepWithData:[right TIFFRepresentation]];
-		 srcData = [myImageRep bitmapData];
-		 w = [myImageRep pixelsWide];
-		 h = [myImageRep pixelsHigh];
-		 x = w-1;
-		 y = h/2;
-		 if( x < w && w > 0 && y < h && y > 0 ) {
-			 int n = [myImageRep bitsPerPixel] / 8;
-			 unsigned char *sample = srcData + n * ( y * w + x);
-			 r = (float)*sample;
-			 g = (float)*(sample + 1);
-			 b = (float)*(sample + 2);
-		 }
-		 [[NSColor colorWithCalibratedRed:r/255 green:g/255 blue:b/255 alpha:1.0] set];
-		 NSRectFillUsingOperation(rightRect,NSCompositingOperationSourceOver);
-	 } else {
-		 NSArray *repArray = [left representations];
-		 int i;
-		 for (i=0;i<[repArray count];i++) {
-			 if ([[repArray objectAtIndex:i] isKindOfClass:[NSBitmapImageRep class]]) {
-				 break;
-			 }
-			 if (i==[repArray count]-1){
-				 return;
-			 }
-		 }
-		 myImageRep = [NSBitmapImageRep imageRepWithData:[left TIFFRepresentation]];
-		 srcData = [myImageRep bitmapData];
-		 w = [myImageRep pixelsWide];
-		 h = [myImageRep pixelsHigh];
-		 x = 1;
-		 y = h/2;
-		 if( x < w && w > 0 && y < h && y > 0 ) {
-			 int n = [myImageRep bitsPerPixel] / 8;
-			 unsigned char *sample = srcData + n * ( y * w + x);
-			 r = (float)*sample;
-			 g = (float)*(sample + 1);
-			 b = (float)*(sample + 2);
-		 }
-		 [[NSColor colorWithCalibratedRed:r/255 green:g/255 blue:b/255 alpha:1.0] set];
-		 NSRectFillUsingOperation(leftRect,NSCompositingOperationSourceOver);
-		 x = w-1;
-		 y = h/2;
-		 if( x < w && w > 0 && y < h && y > 0 ) {
-			 int n = [myImageRep bitsPerPixel] / 8;
-			 unsigned char *sample = srcData + n * ( y * w + x);
-			 r = (float)*sample;
-			 g = (float)*(sample + 1);
-			 b = (float)*(sample + 2);
-		 }
-		 [[NSColor colorWithCalibratedRed:r/255 green:g/255 blue:b/255 alpha:1.0] set];
-		 NSRectFillUsingOperation(rightRect,NSCompositingOperationSourceOver);
-	 }
- }*/
-/*
-- (CIImage *)createCIImage:(NSImage *)image
-{
-	NSData  *tiffData = [image TIFFRepresentation];
-	NSBitmapImageRep *bitmap = [NSBitmapImageRep imageRepWithData:tiffData];
-	CIImage *img= [[CIImage alloc] initWithBitmapImageRep:bitmap];
-	return img;
-}
-
-- (CIImage *)createCIImageFromView:(NSView *)view
-{
-	NSBitmapImageRep *bitmap= [view bitmapImageRepForCachingDisplayInRect:[view bounds]];
-	[view cacheDisplayInRect:[view bounds] toBitmapImageRep:bitmap];
-	CIImage *img= [[CIImage alloc] initWithBitmapImageRep:bitmap];
-	return img;
-}
-
--(void)drawCIImageFromVIew
-{
-	CIImage *ciImage = [self createCIImageFromView:self];
-	
-	CIFilter *filter = [CIFilter filterWithName:@"CIMotionBlur"];
-    [filter setDefaults];
-	
-	//CIFilter *filter   = [CIFilter filterWithName: @"CISharpenLuminance" keysAndValues: @"inputImage", ciImage, nil];
-	//[filter setValue:[NSNumber numberWithFloat:0.4]  forKey:@"inputSharpness"];
-	 
-	
-    [filter setValue:ciImage forKey:@"inputImage"];
-    CIImage *outputImage = [filter valueForKey:@"outputImage"];
-    
-	[outputImage drawInRect:[self bounds] fromRect:[self bounds] operation:NSCompositingOperationSourceOver fraction:1.0];
-}
-
--(void)drawCIImage:(NSImage *)image inRect:(CGRect)inRect fromRect:(CGRect)fromRect
-{
-	CIImage *ciImage = [self createCIImage:image];
-	
-	CIFilter *filter = [CIFilter filterWithName:@"CIMotionBlur"];
-    [filter setDefaults];
-	
-    [filter setValue:ciImage forKey:@"inputImage"];
-    CIImage *outputImage = [filter valueForKey:@"outputImage"];
-    
-	
-	
-	CIContext *context = [[NSGraphicsContext currentContext] CIContext];
-    [context drawImage:outputImage inRect:inRect  fromRect:fromRect];
-}*/
-
 
 @end
 
