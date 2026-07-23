@@ -2,10 +2,11 @@
 
 #import <Cocoa/Cocoa.h>
 #import "ThumbnailController.h"
+#import "ThumbnailMatrix.h"
 
 @interface ThumbnailPanel : NSPanel
 {
-    IBOutlet id matrix;
+    IBOutlet ThumbnailMatrix *matrix;
 	ThumbnailController *target;
 	SEL selector;
 	float setting;

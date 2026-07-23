@@ -2,15 +2,16 @@
 
 #import <Cocoa/Cocoa.h>
 #import "CustomImageView.h"
+#import "Controller.h"
 
 @interface CustomWindow : NSWindow
 {
 	BOOL fullscreen;
-	
+
 	id target;
 	SEL selector;
-	
-	IBOutlet id controller;
+
+	IBOutlet Controller *controller;
 	NSTimer *cursorTimer;
 	NSTrackingRectTag tag;
 	NSRect mouseRect;
