@@ -3,6 +3,7 @@
 #import "NSAttributedString_Adding.h"
 #import "AccessoryView.h"
 #import "AccessoryWindow.h"
+#import "cooViewer-Swift.h"
 
 @interface CustomImageView(private)
 -(void)setUrlRect;
@@ -233,49 +234,15 @@
 	}
 	
 	
-	if (cursorMoved.y < -30 || cursorMoved.y > 30 || cursorMoved.x > 30 || cursorMoved.x < -30) {
-		float lr=0;
-		float ud=0;
-		if (cursorMoved.y < -30) {
-			lr = -1*cursorMoved.y;
-		}
-		if (cursorMoved.y > 30) {
-			lr = cursorMoved.y;
-		}
-		if (cursorMoved.x > 30) {
-			ud = cursorMoved.x;
-		}
-		if (cursorMoved.x < -30) {
-			ud = -1*cursorMoved.x;
-		}
-		if (ud > lr) {
-			if (cursorMoved.x > 30) {
-				//up
-				[target gestureAction:event moved:2];
-			} else if (cursorMoved.x < -30) {
-				//down
-				[target gestureAction:event moved:3];
-			}
-		} else {
-			if (cursorMoved.y < -30) {
-				//left
-				[target gestureAction:event moved:0];
-			} else if (cursorMoved.y > 30) {
-				//right
-				[target gestureAction:event moved:1];
-			}
-		}
+	int gestureCode = [ViewerMouseGesture gestureCodeWithMovedX:cursorMoved.x movedY:cursorMoved.y];
+	if (gestureCode >= 0) {
+		[target gestureAction:event moved:gestureCode];
 	} else {
 		if (NSPointInRect([event locationInWindow], [accessoryView pageBarRect])){
 			if ([target indicator] && ![lensWindow isVisible]) {
-				NSPoint tempPoint = [event locationInWindow];
-				NSRect tempRect = NSInsetRect([accessoryView pageBarRect],2,2);
-				float temp = tempPoint.x - tempRect.origin.x;
-				if (![target readFromLeft]) {
-					temp = tempRect.size.width - temp-1;
-				}
-				temp = temp/tempRect.size.width;		
-				[target goToPar:temp];
+				[target goToPar:[ViewerMouseGesture pageBarFractionWithPointX:[event locationInWindow].x
+																	  barRect:[accessoryView pageBarRect]
+																 readFromLeft:[target readFromLeft]]];
 			} else {
 				[target mouseAction:event];
 			}
