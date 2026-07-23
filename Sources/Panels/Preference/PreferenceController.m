@@ -1479,6 +1479,28 @@ static const int DIALOG_CANCEL	= 129;
 	[defaults setInteger:thumbnailCache forKey:@"ThumbnailCache"];
 }
 
+- (void)co_loadViewSettings
+{
+	NSColor *viewBackGround;
+	if ([defaults objectForKey:@"ViewBackGroundColor"]) {
+		viewBackGround = [NSUnarchiver unarchiveObjectWithData:[defaults objectForKey:@"ViewBackGroundColor"]];
+	} else {
+		viewBackGround = [NSColor blackColor];
+	}
+	[viewBackGroundColor setCurrentColor:viewBackGround];
+	if ([defaults objectForKey:@"SyncSecondaryDisplayBackground"] != nil) {
+		[secondaryDisplayBackgroundSyncCheck setState:[defaults boolForKey:@"SyncSecondaryDisplayBackground"] ? NSControlStateValueOn : NSControlStateValueOff];
+	} else {
+		[secondaryDisplayBackgroundSyncCheck setState:([defaults integerForKey:@"SecondaryDisplayMode"] != 0) ? NSControlStateValueOn : NSControlStateValueOff];
+	}
+}
+
+- (void)co_saveViewSettings
+{
+	[defaults setObject:[NSArchiver archivedDataWithRootObject:[viewBackGroundColor currentColor]] forKey:@"ViewBackGroundColor"];
+	[defaults setBool:([secondaryDisplayBackgroundSyncCheck state] == NSControlStateValueOn) forKey:@"SyncSecondaryDisplayBackground"];
+}
+
 - (void)preferences
 {
 	[accessorySettingView setPreferences];
@@ -1669,19 +1691,7 @@ static const int DIALOG_CANCEL	= 129;
 	}
 	
 	[self co_loadLoupeSettings];
-	/*view*/
-	NSColor *viewBackGround;
-	if ([defaults objectForKey:@"ViewBackGroundColor"]) {
-		viewBackGround = [NSUnarchiver unarchiveObjectWithData:[defaults objectForKey:@"ViewBackGroundColor"]];
-	} else {
-		viewBackGround = [NSColor blackColor];
-	}
-	[viewBackGroundColor setCurrentColor:viewBackGround];
-	if ([defaults objectForKey:@"SyncSecondaryDisplayBackground"] != nil) {
-		[secondaryDisplayBackgroundSyncCheck setState:[defaults boolForKey:@"SyncSecondaryDisplayBackground"] ? NSControlStateValueOn : NSControlStateValueOff];
-	} else {
-		[secondaryDisplayBackgroundSyncCheck setState:([defaults integerForKey:@"SecondaryDisplayMode"] != 0) ? NSControlStateValueOn : NSControlStateValueOff];
-	}
+	[self co_loadViewSettings];
 	[self co_loadCacheSettings];
 
 	
@@ -2046,9 +2056,7 @@ static const int DIALOG_CANCEL	= 129;
 		
 		[self co_saveLoupeSettings];
 		[self co_saveCacheSettings];
-		/*view*/
-		[defaults setObject:[NSArchiver archivedDataWithRootObject:[viewBackGroundColor currentColor]] forKey:@"ViewBackGroundColor"];
-		[defaults setBool:([secondaryDisplayBackgroundSyncCheck state] == NSControlStateValueOn) forKey:@"SyncSecondaryDisplayBackground"];
+		[self co_saveViewSettings];
 		
 		
 
