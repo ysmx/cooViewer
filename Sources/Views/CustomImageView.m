@@ -793,6 +793,41 @@
 	if (lensWindow) [self drawLoupe];
 }
 
+/*
+ fitScreenMode 1's "fit full screen width, letterbox height" layout math -
+ verified byte-identical to fitScreenMode 3's "small image or 90/270
+ rotation" sub-branch in -getDrawImageInfo:, since a single small/rotated
+ page in two-page mode lays out the same way as one full-screen
+ fitScreenMode-1 page.
+ */
+- (void)co_applyFitWidthLayoutForWidthValue:(int)widthValue
+								 heightValue:(int)heightValue
+							screenWidthValue:(float)screenWidthValue
+						   screenHeightValue:(float)screenHeightValue
+									 infodic:(NSMutableDictionary *)infodic
+										   x:(float *)x
+										   y:(float *)y
+									   width:(float *)width
+									  height:(float *)height
+{
+	float rate = screenWidthValue/widthValue;
+	if (maxEnlargement != 0 && rate > maxEnlargement) {
+		rate = maxEnlargement;
+	}
+	*width = widthValue*rate;
+	*height = heightValue*rate;
+	*x = screenWidthValue-*width;
+	*x = *x/2;
+	*y = screenHeightValue-*height;
+	*y = *y/2;
+	if (*height < screenHeightValue) {
+		[infodic setObject:NSStringFromSize(NSMakeSize(screenWidthValue,screenHeightValue)) forKey:@"frameSize"];
+	} else {
+		[infodic setObject:NSStringFromSize(NSMakeSize(screenWidthValue,(int)*height)) forKey:@"frameSize"];
+		*y = 0;
+	}
+}
+
 - (NSMutableDictionary *)getDrawImageInfo:(NSImage*)image
 {
     NSMutableDictionary *infodic = [NSMutableDictionary dictionary];
@@ -811,22 +846,12 @@
     
     float x,y,width,height;
     if (fitScreenMode == 1) {
-        float rate = screenWidthValue/widthValue;
-        if (maxEnlargement != 0 && rate > maxEnlargement) {
-            rate = maxEnlargement;
-        }
-        width = widthValue*rate;
-        height = heightValue*rate;
-        x = screenWidthValue-width;
-        x = x/2;
-        y = screenHeightValue-height;
-        y = y/2;
-        if (height < screenHeightValue) {
-            [infodic setObject:NSStringFromSize(NSMakeSize(screenWidthValue,screenHeightValue)) forKey:@"frameSize"];
-        } else {
-            [infodic setObject:NSStringFromSize(NSMakeSize(screenWidthValue,(int)height)) forKey:@"frameSize"];
-            y = 0;
-        }
+        [self co_applyFitWidthLayoutForWidthValue:widthValue
+                                       heightValue:heightValue
+                                  screenWidthValue:screenWidthValue
+                                 screenHeightValue:screenHeightValue
+                                           infodic:infodic
+                                                 x:&x y:&y width:&width height:&height];
     } else if (fitScreenMode == 2) {
         width = widthValue;
         height = heightValue;
@@ -856,22 +881,12 @@
         if ([target isSmallImage:image page:-1] || (rotateMode==1||rotateMode==3)) {
             //(readmode:single && smallImage) || (90回転)
             //とりあえずfitScreenMode==1と同じ
-            float rate = screenWidthValue/widthValue;
-            if (maxEnlargement != 0 && rate > maxEnlargement) {
-                rate = maxEnlargement;
-            }
-            width = widthValue*rate;
-            height = heightValue*rate;
-            x = screenWidthValue-width;
-            x = x/2;
-            y = screenHeightValue-height;
-            y = y/2;
-            if (height < screenHeightValue) {
-                [infodic setObject:NSStringFromSize(NSMakeSize(screenWidthValue,screenHeightValue)) forKey:@"frameSize"];
-            } else {
-                [infodic setObject:NSStringFromSize(NSMakeSize(screenWidthValue,(int)height)) forKey:@"frameSize"];
-                y = 0;
-            }
+            [self co_applyFitWidthLayoutForWidthValue:widthValue
+                                           heightValue:heightValue
+                                      screenWidthValue:screenWidthValue
+                                     screenHeightValue:screenHeightValue
+                                               infodic:infodic
+                                                     x:&x y:&y width:&width height:&height];
         } else {
             float rate = screenWidthValue/(widthValue/2);
             if (maxEnlargement != 0 && rate > maxEnlargement) {
