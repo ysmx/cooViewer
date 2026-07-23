@@ -4,7 +4,7 @@
 
 
 @interface FullImagePanel : NSPanel {
-	id keyArray;
+	NSArray *keyArray;
 	Controller *target;
 	BOOL fitMode;
 }
