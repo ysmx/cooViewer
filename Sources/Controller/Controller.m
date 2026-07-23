@@ -1195,19 +1195,18 @@ static const int DIALOG_CANCEL	= 129;
 			} else {
 				[defaults removeObjectForKey:@"RecentItems"];
 			}
-			if (alwaysRememberLastPage && nowPage > 0) {				
+			if (alwaysRememberLastPage && nowPage > 0) {
 				NSMutableArray *lastPages;
 				if (![defaults arrayForKey:@"LastPages"]) {
 					lastPages = [NSMutableArray array];
 				} else {
 					lastPages = [NSMutableArray arrayWithArray:[defaults arrayForKey:@"LastPages"]];
 				}
-				int index;
+				int index = 0;
 				id object = [self searchFromLastPages:oldBookPath index:&index];
-				if (object) {
-					[lastPages removeObjectAtIndex:index];
-				}
-				[lastPages addObject:[NSDictionary dictionaryWithObjectsAndKeys:aliasData,@"alias",pageNumber,@"page",COPathForHistoryLookup(oldBookPath),@"temppath",nil]];
+				NSNumber *removeIndex = object ? [NSNumber numberWithInt:index] : nil;
+				NSDictionary *newEntry = [NSDictionary dictionaryWithObjectsAndKeys:aliasData,@"alias",pageNumber,@"page",COPathForHistoryLookup(oldBookPath),@"temppath",nil];
+				lastPages = [NSMutableArray arrayWithArray:[ViewerLastPages updatedWithItems:lastPages removingIndex:removeIndex newEntry:newEntry]];
 				[defaults setObject:lastPages forKey:@"LastPages"];
 			} else if (!alwaysRememberLastPage || nowPage == 0) {
 				NSMutableArray *lastPages;
@@ -1216,11 +1215,10 @@ static const int DIALOG_CANCEL	= 129;
 				} else {
 					lastPages = [NSMutableArray arrayWithArray:[defaults arrayForKey:@"LastPages"]];
 				}
-				int index;
+				int index = 0;
 				id object = [self searchFromLastPages:oldBookPath index:&index];
-				if (object) {
-					[lastPages removeObjectAtIndex:index];
-				}
+				NSNumber *removeIndex = object ? [NSNumber numberWithInt:index] : nil;
+				lastPages = [NSMutableArray arrayWithArray:[ViewerLastPages updatedWithItems:lastPages removingIndex:removeIndex newEntry:nil]];
 				[defaults setObject:lastPages forKey:@"LastPages"];
 			}
 		}
