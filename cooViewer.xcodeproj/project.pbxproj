@@ -52,6 +52,8 @@
 		5774CCF78A264C7B951C8A7B /* ImageBufferCache.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6D7ABF9AC5D0497286585AF1 /* ImageBufferCache.swift */; };
 		9CA5E9A0D88A414795828A81 /* ImageBufferCache.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6D7ABF9AC5D0497286585AF1 /* ImageBufferCache.swift */; };
 		BC1D2703A9AA4DFB9552F1E6 /* ViewerThumbnailMangaLayout.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0D6C0864AF5A480A994A1E4D /* ViewerThumbnailMangaLayout.swift */; };
+		CB4F66341665417EB512D438 /* ViewerThumbnailGridStep.swift in Sources */ = {isa = PBXBuildFile; fileRef = 943E6D1FE9674B8E9DE4ACC1 /* ViewerThumbnailGridStep.swift */; };
+		777B0EC44EC24C53AC01595D /* ViewerThumbnailGridStep.swift in Sources */ = {isa = PBXBuildFile; fileRef = 943E6D1FE9674B8E9DE4ACC1 /* ViewerThumbnailGridStep.swift */; };
 		D216E5475ACC4284AB36EBB1 /* ViewerSortModeTransition.swift in Sources */ = {isa = PBXBuildFile; fileRef = 249AF7B85D724090B7B5910F /* ViewerSortModeTransition.swift */; };
 		691E06277FDE4F3E9D57C5B4 /* ViewerSortModeTransition.swift in Sources */ = {isa = PBXBuildFile; fileRef = 249AF7B85D724090B7B5910F /* ViewerSortModeTransition.swift */; };
 		1897CF615057443BA3A2E9B1 /* ViewerScrollDelta.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8D68CDB42A784129A61341A4 /* ViewerScrollDelta.swift */; };
@@ -202,6 +204,7 @@
 		1EAD25AE59DE41CD92F8993A /* ViewerAccessoryGeometry.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ViewerAccessoryGeometry.swift; sourceTree = "<group>"; };
 		7AF42708AE6E498A9C155BB3 /* ViewerMouseGesture.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ViewerMouseGesture.swift; sourceTree = "<group>"; };
 		0D6C0864AF5A480A994A1E4D /* ViewerThumbnailMangaLayout.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ViewerThumbnailMangaLayout.swift; sourceTree = "<group>"; };
+		943E6D1FE9674B8E9DE4ACC1 /* ViewerThumbnailGridStep.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ViewerThumbnailGridStep.swift; sourceTree = "<group>"; };
 		B823D044B0304949ABBF71D1 /* ViewerLastPages.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ViewerLastPages.swift; sourceTree = "<group>"; };
 		766E19664A2F47828BC97257 /* ViewerBookSettingsKey.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ViewerBookSettingsKey.swift; sourceTree = "<group>"; };
 		6D7ABF9AC5D0497286585AF1 /* ImageBufferCache.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ImageBufferCache.swift; sourceTree = "<group>"; };
@@ -457,6 +460,7 @@
 				763759370C3913050047DF92 /* ThumbnailMatrix.h */,
 				763759380C3913050047DF92 /* ThumbnailMatrix.m */,
 				0D6C0864AF5A480A994A1E4D /* ViewerThumbnailMangaLayout.swift */,
+				943E6D1FE9674B8E9DE4ACC1 /* ViewerThumbnailGridStep.swift */,
 			);
 			name = thumbnail;
 			path = Sources/Panels/Thumbnail;
@@ -827,6 +831,7 @@
 				791D1850761348F5A17B9594 /* ViewerAccessoryGeometry.swift in Sources */,
 				97871B5A337F40A3AFDA7ACD /* ViewerMouseGesture.swift in Sources */,
 				984B9D1FB45A481D89DDC955 /* ViewerThumbnailMangaLayout.swift in Sources */,
+				CB4F66341665417EB512D438 /* ViewerThumbnailGridStep.swift in Sources */,
 				5680D3FBE37D4F65917A9204 /* ViewerActionResolver.swift in Sources */,
 				691E06277FDE4F3E9D57C5B4 /* ViewerSortModeTransition.swift in Sources */,
 				00585B35313448F283290898 /* ViewerScrollDelta.swift in Sources */,
@@ -884,6 +889,7 @@
 				6A15DCB5E75249A2BE1ED6C2 /* ViewerAccessoryGeometry.swift in Sources */,
 				7B519E56B0C04A40916E7489 /* ViewerMouseGesture.swift in Sources */,
 				BC1D2703A9AA4DFB9552F1E6 /* ViewerThumbnailMangaLayout.swift in Sources */,
+				777B0EC44EC24C53AC01595D /* ViewerThumbnailGridStep.swift in Sources */,
 				D216E5475ACC4284AB36EBB1 /* ViewerSortModeTransition.swift in Sources */,
 				1897CF615057443BA3A2E9B1 /* ViewerScrollDelta.swift in Sources */,
 				F4B3A9CC299C4C9CAE8044D8 /* ViewerFitScreenTransition.swift in Sources */,
