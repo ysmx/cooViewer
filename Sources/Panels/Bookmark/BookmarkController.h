@@ -2,24 +2,28 @@
 
 #import <Cocoa/Cocoa.h>
 #import "Controller.h"
+#import "BookmarkPanel.h"
 
 @interface BookmarkController : NSObject
 {
-	IBOutlet id controller;
-	
-	IBOutlet id window;
-    IBOutlet id bookmarkPanel;
-    IBOutlet id bookmarkTableView;
-	
-    IBOutlet id allBookmarkPanel;
-    IBOutlet id allBookmarkTableView;
-    IBOutlet id allBookNameTableView;
-    IBOutlet id allNewBookmarkTextField;
-	IBOutlet id allBookmarkSplitView;
-	
-    IBOutlet id contextMenuItem;
-	
-    IBOutlet id newBookmarkTextField;
+	IBOutlet Controller *controller;
+
+	// Not CustomWindow, despite the XIB wiring it to one: -editBookmark:
+	// reassigns this to whatever [NSApp keyWindow] currently is (to
+	// restore focus after the sheet closes), which is plain NSWindow.
+	IBOutlet NSWindow *window;
+    IBOutlet BookmarkPanel *bookmarkPanel;
+    IBOutlet NSTableView *bookmarkTableView;
+
+    IBOutlet BookmarkPanel *allBookmarkPanel;
+    IBOutlet NSTableView *allBookmarkTableView;
+    IBOutlet NSTableView *allBookNameTableView;
+    IBOutlet NSTextField *allNewBookmarkTextField;
+	IBOutlet NSSplitView *allBookmarkSplitView;
+
+    IBOutlet NSMenu *contextMenuItem;
+
+    IBOutlet NSTextField *newBookmarkTextField;
 
 	NSUserDefaults *defaults;
 	NSMutableArray *bookmarkArray;
