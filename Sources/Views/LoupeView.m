@@ -46,6 +46,52 @@
     parentFrame = pf;
 }
 
+/*
+ The rotateMode-dependent NSAffineTransform (translate+rotate, one of
+ the loupe's two draw branches concats it and inverts afterward) and
+ the corresponding mouse-point-to-draw-point remapping were byte-
+ identical across -drawRect:'s single-image and two-image branches.
+ The per-branch rect remapping (tempRect / fTempRect+sTempRect) is
+ NOT identical between the branches - most visibly for rotateMode 2,
+ where the two-image branch cross-references fRect and sRect against
+ each other for the spread layout - so that part stays in each branch.
+ */
+- (NSAffineTransform *)co_loupeTransformForMode:(int)mode
+{
+	NSAffineTransform *transform = [NSAffineTransform transform];
+	switch (mode) {
+		case 1:
+			[transform translateXBy:lensSize yBy:0];
+			[transform rotateByDegrees:90];
+			break;
+		case 2:
+			[transform translateXBy:lensSize yBy:lensSize];
+			[transform rotateByDegrees:180];
+			break;
+		case 3:
+			[transform translateXBy:0 yBy:lensSize];
+			[transform rotateByDegrees:270];
+			break;
+		default:
+			break;
+	}
+	return transform;
+}
+
+- (NSPoint)co_loupeDrawPointForMode:(int)mode
+{
+	switch (mode) {
+		case 1:
+			return NSMakePoint(mPoint.y, parentFrame.size.width - mPoint.x);
+		case 2:
+			return NSMakePoint(parentFrame.size.width - mPoint.x, parentFrame.size.height - mPoint.y);
+		case 3:
+			return NSMakePoint(parentFrame.size.height - mPoint.y, mPoint.x);
+		default:
+			return mPoint;
+	}
+}
+
 - (void)drawRect:(NSRect)dirtyRect
 {
     NSPoint iPoint;
@@ -76,30 +122,15 @@
     if (NSPointInRect(mPoint,fRect) || NSPointInRect(mPoint,sRect)) {
         if (NSIsEmptyRect(sRect)) {
             NSImage *image;
-            NSPoint drawPoint = mPoint;
-            NSAffineTransform *transform = [NSAffineTransform transform];
+            NSAffineTransform *transform = [self co_loupeTransformForMode:rotateMode];
+            NSPoint drawPoint = [self co_loupeDrawPointForMode:rotateMode];
             NSRect tempRect = fRect;
             image = [targetController image1];
             widthValue = [image size].width;
             heightValue = [image size].height;
-            
-            if (rotateMode==1) {
-                [transform translateXBy:lensSize yBy:0];
-                [transform rotateByDegrees:90];
+
+            if (rotateMode==1 || rotateMode==3) {
                 tempRect = NSMakeRect(fRect.origin.y,fRect.origin.x,fRect.size.height,fRect.size.width);
-                drawPoint.x = mPoint.y;
-                drawPoint.y = (parentFrame.size.width-mPoint.x);
-            } else if (rotateMode==2) {
-                [transform translateXBy:lensSize yBy:lensSize];
-                [transform rotateByDegrees:180];
-                drawPoint.x = parentFrame.size.width-mPoint.x;
-                drawPoint.y = parentFrame.size.height-mPoint.y;
-            } else if (rotateMode==3) {
-                [transform translateXBy:0 yBy:lensSize];
-                [transform rotateByDegrees:270];
-                tempRect = NSMakeRect(fRect.origin.y,fRect.origin.x,fRect.size.height,fRect.size.width);
-                drawPoint.x = (parentFrame.size.height-mPoint.y);
-                drawPoint.y = mPoint.x;
             }
             float x = [image size].width/tempRect.size.width;
             iPoint.x = (int)((drawPoint.x - tempRect.origin.x)*lensRate*x);
@@ -113,31 +144,19 @@
         } else {
             //!NSIsEmptyRect(sRect)
             NSImage *image;
-            NSAffineTransform *transform = [NSAffineTransform transform];
+            NSAffineTransform *transform = [self co_loupeTransformForMode:rotateMode];
+            NSPoint drawPoint = [self co_loupeDrawPointForMode:rotateMode];
             NSRect fTempRect = fRect;
             NSRect sTempRect = sRect;
-            NSPoint drawPoint = mPoint;
             if (rotateMode==1) {
-                [transform translateXBy:lensSize yBy:0];
-                [transform rotateByDegrees:90];
                 fTempRect = NSMakeRect(fRect.origin.y,fRect.origin.x,fRect.size.height,fRect.size.width);
                 sTempRect = NSMakeRect(sRect.origin.y,sRect.origin.x,sRect.size.height,sRect.size.width);
-                drawPoint.x = mPoint.y;
-                drawPoint.y = parentFrame.size.width-mPoint.x;
             } else if (rotateMode==2) {
-                [transform translateXBy:lensSize yBy:lensSize];
-                [transform rotateByDegrees:180];
                 fTempRect = NSMakeRect(sRect.origin.x,fRect.origin.y,fRect.size.width,fRect.size.height);
                 sTempRect = NSMakeRect(fRect.size.width+sRect.origin.x,sRect.origin.y,sRect.size.width,sRect.size.height);
-                drawPoint.x = parentFrame.size.width-mPoint.x;
-                drawPoint.y = parentFrame.size.height-mPoint.y;
             } else if (rotateMode==3) {
-                [transform translateXBy:0 yBy:lensSize];
-                [transform rotateByDegrees:270];
                 fTempRect = NSMakeRect(sRect.origin.y,fRect.origin.x,fRect.size.height,fRect.size.width);
                 sTempRect = NSMakeRect(fRect.size.height,sRect.origin.x,sRect.size.height,sRect.size.width);
-                drawPoint.x = parentFrame.size.height-mPoint.y;
-                drawPoint.y = mPoint.x;
             }
             [transform concat];
             if (NSPointInRect(mPoint,fRect)) {
