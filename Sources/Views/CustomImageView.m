@@ -523,16 +523,31 @@
 	[self displayIfNeededInRect:[self visibleRect]];
 }
 
-- (void)scrollUp
+/*
+ Shared guard+setup for -scrollUp/-scrollDown/-scrollToTop/-scrollToLast/
+ -next/-prev: returns nil when there's nothing to scroll (fitScreenMode
+ disabled, or the visible rect already covers the whole document),
+ otherwise the clip view to scroll. Callers interpret a nil result as
+ their own "nothing to do" case (a plain return for the void methods,
+ return YES for the BOOL-returning page-turn methods).
+ */
+- (NSClipView *)co_scrollableClipViewOrNil
 {
 	if (fitScreenMode == 0) {
-		return;
+		return nil;
 	}
 	NSScrollView *scrollView = [self enclosingScrollView];
 	NSClipView *clipView = [scrollView contentView];
 	if (NSEqualRects([clipView documentVisibleRect],[clipView documentRect])) {
-		return;
+		return nil;
 	}
+	return clipView;
+}
+
+- (void)scrollUp
+{
+	NSClipView *clipView = [self co_scrollableClipViewOrNil];
+	if (!clipView) return;
 	float x = [clipView documentVisibleRect].origin.x;
 	float y = [clipView documentVisibleRect].origin.y + [clipView documentVisibleRect].size.height;
 	float max = [clipView documentRect].size.height - [clipView documentVisibleRect].size.height;
@@ -544,12 +559,8 @@
 
 - (void)scrollDown
 {
-	if (fitScreenMode == 0) return;
-	NSScrollView *scrollView = [self enclosingScrollView];
-	NSClipView *clipView = [scrollView contentView];
-	if (NSEqualRects([clipView documentVisibleRect],[clipView documentRect])) {
-		return;
-	}
+	NSClipView *clipView = [self co_scrollableClipViewOrNil];
+	if (!clipView) return;
 	float x = [clipView documentVisibleRect].origin.x;
 	float y = [clipView documentVisibleRect].origin.y - [clipView documentVisibleRect].size.height;
 	if (y < 0) {
@@ -560,11 +571,9 @@
 
 - (void)scrollToTop
 {
-	if (fitScreenMode == 0) return;
-	NSScrollView *scrollView = [self enclosingScrollView];
-	NSClipView *clipView = [scrollView contentView];
-	if (NSEqualRects([clipView documentVisibleRect],[clipView documentRect])) return;
-	
+	NSClipView *clipView = [self co_scrollableClipViewOrNil];
+	if (!clipView) return;
+
 	float x,y;
 	if ([target readFromLeft]) {
 		x = 0;
@@ -578,12 +587,8 @@
 
 - (void)scrollToLast
 {
-	if (fitScreenMode == 0) return;
-	NSScrollView *scrollView = [self enclosingScrollView];
-	NSClipView *clipView = [scrollView contentView];
-	if (NSEqualRects([clipView documentVisibleRect],[clipView documentRect])) {
-		return;
-	}
+	NSClipView *clipView = [self co_scrollableClipViewOrNil];
+	if (!clipView) return;
 	float x,y;
 	if ([target readFromLeft]) {
 		x = [clipView documentRect].size.width - [clipView documentVisibleRect].size.width;
@@ -597,14 +602,8 @@
 
 - (BOOL)next
 {
-	if (fitScreenMode == 0) {
-		return YES;
-	}
-	NSScrollView *scrollView = [self enclosingScrollView];
-	NSClipView *clipView = [scrollView contentView];
-	if (NSEqualRects([clipView documentVisibleRect],[clipView documentRect])) {
-		return YES;
-	}
+	NSClipView *clipView = [self co_scrollableClipViewOrNil];
+	if (!clipView) return YES;
 	if ([target readFromLeft]) {
 		if ([clipView documentVisibleRect].origin.y == 0) {
 			if ([clipView documentVisibleRect].origin.x == ([clipView documentRect].size.width - [clipView documentVisibleRect].size.width)) {
@@ -641,14 +640,8 @@
 
 - (BOOL)prev
 {
-	if (fitScreenMode == 0) {
-		return YES;
-	}
-	NSScrollView *scrollView = [self enclosingScrollView];
-	NSClipView *clipView = [scrollView contentView];
-	if (NSEqualRects([clipView documentVisibleRect],[clipView documentRect])) {
-		return YES;
-	}
+	NSClipView *clipView = [self co_scrollableClipViewOrNil];
+	if (!clipView) return YES;
 	if ([target readFromLeft]) {
 		if ([clipView documentVisibleRect].origin.y == ([clipView documentRect].size.height - [clipView documentVisibleRect].size.height)) {
 			if ([clipView documentVisibleRect].origin.x == 0) {
