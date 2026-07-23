@@ -11,10 +11,10 @@
 
 @interface FilterPanelController : NSObject <NSTableViewDataSource, NSTableViewDelegate, NSSearchFieldDelegate>
 {
-    IBOutlet id filterPanel;
-    IBOutlet id scrollView;
-    IBOutlet id popupButton;
-    IBOutlet id contentsView;
+    IBOutlet NSPanel *filterPanel;
+    IBOutlet NSScrollView *scrollView;
+    IBOutlet NSPopUpButton *popupButton;
+    IBOutlet NSStackView *contentsView;
     
     NSMutableDictionary *filterDic;
     NSMutableArray *selectedFilterKeys;
