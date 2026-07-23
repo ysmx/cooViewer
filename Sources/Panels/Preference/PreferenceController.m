@@ -1501,6 +1501,51 @@ static const int DIALOG_CANCEL	= 129;
 	[defaults setBool:([secondaryDisplayBackgroundSyncCheck state] == NSControlStateValueOn) forKey:@"SyncSecondaryDisplayBackground"];
 }
 
+- (void)co_loadSortSettings
+{
+	switch ([defaults integerForKey:@"SortMode"]) {
+		case 0:
+			[sortModePopUpButton selectItemAtIndex:0];
+			break;
+		case 1:
+			[sortModePopUpButton selectItemAtIndex:3];
+			break;
+		case 2:
+			[sortModePopUpButton selectItemAtIndex:1];
+			break;
+		case 3:
+			[sortModePopUpButton selectItemAtIndex:2];
+			break;
+		default:
+			[sortModePopUpButton selectItemAtIndex:0];
+			break;
+	}
+	[sortDescendingButton setState:[defaults boolForKey:@"SortDescending"] ? NSControlStateValueOn : NSControlStateValueOff];
+	[self co_updateSortDescendingControl];
+}
+
+- (void)co_saveSortSettings
+{
+	switch ([sortModePopUpButton indexOfSelectedItem]) {
+		case 0:
+			[defaults setInteger:0 forKey:@"SortMode"];
+			break;
+		case 1:
+			[defaults setInteger:2 forKey:@"SortMode"];
+			break;
+		case 2:
+			[defaults setInteger:3 forKey:@"SortMode"];
+			break;
+		case 3:
+			[defaults setInteger:1 forKey:@"SortMode"];
+			break;
+		break;
+	default:
+		break;
+	}
+	[defaults setBool:([sortDescendingButton state] == NSControlStateValueOn) forKey:@"SortDescending"];
+}
+
 - (void)preferences
 {
 	[accessorySettingView setPreferences];
@@ -1602,26 +1647,8 @@ static const int DIALOG_CANCEL	= 129;
 		[changeCreatorCheck setState:NSControlStateValueOff];
 	}
 	
-	switch ([defaults integerForKey:@"SortMode"]) {
-		case 0:
-			[sortModePopUpButton selectItemAtIndex:0];
-			break;
-		case 1:
-			[sortModePopUpButton selectItemAtIndex:3];
-			break;
-		case 2:
-			[sortModePopUpButton selectItemAtIndex:1];
-			break;
-		case 3:
-			[sortModePopUpButton selectItemAtIndex:2];
-			break;
-		default:
-			[sortModePopUpButton selectItemAtIndex:0];
-			break;
-	}
-	[sortDescendingButton setState:[defaults boolForKey:@"SortDescending"] ? NSControlStateValueOn : NSControlStateValueOff];
-	[self co_updateSortDescendingControl];
-	
+	[self co_loadSortSettings];
+
 	if ([defaults boolForKey:@"DontHideMenuBar"]) {
 		[dontHideMenubarCheck setState:NSControlStateValueOn];
 	} else {
@@ -2087,25 +2114,8 @@ static const int DIALOG_CANCEL	= 129;
 			[defaults setBool:NO forKey:@"ChangeCreator"];
 		}
 		
-		switch ([sortModePopUpButton indexOfSelectedItem]) {
-			case 0:
-				[defaults setInteger:0 forKey:@"SortMode"];
-				break;
-			case 1:
-				[defaults setInteger:2 forKey:@"SortMode"];
-				break;
-			case 2:
-				[defaults setInteger:3 forKey:@"SortMode"];
-				break;
-			case 3:
-				[defaults setInteger:1 forKey:@"SortMode"];
-				break;
-			break;
-		default:
-			break;
-		}
-		[defaults setBool:([sortDescendingButton state] == NSControlStateValueOn) forKey:@"SortDescending"];
-		
+		[self co_saveSortSettings];
+
 		if ([dontHideMenubarCheck state]==NSControlStateValueOn) {
 			[defaults setBool:YES forKey:@"DontHideMenuBar"];
 		} else {
