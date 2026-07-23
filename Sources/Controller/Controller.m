@@ -1717,6 +1717,65 @@ static const int DIALOG_CANCEL	= 129;
 }
 
 /*
+ The "page" key screenCacheArray entries are stored/looked-up under for a
+ composed two-page spread ending at `page`: readMode determines whether the
+ higher or lower page number comes first in the "%i-%i" string, shared by
+ -lookaheadAndCompose, -composeImage, and -imageDisplayIfHasScreenCache.
+ Returns nil for any readMode other than the four recognized values.
+ */
+- (NSString *)co_screenCacheKeyForPage:(int)page
+{
+	if (readMode == 0 || readMode == 2) {
+		return [NSString stringWithFormat:@"%i-%i", page, page-1];
+	} else if (readMode == 1 || readMode == 3) {
+		return [NSString stringWithFormat:@"%i-%i", page-1, page];
+	}
+	return nil;
+}
+
+/*
+ Searches screenCacheArray for an entry matching (page, fitScreenMode) and,
+ if found, touches it to the end of the array (LRU) before returning it.
+ Returns nil on no match.
+ */
+- (NSDictionary *)co_screenCacheEntryForPage:(int)page
+{
+	NSString *key = [self co_screenCacheKeyForPage:page];
+	if (!key) return nil;
+	for (int index = 0; index < [screenCacheArray count]; index++) {
+		id object = [screenCacheArray objectAtIndex:index];
+		if ([[object objectForKey:@"page"] isEqualToString:key] &&
+			[[object objectForKey:@"fitScreenMode"] intValue] == fitScreenMode) {
+			[screenCacheArray addObject:object];
+			[screenCacheArray removeObjectAtIndex:index];
+			return object;
+		}
+	}
+	return nil;
+}
+
+/*
+ Stores `composedImg` into screenCacheArray under the key for `page` (unless
+ nil or fitScreenMode isn't cacheable), then trims the array back down to
+ screenCache+2 entries — mirroring the insert/trim step duplicated across
+ -lookaheadAndCompose and -composeImage.
+ */
+- (void)co_insertScreenCacheEntryForPage:(int)page composedImage:(NSImage *)composedImg
+{
+	if (!composedImg) return;
+	if (screenCache > 0) {
+		NSString *key = [self co_screenCacheKeyForPage:page];
+		if (key) {
+			[screenCacheArray addObject:[NSDictionary dictionaryWithObjectsAndKeys:
+				key,@"page",
+				[NSNumber numberWithInt:fitScreenMode],@"fitScreenMode",
+				composedImg,@"composed",nil]];
+		}
+	}
+	while ([screenCacheArray count] > screenCache+2) [screenCacheArray removeObjectAtIndex:0];
+}
+
+/*
  Fills imageMutableArray with lookahead images starting at nowPage, up to a
  buffer of 2, shared by -lookahead and -lookaheadAndCompose. Must be called
  with `lock` already held. Returns YES if threadStop fired mid-fill (caller
@@ -1797,41 +1856,18 @@ static const int DIALOG_CANCEL	= 129;
 	if ([imageMutableArray count]>1 && readMode<2 && bufferingMode == 0) {
 		int tempPage = nowPage+2;
 		if (screenCache>0) {
-			int index;
-			id object;
-			for (index=0; index<[screenCacheArray count]; index++) {
-				object = [screenCacheArray objectAtIndex:index];
-				if (readMode == 0 || readMode == 2) {
-					if ([[object objectForKey:@"page"] isEqualToString:[NSString stringWithFormat:@"%i-%i",tempPage,tempPage-1]] &&
-						[[object objectForKey:@"fitScreenMode"] intValue] == fitScreenMode ) {
-						[screenCacheArray addObject:object];
-						[screenCacheArray removeObjectAtIndex:index];
-						//NSLog(@"%i composed=%@",nowPage,[object objectForKey:@"page"]);
-						composedImage = [[object objectForKey:@"composed"] retain];
-						threadCount--;
-						threadStop = NO;
-						[lock unlock];
-						[pool release];
-						return;
-					}
-				} else if (readMode == 1 || readMode == 3) {
-					if ([[object objectForKey:@"page"] isEqualToString:[NSString stringWithFormat:@"%i-%i",tempPage-1,tempPage]] &&
-						[[object objectForKey:@"fitScreenMode"] intValue] == fitScreenMode ) {
-						[screenCacheArray addObject:object];
-						[screenCacheArray removeObjectAtIndex:index];
-						//NSLog(@"composed=%@",[object objectForKey:@"page"]);
-						composedImage = [[object objectForKey:@"composed"] retain];
-						threadCount--;
-						threadStop = NO;
-						[lock unlock];
-						[pool release];
-						return;
-					}
-				}
+			NSDictionary *cached = [self co_screenCacheEntryForPage:tempPage];
+			if (cached) {
+				composedImage = [[cached objectForKey:@"composed"] retain];
+				threadCount--;
+				threadStop = NO;
+				[lock unlock];
+				[pool release];
+				return;
 			}
 		}
-		
-		if ([self isSmallImage:[imageMutableArray objectAtIndex:1] page:nowPage+1] 
+
+		if ([self isSmallImage:[imageMutableArray objectAtIndex:1] page:nowPage+1]
 			&& [self isSmallImage:[imageMutableArray objectAtIndex:0] page:nowPage+2]) {
 			NSImage *image1 = [[imageMutableArray objectAtIndex:1] retain];
 			NSImage *image2 = [[imageMutableArray objectAtIndex:0] retain];
@@ -1839,28 +1875,7 @@ static const int DIALOG_CANCEL	= 129;
 			[image1 release];
 			[image2 release];
 		}
-		if (composedImage) {
-			if (screenCache>0) {
-				switch (readMode) {
-					case 0: case 2:
-						[screenCacheArray addObject:[NSDictionary dictionaryWithObjectsAndKeys:
-							[NSString stringWithFormat:@"%i-%i",tempPage,tempPage-1],@"page",
-							[NSNumber numberWithInt:fitScreenMode],@"fitScreenMode",
-							composedImage,@"composed",nil]];
-						break;
-					case 1: case 3:
-						[screenCacheArray addObject:[NSDictionary dictionaryWithObjectsAndKeys:
-							[NSString stringWithFormat:@"%i-%i",tempPage-1,tempPage],@"page",
-							[NSNumber numberWithInt:fitScreenMode],@"fitScreenMode",
-							composedImage,@"composed",nil]];
-						break;
-					default:
-						break;
-				}
-			}
-			//NSLog(@"add %i-%i",tempPage,tempPage-1);
-			while ([screenCacheArray count] > screenCache+2) [screenCacheArray removeObjectAtIndex:0];
-		}
+		[self co_insertScreenCacheEntryForPage:tempPage composedImage:composedImage];
 	}
 	threadStop = NO;
 	threadCount--;
@@ -2042,91 +2057,29 @@ static const int DIALOG_CANCEL	= 129;
 		[imageView setImages:secondImage];
 	} else {
 		if (screenCache>0) {
-			int index;
-			id object;
-			for (index=0; index<[screenCacheArray count]; index++) {
-				object = [screenCacheArray objectAtIndex:index];
-				if (readMode == 0 || readMode == 2) {
-					if ([[object objectForKey:@"page"] isEqualToString:[NSString stringWithFormat:@"%i-%i",nowPage,nowPage-1]] &&
-						[[object objectForKey:@"fitScreenMode"] intValue] == fitScreenMode ) {
-						[screenCacheArray addObject:object];
-						[screenCacheArray removeObjectAtIndex:index];
-						//NSLog(@"setImage %@",[object objectForKey:@"page"]);
-						[imageView setImage:[object objectForKey:@"composed"]];
-						return;
-					}
-				} else if (readMode == 1 || readMode == 3) {
-					if ([[object objectForKey:@"page"] isEqualToString:[NSString stringWithFormat:@"%i-%i",nowPage-1,nowPage]] &&
-						[[object objectForKey:@"fitScreenMode"] intValue] == fitScreenMode ) {
-						[screenCacheArray addObject:object];
-						[screenCacheArray removeObjectAtIndex:index];
-						//NSLog(@"setImage% %@",[object objectForKey:@"page"]);
-						[imageView setImage:[object objectForKey:@"composed"]];
-						return;
-					}
-				}
+			NSDictionary *cached = [self co_screenCacheEntryForPage:nowPage];
+			if (cached) {
+				[imageView setImage:[cached objectForKey:@"composed"]];
+				return;
 			}
 		}
-		//NSLog(@"kone- %i-%i",nowPage,nowPage-1);
 		id image = [self returnComposeImage:secondImage and:firstImage];
 		[imageView setImage:image];
-		if (image) {
-			if (screenCache>0) {
-				switch (readMode) {
-					case 0: case 2:
-						[screenCacheArray addObject:[NSDictionary dictionaryWithObjectsAndKeys:
-							[NSString stringWithFormat:@"%i-%i",nowPage,nowPage-1],@"page",
-							[NSNumber numberWithInt:fitScreenMode],@"fitScreenMode",
-							image,@"composed",nil]];
-						break;
-					case 1: case 3:
-						[screenCacheArray addObject:[NSDictionary dictionaryWithObjectsAndKeys:
-							[NSString stringWithFormat:@"%i-%i",nowPage-1,nowPage],@"page",
-							[NSNumber numberWithInt:fitScreenMode],@"fitScreenMode",
-							image,@"composed",nil]];
-						break;
-					default:
-						break;
-				}
-			}
-			//NSLog(@"set %i-%i",nowPage,nowPage-1);
-			while ([screenCacheArray count] > screenCache+2) [screenCacheArray removeObjectAtIndex:0];
-		}
+		[self co_insertScreenCacheEntryForPage:nowPage composedImage:image];
 	}
-	//[imageView setImages:secondImage];
 }
 
 #pragma mark display
 
 -(BOOL)imageDisplayIfHasScreenCache
 {
-	int tempPage = nowPage;
-	nowPage += 2;
-	int index;
-	id object;
-	for (index=0; index<[screenCacheArray count]; index++) {
-		object = [screenCacheArray objectAtIndex:index];
-		if (readMode == 0 || readMode == 2) {
-			if ([[object objectForKey:@"page"] isEqualToString:[NSString stringWithFormat:@"%i-%i",nowPage,nowPage-1]] &&
-				[[object objectForKey:@"fitScreenMode"] intValue] == fitScreenMode ) {
-				[imageView setImage:[object objectForKey:@"composed"]];
-				[self setPageTextField];
-				[imageView setPageString:[NSString stringWithFormat:@"%@ LoadingOriginals...",[imageView pageString]]];
-				nowPage = tempPage;
-				return YES;
-			}
-		} else if (readMode == 1 || readMode == 3) {
-			if ([[object objectForKey:@"page"] isEqualToString:[NSString stringWithFormat:@"%i-%i",nowPage-1,nowPage]] &&
-				[[object objectForKey:@"fitScreenMode"] intValue] == fitScreenMode ) {
-				[imageView setImage:[object objectForKey:@"composed"]];
-				[self setPageTextField];
-				[imageView setPageString:[NSString stringWithFormat:@"%@ LoadingOriginals...",[imageView pageString]]];
-				nowPage = tempPage;
-				return YES;
-			}
-		}
+	NSDictionary *cached = [self co_screenCacheEntryForPage:nowPage+2];
+	if (cached) {
+		[imageView setImage:[cached objectForKey:@"composed"]];
+		[self setPageTextField];
+		[imageView setPageString:[NSString stringWithFormat:@"%@ LoadingOriginals...",[imageView pageString]]];
+		return YES;
 	}
-	nowPage = tempPage;
 	return NO;
 }
 
