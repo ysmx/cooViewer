@@ -1787,20 +1787,14 @@ static const int DIALOG_CANCEL	= 129;
 	[defaults setObject:mouseArrayMode3 forKey:@"MouseArrayMode3"];
 }
 
-- (void)preferences
+- (void)co_loadGeneralSettings
 {
-	[accessorySettingView setPreferences];
-	[self co_installAppearanceLayoutIfNeeded];
-
-	[self co_loadInputSettings];
-
-	int bufferingMode = (int)[defaults integerForKey:@"BufferingMode"];
 	BOOL fitOriginal = [defaults boolForKey:@"FitOriginal"];
 	BOOL rememberBookSettings = [defaults boolForKey:@"RememberBookSettings"];
 	NSDictionary *thumbnail = [defaults dictionaryForKey:@"Thumbnail"];
 	float sliderValue = [defaults floatForKey:@"SlideshowDelay"];
 	int loopCheck = (int)[defaults integerForKey:@"LoopCheck"];
-	
+
 	int maxEnlargement = (int)[defaults integerForKey:@"MaxEnlargement"];
 	//int skipPage = [defaults integerForKey:@"SkipPage"];
 	int singleSetting = (int)[defaults integerForKey:@"SingleSetting"];
@@ -1808,16 +1802,13 @@ static const int DIALOG_CANCEL	= 129;
 	float wheelSensitivity = [defaults floatForKey:@"WheelSensitivity"];
 	BOOL openLastFolder = [defaults boolForKey:@"OpenLastFolder"];
     BOOL useCalayer = [defaults boolForKey:@"UseCALayer"];
-	
+
 	int prevPageAction = (int)[defaults integerForKey:@"PrevPageMode"];
 	int canScrollAction = (int)[defaults integerForKey:@"CanScrollMode"];
-    
-	
+
 	[prevPageActionPopUpButton selectItemAtIndex:prevPageAction];
 	[canScrollActionPopUpButton selectItemAtIndex:canScrollAction];
-	
-	
-	
+
 	if ([defaults boolForKey:@"ChangeOpenWith"]) {
 		[changeOpenWithCheck setState:NSControlStateValueOn];
 	} else {
@@ -1828,8 +1819,6 @@ static const int DIALOG_CANCEL	= 129;
 	} else {
 		[changeCreatorCheck setState:NSControlStateValueOff];
 	}
-	
-	[self co_loadSortSettings];
 
 	if ([defaults boolForKey:@"DontHideMenuBar"]) {
 		[dontHideMenubarCheck setState:NSControlStateValueOn];
@@ -1841,92 +1830,72 @@ static const int DIALOG_CANCEL	= 129;
 	} else {
 		[showThumbnailCheck setState:NSControlStateValueOff];
 	}
-	
-	/*history*/
-	[self co_loadHistorySettings];
 
 	/*pdf link*/
-	[openLinkPopUpButton selectItemAtIndex:[defaults integerForKey:@"OpenLinkMode"]];	
-	
+	[openLinkPopUpButton selectItemAtIndex:[defaults integerForKey:@"OpenLinkMode"]];
+
 	/*change current folder*/
-	[changeCurrentFolderPopUpButton selectItemAtIndex:[defaults integerForKey:@"ChangeCurrentFolder"]];	
-	
-	
-	/*pageBar*/
-	[self co_loadPageBarSettings];
-
-	[self co_loadLoupeSettings];
-	[self co_loadViewSettings];
-	[self co_loadCacheSettings];
-
-	/*pagenumber*/
-	[self co_loadPageNumberSettings];
+	[changeCurrentFolderPopUpButton selectItemAtIndex:[defaults integerForKey:@"ChangeCurrentFolder"]];
 
 	[interpolationPopUpButton selectItemAtIndex:[defaults integerForKey:@"Interpolation"]];
-	
+
 	[bufferingModePopUpButton selectItemAtIndex:[defaults integerForKey:@"BufferingMode"]];
 	if ([bufferingModePopUpButton indexOfSelectedItem]==1) {
 		[screenCacheTextField setEnabled:NO];
 	} else {
 		[screenCacheTextField setEnabled:YES];
 	}
-	
+
 	if (fitOriginal) {
 		[fitOriginalCheck setState:NSControlStateValueOn];
 	} else {
 		[fitOriginalCheck setState:NSControlStateValueOff];
 	}
-	
-	
+
+
 	//[skipPageTextField setStringValue:[NSString stringWithFormat:@"%d", skipPage]];
-	
+
 	if (wheelSensitivity == 0.0) {
 		[wheelSlider setFloatValue:0.0];
 	} else {
 		[wheelSlider setFloatValue:(2.1-wheelSensitivity)];
 	}
-	
 
-	
+
 	if (rememberBookSettings) {
 		[rememberBookSettingsCheck setState:NSControlStateValueOn];
 	} else {
 		[rememberBookSettingsCheck setState:NSControlStateValueOff];
 	}
-	
-	
-	
-	
+
+
 	if (openLastFolder == YES) {
 		[openLastFolderCheck setState:NSControlStateValueOn];
 	} else {
 		[openLastFolderCheck setState:NSControlStateValueOff];
 	}
-    
-    
+
+
     if (useCalayer == YES) {
         [useCalayerCheck setState:NSControlStateValueOn];
     } else {
         [useCalayerCheck setState:NSControlStateValueOff];
     }
-	
-	
+
 
 	[thumbnailTextFieldRow setStringValue:[NSString stringWithFormat:@"%i",[[thumbnail objectForKey:@"row"] intValue] ]];
 	[thumbnailTextFieldCol setStringValue:[NSString stringWithFormat:@"%i", [[thumbnail objectForKey:@"column"] intValue]]];
-	
+
 	[singleSettingTextField setStringValue:[NSString stringWithFormat:@"%i", singleSetting]];
-	
-	
-	
-	
+
+
 	if (readSubFolder == YES) {
 		[readSubFolderCheck setState:NSControlStateValueOn];
 	} else {
 		[readSubFolderCheck setState:NSControlStateValueOff];
 	}
-	
-	
+
+
 	if (loopCheck == 0) {
 		//loop
 		[loopPopUpButton selectItemAtIndex:0];
@@ -1940,8 +1909,8 @@ static const int DIALOG_CANCEL	= 129;
 		//none
 		[loopPopUpButton selectItemAtIndex:3];
 	}
-	
-	
+
+
 	switch ([defaults integerForKey:@"ReadMode"]) {
 		case 0:
 			[readRightButton setState:NSControlStateValueOff];
@@ -1965,7 +1934,7 @@ static const int DIALOG_CANCEL	= 129;
 			break;
 		default:break;
 	}
-	
+
 	if (maxEnlargement == 0) {
 		[enlargePopUpButton selectItemAtIndex:5];
 	} else if (maxEnlargement == 1) {
@@ -1979,10 +1948,199 @@ static const int DIALOG_CANCEL	= 129;
 	} else if (maxEnlargement == 5) {
 		[enlargePopUpButton selectItemAtIndex:4];
 	}
-	
+
 	[slideshowSlider setFloatValue:sliderValue];
 	[slideshowTextField setStringValue:[NSString stringWithFormat:@"%.1f", sliderValue]];
-	
+}
+
+- (void)co_saveGeneralSettings
+{
+	BOOL fitOriginal;
+	if ([fitOriginalCheck state] == NSControlStateValueOn) {
+		fitOriginal = YES;
+	} else {
+		fitOriginal = NO;
+	}
+
+	[defaults setBool:fitOriginal forKey:@"FitOriginal"];
+
+	int bufferingMode = (int)[bufferingModePopUpButton indexOfSelectedItem];
+	[defaults setInteger:bufferingMode forKey:@"BufferingMode"];
+
+	BOOL rememberBookSettings;
+	if ([rememberBookSettingsCheck state] == NSControlStateValueOn) {
+		rememberBookSettings = YES;
+	} else {
+		rememberBookSettings = NO;
+	}
+
+
+	[defaults setBool:rememberBookSettings forKey:@"RememberBookSettings"];
+
+
+	BOOL openLastFolder;
+	if ([openLastFolderCheck state] == NSControlStateValueOn) {
+		openLastFolder = YES;
+	} else {
+		openLastFolder = NO;
+	}
+	[defaults setBool:openLastFolder forKey:@"OpenLastFolder"];
+
+	BOOL readSubFolder;
+	if ([readSubFolderCheck state] == NSControlStateValueOn) {
+		readSubFolder = YES;
+	} else {
+		readSubFolder = NO;
+	}
+	[defaults setBool:readSubFolder forKey:@"ReadSubFolder"];
+
+    BOOL useCalayer;
+    if ([useCalayerCheck state] == NSControlStateValueOn) {
+        useCalayer = YES;
+    } else {
+        useCalayer = NO;
+    }
+    [defaults setBool:useCalayer forKey:@"UseCALayer"];
+
+	int loopCheck = 0;
+	int loopIndex = (int)[loopPopUpButton indexOfSelectedItem];
+	if (loopIndex == 0){
+		loopCheck = 0;
+	} else if (loopIndex == 1){
+		loopCheck = 1;
+	} else if (loopIndex == 2){
+		loopCheck = 2;
+	} else if (loopIndex == 3){
+		loopCheck = 3;
+	}
+	[defaults setInteger:loopCheck forKey:@"LoopCheck"];
+
+
+
+	int readMode;
+	if ([readLeftButton state] == NSControlStateValueOn) {
+		if ([readSingleCheckButton state] == NSControlStateValueOn) {
+			readMode = 2;
+		} else {
+			readMode = 0;
+		}
+	} else /*if ([readRightButton state] == NSControlStateValueOn)*/ {
+		if ([readSingleCheckButton state] == NSControlStateValueOn) {
+			readMode = 3;
+		} else {
+			readMode = 1;
+		}
+	}
+	[defaults setInteger:readMode forKey:@"ReadMode"];
+
+
+
+
+	int singleSetting = [[singleSettingTextField stringValue] intValue];
+	[defaults setInteger:singleSetting forKey:@"SingleSetting"];
+
+
+	int interpolationIndex = (int)[interpolationPopUpButton indexOfSelectedItem];
+	[defaults setInteger:interpolationIndex forKey:@"Interpolation"];
+
+	int maxEnlargement = 0;
+	int enlargementIndex = (int)[enlargePopUpButton indexOfSelectedItem];
+	if (enlargementIndex == 0){
+		maxEnlargement = 1;
+	} else if (enlargementIndex == 1){
+		maxEnlargement = 2;
+	} else if (enlargementIndex == 2){
+		maxEnlargement = 3;
+	} else if (enlargementIndex == 3){
+		maxEnlargement = 4;
+	} else if (enlargementIndex == 4){
+		maxEnlargement = 5;
+	} else if (enlargementIndex == 5){
+		maxEnlargement = 0;
+	}
+	[defaults setInteger:maxEnlargement forKey:@"MaxEnlargement"];
+
+	float wheelSensitivity;
+	if ([wheelSlider floatValue] == 0.0) {
+		wheelSensitivity = 0.0;
+	} else {
+		wheelSensitivity = (2.1-[wheelSlider floatValue]);
+	}
+
+	[defaults setFloat:wheelSensitivity forKey:@"WheelSensitivity"];
+
+
+
+
+	//skipPage = [[skipPageTextField stringValue] intValue];
+	//[defaults setInteger:skipPage forKey:@"SkipPage"];
+
+	NSDictionary *thumbnail;
+	int col = [[thumbnailTextFieldCol stringValue] intValue];
+	int row = [[thumbnailTextFieldRow stringValue] intValue];
+	thumbnail = [NSDictionary dictionaryWithObjectsAndKeys:
+		[NSNumber numberWithInt:row],@"row",
+		[NSNumber numberWithInt:col],@"column",nil];
+	[defaults setObject:thumbnail forKey:@"Thumbnail"];
+
+	float sliderValue = [[slideshowTextField stringValue] floatValue];
+	[defaults setFloat:sliderValue forKey:@"SlideshowDelay"];
+
+
+	int prevPageAction = (int)[prevPageActionPopUpButton indexOfSelectedItem];
+	int canScrollAction = (int)[canScrollActionPopUpButton indexOfSelectedItem];
+	[defaults setInteger:prevPageAction forKey:@"PrevPageMode"];
+	[defaults setInteger:canScrollAction forKey:@"CanScrollMode"];
+
+	if ([changeOpenWithCheck state]==NSControlStateValueOn) {
+		[defaults setBool:YES forKey:@"ChangeOpenWith"];
+	} else {
+		[defaults setBool:NO forKey:@"ChangeOpenWith"];
+	}
+	if ([changeCreatorCheck state]==NSControlStateValueOn) {
+		[defaults setBool:YES forKey:@"ChangeCreator"];
+	} else {
+		[defaults setBool:NO forKey:@"ChangeCreator"];
+	}
+
+	if ([dontHideMenubarCheck state]==NSControlStateValueOn) {
+		[defaults setBool:YES forKey:@"DontHideMenuBar"];
+	} else {
+		[defaults setBool:NO forKey:@"DontHideMenuBar"];
+	}
+	if ([showThumbnailCheck state]==NSControlStateValueOn) {
+		[defaults setBool:YES forKey:@"ShowThumbnailWhenOpen"];
+	} else {
+		[defaults setBool:NO forKey:@"ShowThumbnailWhenOpen"];
+	}
+
+	[defaults setInteger:[openLinkPopUpButton indexOfSelectedItem] forKey:@"OpenLinkMode"];
+
+	[defaults setInteger:[changeCurrentFolderPopUpButton indexOfSelectedItem] forKey:@"ChangeCurrentFolder"];
+}
+
+- (void)preferences
+{
+	[accessorySettingView setPreferences];
+	[self co_installAppearanceLayoutIfNeeded];
+
+	[self co_loadInputSettings];
+	[self co_loadGeneralSettings];
+	[self co_loadSortSettings];
+
+	/*history*/
+	[self co_loadHistorySettings];
+
+	/*pageBar*/
+	[self co_loadPageBarSettings];
+
+	[self co_loadLoupeSettings];
+	[self co_loadViewSettings];
+	[self co_loadCacheSettings];
+
+	/*pagenumber*/
+	[self co_loadPageNumberSettings];
+
 	if ([window isVisible]) {
 		[preferences setLevel:NSModalPanelWindowLevel];
 	}
@@ -1994,17 +2152,8 @@ static const int DIALOG_CANCEL	= 129;
 		[self co_releaseInputArrays];
         return;
     } else if(result == DIALOG_OK) {
-		if ([fitOriginalCheck state] == NSControlStateValueOn) {
-			fitOriginal = YES;
-		} else {
-			fitOriginal = NO;
-		}
+		[self co_saveGeneralSettings];
 
-		[defaults setBool:fitOriginal forKey:@"FitOriginal"];
-		
-		bufferingMode = (int)[bufferingModePopUpButton indexOfSelectedItem];
-		[defaults setInteger:bufferingMode forKey:@"BufferingMode"];
-		
 		[self co_saveInputSettings];
 
 		/*
@@ -2014,127 +2163,7 @@ static const int DIALOG_CANCEL	= 129;
 		[accessorySettingView pageStringPosition];
 		[accessorySettingView pageMargin];
 		*/
-		
-		if ([rememberBookSettingsCheck state] == NSControlStateValueOn) {
-			rememberBookSettings = YES;
-		} else {
-			rememberBookSettings = NO;
-		}
-		
-		
-		[defaults setBool:rememberBookSettings forKey:@"RememberBookSettings"];
-		
-		
-		if ([openLastFolderCheck state] == NSControlStateValueOn) {
-			openLastFolder = YES;
-		} else {
-			openLastFolder = NO;
-		}
-		[defaults setBool:openLastFolder forKey:@"OpenLastFolder"];
-		
-		if ([readSubFolderCheck state] == NSControlStateValueOn) {
-			readSubFolder = YES;
-		} else {
-			readSubFolder = NO;
-		}
-		[defaults setBool:readSubFolder forKey:@"ReadSubFolder"];
-        
-        if ([useCalayerCheck state] == NSControlStateValueOn) {
-            useCalayer = YES;
-        } else {
-            useCalayer = NO;
-        }
-        [defaults setBool:useCalayer forKey:@"UseCALayer"];
-		
-		int loopIndex = (int)[loopPopUpButton indexOfSelectedItem];
-		if (loopIndex == 0){
-			loopCheck = 0;
-		} else if (loopIndex == 1){
-			loopCheck = 1;
-		} else if (loopIndex == 2){
-			loopCheck = 2;
-		} else if (loopIndex == 3){
-			loopCheck = 3;
-		}
-		[defaults setInteger:loopCheck forKey:@"LoopCheck"];
-		
-		
-		
-		int readMode;
-		if ([readLeftButton state] == NSControlStateValueOn) {
-			if ([readSingleCheckButton state] == NSControlStateValueOn) {
-				readMode = 2;
-			} else {
-				readMode = 0;
-			}
-		} else /*if ([readRightButton state] == NSControlStateValueOn)*/ {
-			if ([readSingleCheckButton state] == NSControlStateValueOn) {
-				readMode = 3;
-			} else {
-				readMode = 1;
-			}
-		}
-		[defaults setInteger:readMode forKey:@"ReadMode"];
 
-		
-		
-		
-		singleSetting = [[singleSettingTextField stringValue] intValue];
-		[defaults setInteger:singleSetting forKey:@"SingleSetting"];
-		
-		
-		int interpolationIndex = (int)[interpolationPopUpButton indexOfSelectedItem];
-		[defaults setInteger:interpolationIndex forKey:@"Interpolation"];
-		
-		int enlargementIndex = (int)[enlargePopUpButton indexOfSelectedItem];
-		if (enlargementIndex == 0){
-			maxEnlargement = 1;
-		} else if (enlargementIndex == 1){
-			maxEnlargement = 2;
-		} else if (enlargementIndex == 2){
-			maxEnlargement = 3;
-		} else if (enlargementIndex == 3){
-			maxEnlargement = 4;
-		} else if (enlargementIndex == 4){
-			maxEnlargement = 5;
-		} else if (enlargementIndex == 5){
-			maxEnlargement = 0;
-		}
-		[defaults setInteger:maxEnlargement forKey:@"MaxEnlargement"];
-		
-		if ([wheelSlider floatValue] == 0.0) {
-			wheelSensitivity = 0.0;
-		} else {
-			wheelSensitivity = (2.1-[wheelSlider floatValue]);
-		}
-		
-		[defaults setFloat:wheelSensitivity forKey:@"WheelSensitivity"];
-		
-		
-		
-
-		
-		//skipPage = [[skipPageTextField stringValue] intValue];
-		//[defaults setInteger:skipPage forKey:@"SkipPage"];
-		
-		NSDictionary *thumbnail;
-		int col = [[thumbnailTextFieldCol stringValue] intValue];
-		int row = [[thumbnailTextFieldRow stringValue] intValue];
-		thumbnail = [NSDictionary dictionaryWithObjectsAndKeys:
-			[NSNumber numberWithInt:row],@"row",
-			[NSNumber numberWithInt:col],@"column",nil];
-		[defaults setObject:thumbnail forKey:@"Thumbnail"];
-		
-		sliderValue = [[slideshowTextField stringValue] floatValue];
-		[defaults setFloat:sliderValue forKey:@"SlideshowDelay"];
-		
-		
-		prevPageAction = (int)[prevPageActionPopUpButton indexOfSelectedItem];
-		canScrollAction = (int)[canScrollActionPopUpButton indexOfSelectedItem];
-		[defaults setInteger:prevPageAction forKey:@"PrevPageMode"];
-		[defaults setInteger:canScrollAction forKey:@"CanScrollMode"];
-		
-		
 		/*pageNum*/
 		[self co_savePageNumberSettings];
 		/*pageBar*/
@@ -2144,36 +2173,10 @@ static const int DIALOG_CANCEL	= 129;
 		[self co_saveCacheSettings];
 		[self co_saveViewSettings];
 
-		if ([changeOpenWithCheck state]==NSControlStateValueOn) {
-			[defaults setBool:YES forKey:@"ChangeOpenWith"];
-		} else {
-			[defaults setBool:NO forKey:@"ChangeOpenWith"];
-		}
-		if ([changeCreatorCheck state]==NSControlStateValueOn) {
-			[defaults setBool:YES forKey:@"ChangeCreator"];
-		} else {
-			[defaults setBool:NO forKey:@"ChangeCreator"];
-		}
-		
 		[self co_saveSortSettings];
 
-		if ([dontHideMenubarCheck state]==NSControlStateValueOn) {
-			[defaults setBool:YES forKey:@"DontHideMenuBar"];
-		} else {
-			[defaults setBool:NO forKey:@"DontHideMenuBar"];
-		}
-		if ([showThumbnailCheck state]==NSControlStateValueOn) {
-			[defaults setBool:YES forKey:@"ShowThumbnailWhenOpen"];
-		} else {
-			[defaults setBool:NO forKey:@"ShowThumbnailWhenOpen"];
-		}
-		
 		[self co_saveHistorySettings];
 
-		[defaults setInteger:[openLinkPopUpButton indexOfSelectedItem] forKey:@"OpenLinkMode"];
-		
-		[defaults setInteger:[changeCurrentFolderPopUpButton indexOfSelectedItem] forKey:@"ChangeCurrentFolder"];
-		
 		[defaults synchronize];
 		
 		
