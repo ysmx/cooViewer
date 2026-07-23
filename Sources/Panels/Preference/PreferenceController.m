@@ -1732,11 +1732,8 @@ static const int DIALOG_CANCEL	= 129;
 	}
 }
 
-- (void)preferences
+- (void)co_loadInputSettings
 {
-	[accessorySettingView setPreferences];
-	[self co_installAppearanceLayoutIfNeeded];
-	
 	keyArray = [[NSMutableArray alloc] initWithArray:[defaults arrayForKey:@"KeyArray"]];
 	keyArrayMode2 = [[NSMutableArray alloc] initWithArray:[defaults arrayForKey:@"KeyArrayMode2"]];
 	keyArrayMode3 = [[NSMutableArray alloc] initWithArray:[defaults arrayForKey:@"KeyArrayMode3"]];
@@ -1766,12 +1763,37 @@ static const int DIALOG_CANCEL	= 129;
 			currentMouseArray = mouseArrayMode3;
 			break;
 		default:break;
-		
+
 	}
 	[currentKeyArray sortUsingSelector:@selector(keyArrayCompare:)];
 	[currentMouseArray sortUsingSelector:@selector(mouseArrayCompare:)];
-	
-	
+
+	[inputTableView setDataSource:(id)self];
+	[inputTableView setDelegate:(id)self];
+	[inputTableView reloadData];
+
+	[mouseTableView setDataSource:(id)self];
+	[mouseTableView setDelegate:(id)self];
+	[mouseTableView reloadData];
+}
+
+- (void)co_saveInputSettings
+{
+	[defaults setObject:keyArray forKey:@"KeyArray"];
+	[defaults setObject:keyArrayMode2 forKey:@"KeyArrayMode2"];
+	[defaults setObject:keyArrayMode3 forKey:@"KeyArrayMode3"];
+	[defaults setObject:mouseArray forKey:@"MouseArray"];
+	[defaults setObject:mouseArrayMode2 forKey:@"MouseArrayMode2"];
+	[defaults setObject:mouseArrayMode3 forKey:@"MouseArrayMode3"];
+}
+
+- (void)preferences
+{
+	[accessorySettingView setPreferences];
+	[self co_installAppearanceLayoutIfNeeded];
+
+	[self co_loadInputSettings];
+
 	int bufferingMode = (int)[defaults integerForKey:@"BufferingMode"];
 	BOOL fitOriginal = [defaults boolForKey:@"FitOriginal"];
 	BOOL rememberBookSettings = [defaults boolForKey:@"RememberBookSettings"];
@@ -1837,18 +1859,6 @@ static const int DIALOG_CANCEL	= 129;
 	[self co_loadViewSettings];
 	[self co_loadCacheSettings];
 
-	
-	/**/
-    [inputTableView setDataSource:(id)self];
-    [inputTableView setDelegate:(id)self];
-	[inputTableView reloadData];
-	
-	[mouseTableView setDataSource:(id)self];
-    [mouseTableView setDelegate:(id)self];
-	[mouseTableView reloadData];
-	/**/
-	
-	
 	/*pagenumber*/
 	[self co_loadPageNumberSettings];
 
@@ -1995,15 +2005,8 @@ static const int DIALOG_CANCEL	= 129;
 		bufferingMode = (int)[bufferingModePopUpButton indexOfSelectedItem];
 		[defaults setInteger:bufferingMode forKey:@"BufferingMode"];
 		
-		[defaults setObject:keyArray forKey:@"KeyArray"];
-		[defaults setObject:keyArrayMode2 forKey:@"KeyArrayMode2"];
-		[defaults setObject:keyArrayMode3 forKey:@"KeyArrayMode3"];
-		[defaults setObject:mouseArray forKey:@"MouseArray"];
-		[defaults setObject:mouseArrayMode2 forKey:@"MouseArrayMode2"];
-		[defaults setObject:mouseArrayMode3 forKey:@"MouseArrayMode3"];
-		
-		
-		
+		[self co_saveInputSettings];
+
 		/*
 		[accessorySettingView pageBarPosition];
 		[accessorySettingView pageBarMargin];
