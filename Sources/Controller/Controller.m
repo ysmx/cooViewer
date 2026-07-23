@@ -1,4 +1,5 @@
 #import "Controller.h"
+#import "cooViewer-Swift.h"
 #import "CustomWindow.h"
 #import "BookmarkController.h"
 #import "CustomImageView.h"
@@ -1187,13 +1188,9 @@ static const int DIALOG_CANCEL	= 129;
 				}
 				int index = 0;
 				id object = [self searchFromRecentItems:oldBookPath index:&index];
-				if (object) {
-					[newRecentItems removeObjectAtIndex:index];
-				}
-				while ([newRecentItems count] >= openRecentLimit) {
-					[newRecentItems removeLastObject];
-				}
-				[newRecentItems insertObject:[NSDictionary dictionaryWithObjectsAndKeys:aliasData,@"alias",pageNumber,@"page",COPathForHistoryLookup(oldBookPath),@"temppath",nil] atIndex:0];
+				NSNumber *removeIndex = object ? [NSNumber numberWithInt:index] : nil;
+				NSDictionary *newEntry = [NSDictionary dictionaryWithObjectsAndKeys:aliasData,@"alias",pageNumber,@"page",COPathForHistoryLookup(oldBookPath),@"temppath",nil];
+				newRecentItems = [NSMutableArray arrayWithArray:[ViewerRecentItems updatedWithItems:newRecentItems removingIndex:removeIndex newEntry:newEntry cap:openRecentLimit]];
 				[defaults setObject:newRecentItems forKey:@"RecentItems"];
 			} else {
 				[defaults removeObjectForKey:@"RecentItems"];
@@ -1301,12 +1298,12 @@ static const int DIALOG_CANCEL	= 129;
 		}
 		int index = 0;
 		id objectS = [self searchFromRecentItems:currentBookPath index:&index];
+		NSNumber *removeIndex = objectS ? [NSNumber numberWithInt:index] : nil;
 		if (objectS) {
-			[newRecentItems removeObjectAtIndex:index];
 			newDic = objectS;
 		}
-		[newRecentItems insertObject:newDic atIndex:0];
-		
+		newRecentItems = [NSMutableArray arrayWithArray:[ViewerRecentItems updatedWithItems:newRecentItems removingIndex:removeIndex newEntry:newDic cap:-1]];
+
 		[defaults setObject:newRecentItems forKey:@"RecentItems"];
 	} else {
 		[defaults removeObjectForKey:@"RecentItems"];
