@@ -987,6 +987,57 @@
 	sRect = NSZeroRect;
 }
 
+/*
+ -getDrawImagesInfo:and:'s 90/270-rotation fitScreenMode 1 layout math -
+ verified byte-identical to its fitScreenMode 3 sub-branch (the original
+ marked this with a "とりあえずfitScreenMode==1と同じ" - "same as
+ fitScreenMode 1 for now" - comment). The 0/180-rotation fitScreenMode
+ 1/3 sub-branches are NOT included here: their scaling divisor and
+ frameSize width genuinely differ (fitScreenMode 3 halves the combined
+ width and doubles the frame width, for the two-page spread), so
+ unifying those would risk conflating two different layouts.
+ */
+- (void)co_applyRotatedSpreadFitWidthLayoutWithSRate1:(float)sRate1
+												sRate2:(float)sRate2
+										  widthValue01:(int)widthValue01
+										 heightValue01:(int)heightValue01
+										  widthValue02:(int)widthValue02
+										 heightValue02:(int)heightValue02
+										fullscreenSize:(NSSize)fullscreenSize
+									   outFullscreenRect:(NSRect *)outFullscreenRect
+										   infodic:(NSMutableDictionary *)infodic
+										   widthValue1:(int *)widthValue1
+										  heightValue1:(int *)heightValue1
+										   widthValue2:(int *)widthValue2
+										  heightValue2:(int *)heightValue2
+{
+	*widthValue1 = widthValue01*sRate1;
+	*heightValue1 = heightValue01*sRate1;
+	*widthValue2 = widthValue02*sRate2;
+	*heightValue2 = heightValue02*sRate2;
+	if (maxEnlargement != 0) {
+		if (*widthValue1 > (widthValue01*maxEnlargement)) {
+			*widthValue1 = widthValue01;
+			*heightValue1 = heightValue01;
+		}
+		if (*heightValue1 > (heightValue01*maxEnlargement)) {
+			*widthValue1 = widthValue01;
+			*heightValue1 = heightValue01;
+		}
+		if (*widthValue2 > (widthValue02*maxEnlargement)) {
+			*widthValue2 = widthValue02;
+			*heightValue2 = heightValue02;
+		}
+		if (*heightValue2 > (heightValue02*maxEnlargement)) {
+			*widthValue2 = widthValue02;
+			*heightValue2 = heightValue02;
+		}
+	}
+	[infodic setObject:NSStringFromSize(NSMakeSize((int)fullscreenSize.height,(int)(*widthValue1+*widthValue2))) forKey:@"frameSize"];
+	NSRect newFullscreenRect = [self frame];
+	*outFullscreenRect = NSMakeRect(newFullscreenRect.origin.x,newFullscreenRect.origin.y,newFullscreenRect.size.height,newFullscreenRect.size.width);
+}
+
 - (NSMutableDictionary *)getDrawImagesInfo:(NSImage*)image1 and:(NSImage*)image2
 {
     NSMutableDictionary *infodic = [NSMutableDictionary dictionary];
@@ -1102,61 +1153,20 @@
                     widthValue2 = widthValue2*rates;
                     heightValue2 = heightValue2*rates;
                 }
-            } else if (fitScreenMode == 1) {
-                widthValue1 = widthValue01*sRate1;
-                heightValue1 = heightValue01*sRate1;
-                widthValue2 = widthValue02*sRate2;
-                heightValue2 = heightValue02*sRate2;
-                if (maxEnlargement != 0) {
-                    if (widthValue1 > (widthValue01*maxEnlargement)) {
-                        widthValue1 = widthValue01;
-                        heightValue1 = heightValue01;
-                    }
-                    if (heightValue1 > (heightValue01*maxEnlargement)) {
-                        widthValue1 = widthValue01;
-                        heightValue1 = heightValue01;
-                    }
-                    if (widthValue2 > (widthValue02*maxEnlargement)) {
-                        widthValue2 = widthValue02;
-                        heightValue2 = heightValue02;
-                    }
-                    if (heightValue2 > (heightValue02*maxEnlargement)) {
-                        widthValue2 = widthValue02;
-                        heightValue2 = heightValue02;
-                    }
-                }
-                
-                [infodic setObject:NSStringFromSize(NSMakeSize((int)fullscreenRect.size.height,(int)(widthValue1+widthValue2))) forKey:@"frameSize"];
-                fullscreenRect = [self frame];
-                fullscreenRect = NSMakeRect(fullscreenRect.origin.x,fullscreenRect.origin.y,fullscreenRect.size.height,fullscreenRect.size.width);
-            } else if (fitScreenMode == 3) {
-                //とりあえずfitScreenMode==1と同じ
-                widthValue1 = widthValue01*sRate1;
-                heightValue1 = heightValue01*sRate1;
-                widthValue2 = widthValue02*sRate2;
-                heightValue2 = heightValue02*sRate2;
-                if (maxEnlargement != 0) {
-                    if (widthValue1 > (widthValue01*maxEnlargement)) {
-                        widthValue1 = widthValue01;
-                        heightValue1 = heightValue01;
-                    }
-                    if (heightValue1 > (heightValue01*maxEnlargement)) {
-                        widthValue1 = widthValue01;
-                        heightValue1 = heightValue01;
-                    }
-                    if (widthValue2 > (widthValue02*maxEnlargement)) {
-                        widthValue2 = widthValue02;
-                        heightValue2 = heightValue02;
-                    }
-                    if (heightValue2 > (heightValue02*maxEnlargement)) {
-                        widthValue2 = widthValue02;
-                        heightValue2 = heightValue02;
-                    }
-                }
-                
-                [infodic setObject:NSStringFromSize(NSMakeSize((int)fullscreenRect.size.height,(int)(widthValue1+widthValue2))) forKey:@"frameSize"];
-                fullscreenRect = [self frame];
-                fullscreenRect = NSMakeRect(fullscreenRect.origin.x,fullscreenRect.origin.y,fullscreenRect.size.height,fullscreenRect.size.width);
+            } else if (fitScreenMode == 1 || fitScreenMode == 3) {
+                [self co_applyRotatedSpreadFitWidthLayoutWithSRate1:sRate1
+                                                              sRate2:sRate2
+                                                        widthValue01:widthValue01
+                                                       heightValue01:heightValue01
+                                                        widthValue02:widthValue02
+                                                       heightValue02:heightValue02
+                                                      fullscreenSize:fullscreenRect.size
+                                                   outFullscreenRect:&fullscreenRect
+                                                             infodic:infodic
+                                                         widthValue1:&widthValue1
+                                                        heightValue1:&heightValue1
+                                                         widthValue2:&widthValue2
+                                                        heightValue2:&heightValue2];
             }
         } else {
             //0,180度回転
