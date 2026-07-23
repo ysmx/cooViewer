@@ -1574,6 +1574,164 @@ static const int DIALOG_CANCEL	= 129;
 	[defaults setInteger:[goToLastPopUpButton indexOfSelectedItem] forKey:@"GoToLastPage"];
 }
 
+- (void)co_loadPageNumberSettings
+{
+	if ([defaults boolForKey:@"ShowNumber"]) {
+		[showPageNumCheck setState:NSControlStateValueOn];
+	} else {
+		[showPageNumCheck setState:NSControlStateValueOff];
+	}
+
+	if ([defaults boolForKey:@"PageNumAutoHide"]) {
+		[pageNumAutoHideCheck setState:NSControlStateValueOn];
+	} else {
+		[pageNumAutoHideCheck setState:NSControlStateValueOff];
+	}
+
+	if ([defaults objectForKey:@"TextFont"]) {
+		[fontTextField setFont:[NSUnarchiver unarchiveObjectWithData:[defaults objectForKey:@"TextFont"]]];
+	} else {
+		[fontTextField setFont:[fontTextField font]];
+	}
+
+	NSColor *textColor;
+	if ([defaults objectForKey:@"TextColor"]) {
+		textColor = [NSUnarchiver unarchiveObjectWithData:[defaults objectForKey:@"TextColor"]];
+	} else {
+		textColor = [NSColor whiteColor];
+	}
+	[pageColor setCurrentColor:textColor];
+	[fontTextField setTextColor:textColor];
+	NSColor *textBGColor;
+	if ([defaults objectForKey:@"TextBGColor"]) {
+		textBGColor = [NSUnarchiver unarchiveObjectWithData:[defaults objectForKey:@"TextBGColor"]];
+	} else {
+		textBGColor = [[NSColor blackColor] colorWithAlphaComponent:0.8];
+	}
+	[pageBGColor setCurrentColor:textBGColor];
+	[fontTextField setBackgroundColor:textBGColor];
+	NSColor *textBorderColor;
+	if ([defaults objectForKey:@"TextBorderColor"]) {
+		textBorderColor = [NSUnarchiver unarchiveObjectWithData:[defaults objectForKey:@"TextBorderColor"]];
+	} else {
+		textBorderColor = [[NSColor blackColor] colorWithAlphaComponent:0.8];
+	}
+	[pageBorderColor setCurrentColor:textBorderColor];
+}
+
+- (void)co_savePageNumberSettings
+{
+	int accessoryPlacement = [accessorySettingView pageNumPosition];
+	NSDictionary *zeroAccessoryMargin = [NSDictionary dictionaryWithObjectsAndKeys:
+										[NSNumber numberWithInt:0],@"x",
+										[NSNumber numberWithInt:0],@"y",nil];
+	[defaults setInteger:accessoryPlacement forKey:@"PageNumPosition"];
+	[defaults setObject:zeroAccessoryMargin forKey:@"Margin_Page"];
+	[defaults setObject:[NSArchiver archivedDataWithRootObject:[fontTextField font]] forKey:@"TextFont"];
+	[defaults setObject:[NSArchiver archivedDataWithRootObject:[pageColor currentColor]] forKey:@"TextColor"];
+	[defaults setObject:[NSArchiver archivedDataWithRootObject:[pageBGColor currentColor]] forKey:@"TextBGColor"];
+	[defaults setObject:[NSArchiver archivedDataWithRootObject:[pageBorderColor currentColor]] forKey:@"TextBorderColor"];
+	if ([showPageNumCheck state]==NSControlStateValueOn) {
+		[defaults setBool:YES forKey:@"ShowNumber"];
+	} else {
+		[defaults setBool:NO forKey:@"ShowNumber"];
+	}
+
+	if ([pageNumAutoHideCheck state]==NSControlStateValueOn) {
+		[defaults setBool:YES forKey:@"PageNumAutoHide"];
+	} else {
+		[defaults setBool:NO forKey:@"PageNumAutoHide"];
+	}
+}
+
+- (void)co_loadPageBarSettings
+{
+	if ([defaults boolForKey:@"ShowPageBar"]) {
+		[showPageBarCheck setState:NSControlStateValueOn];
+	} else {
+		[showPageBarCheck setState:NSControlStateValueOff];
+	}
+
+	if ([defaults boolForKey:@"PageBarAutoHide"]) {
+		[pageBarAutoHideCheck setState:NSControlStateValueOn];
+	} else {
+		[pageBarAutoHideCheck setState:NSControlStateValueOff];
+	}
+	if ([defaults boolForKey:@"PageBarShowThumbnail"]) {
+		[pageBarShowThumbCheck setState:NSControlStateValueOn];
+	} else {
+		[pageBarShowThumbCheck setState:NSControlStateValueOff];
+	}
+
+	NSColor *pageBarBG;
+	if ([defaults objectForKey:@"PageBarBGColor"]) {
+		pageBarBG = [NSUnarchiver unarchiveObjectWithData:[defaults objectForKey:@"PageBarBGColor"]];
+	} else {
+		pageBarBG = [[NSColor blackColor] colorWithAlphaComponent:0.8];
+	}
+	[pageBarBGColor setCurrentColor:pageBarBG];
+	[pageBarFontTextField setBackgroundColor:pageBarBG];
+	NSColor *pageBarBorder;
+	if ([defaults objectForKey:@"PageBarBorderColor"]) {
+		pageBarBorder = [NSUnarchiver unarchiveObjectWithData:[defaults objectForKey:@"PageBarBorderColor"]];
+	} else {
+		pageBarBorder = [NSColor whiteColor];
+	}
+	[pageBarBorderColor setCurrentColor:pageBarBorder];
+	NSColor *pageBarReaded;
+	if ([defaults objectForKey:@"PageBarReadedColor"]) {
+		pageBarReaded = [NSUnarchiver unarchiveObjectWithData:[defaults objectForKey:@"PageBarReadedColor"]];
+	} else {
+		pageBarReaded = [[NSColor whiteColor] colorWithAlphaComponent:0.5];
+	}
+	[pageBarReadedColor setCurrentColor:pageBarReaded];
+	NSColor *pageBarFont;
+	if ([defaults objectForKey:@"PageBarFontColor"]) {
+		pageBarFont = [NSUnarchiver unarchiveObjectWithData:[defaults objectForKey:@"PageBarFontColor"]];
+	} else {
+		pageBarFont = [NSColor whiteColor];
+	}
+	[pageBarFontColor setCurrentColor:pageBarFont];
+	[pageBarFontTextField setTextColor:pageBarFont];
+	if ([defaults objectForKey:@"PageBarTextFont"]) {
+		[pageBarFontTextField setFont:[NSUnarchiver unarchiveObjectWithData:[defaults objectForKey:@"PageBarTextFont"]]];
+	} else {
+		[pageBarFontTextField setFont:[NSFont userFontOfSize:14]];
+	}
+}
+
+- (void)co_savePageBarSettings
+{
+	int accessoryPlacement = [accessorySettingView pageNumPosition];
+	NSDictionary *zeroAccessoryMargin = [NSDictionary dictionaryWithObjectsAndKeys:
+										[NSNumber numberWithInt:0],@"x",
+										[NSNumber numberWithInt:0],@"y",nil];
+	[defaults setInteger:accessoryPlacement forKey:@"PageBarPosition"];
+	[defaults setObject:zeroAccessoryMargin forKey:@"Margin_PageBar"];
+	[defaults setObject:[accessorySettingView pageBarSize] forKey:@"PageBarSize"];
+	[defaults setObject:[NSArchiver archivedDataWithRootObject:[pageBarBGColor currentColor]] forKey:@"PageBarBGColor"];
+	[defaults setObject:[NSArchiver archivedDataWithRootObject:[pageBarBorderColor currentColor]] forKey:@"PageBarBorderColor"];
+	[defaults setObject:[NSArchiver archivedDataWithRootObject:[pageBarReadedColor currentColor]] forKey:@"PageBarReadedColor"];
+	[defaults setObject:[NSArchiver archivedDataWithRootObject:[pageBarFontColor currentColor]] forKey:@"PageBarFontColor"];
+	[defaults setObject:[NSArchiver archivedDataWithRootObject:[pageBarFontTextField font]] forKey:@"PageBarTextFont"];
+	if ([showPageBarCheck state]==NSControlStateValueOn) {
+		[defaults setBool:YES forKey:@"ShowPageBar"];
+	} else {
+		[defaults setBool:NO forKey:@"ShowPageBar"];
+	}
+
+	if ([pageBarAutoHideCheck state]==NSControlStateValueOn) {
+		[defaults setBool:YES forKey:@"PageBarAutoHide"];
+	} else {
+		[defaults setBool:NO forKey:@"PageBarAutoHide"];
+	}
+	if ([pageBarShowThumbCheck state]==NSControlStateValueOn) {
+		[defaults setBool:YES forKey:@"PageBarShowThumbnail"];
+	} else {
+		[defaults setBool:NO forKey:@"PageBarShowThumbnail"];
+	}
+}
+
 - (void)preferences
 {
 	[accessorySettingView setPreferences];
@@ -1638,32 +1796,6 @@ static const int DIALOG_CANCEL	= 129;
 	
 	
 	
-	if ([defaults boolForKey:@"ShowNumber"]) {
-		[showPageNumCheck setState:NSControlStateValueOn];
-	} else {
-		[showPageNumCheck setState:NSControlStateValueOff];
-	}
-	if ([defaults boolForKey:@"ShowPageBar"]) {
-		[showPageBarCheck setState:NSControlStateValueOn];
-	} else {
-		[showPageBarCheck setState:NSControlStateValueOff];
-	}
-	
-	if ([defaults boolForKey:@"PageNumAutoHide"]) {
-		[pageNumAutoHideCheck setState:NSControlStateValueOn];
-	} else {
-		[pageNumAutoHideCheck setState:NSControlStateValueOff];
-	}
-	if ([defaults boolForKey:@"PageBarAutoHide"]) {
-		[pageBarAutoHideCheck setState:NSControlStateValueOn];
-	} else {
-		[pageBarAutoHideCheck setState:NSControlStateValueOff];
-	}
-	if ([defaults boolForKey:@"PageBarShowThumbnail"]) {
-		[pageBarShowThumbCheck setState:NSControlStateValueOn];
-	} else {
-		[pageBarShowThumbCheck setState:NSControlStateValueOff];
-	}
 	if ([defaults boolForKey:@"ChangeOpenWith"]) {
 		[changeOpenWithCheck setState:NSControlStateValueOn];
 	} else {
@@ -1699,42 +1831,8 @@ static const int DIALOG_CANCEL	= 129;
 	
 	
 	/*pageBar*/
-	NSColor *pageBarBG;
-	if ([defaults objectForKey:@"PageBarBGColor"]) {
-		pageBarBG = [NSUnarchiver unarchiveObjectWithData:[defaults objectForKey:@"PageBarBGColor"]];
-	} else {
-		pageBarBG = [[NSColor blackColor] colorWithAlphaComponent:0.8];
-	}
-	[pageBarBGColor setCurrentColor:pageBarBG];
-	[pageBarFontTextField setBackgroundColor:pageBarBG];
-	NSColor *pageBarBorder;
-	if ([defaults objectForKey:@"PageBarBorderColor"]) {
-		pageBarBorder = [NSUnarchiver unarchiveObjectWithData:[defaults objectForKey:@"PageBarBorderColor"]];
-	} else {
-		pageBarBorder = [NSColor whiteColor];
-	}
-	[pageBarBorderColor setCurrentColor:pageBarBorder];
-	NSColor *pageBarReaded;
-	if ([defaults objectForKey:@"PageBarReadedColor"]) {
-		pageBarReaded = [NSUnarchiver unarchiveObjectWithData:[defaults objectForKey:@"PageBarReadedColor"]];
-	} else {
-		pageBarReaded = [[NSColor whiteColor] colorWithAlphaComponent:0.5];
-	}
-	[pageBarReadedColor setCurrentColor:pageBarReaded];
-	NSColor *pageBarFont;
-	if ([defaults objectForKey:@"PageBarFontColor"]) {
-		pageBarFont = [NSUnarchiver unarchiveObjectWithData:[defaults objectForKey:@"PageBarFontColor"]];
-	} else {
-		pageBarFont = [NSColor whiteColor];
-	}
-	[pageBarFontColor setCurrentColor:pageBarFont];
-	[pageBarFontTextField setTextColor:pageBarFont];
-	if ([defaults objectForKey:@"PageBarTextFont"]) {
-		[pageBarFontTextField setFont:[NSUnarchiver unarchiveObjectWithData:[defaults objectForKey:@"PageBarTextFont"]]];
-	} else {
-		[pageBarFontTextField setFont:[NSFont userFontOfSize:14]];
-	}
-	
+	[self co_loadPageBarSettings];
+
 	[self co_loadLoupeSettings];
 	[self co_loadViewSettings];
 	[self co_loadCacheSettings];
@@ -1752,39 +1850,8 @@ static const int DIALOG_CANCEL	= 129;
 	
 	
 	/*pagenumber*/
-	if ([defaults objectForKey:@"TextFont"]) {
-		[fontTextField setFont:[NSUnarchiver unarchiveObjectWithData:[defaults objectForKey:@"TextFont"]]];
-	} else {
-		[fontTextField setFont:[fontTextField font]];
-	}
+	[self co_loadPageNumberSettings];
 
-	
-	NSColor *textColor;
-	if ([defaults objectForKey:@"TextColor"]) {
-		textColor = [NSUnarchiver unarchiveObjectWithData:[defaults objectForKey:@"TextColor"]];
-	} else {
-		textColor = [NSColor whiteColor];
-	}
-	[pageColor setCurrentColor:textColor];
-	[fontTextField setTextColor:textColor];
-	NSColor *textBGColor;
-	if ([defaults objectForKey:@"TextBGColor"]) {
-		textBGColor = [NSUnarchiver unarchiveObjectWithData:[defaults objectForKey:@"TextBGColor"]];
-	} else {
-		textBGColor = [[NSColor blackColor] colorWithAlphaComponent:0.8];
-	}
-	[pageBGColor setCurrentColor:textBGColor];
-	[fontTextField setBackgroundColor:textBGColor];
-	NSColor *textBorderColor;
-	if ([defaults objectForKey:@"TextBorderColor"]) {
-		textBorderColor = [NSUnarchiver unarchiveObjectWithData:[defaults objectForKey:@"TextBorderColor"]];
-	} else {
-		textBorderColor = [[NSColor blackColor] colorWithAlphaComponent:0.8];
-	}
-	[pageBorderColor setCurrentColor:textBorderColor];
-	
-	
-	
 	[interpolationPopUpButton selectItemAtIndex:[defaults integerForKey:@"Interpolation"]];
 	
 	[bufferingModePopUpButton selectItemAtIndex:[defaults integerForKey:@"BufferingMode"]];
@@ -2066,61 +2133,14 @@ static const int DIALOG_CANCEL	= 129;
 		
 		
 		/*pageNum*/
-		int accessoryPlacement = [accessorySettingView pageNumPosition];
-		NSDictionary *zeroAccessoryMargin = [NSDictionary dictionaryWithObjectsAndKeys:
-											[NSNumber numberWithInt:0],@"x",
-											[NSNumber numberWithInt:0],@"y",nil];
-		[defaults setInteger:accessoryPlacement forKey:@"PageNumPosition"];
-		[defaults setObject:zeroAccessoryMargin forKey:@"Margin_Page"];
-		[defaults setObject:[NSArchiver archivedDataWithRootObject:[fontTextField font]] forKey:@"TextFont"];
-		[defaults setObject:[NSArchiver archivedDataWithRootObject:[pageColor currentColor]] forKey:@"TextColor"];
-		[defaults setObject:[NSArchiver archivedDataWithRootObject:[pageBGColor currentColor]] forKey:@"TextBGColor"];
-		[defaults setObject:[NSArchiver archivedDataWithRootObject:[pageBorderColor currentColor]] forKey:@"TextBorderColor"];
-		if ([showPageNumCheck state]==NSControlStateValueOn) {
-			[defaults setBool:YES forKey:@"ShowNumber"];
-		} else {
-			[defaults setBool:NO forKey:@"ShowNumber"];
-		}	
+		[self co_savePageNumberSettings];
 		/*pageBar*/
-		//NSDictionary *pageBarDic;
-		[defaults setInteger:accessoryPlacement forKey:@"PageBarPosition"];
-		[defaults setObject:zeroAccessoryMargin forKey:@"Margin_PageBar"];
-		[defaults setObject:[accessorySettingView pageBarSize] forKey:@"PageBarSize"];
-		[defaults setObject:[NSArchiver archivedDataWithRootObject:[pageBarBGColor currentColor]] forKey:@"PageBarBGColor"];
-		[defaults setObject:[NSArchiver archivedDataWithRootObject:[pageBarBorderColor currentColor]] forKey:@"PageBarBorderColor"];
-		[defaults setObject:[NSArchiver archivedDataWithRootObject:[pageBarReadedColor currentColor]] forKey:@"PageBarReadedColor"];
-		[defaults setObject:[NSArchiver archivedDataWithRootObject:[pageBarFontColor currentColor]] forKey:@"PageBarFontColor"];
-		[defaults setObject:[NSArchiver archivedDataWithRootObject:[pageBarFontTextField font]] forKey:@"PageBarTextFont"];		
-		if ([showPageBarCheck state]==NSControlStateValueOn) {
-			[defaults setBool:YES forKey:@"ShowPageBar"];
-		} else {
-			[defaults setBool:NO forKey:@"ShowPageBar"];
-		}	
-		
-		
-		
+		[self co_savePageBarSettings];
+
 		[self co_saveLoupeSettings];
 		[self co_saveCacheSettings];
 		[self co_saveViewSettings];
-		
-		
 
-		
-		if ([pageNumAutoHideCheck state]==NSControlStateValueOn) {
-			[defaults setBool:YES forKey:@"PageNumAutoHide"];
-		} else {
-			[defaults setBool:NO forKey:@"PageNumAutoHide"];
-		}			
-		if ([pageBarAutoHideCheck state]==NSControlStateValueOn) {
-			[defaults setBool:YES forKey:@"PageBarAutoHide"];
-		} else {
-			[defaults setBool:NO forKey:@"PageBarAutoHide"];
-		}	
-		if ([pageBarShowThumbCheck state]==NSControlStateValueOn) {
-			[defaults setBool:YES forKey:@"PageBarShowThumbnail"];
-		} else {
-			[defaults setBool:NO forKey:@"PageBarShowThumbnail"];
-		}		
 		if ([changeOpenWithCheck state]==NSControlStateValueOn) {
 			[defaults setBool:YES forKey:@"ChangeOpenWith"];
 		} else {
