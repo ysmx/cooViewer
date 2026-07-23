@@ -47,6 +47,19 @@ import Foundation
 		}
 	}
 
+	/// Removes the entry at `index`. Out-of-range indexes are a no-op rather
+	/// than a crash.
+	@objc(bookmarksByRemovingBookmarks:atIndex:)
+	static func removing(bookmarks: [NSDictionary], atIndex index: Int32) -> [NSDictionary] {
+		let i = Int(index)
+		guard bookmarks.indices.contains(i) else {
+			return bookmarks
+		}
+		var result = bookmarks
+		result.remove(at: i)
+		return result
+	}
+
 	private static func replacing(bookmarks: [NSDictionary], atIndex index: Int32, with transform: (NSDictionary) -> [String: Any]) -> [NSDictionary] {
 		let i = Int(index)
 		guard bookmarks.indices.contains(i) else {

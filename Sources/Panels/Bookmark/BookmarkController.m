@@ -150,9 +150,9 @@ static const int DIALOG_CANCEL	= 129;
 	int selectedRow;
 	selectedRow = (int)[bookmarkTableView selectedRow];
 	if (0 <= selectedRow) {
-		[bookmarkArray removeObjectAtIndex:selectedRow];
+		[bookmarkArray setArray:[ViewerBookmarkList bookmarksByRemovingBookmarks:bookmarkArray atIndex:selectedRow]];
 		[bookmarkTableView reloadData];
-		
+
 	} else {
 		NSBeep();
 	}
@@ -239,19 +239,14 @@ static const int DIALOG_CANCEL	= 129;
 	} else {
 		selectedRow = (int)[allBookmarkTableView selectedRow];
 		if (selectedRow > -1) {
-			
+
 			id dic = [allBookmark objectForKey:[bookNameArray objectAtIndex:[allBookNameTableView selectedRow]]];
 			NSMutableDictionary *cDic = [NSMutableDictionary dictionaryWithDictionary:dic];
-			id array = [cDic objectForKey:@"bookmarks"];
-			NSMutableArray *newArray = [NSMutableArray arrayWithArray:array];
-			
-			[newArray removeObjectAtIndex:selectedRow];
-			
-			[cDic setObject:newArray forKey:@"bookmarks"];
-			[allBookmark setObject:cDic forKey:[bookNameArray objectAtIndex:[allBookNameTableView selectedRow]]];
-			
+			NSArray *array = [cDic objectForKey:@"bookmarks"];
 
-			
+			[cDic setObject:[ViewerBookmarkList bookmarksByRemovingBookmarks:array atIndex:selectedRow] forKey:@"bookmarks"];
+			[allBookmark setObject:cDic forKey:[bookNameArray objectAtIndex:[allBookNameTableView selectedRow]]];
+
 			[allBookmarkTableView reloadData];
 		} else {
 			NSBeep();
@@ -265,9 +260,9 @@ static const int DIALOG_CANCEL	= 129;
 	int selectedRow;
 	selectedRow = (int)[bookmarkTableView selectedRow];
 	if (0 <= selectedRow) {
-		[bookmarkArray removeObjectAtIndex:selectedRow];
+		[bookmarkArray setArray:[ViewerBookmarkList bookmarksByRemovingBookmarks:bookmarkArray atIndex:selectedRow]];
 		[bookmarkTableView reloadData];
-		
+
 	}
 }
 

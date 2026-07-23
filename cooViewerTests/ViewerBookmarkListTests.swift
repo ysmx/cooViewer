@@ -61,4 +61,27 @@ final class ViewerBookmarkListTests: XCTestCase {
 		XCTAssertEqual(ViewerBookmarkList.updatingName(bookmarks: existing, atIndex: 5, updatedTo: "x"), existing)
 		XCTAssertEqual(ViewerBookmarkList.updatingPage(bookmarks: existing, atIndex: -1, updatedTo: "9"), existing)
 	}
+
+	func testRemovingDropsOnlyTheTargetedIndex() {
+		let existing: [NSDictionary] = [
+			["name": "a", "page": "1"],
+			["name": "b", "page": "2"],
+			["name": "c", "page": "3"],
+		]
+		let result = ViewerBookmarkList.removing(bookmarks: existing, atIndex: 1)
+		XCTAssertEqual(result.count, 2)
+		XCTAssertEqual(result[0]["name"] as? String, "a")
+		XCTAssertEqual(result[1]["name"] as? String, "c")
+	}
+
+	func testRemovingTheOnlyEntryLeavesAnEmptyList() {
+		let existing: [NSDictionary] = [["name": "a", "page": "1"]]
+		XCTAssertEqual(ViewerBookmarkList.removing(bookmarks: existing, atIndex: 0), [])
+	}
+
+	func testRemovingOutOfRangeIndexIsIgnoredRatherThanCrashing() {
+		let existing: [NSDictionary] = [["name": "a", "page": "1"]]
+		XCTAssertEqual(ViewerBookmarkList.removing(bookmarks: existing, atIndex: 5), existing)
+		XCTAssertEqual(ViewerBookmarkList.removing(bookmarks: existing, atIndex: -1), existing)
+	}
 }
