@@ -2,7 +2,16 @@
 
 #import <Cocoa/Cocoa.h>
 #import "COImageLoader.h"
+#import "Controller.h"
+#import "ThumbnailMatrix.h"
+#import "COPopUpTextField.h"
 
+// Forward-declared, not #import-ed: ThumbnailPanel.h #imports this header
+// (for its own typed target ivar), so importing it back here would race
+// the #import include guards. All of -panel's use sites only call
+// inherited NSPanel/NSWindow methods, so the forward declaration alone is
+// enough - no separate #import is needed in ThumbnailController.m either.
+@class ThumbnailPanel;
 
 @interface ThumbnailController : NSObject
 {
@@ -18,20 +27,20 @@
 	BOOL stop;
 	BOOL mangaMode;
 	
-    IBOutlet id controller;
-    IBOutlet id matrix;
-    IBOutlet id panel;
-	
+    IBOutlet Controller *controller;
+    IBOutlet ThumbnailMatrix *matrix;
+    IBOutlet ThumbnailPanel *panel;
+
 	NSMutableArray *pathArray;
 	int now;
 	int sortMode;
-    IBOutlet id sortPopUpButton;
+    IBOutlet NSPopUpButton *sortPopUpButton;
 	NSButton *sortDescendingButton;
-    IBOutlet id stateTextField;
-    IBOutlet id nameTextField;
-    IBOutlet id onlyBookmarkButton;
-    IBOutlet id comicModeButton;
-    IBOutlet id contextMenu;
+    IBOutlet NSTextField *stateTextField;
+    IBOutlet COPopUpTextField *nameTextField;
+    IBOutlet NSButton *onlyBookmarkButton;
+    IBOutlet NSButton *comicModeButton;
+    IBOutlet NSMenu *contextMenu;
 	
 	NSArray *keyArray;
 	
