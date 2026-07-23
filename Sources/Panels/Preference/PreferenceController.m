@@ -1546,6 +1546,34 @@ static const int DIALOG_CANCEL	= 129;
 	[defaults setBool:([sortDescendingButton state] == NSControlStateValueOn) forKey:@"SortDescending"];
 }
 
+- (void)co_loadHistorySettings
+{
+	if ([defaults boolForKey:@"AlwaysRememberLastPage"]) {
+		[alwaysRememberLastCheck setState:NSControlStateValueOn];
+	} else {
+		[alwaysRememberLastCheck setState:NSControlStateValueOff];
+	}
+
+	[goToLastPopUpButton selectItemAtIndex:[defaults integerForKey:@"GoToLastPage"]];
+
+	if ([defaults integerForKey:@"OpenRecentLimit"]) {
+		[numberOfOpenRecentTextField setStringValue:[NSString stringWithFormat:@"%i",(int)[defaults integerForKey:@"OpenRecentLimit"] ]];
+	}
+}
+
+- (void)co_saveHistorySettings
+{
+	if ([alwaysRememberLastCheck state]==NSControlStateValueOn) {
+		[defaults setBool:YES forKey:@"AlwaysRememberLastPage"];
+	} else {
+		[defaults setBool:NO forKey:@"AlwaysRememberLastPage"];
+	}
+	[defaults setInteger:[[numberOfOpenRecentTextField stringValue] intValue] forKey:@"OpenRecentLimit"];
+
+
+	[defaults setInteger:[goToLastPopUpButton indexOfSelectedItem] forKey:@"GoToLastPage"];
+}
+
 - (void)preferences
 {
 	[accessorySettingView setPreferences];
@@ -1661,18 +1689,8 @@ static const int DIALOG_CANCEL	= 129;
 	}
 	
 	/*history*/
-	if ([defaults boolForKey:@"AlwaysRememberLastPage"]) {
-		[alwaysRememberLastCheck setState:NSControlStateValueOn];
-	} else {
-		[alwaysRememberLastCheck setState:NSControlStateValueOff];
-	}
-	
-	[goToLastPopUpButton selectItemAtIndex:[defaults integerForKey:@"GoToLastPage"]];
-	
-	if ([defaults integerForKey:@"OpenRecentLimit"]) {
-		[numberOfOpenRecentTextField setStringValue:[NSString stringWithFormat:@"%i",(int)[defaults integerForKey:@"OpenRecentLimit"] ]];
-	}
-	
+	[self co_loadHistorySettings];
+
 	/*pdf link*/
 	[openLinkPopUpButton selectItemAtIndex:[defaults integerForKey:@"OpenLinkMode"]];	
 	
@@ -2127,16 +2145,8 @@ static const int DIALOG_CANCEL	= 129;
 			[defaults setBool:NO forKey:@"ShowThumbnailWhenOpen"];
 		}
 		
-		if ([alwaysRememberLastCheck state]==NSControlStateValueOn) {
-			[defaults setBool:YES forKey:@"AlwaysRememberLastPage"];
-		} else {
-			[defaults setBool:NO forKey:@"AlwaysRememberLastPage"];
-		}
-		[defaults setInteger:[[numberOfOpenRecentTextField stringValue] intValue] forKey:@"OpenRecentLimit"];
-		
-		
-		[defaults setInteger:[goToLastPopUpButton indexOfSelectedItem] forKey:@"GoToLastPage"];
-		
+		[self co_saveHistorySettings];
+
 		[defaults setInteger:[openLinkPopUpButton indexOfSelectedItem] forKey:@"OpenLinkMode"];
 		
 		[defaults setInteger:[changeCurrentFolderPopUpButton indexOfSelectedItem] forKey:@"ChangeCurrentFolder"];
