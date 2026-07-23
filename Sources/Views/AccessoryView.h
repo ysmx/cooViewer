@@ -7,6 +7,8 @@
 //
 
 #import <Cocoa/Cocoa.h>
+#import "Controller.h"
+#import "CustomImageView.h"
 
 @interface AccessoryView : NSView
 {	
@@ -28,8 +30,8 @@
 	BOOL drawAccessory;
 	BOOL didFirst;
 	
-	IBOutlet id controller;
-	IBOutlet id imageView;
+	IBOutlet Controller *controller;
+	IBOutlet CustomImageView *imageView;
 	
 	
 	NSPoint pageMargin;

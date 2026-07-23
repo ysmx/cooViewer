@@ -2,10 +2,17 @@
 #import "Controller.h"
 #import "LoupeView.h"
 
+// Forward-declared, not #import-ed: AccessoryView.h #imports this header
+// (for its own typed controller/imageView outlets), so importing
+// AccessoryView.h back here would race the #import include guards. See
+// CustomImageView.m for the real #import of these headers.
+@class AccessoryView;
+@class AccessoryWindow;
+
 @interface CustomImageView : NSImageView
 {
-	IBOutlet id accessoryWindow;
-	IBOutlet id accessoryView;
+	IBOutlet AccessoryWindow *accessoryWindow;
+	IBOutlet AccessoryView *accessoryView;
 	
 	BOOL needFirstScroll;
 	

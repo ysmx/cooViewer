@@ -2,6 +2,7 @@
 #import "NSBezierPath_Adding.h"
 #import "NSAttributedString_Adding.h"
 #import "AccessoryView.h"
+#import "AccessoryWindow.h"
 //#import "QuartzCore/CIFilter.h"
 
 @interface CustomImageView(private)
