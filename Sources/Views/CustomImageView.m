@@ -1249,49 +1249,20 @@
     int x = fullscreenRect.size.width-widthValue1-widthValue2;
     x = x/2;
     
-    if (rotateMode==1) {
-        if ([target readFromLeft]) {
-            fRect = NSMakeRect(center1,x,heightValue1,widthValue1);
-            sRect = NSMakeRect(center2,x+widthValue1,heightValue2,widthValue2);
-        } else {
-            fRect = NSMakeRect(center2,x,heightValue2,widthValue2);
-            sRect = NSMakeRect(center1,x+widthValue2,heightValue1,widthValue1);
-        }
-    } else if (rotateMode==3) {
-        if ([target readFromLeft]) {
-            sRect = NSMakeRect(center2,x,heightValue2,widthValue2);
-            fRect = NSMakeRect(center1,x+widthValue2,heightValue1,widthValue1);
-        } else {
-            sRect = NSMakeRect(center1,x,heightValue1,widthValue1);
-            fRect = NSMakeRect(center2,x+widthValue1,heightValue2,widthValue2);
-        }
-    } else if (rotateMode==2) {
-        if ([target readFromLeft]) {
-            fRect = NSMakeRect(x,center2,widthValue2,heightValue2);
-            sRect = NSMakeRect(x+widthValue2,center1,widthValue1,heightValue1);
-        } else {
-            sRect = NSMakeRect(x,center1,widthValue1,heightValue1);
-            fRect = NSMakeRect(x+widthValue1,center2,widthValue2,heightValue2);
-        }
-    } else {
-        if ([target readFromLeft]) {
-            fRect = NSMakeRect(x,center1,widthValue1,heightValue1);
-            sRect = NSMakeRect(x+widthValue1,center2,widthValue2,heightValue2);
-        } else {
-            fRect = NSMakeRect(x,center2,widthValue2,heightValue2);
-            sRect = NSMakeRect(x+widthValue2,center1,widthValue1,heightValue1);
-        }
-    }
-    NSRect drawRect1;
-    NSRect drawRect2;
-    if ([target readFromLeft]) {
-        drawRect1=NSMakeRect(x,center1,widthValue1,heightValue1);
-        drawRect2=NSMakeRect(x+widthValue1,center2,widthValue2,heightValue2);
-    } else {
-        drawRect1=NSMakeRect(x+widthValue2,center1,widthValue1,heightValue1);
-        drawRect2=NSMakeRect(x,center2,widthValue2,heightValue2);
-    }
-    
+    ViewerSpreadDrawRects *spreadRects = [ViewerSpreadDrawRects assignForRotateMode:rotateMode
+                                                                        readFromLeft:[target readFromLeft]
+                                                                         widthValue1:widthValue1
+                                                                        heightValue1:heightValue1
+                                                                         widthValue2:widthValue2
+                                                                        heightValue2:heightValue2
+                                                                             center1:center1
+                                                                             center2:center2
+                                                                                   x:x];
+    fRect = spreadRects.fRect;
+    sRect = spreadRects.sRect;
+    NSRect drawRect1 = spreadRects.drawRect1;
+    NSRect drawRect2 = spreadRects.drawRect2;
+
     [infodic setObject:[NSString stringWithFormat:@"%i",widthValue01] forKey:@"widthValue01"];
     [infodic setObject:[NSString stringWithFormat:@"%i",widthValue02] forKey:@"widthValue02"];
     [infodic setObject:[NSString stringWithFormat:@"%i",heightValue01] forKey:@"heightValue01"];
