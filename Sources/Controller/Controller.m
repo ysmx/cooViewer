@@ -1716,27 +1716,27 @@ static const int DIALOG_CANCEL	= 129;
 	return image;
 }
 
--(void)lookahead
+/*
+ Fills imageMutableArray with lookahead images starting at nowPage, up to a
+ buffer of 2, shared by -lookahead and -lookaheadAndCompose. Must be called
+ with `lock` already held. Returns YES if threadStop fired mid-fill (caller
+ must bail out without touching anything buffer-fill hasn't already set up),
+ NO if the fill ran to completion normally.
+ */
+- (BOOL)co_bufferLookaheadImagesLogTag:(NSString *)logTag
 {
-	[lock lock];
-	threadCount++;
-	NSAutoreleasePool *pool = [[NSAutoreleasePool alloc] init];
-	
 	int i = nowPage;
 	i += [imageMutableArray count];
-	
+
 	if (i < [completeMutableArray count]) {
-		while([imageMutableArray count] < 2) {
+		while ([imageMutableArray count] < 2) {
 			if (threadStop) {
-				threadStop = NO;
-				threadCount--;
-				[lock unlock];
-				[pool release];
-				return;
+				return YES;
 			}
 			NSImage *image = [self loadImage:i];
 			if (image == nil) {
-				NSLog(@"cooViewer lookahead nil image before buffering: index=%d nowPage=%d current=%lu total=%lu",
+				NSLog(@"cooViewer %@ nil image before buffering: index=%d nowPage=%d current=%lu total=%lu",
+					  logTag,
 					  i,
 					  nowPage,
 					  (unsigned long)[imageMutableArray count],
@@ -1753,6 +1753,17 @@ static const int DIALOG_CANCEL	= 129;
 	} else if (nowPage > [completeMutableArray count]) {
 		nowPage = (int)[completeMutableArray count];
 	}
+	return NO;
+}
+
+-(void)lookahead
+{
+	[lock lock];
+	threadCount++;
+	NSAutoreleasePool *pool = [[NSAutoreleasePool alloc] init];
+
+	[self co_bufferLookaheadImagesLogTag:@"lookahead"];
+
 	threadStop = NO;
 	threadCount--;
 	[lock unlock];
@@ -1764,40 +1775,15 @@ static const int DIALOG_CANCEL	= 129;
 	[lock lock];
 	threadCount++;
 	NSAutoreleasePool *pool = [[NSAutoreleasePool alloc] init];
-	
-	int i = nowPage;
-	i += [imageMutableArray count];
-	
-	
-	if (i < [completeMutableArray count]) {
-		 while([imageMutableArray count] < 2) {
-			 if (threadStop) {
-				 threadCount--;
-				 threadStop = NO;
-				 [lock unlock];
-				 [pool release];
-				 return;
-			 }
-			 NSImage *image = [self loadImage:i];
-			 if (image == nil) {
-				 NSLog(@"cooViewer lookaheadAndCompose nil image before buffering: index=%d nowPage=%d current=%lu total=%lu",
-					   i,
-					   nowPage,
-					   (unsigned long)[imageMutableArray count],
-					   (unsigned long)[completeMutableArray count]);
-			 }
-			 [imageMutableArray addObject:image];
-			 i = nowPage;
-			 i += [imageMutableArray count];
-			 if (i == [completeMutableArray count]) {
-				 break;
-			 }
-		 }
-	} else if (nowPage == [completeMutableArray count]) {
-	} else if (nowPage > [completeMutableArray count]) {
-		nowPage = (int)[completeMutableArray count];
+
+	if ([self co_bufferLookaheadImagesLogTag:@"lookaheadAndCompose"]) {
+		threadCount--;
+		threadStop = NO;
+		[lock unlock];
+		[pool release];
+		return;
 	}
-	
+
 	[composedImage autorelease];
 	composedImage = nil;
 	if (threadStop) {
