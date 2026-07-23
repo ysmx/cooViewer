@@ -2,6 +2,7 @@
 #import "COColorPopUpButton.h"
 #import "Controller.h"
 #import "AccessorySettingView.h"
+#import "cooViewer-Swift.h"
 
 @interface PreferenceController ()
 {
@@ -3143,131 +3144,78 @@ static const int DIALOG_CANCEL	= 129;
 	[self co_showResetConfirmationWithTitle:title message:message context:@"key"];
 }
 #pragma mark key&mouseEdit
+/*
+ Walks an input-config popup's menu (and one level of submenu), wiring
+ every item's target/action and, for the item whose tag matches the
+ stored action, performing it and restoring its saved value into
+ valueTextField. Shared by the key/mouse branches of
+ -tableView:shouldEditTableColumn:row:, which differed only in which
+ popup, action selector, and value field they used.
+ */
+- (void)co_configureActionMenu:(NSMenu *)menu action:(SEL)action tag:(int)tag lastInput:(NSDictionary *)lastInput valueTextField:(NSTextField *)valueTextField
+{
+	NSArray *menuArray = [menu itemArray];
+	NSArray *subMenuArray;
+	int i,ii;
+	for (i=0;i<[menuArray count];i++) {
+		if ([[menuArray objectAtIndex:i] hasSubmenu]) {
+			subMenuArray = [[[menuArray objectAtIndex:i] submenu] itemArray];
+			for (ii=0;ii<[subMenuArray count];ii++) {
+				[[subMenuArray objectAtIndex:ii] setTarget:self];
+				[[subMenuArray objectAtIndex:ii] setAction:action];
+				if ([[subMenuArray objectAtIndex:ii] tag] == tag) {
+					if (![[[subMenuArray objectAtIndex:ii] title] isEqualToString:@""]) {
+						[[[menuArray objectAtIndex:i] submenu] performActionForItemAtIndex:ii];
+						if ([lastInput objectForKey:@"value"]) [valueTextField setStringValue:[[lastInput objectForKey:@"value"] stringValue]];
+					}
+				}
+			}
+		} else {
+			[[menuArray objectAtIndex:i] setTarget:self];
+			[[menuArray objectAtIndex:i] setAction:action];
+		}
+	}
+}
+
 - (BOOL)tableView:(NSTableView *)aTableView shouldEditTableColumn:(NSTableColumn *)aTableColumn row:(int)rowIndex
 {
 	if (aTableView == inputTableView) {
 		editMode = YES;
 		editedInputIndex = rowIndex;
-		
+
 		lastInput = [[NSMutableDictionary dictionaryWithDictionary:[currentKeyArray objectAtIndex:rowIndex]] retain];
-		
+
 		int tag = [[lastInput objectForKey:@"action"] intValue];
-		
-		NSArray *menuArray = [[keyPanelPopUpButton menu] itemArray];
-		NSArray *subMenuArray;
-		int i,ii;
-		for (i=0;i<[menuArray count];i++) {
-			if ([[menuArray objectAtIndex:i] hasSubmenu]) {
-				subMenuArray = [[[menuArray objectAtIndex:i] submenu] itemArray];
-				for (ii=0;ii<[subMenuArray count];ii++) {
-					[[subMenuArray objectAtIndex:ii] setTarget:self];
-					[[subMenuArray objectAtIndex:ii] setAction:@selector(keyPanelPopUpButtonAction:)];
-					if ([[subMenuArray objectAtIndex:ii] tag] == tag) {
-						if (![[[subMenuArray objectAtIndex:ii] title] isEqualToString:@""]) {
-							[[[menuArray objectAtIndex:i] submenu] performActionForItemAtIndex:ii];
-							if ([lastInput objectForKey:@"value"]) [keyValueTextField setStringValue:[[lastInput objectForKey:@"value"] stringValue]];
-						}
-					}
-				}
-			} else {
-				[[menuArray objectAtIndex:i] setTarget:self];
-				[[menuArray objectAtIndex:i] setAction:@selector(keyPanelPopUpButtonAction:)];
-				/*
-				 //今のところサブメニュー以外に項目ないから…
-				 if ([[menuArray objectAtIndex:i] tag] == tag) {
-					 NSLog(@"2 kita %i %@",tag,[[menuArray objectAtIndex:i] title]);
-				 }*/
-			}
-		}
+
+		[self co_configureActionMenu:[keyPanelPopUpButton menu] action:@selector(keyPanelPopUpButtonAction:) tag:tag lastInput:lastInput valueTextField:keyValueTextField];
 		if ([[lastInput objectForKey:@"switchAction"] boolValue] == YES) {
 			[keyPanelSwitchActionCheck setState:NSControlStateValueOn];
 		} else {
 			[keyPanelSwitchActionCheck setState:NSControlStateValueOff];
 		}
-		
+
 		[keyPanelPopUpButton setEnabled:YES];
 		[keyPanelTextView setString:[lastInput objectForKey:@"keyname"]];
-		[[NSApplication sharedApplication] beginSheet:keyConfigPanel 
-									   modalForWindow:preferences 
-										modalDelegate:self 
-									   didEndSelector:@selector(sheetDidEnd:returnCode:contextInfo:) 
+		[[NSApplication sharedApplication] beginSheet:keyConfigPanel
+									   modalForWindow:preferences
+										modalDelegate:self
+									   didEndSelector:@selector(sheetDidEnd:returnCode:contextInfo:)
 										  contextInfo:nil];
 	} else if (aTableView == mouseTableView) {
 		editMode = YES;
 		editedInputIndex = rowIndex;
-		
+
 		lastInput = [[NSMutableDictionary dictionaryWithDictionary:[currentMouseArray objectAtIndex:rowIndex]] retain];
 		int tag = [[lastInput objectForKey:@"action"] intValue];
-		
-		NSArray *menuArray = [[mousePanelActionPopUpButton menu] itemArray];
-		NSArray *subMenuArray;
-		int i,ii;
-		for (i=0;i<[menuArray count];i++) {
-			if ([[menuArray objectAtIndex:i] hasSubmenu]) {
-				subMenuArray = [[[menuArray objectAtIndex:i] submenu] itemArray];
-				for (ii=0;ii<[subMenuArray count];ii++) {
-					[[subMenuArray objectAtIndex:ii] setTarget:self];
-					[[subMenuArray objectAtIndex:ii] setAction:@selector(mousePanelActionPopUpButtonAction:)];
-					if ([[subMenuArray objectAtIndex:ii] tag] == tag) {
-						if (![[[subMenuArray objectAtIndex:ii] title] isEqualToString:@""]) {
-							[[[menuArray objectAtIndex:i] submenu] performActionForItemAtIndex:ii];
-							if ([lastInput objectForKey:@"value"]) [mouseValueTextField setStringValue:[[lastInput objectForKey:@"value"] stringValue]];
-						}
-					}
-				}
-			} else {
-				[[menuArray objectAtIndex:i] setTarget:self];
-				[[menuArray objectAtIndex:i] setAction:@selector(mousePanelActionPopUpButtonAction:)];
-			}
-		}
-		[mousePanelShiftCheck setState:NSControlStateValueOff];
-		[mousePanelOptionCheck setState:NSControlStateValueOff];
-		[mousePanelControlCheck setState:NSControlStateValueOff];
-		int cMod = [[lastInput objectForKey:@"modifier"] intValue];
-		if (cMod>=1000) {
-			[mousePanelClickPopUpButton selectItemAtIndex:10];
-			cMod -= 1000;
-		} else if (cMod>=900) {
-			[mousePanelClickPopUpButton selectItemAtIndex:9];
-			cMod -= 900;
-		} else if (cMod>=800) {
-			[mousePanelClickPopUpButton selectItemAtIndex:8];
-			cMod -= 800;
-		} else if (cMod>=700) {
-			[mousePanelClickPopUpButton selectItemAtIndex:7];
-			cMod -= 700;
-		} else if (cMod>=600) {
-			[mousePanelClickPopUpButton selectItemAtIndex:6];
-			cMod -= 600;
-		} else if (cMod>=500) {
-			[mousePanelClickPopUpButton selectItemAtIndex:5];
-			cMod -= 500;
-		} else if (cMod>=400) {
-			[mousePanelClickPopUpButton selectItemAtIndex:4];
-			cMod -= 400;
-		} else if (cMod>=300) {
-			[mousePanelClickPopUpButton selectItemAtIndex:3];
-			cMod -= 300;
-		} else if (cMod>=200) {
-			[mousePanelClickPopUpButton selectItemAtIndex:2];
-			cMod -= 200;
-		} else if (cMod>=100) {
-			[mousePanelClickPopUpButton selectItemAtIndex:1];
-			cMod -= 100;
-		} else {
-			[mousePanelClickPopUpButton selectItemAtIndex:0];
-		}
-		switch (cMod) {
-			case 0:break;
-			case 1:[mousePanelShiftCheck setState:NSControlStateValueOn];break;
-			case 2:[mousePanelOptionCheck setState:NSControlStateValueOn];break;
-			case 3:[mousePanelShiftCheck setState:NSControlStateValueOn];[mousePanelOptionCheck setState:NSControlStateValueOn];break;
-			case 4:[mousePanelControlCheck setState:NSControlStateValueOn];break;
-			case 5:[mousePanelControlCheck setState:NSControlStateValueOn];[mousePanelShiftCheck setState:NSControlStateValueOn];break;
-			case 6:[mousePanelControlCheck setState:NSControlStateValueOn];[mousePanelOptionCheck setState:NSControlStateValueOn];break;
-			case 7:[mousePanelControlCheck setState:NSControlStateValueOn];[mousePanelShiftCheck setState:NSControlStateValueOn];[mousePanelOptionCheck setState:NSControlStateValueOn];break;
-			default:break;
-		}
+
+		[self co_configureActionMenu:[mousePanelActionPopUpButton menu] action:@selector(mousePanelActionPopUpButtonAction:) tag:tag lastInput:lastInput valueTextField:mouseValueTextField];
+
+		ViewerMouseBinding *binding = [ViewerMouseBinding decodeModifier:[[lastInput objectForKey:@"modifier"] intValue]];
+		[mousePanelClickPopUpButton selectItemAtIndex:[binding clickIndex]];
+		[mousePanelShiftCheck setState:[binding shift] ? NSControlStateValueOn : NSControlStateValueOff];
+		[mousePanelOptionCheck setState:[binding option] ? NSControlStateValueOn : NSControlStateValueOff];
+		[mousePanelControlCheck setState:[binding control] ? NSControlStateValueOn : NSControlStateValueOff];
+
 		[mousePanelButtonPopUpButton selectItemWithTag:[[lastInput objectForKey:@"button"] intValue]];
 		if ([mousePanelButtonPopUpButton selectedTag]>=1000) {
 			[mousePanelClickPopUpButton setEnabled:NO];
@@ -3279,12 +3227,12 @@ static const int DIALOG_CANCEL	= 129;
 		} else {
 			[mousePanelSwitchActionCheck setState:NSControlStateValueOff];
 		}
-		[[NSApplication sharedApplication] beginSheet:mouseConfigPanel 
-									   modalForWindow:preferences 
-										modalDelegate:self 
-									   didEndSelector:@selector(sheetDidEnd:returnCode:contextInfo:) 
+		[[NSApplication sharedApplication] beginSheet:mouseConfigPanel
+									   modalForWindow:preferences
+										modalDelegate:self
+									   didEndSelector:@selector(sheetDidEnd:returnCode:contextInfo:)
 										  contextInfo:nil];
-		
+
 	}
     return NO;
 }
