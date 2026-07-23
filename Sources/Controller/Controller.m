@@ -3,6 +3,9 @@
 #import "BookmarkController.h"
 #import "CustomImageView.h"
 #import "FullImagePanel.h"
+#import "FullImageView.h"
+#import "ThumbnailController.h"
+#import "PreferenceController.h"
 
 static NSMenu *COFindSortMenu(NSMenu *menu)
 {
