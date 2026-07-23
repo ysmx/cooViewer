@@ -1,4 +1,5 @@
 #import "BookmarkController.h"
+#import "cooViewer-Swift.h"
 
 @implementation BookmarkController
 
@@ -273,52 +274,27 @@ static const int DIALOG_CANCEL	= 129;
 -(IBAction)addNewBookmark:(id)sender
 {
 	if ([bookmarkPanel isVisible]) {
-		int count = (int)[bookmarkArray count];
-		
-		NSString *bookmarkCountName = [NSString stringWithFormat:@"bookmark%i",count + 1];
-		
-		int bookmarkPage;
-		bookmarkPage = [newBookmarkTextField intValue];
-		if (bookmarkPage < 1) {
+		NSArray<NSDictionary *> *updated = [ViewerBookmarkList appendingBookmarks:bookmarkArray page:[newBookmarkTextField intValue]];
+		if (!updated) {
 			NSBeep();
 			return;
 		}
-		NSString *bookmarkNowPageString = [NSString stringWithFormat:@"%i",bookmarkPage];
-		
-		NSDictionary *bookmarkDic = [NSDictionary dictionaryWithObjectsAndKeys:
-			bookmarkCountName, @"name", 
-			bookmarkNowPageString, @"page",
-			nil];
-		
-		[bookmarkArray insertObject:bookmarkDic atIndex:count];
+		[bookmarkArray setArray:updated];
 		[bookmarkTableView reloadData];
 	} else {
 		if (allBookmark && [allBookNameTableView selectedRow] > -1) {
 			id dic = [allBookmark objectForKey:[bookNameArray objectAtIndex:[allBookNameTableView selectedRow]]];
 			NSMutableDictionary *cDic = [NSMutableDictionary dictionaryWithDictionary:dic];
-			id array = [cDic objectForKey:@"bookmarks"];
-			NSMutableArray *newArray = [NSMutableArray arrayWithArray:array];
-			
-			
-			int count = (int)[newArray count];
-			NSString *bookmarkCountName = [NSString stringWithFormat:@"bookmark%i",count + 1];
-			int bookmarkPage;
-			bookmarkPage = [newBookmarkTextField intValue];
-			if (bookmarkPage < 1) {
+			NSArray *array = [cDic objectForKey:@"bookmarks"];
+
+			NSArray<NSDictionary *> *updated = [ViewerBookmarkList appendingBookmarks:array page:[newBookmarkTextField intValue]];
+			if (!updated) {
 				NSBeep();
 				return;
 			}
-			NSString *bookmarkNowPageString = [NSString stringWithFormat:@"%i",bookmarkPage];
-			
-			NSDictionary *bookmarkDic = [NSDictionary dictionaryWithObjectsAndKeys:
-				bookmarkCountName, @"name", 
-				bookmarkNowPageString, @"page",
-				nil];
-			
-			[newArray insertObject:bookmarkDic atIndex:count];
-			[cDic setObject:newArray forKey:@"bookmarks"];
+			[cDic setObject:updated forKey:@"bookmarks"];
 			[allBookmark setObject:cDic forKey:[bookNameArray objectAtIndex:[allBookNameTableView selectedRow]]];
-			
+
 			[allBookmarkTableView reloadData];
 		} else {
 			NSBeep();
@@ -510,57 +486,23 @@ static const int DIALOG_CANCEL	= 129;
 		return;
 	}
 	if (aTableView == bookmarkTableView) {
-		if([[aTableColumn identifier] isEqualToString:@"name"]) {
-			if (bookmarkArray) {
-				NSDictionary *dic = [NSDictionary dictionaryWithObjectsAndKeys:
-					anObject,@"name",
-					[[bookmarkArray objectAtIndex:rowIndex] objectForKey:@"page"],@"page",
-					nil];
-				[bookmarkArray insertObject:dic atIndex:rowIndex+1];
-				[bookmarkArray removeObjectAtIndex:rowIndex];
-			}
-		} else if([[aTableColumn identifier] isEqualToString:@"page"]) {
-			if (bookmarkArray) {
-				NSDictionary *dic = [NSDictionary dictionaryWithObjectsAndKeys:
-					[[bookmarkArray objectAtIndex:rowIndex] objectForKey:@"name"],@"name",
-					[NSString stringWithFormat:@"%@",anObject],@"page",
-					nil];
-				[bookmarkArray insertObject:dic atIndex:rowIndex+1];
-				[bookmarkArray removeObjectAtIndex:rowIndex];
+		if (bookmarkArray) {
+			if([[aTableColumn identifier] isEqualToString:@"name"]) {
+				[bookmarkArray setArray:[ViewerBookmarkList bookmarksWithNameBookmarks:bookmarkArray atIndex:rowIndex updatedTo:anObject]];
+			} else if([[aTableColumn identifier] isEqualToString:@"page"]) {
+				[bookmarkArray setArray:[ViewerBookmarkList bookmarksWithPageBookmarks:bookmarkArray atIndex:rowIndex updatedTo:[NSString stringWithFormat:@"%@",anObject]]];
 			}
 		}
 	} else if (aTableView == allBookmarkTableView) {
+		id dic = [allBookmark objectForKey:[bookNameArray objectAtIndex:[allBookNameTableView selectedRow]]];
+		NSMutableDictionary *cDic = [NSMutableDictionary dictionaryWithDictionary:dic];
+		NSArray *array = [cDic objectForKey:@"bookmarks"];
+
 		if([[aTableColumn identifier] isEqualToString:@"name"]) {
-			id dic = [allBookmark objectForKey:[bookNameArray objectAtIndex:[allBookNameTableView selectedRow]]];
-			NSMutableDictionary *cDic = [NSMutableDictionary dictionaryWithDictionary:dic];
-			id array = [cDic objectForKey:@"bookmarks"];
-			NSMutableArray *newArray = [NSMutableArray arrayWithArray:array];
-			
-			
-			NSDictionary *bookmarkDic = [NSDictionary dictionaryWithObjectsAndKeys:
-				anObject,@"name",
-				[[newArray objectAtIndex:rowIndex] objectForKey:@"page"],@"page",
-				nil];
-			[newArray insertObject:bookmarkDic atIndex:rowIndex+1];
-			[newArray removeObjectAtIndex:rowIndex];
-			
-			[cDic setObject:newArray forKey:@"bookmarks"];
+			[cDic setObject:[ViewerBookmarkList bookmarksWithNameBookmarks:array atIndex:rowIndex updatedTo:anObject] forKey:@"bookmarks"];
 			[allBookmark setObject:cDic forKey:[bookNameArray objectAtIndex:[allBookNameTableView selectedRow]]];
 		} else if([[aTableColumn identifier] isEqualToString:@"page"]) {
-			id dic = [allBookmark objectForKey:[bookNameArray objectAtIndex:[allBookNameTableView selectedRow]]];
-			NSMutableDictionary *cDic = [NSMutableDictionary dictionaryWithDictionary:dic];
-			id array = [cDic objectForKey:@"bookmarks"];
-			NSMutableArray *newArray = [NSMutableArray arrayWithArray:array];
-			
-			
-			NSDictionary *bookmarkDic = [NSDictionary dictionaryWithObjectsAndKeys:
-				[[newArray objectAtIndex:rowIndex] objectForKey:@"name"],@"name",
-				[NSString stringWithFormat:@"%@",anObject],@"page",
-				nil];
-			[newArray insertObject:bookmarkDic atIndex:rowIndex+1];
-			[newArray removeObjectAtIndex:rowIndex];
-			
-			[cDic setObject:newArray forKey:@"bookmarks"];
+			[cDic setObject:[ViewerBookmarkList bookmarksWithPageBookmarks:array atIndex:rowIndex updatedTo:[NSString stringWithFormat:@"%@",anObject]] forKey:@"bookmarks"];
 			[allBookmark setObject:cDic forKey:[bookNameArray objectAtIndex:[allBookNameTableView selectedRow]]];
 		}
 	} else if (aTableView == allBookNameTableView) {
