@@ -920,13 +920,20 @@
     [infodic setObject:NSStringFromRect(drawRect) forKey:@"drawRect"];
     return infodic;
 }
-- (void)drawImage:(NSImage*)image
+/*
+ Builds the rotateMode-dependent NSAffineTransform used to draw rotated
+ pages, applies it to the current graphics context (-concat), and
+ returns it so the caller can invert-and-reconcat afterward to restore
+ the context. Shared by -drawImage:/-drawImages:and:, which built and
+ applied this identical switch independently. Returns nil for
+ rotateMode 0, which callers must not invert/reconcat (matching the
+ original code, where `transform` was left uninitialized in that case
+ and only ever touched behind an `if (rotateMode!=0)` guard).
+ */
+- (NSAffineTransform *)co_applyRotationTransformForMode:(int)mode
 {
-    NSDictionary *infodic = [self getDrawImageInfo:image];
-    NSRect drawRect = NSRectFromString([infodic objectForKey:@"drawRect"]);
-		
-	NSAffineTransform *transform;
-	switch (rotateMode) {
+	NSAffineTransform *transform = nil;
+	switch (mode) {
 		case 1:
 			transform = [NSAffineTransform transform];
 			[transform translateXBy:NSWidth([self bounds]) yBy:0];
@@ -948,6 +955,15 @@
 		default:
 			break;
 	}
+	return transform;
+}
+
+- (void)drawImage:(NSImage*)image
+{
+    NSDictionary *infodic = [self getDrawImageInfo:image];
+    NSRect drawRect = NSRectFromString([infodic objectForKey:@"drawRect"]);
+
+	NSAffineTransform *transform = [self co_applyRotationTransformForMode:rotateMode];
     [image drawInRect:drawRect
               fromRect:NSMakeRect(0,0,[image size].width,[image size].height)
              operation:NSCompositingOperationSourceOver fraction:1.0];
@@ -1311,54 +1327,14 @@
     NSRect drawRect2 = NSRectFromString([infodic objectForKey:@"drawRect2"]);
     NSRect fullscreenRect = NSRectFromString([infodic objectForKey:@"fullscreenRect"]);
 	
-	NSAffineTransform *transform;
-	switch (rotateMode) {
-		case 1:
-			transform = [NSAffineTransform transform];
-			[transform translateXBy:NSWidth([self bounds]) yBy:0];
-			[transform rotateByDegrees:90];
-            [transform concat];
-			break;
-		case 2:
-			transform = [NSAffineTransform transform];
-			[transform translateXBy:NSWidth([self bounds]) yBy:NSHeight([self bounds])];
-			[transform rotateByDegrees:180];
-            [transform concat];
-			break;
-		case 3:
-			transform = [NSAffineTransform transform];
-			[transform translateXBy:0 yBy:NSHeight([self bounds])];
-			[transform rotateByDegrees:270];
-            [transform concat];
-			break;
-		default:
-			break;
-	}
+	NSAffineTransform *transform = [self co_applyRotationTransformForMode:rotateMode];
 	[image2 drawInRect:drawRect2
 			  fromRect:NSMakeRect(0,0,widthValue02,heightValue02)
 			 operation:NSCompositingOperationSourceOver fraction:1.0];
 	[image1 drawInRect:drawRect1
 			  fromRect:NSMakeRect(0,0,widthValue01,heightValue01)
 			 operation:NSCompositingOperationSourceOver fraction:1.0];
-	/*
-	if( [NSObject respondsToSelector:@selector(finalize)] ){
-		if ([target readFromLeft]) {
-			[self drawCIImage:image1
-					   inRect:CGRectMake(x,center1,widthValue1,heightValue1)
-					 fromRect:CGRectMake(0,0,[rep1 pixelsWide],[rep1 pixelsHigh])];
-			[self drawCIImage:image2
-					   inRect:CGRectMake(x+widthValue1,center2,widthValue2,heightValue2)
-					 fromRect:CGRectMake(0,0,[rep2 pixelsWide],[rep2 pixelsHigh])];
-		} else {
-			[self drawCIImage:image2
-					   inRect:CGRectMake(x,center2,widthValue2,heightValue2)
-					 fromRect:CGRectMake(0,0,[rep2 pixelsWide],[rep2 pixelsHigh])];
-			[self drawCIImage:image1
-					   inRect:CGRectMake(x+widthValue2,center1,widthValue1,heightValue1)
-					 fromRect:CGRectMake(0,0,[rep1 pixelsWide],[rep1 pixelsHigh])];
-		}
-	}*/
-	
+
 	if (rotateMode!=0) {
 		[transform invert];
 		[transform concat];
