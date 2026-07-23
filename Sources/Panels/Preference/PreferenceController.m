@@ -1438,6 +1438,47 @@ static const int DIALOG_CANCEL	= 129;
 	currentMouseArray = nil;
 }
 
+/*
+ Load/save pairs for -preferences' self-contained settings domains,
+ extracted one domain at a time to shrink the ~700-line method without
+ touching its overall load -> runModal -> save/cancel shape (see #92).
+ */
+- (void)co_loadLoupeSettings
+{
+	int loupeSize = (int)[defaults integerForKey:@"LoupeSize"];
+	[loupeSizeTextField setStringValue:[NSString stringWithFormat:@"%i", loupeSize]];
+	float loupeRate = [defaults floatForKey:@"LoupeRate"];
+	[loupeRateTextField setStringValue:[NSString stringWithFormat:@"%f", loupeRate]];
+}
+
+- (void)co_saveLoupeSettings
+{
+	int loupeSize = [[loupeSizeTextField stringValue] intValue];
+	[defaults setInteger:loupeSize forKey:@"LoupeSize"];
+	float loupeRate = [[loupeRateTextField stringValue] floatValue];
+	[defaults setFloat:loupeRate forKey:@"LoupeRate"];
+}
+
+- (void)co_loadCacheSettings
+{
+	int imageCache = (int)[defaults integerForKey:@"ImageCache"];
+	[imageCacheTextField setStringValue:[NSString stringWithFormat:@"%i", imageCache]];
+	int screenCache = (int)[defaults integerForKey:@"ScreenCache"];
+	[screenCacheTextField setStringValue:[NSString stringWithFormat:@"%i", screenCache]];
+	int thumbnailCache = (int)[defaults integerForKey:@"ThumbnailCache"];
+	[thumbnailCacheTextField setStringValue:[NSString stringWithFormat:@"%i", thumbnailCache]];
+}
+
+- (void)co_saveCacheSettings
+{
+	int imageCache = [[imageCacheTextField stringValue] intValue];
+	[defaults setInteger:imageCache forKey:@"ImageCache"];
+	int screenCache = [[screenCacheTextField stringValue] intValue];
+	[defaults setInteger:screenCache forKey:@"ScreenCache"];
+	int thumbnailCache = [[thumbnailCacheTextField stringValue] intValue];
+	[defaults setInteger:thumbnailCache forKey:@"ThumbnailCache"];
+}
+
 - (void)preferences
 {
 	[accessorySettingView setPreferences];
@@ -1627,11 +1668,7 @@ static const int DIALOG_CANCEL	= 129;
 		[pageBarFontTextField setFont:[NSFont userFontOfSize:14]];
 	}
 	
-	/*loupe*/
-	int loupeSize = (int)[defaults integerForKey:@"LoupeSize"];
-	[loupeSizeTextField setStringValue:[NSString stringWithFormat:@"%i", loupeSize]];
-	float loupeRate = [defaults floatForKey:@"LoupeRate"];
-	[loupeRateTextField setStringValue:[NSString stringWithFormat:@"%f", loupeRate]];
+	[self co_loadLoupeSettings];
 	/*view*/
 	NSColor *viewBackGround;
 	if ([defaults objectForKey:@"ViewBackGroundColor"]) {
@@ -1645,14 +1682,8 @@ static const int DIALOG_CANCEL	= 129;
 	} else {
 		[secondaryDisplayBackgroundSyncCheck setState:([defaults integerForKey:@"SecondaryDisplayMode"] != 0) ? NSControlStateValueOn : NSControlStateValueOff];
 	}
-	/*cache*/
-	int imageCache = (int)[defaults integerForKey:@"ImageCache"];
-	[imageCacheTextField setStringValue:[NSString stringWithFormat:@"%i", imageCache]];
-	int screenCache = (int)[defaults integerForKey:@"ScreenCache"];
-	[screenCacheTextField setStringValue:[NSString stringWithFormat:@"%i", screenCache]];
-	int thumbnailCache = (int)[defaults integerForKey:@"ThumbnailCache"];
-	[thumbnailCacheTextField setStringValue:[NSString stringWithFormat:@"%i", thumbnailCache]];
-	
+	[self co_loadCacheSettings];
+
 	
 	/**/
     [inputTableView setDataSource:(id)self];
@@ -2013,18 +2044,8 @@ static const int DIALOG_CANCEL	= 129;
 		
 		
 		
-		/*loupe*/
-		int loupeSize = [[loupeSizeTextField stringValue] intValue];
-		[defaults setInteger:loupeSize forKey:@"LoupeSize"];
-		float loupeRate = [[loupeRateTextField stringValue] floatValue];
-		[defaults setFloat:loupeRate forKey:@"LoupeRate"];
-		/*cache*/
-		int imageCache = [[imageCacheTextField stringValue] intValue];
-		[defaults setInteger:imageCache forKey:@"ImageCache"];
-		int screenCache = [[screenCacheTextField stringValue] intValue];
-		[defaults setInteger:screenCache forKey:@"ScreenCache"];
-		int thumbnailCache = [[thumbnailCacheTextField stringValue] intValue];
-		[defaults setInteger:thumbnailCache forKey:@"ThumbnailCache"];
+		[self co_saveLoupeSettings];
+		[self co_saveCacheSettings];
 		/*view*/
 		[defaults setObject:[NSArchiver archivedDataWithRootObject:[viewBackGroundColor currentColor]] forKey:@"ViewBackGroundColor"];
 		[defaults setBool:([secondaryDisplayBackgroundSyncCheck state] == NSControlStateValueOn) forKey:@"SyncSecondaryDisplayBackground"];
