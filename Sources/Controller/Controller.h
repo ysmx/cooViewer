@@ -24,6 +24,7 @@
 @class ThumbnailController;
 @class BookmarkController;
 @class PreferenceController;
+@class ImageBufferCache;
 
 @interface Controller : NSObject
 {
@@ -41,9 +42,9 @@
 	BOOL sortDescending;
 	BOOL threadStop;
 	int cacheSize;
-	NSMutableArray *cacheArray;
+	ImageBufferCache *cacheArray;
 	int screenCache;
-	NSMutableArray *screenCacheArray;
+	ImageBufferCache *screenCacheArray;
 	
 	//NSWindow *accWindow;
 	IBOutlet NSProgressIndicator *progressIndicator;

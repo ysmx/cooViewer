@@ -534,8 +534,8 @@ static const int DIALOG_CANCEL	= 129;
 
 	
 	
-	screenCacheArray = [[NSMutableArray allocWithZone:NULL] init];
-	cacheArray = [[NSMutableArray allocWithZone:NULL] init];
+	screenCacheArray = [[ImageBufferCache alloc] init];
+	cacheArray = [[ImageBufferCache alloc] init];
 	imageMutableArray = [[NSMutableArray allocWithZone:NULL] init];
 	bookmarkArray = [[NSMutableArray allocWithZone:NULL] init];
 	currentBookSetting = [[NSMutableDictionary allocWithZone:NULL] init];
@@ -1134,8 +1134,8 @@ static const int DIALOG_CANCEL	= 129;
 		//なことに注意する事！
 		
 		/*clear cache*/
-		[cacheArray removeAllObjects];
-		[screenCacheArray removeAllObjects];
+		[cacheArray removeAll];
+		[screenCacheArray removeAll];
 		if (oldBookPath != nil) {
 			NSData *aliasData = oldBookAlias;	
 			
@@ -1641,15 +1641,7 @@ static const int DIALOG_CANCEL	= 129;
 {
 	if (cacheSize == 0) return nil;
 	NSString *name = [completeMutableArray objectAtIndex:index];
-	for (int i = 0; i < [cacheArray count]; i++) {
-		id object = [cacheArray objectAtIndex:i];
-		if ([name isEqualToString:[object objectForKey:@"name"]]) {
-			[cacheArray addObject:object];
-			[cacheArray removeObjectAtIndex:i];
-			return [object objectForKey:@"image"];
-		}
-	}
-	return nil;
+	return [cacheArray imageForKey:name];
 }
 
 /*
@@ -1661,9 +1653,7 @@ static const int DIALOG_CANCEL	= 129;
 - (void)co_insertImageCacheEntryForIndex:(int)index image:(NSImage *)image
 {
 	if (cacheSize == 0) return;
-	[cacheArray addObject:[NSDictionary dictionaryWithObjectsAndKeys:
-		[completeMutableArray objectAtIndex:index],@"name",
-		image,@"image",nil]];
+	[cacheArray insert:image forKey:[completeMutableArray objectAtIndex:index]];
 }
 
 - (NSImage*)loadImage:(int)index
@@ -1708,7 +1698,7 @@ static const int DIALOG_CANCEL	= 129;
 			  (index >= 0 && index < [completeMutableArray count]) ? [completeMutableArray objectAtIndex:index] : nil);
 	}
 	[self co_insertImageCacheEntryForIndex:index image:image];
-	while ([cacheArray count] > cacheSize+4) [cacheArray removeObjectAtIndex:0];
+	[cacheArray trimToCapacity:cacheSize+4];
 	return image;
 }
 
@@ -1731,23 +1721,16 @@ static const int DIALOG_CANCEL	= 129;
 
 /*
  Searches screenCacheArray for an entry matching (page, fitScreenMode) and,
- if found, touches it to the end of the array (LRU) before returning it.
- Returns nil on no match.
+ if found, touches it to the end of the array (LRU) before returning its
+ composed image. Returns nil on no match. fitScreenMode is folded into the
+ lookup key since ImageBufferCache only keys on a single string.
  */
-- (NSDictionary *)co_screenCacheEntryForPage:(int)page
+- (NSImage *)co_screenCacheEntryForPage:(int)page
 {
 	NSString *key = [self co_screenCacheKeyForPage:page];
 	if (!key) return nil;
-	for (int index = 0; index < [screenCacheArray count]; index++) {
-		id object = [screenCacheArray objectAtIndex:index];
-		if ([[object objectForKey:@"page"] isEqualToString:key] &&
-			[[object objectForKey:@"fitScreenMode"] intValue] == fitScreenMode) {
-			[screenCacheArray addObject:object];
-			[screenCacheArray removeObjectAtIndex:index];
-			return object;
-		}
-	}
-	return nil;
+	NSString *fullKey = [NSString stringWithFormat:@"%@#%d", key, fitScreenMode];
+	return [screenCacheArray imageForKey:fullKey];
 }
 
 /*
@@ -1762,13 +1745,11 @@ static const int DIALOG_CANCEL	= 129;
 	if (screenCache > 0) {
 		NSString *key = [self co_screenCacheKeyForPage:page];
 		if (key) {
-			[screenCacheArray addObject:[NSDictionary dictionaryWithObjectsAndKeys:
-				key,@"page",
-				[NSNumber numberWithInt:fitScreenMode],@"fitScreenMode",
-				composedImg,@"composed",nil]];
+			NSString *fullKey = [NSString stringWithFormat:@"%@#%d", key, fitScreenMode];
+			[screenCacheArray insert:composedImg forKey:fullKey];
 		}
 	}
-	while ([screenCacheArray count] > screenCache+2) [screenCacheArray removeObjectAtIndex:0];
+	[screenCacheArray trimToCapacity:screenCache+2];
 }
 
 /*
@@ -1852,9 +1833,9 @@ static const int DIALOG_CANCEL	= 129;
 	if ([imageMutableArray count]>1 && readMode<2 && bufferingMode == 0) {
 		int tempPage = nowPage+2;
 		if (screenCache>0) {
-			NSDictionary *cached = [self co_screenCacheEntryForPage:tempPage];
+			NSImage *cached = [self co_screenCacheEntryForPage:tempPage];
 			if (cached) {
-				composedImage = [[cached objectForKey:@"composed"] retain];
+				composedImage = [cached retain];
 				threadCount--;
 				threadStop = NO;
 				[lock unlock];
@@ -2053,9 +2034,9 @@ static const int DIALOG_CANCEL	= 129;
 		[imageView setImages:secondImage];
 	} else {
 		if (screenCache>0) {
-			NSDictionary *cached = [self co_screenCacheEntryForPage:nowPage];
+			NSImage *cached = [self co_screenCacheEntryForPage:nowPage];
 			if (cached) {
-				[imageView setImage:[cached objectForKey:@"composed"]];
+				[imageView setImage:cached];
 				return;
 			}
 		}
@@ -2069,9 +2050,9 @@ static const int DIALOG_CANCEL	= 129;
 
 -(BOOL)imageDisplayIfHasScreenCache
 {
-	NSDictionary *cached = [self co_screenCacheEntryForPage:nowPage+2];
+	NSImage *cached = [self co_screenCacheEntryForPage:nowPage+2];
 	if (cached) {
-		[imageView setImage:[cached objectForKey:@"composed"]];
+		[imageView setImage:cached];
 		[self setPageTextField];
 		[imageView setPageString:[NSString stringWithFormat:@"%@ LoadingOriginals...",[imageView pageString]]];
 		return YES;
@@ -2287,9 +2268,9 @@ static const int DIALOG_CANCEL	= 129;
 	
 	/*cache*/
 	cacheSize = (int)[defaults integerForKey:@"ImageCache"];
-	while ([cacheArray count] > cacheSize+4) [cacheArray removeObjectAtIndex:0];
+	[cacheArray trimToCapacity:cacheSize+4];
 	screenCache = (int)[defaults integerForKey:@"ScreenCache"];
-	while ([screenCacheArray count] > screenCache+2) [screenCacheArray removeObjectAtIndex:0];
+	[screenCacheArray trimToCapacity:screenCache+2];
 	[thumController setmaxCacheCount:(int)[defaults integerForKey:@"ThumbnailCache"]];
 	
 	[fullImagePanel setFitMode:[defaults boolForKey:@"FitOriginal"]];
@@ -3452,9 +3433,9 @@ static const int DIALOG_CANCEL	= 129;
 		[bookmarkArray removeAllObjects];
 		[marksArray removeAllObjects];
 		[self setOpenRecentMenu];
-		
-		[cacheArray removeAllObjects];
-		[screenCacheArray removeAllObjects];
+
+		[cacheArray removeAll];
+		[screenCacheArray removeAll];
 		if (imageLoader) {
 			[imageLoader release];
 			imageLoader = nil;
