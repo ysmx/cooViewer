@@ -1578,6 +1578,45 @@
 @end
 
 @implementation CustomImageView(private)
+/*
+ Builds the clickable link-rect list (and matching cursor rects) for one
+ page's rect+image, shared by -setUrlRect's fRect/sRect handling below,
+ which differed only in which rect/image pair they operated on.
+ */
+- (void)co_addUrlRectsForRect:(NSRect)rect image:(NSImage *)image
+{
+	if (image && [image respondsToSelector:@selector(linkList)]) {
+		NSArray *linkList = [(COPDFImage*)image linkList];
+		NSRect tempRect = rect;
+		float rate;
+		if (rotateMode==1 || rotateMode==3) {
+			rate = [image size].width/tempRect.size.height;
+		} else {
+			rate = [image size].width/tempRect.size.width;
+		}
+		int i;
+		NSRect linkRect,newLinkRect;
+		int w,h,x,y;
+		for (i=0;i<[linkList count];i++) {
+			linkRect = [[(NSDictionary*)[linkList objectAtIndex:i] valueForKey:@"rect"] rectValue];
+			w = linkRect.size.width/rate;
+			h = linkRect.size.height/rate;
+			x = linkRect.origin.x/rate;
+			y = linkRect.origin.y/rate;
+			newLinkRect = NSMakeRect(tempRect.origin.x+x,tempRect.origin.y+y,w,h);
+			if (rotateMode==1) {
+				newLinkRect = NSMakeRect(tempRect.origin.x+tempRect.size.width-y-h,tempRect.origin.y+x,h,w);
+			} else if (rotateMode==2) {
+				newLinkRect = NSMakeRect(tempRect.origin.x+tempRect.size.width-x-w,tempRect.origin.y+tempRect.size.height-y-h,w,h);
+			} else if (rotateMode==3) {
+				newLinkRect = NSMakeRect(tempRect.origin.x+y,tempRect.origin.y+tempRect.size.height-x-w,h,w);
+			}
+			[self addCursorRect:newLinkRect cursor:[NSCursor pointingHandCursor]];
+			[urlRectArray addObject:[NSDictionary dictionaryWithObjectsAndKeys:[NSValue valueWithRect:newLinkRect],@"rect",[(NSDictionary*)[linkList objectAtIndex:i] valueForKey:@"url"],@"url",nil]];
+		}
+	}
+}
+
 -(void)setUrlRect
 {
 	[urlRectArray removeAllObjects];
@@ -1593,36 +1632,7 @@
 			} else {
 				image = [target image1];
 			}
-			if (image && [image respondsToSelector:@selector(linkList)]) {					
-				NSArray *linkList = [(COPDFImage*)image linkList];
-				NSRect tempRect = fRect;
-				float rate;
-				if (rotateMode==1 || rotateMode==3) {
-					rate = [image size].width/tempRect.size.height;
-				} else {
-					rate = [image size].width/tempRect.size.width;
-				}
-				int i;
-				NSRect linkRect,newLinkRect;
-				int w,h,x,y;
-				for (i=0;i<[linkList count];i++) {
-					linkRect = [[(NSDictionary*)[linkList objectAtIndex:i] valueForKey:@"rect"] rectValue];
-					w = linkRect.size.width/rate;
-					h = linkRect.size.height/rate;
-					x = linkRect.origin.x/rate;
-					y = linkRect.origin.y/rate;
-					newLinkRect = NSMakeRect(tempRect.origin.x+x,tempRect.origin.y+y,w,h);
-					if (rotateMode==1) {
-						newLinkRect = NSMakeRect(tempRect.origin.x+tempRect.size.width-y-h,tempRect.origin.y+x,h,w);
-					} else if (rotateMode==2) {
-						newLinkRect = NSMakeRect(tempRect.origin.x+tempRect.size.width-x-w,tempRect.origin.y+tempRect.size.height-y-h,w,h);
-					} else if (rotateMode==3) {
-						newLinkRect = NSMakeRect(tempRect.origin.x+y,tempRect.origin.y+tempRect.size.height-x-w,h,w);
-					}
-					[self addCursorRect:newLinkRect cursor:[NSCursor pointingHandCursor]];	
-					[urlRectArray addObject:[NSDictionary dictionaryWithObjectsAndKeys:[NSValue valueWithRect:newLinkRect],@"rect",[(NSDictionary*)[linkList objectAtIndex:i] valueForKey:@"url"],@"url",nil]];
-				}
-			}
+			[self co_addUrlRectsForRect:fRect image:image];
 		}
 		if (!NSIsEmptyRect(sRect)) {
 			NSImage *image;
@@ -1634,37 +1644,8 @@
 				}
 			} else {
 				image = [target image1];
-			}				
-			if (image && [image respondsToSelector:@selector(linkList)]) {					
-				NSArray *linkList = [(COPDFImage*)image linkList];
-				NSRect tempRect = sRect;
-				float rate;
-				if (rotateMode==1 || rotateMode==3) {
-					rate = [image size].width/tempRect.size.height;
-				} else {
-					rate = [image size].width/tempRect.size.width;
-				}
-				int i;
-				NSRect linkRect,newLinkRect;
-				int w,h,x,y;
-				for (i=0;i<[linkList count];i++) {
-					linkRect = [[(NSDictionary*)[linkList objectAtIndex:i] valueForKey:@"rect"] rectValue];
-					w = linkRect.size.width/rate;
-					h = linkRect.size.height/rate;
-					x = linkRect.origin.x/rate;
-					y = linkRect.origin.y/rate;
-					newLinkRect = NSMakeRect(tempRect.origin.x+x,tempRect.origin.y+y,w,h);
-					if (rotateMode==1) {
-						newLinkRect = NSMakeRect(tempRect.origin.x+tempRect.size.width-y-h,tempRect.origin.y+x,h,w);
-					} else if (rotateMode==2) {
-						newLinkRect = NSMakeRect(tempRect.origin.x+tempRect.size.width-x-w,tempRect.origin.y+tempRect.size.height-y-h,w,h);
-					} else if (rotateMode==3) {
-						newLinkRect = NSMakeRect(tempRect.origin.x+y,tempRect.origin.y+tempRect.size.height-x-w,h,w);
-					}					
-					[self addCursorRect:newLinkRect cursor:[NSCursor pointingHandCursor]];	
-					[urlRectArray addObject:[NSDictionary dictionaryWithObjectsAndKeys:[NSValue valueWithRect:newLinkRect],@"rect",[(NSDictionary*)[linkList objectAtIndex:i] valueForKey:@"url"],@"url",nil]];
-				}
-			}						
+			}
+			[self co_addUrlRectsForRect:sRect image:image];
 		}
 	}
 }
