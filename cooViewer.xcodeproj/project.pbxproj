@@ -43,6 +43,10 @@
 		791D1850761348F5A17B9594 /* ViewerAccessoryGeometry.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1EAD25AE59DE41CD92F8993A /* ViewerAccessoryGeometry.swift */; };
 		6A15DCB5E75249A2BE1ED6C2 /* ViewerAccessoryGeometry.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1EAD25AE59DE41CD92F8993A /* ViewerAccessoryGeometry.swift */; };
 		984B9D1FB45A481D89DDC955 /* ViewerThumbnailMangaLayout.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0D6C0864AF5A480A994A1E4D /* ViewerThumbnailMangaLayout.swift */; };
+		25C2CAB9E2BA4BFAA4EBF2B0 /* ViewerLastPages.swift in Sources */ = {isa = PBXBuildFile; fileRef = B823D044B0304949ABBF71D1 /* ViewerLastPages.swift */; };
+		3CA52062ECFE47B594B8023E /* ViewerLastPages.swift in Sources */ = {isa = PBXBuildFile; fileRef = B823D044B0304949ABBF71D1 /* ViewerLastPages.swift */; };
+		91459EC8197940869F223A11 /* ViewerBookSettingsKey.swift in Sources */ = {isa = PBXBuildFile; fileRef = 766E19664A2F47828BC97257 /* ViewerBookSettingsKey.swift */; };
+		666630CF492C4086AE55A93E /* ViewerBookSettingsKey.swift in Sources */ = {isa = PBXBuildFile; fileRef = 766E19664A2F47828BC97257 /* ViewerBookSettingsKey.swift */; };
 		BC1D2703A9AA4DFB9552F1E6 /* ViewerThumbnailMangaLayout.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0D6C0864AF5A480A994A1E4D /* ViewerThumbnailMangaLayout.swift */; };
 		D216E5475ACC4284AB36EBB1 /* ViewerSortModeTransition.swift in Sources */ = {isa = PBXBuildFile; fileRef = 249AF7B85D724090B7B5910F /* ViewerSortModeTransition.swift */; };
 		691E06277FDE4F3E9D57C5B4 /* ViewerSortModeTransition.swift in Sources */ = {isa = PBXBuildFile; fileRef = 249AF7B85D724090B7B5910F /* ViewerSortModeTransition.swift */; };
@@ -193,6 +197,8 @@
 		3091121F90DD41D3B2B8CD8B /* ViewerRecentItems.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ViewerRecentItems.swift; sourceTree = "<group>"; };
 		1EAD25AE59DE41CD92F8993A /* ViewerAccessoryGeometry.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ViewerAccessoryGeometry.swift; sourceTree = "<group>"; };
 		0D6C0864AF5A480A994A1E4D /* ViewerThumbnailMangaLayout.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ViewerThumbnailMangaLayout.swift; sourceTree = "<group>"; };
+		B823D044B0304949ABBF71D1 /* ViewerLastPages.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ViewerLastPages.swift; sourceTree = "<group>"; };
+		766E19664A2F47828BC97257 /* ViewerBookSettingsKey.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ViewerBookSettingsKey.swift; sourceTree = "<group>"; };
 		249AF7B85D724090B7B5910F /* ViewerSortModeTransition.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ViewerSortModeTransition.swift; sourceTree = "<group>"; };
 		8D68CDB42A784129A61341A4 /* ViewerScrollDelta.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ViewerScrollDelta.swift; sourceTree = "<group>"; };
 		3782D0A7273D4D8FBF5A556F /* ViewerFitScreenTransition.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ViewerFitScreenTransition.swift; sourceTree = "<group>"; };
@@ -517,6 +523,8 @@
 				76CB9073097B9E100009A972 /* Controller_input.m */,
 				69661E1AA37C4876894F1180 /* ViewerPageGeometry.swift */,
 				3091121F90DD41D3B2B8CD8B /* ViewerRecentItems.swift */,
+				B823D044B0304949ABBF71D1 /* ViewerLastPages.swift */,
+				766E19664A2F47828BC97257 /* ViewerBookSettingsKey.swift */,
 				778685921B8543A1AF67D061 /* ViewerActionResolver.swift */,
 				249AF7B85D724090B7B5910F /* ViewerSortModeTransition.swift */,
 				8D68CDB42A784129A61341A4 /* ViewerScrollDelta.swift */,
@@ -805,6 +813,8 @@
 			files = (
 				31FD081B418E48ABA13ECEFC /* ViewerPageGeometry.swift in Sources */,
 				C318570306914865BC801D07 /* ViewerRecentItems.swift in Sources */,
+				25C2CAB9E2BA4BFAA4EBF2B0 /* ViewerLastPages.swift in Sources */,
+				91459EC8197940869F223A11 /* ViewerBookSettingsKey.swift in Sources */,
 				791D1850761348F5A17B9594 /* ViewerAccessoryGeometry.swift in Sources */,
 				984B9D1FB45A481D89DDC955 /* ViewerThumbnailMangaLayout.swift in Sources */,
 				5680D3FBE37D4F65917A9204 /* ViewerActionResolver.swift in Sources */,
@@ -858,6 +868,8 @@
 				761B469F0D61E95D00667B2A /* AccessoryView.m in Sources */,
 				13F55E4E41A24AA19C9B9769 /* ViewerPageGeometry.swift in Sources */,
 				8C98153912E84A96BE8FE104 /* ViewerRecentItems.swift in Sources */,
+				3CA52062ECFE47B594B8023E /* ViewerLastPages.swift in Sources */,
+				666630CF492C4086AE55A93E /* ViewerBookSettingsKey.swift in Sources */,
 				6A15DCB5E75249A2BE1ED6C2 /* ViewerAccessoryGeometry.swift in Sources */,
 				BC1D2703A9AA4DFB9552F1E6 /* ViewerThumbnailMangaLayout.swift in Sources */,
 				D216E5475ACC4284AB36EBB1 /* ViewerSortModeTransition.swift in Sources */,
