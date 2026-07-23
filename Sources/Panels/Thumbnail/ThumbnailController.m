@@ -1,6 +1,7 @@
 #import "ThumbnailController.h"
 #import "Controller.h"
 #import "ThumbnailMatrix.h"
+#import "cooViewer-Swift.h"
 
 
 @implementation ThumbnailController
@@ -130,52 +131,13 @@
 		newWidth = widthValue/hRate;
 		newHeight = heightValue/hRate;
 	}
-	/*
-	BOOL b = NO;
-	enu = [[controller bookmarkArray] objectEnumerator];
-	while (object = [enu nextObject]) {
-		if ([[object objectForKey:@"page"] intValue] == index+1) {
-			b = YES;
-			break;
-		}
-	}*/
 	NSImage *newImage = [[[NSImage alloc] initWithSize:NSMakeSize(newWidth,newHeight)] autorelease];
 	[newImage lockFocus];
 	[[NSGraphicsContext currentContext] setImageInterpolation:NSImageInterpolationLow];
     [image drawInRect:NSMakeRect(0,0,(int)newWidth,(int)newHeight)
              fromRect:NSMakeRect(0, 0, [image size].width, [image size].height)
             operation:NSCompositingOperationSourceOver fraction:1.0];
-	
-	/*
-	if (b) {
-		NSRect rect = NSMakeRect(0,0,(int)newWidth,(int)newHeight);
-		rect.origin.x = rect.size.width-28;
-		rect.origin.y = rect.size.height-28;
-		rect.size.width = 24;
-		rect.size.height = 24;
-		
-		NSBezierPath *bezier = [NSBezierPath bezierPath];
-		float rad = 7.0;
-		[bezier appendBezierPathWithArcWithCenter:NSMakePoint(rect.origin.x+rad,rect.origin.y+rect.size.height-rad)
-										   radius:rad startAngle:90 endAngle:180];
-		[bezier appendBezierPathWithArcWithCenter:NSMakePoint(rect.origin.x+rad,rect.origin.y+rad)
-										   radius:rad startAngle:180 endAngle:270];
-		[bezier appendBezierPathWithArcWithCenter:NSMakePoint(rect.origin.x+rect.size.width-rad,rect.origin.y+rad)
-										   radius:rad startAngle:270  endAngle:0];
-		[bezier appendBezierPathWithArcWithCenter:NSMakePoint(rect.origin.x+rect.size.width-rad,rect.origin.y+rect.size.height-rad)
-										   radius:rad startAngle:0 endAngle:90];
-		[bezier closePath];
-		[[[NSColor blackColor] colorWithAlphaComponent:0.8] set];
-		[bezier fill];
-		
-		NSImage *image = [[[NSImage alloc] initWithContentsOfFile:[[NSBundle mainBundle] pathForResource:@"bookmark" ofType:@"tiff"]] autorelease];
-		
-		[image drawInRect:rect
-				 fromRect:NSMakeRect(0,0,[image size].width,[image size].height)
-				operation:NSCompositingOperationSourceOver
-				 fraction:1.0];
-	}*/
-	
+
 	[newImage unlockFocus];
 	[image release];
 	[thumImageArray addObject:[NSDictionary dictionaryWithObjectsAndKeys:newImage,@"image",[NSString stringWithFormat:@"%i",index],@"page",nil]];
@@ -183,192 +145,118 @@
 	return newImage;
 }
 
+// -back and -!back used to be two ~90-line mirror-image blocks (same rate/
+// size math, only the left/right draw order and index offsets swapped).
+// Unified here, parameterized by back - the index/boundary/left-right
+// decisions are pure functions of (index, back, readMode, count), so
+// they're pulled out to ViewerThumbnailMangaLayout (Swift) where they're
+// unit tested against all four (back, readMode) combinations the original
+// branches covered.
+//
+// Note: the original back branch's "not small enough to pair" fallback
+// (the final `else` below) leaked image2 - only the !back branch released
+// it. Fixed here since unifying the two forced a single, explicit answer.
 -(id)loadMangaImage:(int)index back:(BOOL)back
 {
 	NSImage *image,*image2;
-	if (!back) {
-		image = [[self loadImage:index] retain];
-		if (![controller isSmallImage:image page:index+1] || [controller readMode] > 1 || index == [pathArray count]-1) {
-			return [image autorelease];
-		} else {
-			image2 = [[self loadImage:index+1] retain];
-			if ([controller isSmallImage:image page:index+1] && [controller isSmallImage:image2 page:index+2]) {
-				int widthValue1 = [image size].width;
-				int heightValue1 = [image size].height;
-				int widthValue2 = [image2 size].width;
-				int heightValue2 = [image2 size].height;
-				float screenWidthValue = [matrix cellSize].width;
-				float screenHeightValue = [matrix cellSize].height;
-				screenWidthValue /= 2;
-				float rate1 = screenWidthValue/widthValue1;
-				float sRate1 = screenHeightValue/heightValue1;
-				
-				float rate2 = screenWidthValue/widthValue2;
-				float sRate2 = screenHeightValue/heightValue2;
-				
-				if (rate1 > sRate1) {
-					rate1 = sRate1;
-				}
-				if (rate2 > sRate2) {
-					rate2 = sRate2;
-				}
-				
-				widthValue1 = widthValue1*rate1;
-				heightValue1 = heightValue1*rate1;
-				
-				widthValue2 = widthValue2*rate2;
-				heightValue2 = heightValue2*rate2;
-				
-				if (widthValue1+widthValue2 < [matrix cellSize].width){
-					if (heightValue1 != screenHeightValue) {
-						rate1 = screenHeightValue/[image size].height;
-						widthValue1 = [image size].width*rate1;
-						heightValue1 = [image size].height*rate1;
-					}
-					if (heightValue2 != screenHeightValue) {
-						rate2 = screenHeightValue/[image2 size].height;
-						widthValue2 = [image2 size].width*rate2;
-						heightValue2 = [image2 size].height*rate2;
-					}
-					if (widthValue1+widthValue2 > [matrix cellSize].width){
-						float rates = [matrix cellSize].width/(widthValue1+widthValue2);
-						
-						widthValue1 = widthValue1*rates;
-						heightValue1 = heightValue1*rates;
-						widthValue2 = widthValue2*rates;
-						heightValue2 = heightValue2*rates;
-					}
-				}
-				int height;
-				if (heightValue1 > heightValue2) {
-					height = heightValue1;
-				} else {
-					height = heightValue2;
-				}
-				int center1 = (height-heightValue1)/2;
-				int center2 = (height-heightValue2)/2;
-				
-				NSImage *newImage = [[[NSImage alloc] initWithSize:NSMakeSize(widthValue1+widthValue2,height)] autorelease];
-				[ newImage lockFocus ];
-				[[NSGraphicsContext currentContext] setImageInterpolation:NSImageInterpolationLow];
-				if ([controller readMode] == 1) {
-                    [image drawInRect:NSMakeRect(0,(int)center1,(int)widthValue1,(int)heightValue1)
-                             fromRect:NSMakeRect(0, 0, [image size].width, [image size].height)
-                            operation:NSCompositingOperationSourceOver fraction:1.0];
-                    [image2 drawInRect:NSMakeRect((int)widthValue1,(int)center2,(int)widthValue2,(int)heightValue2)
-                              fromRect:NSMakeRect(0, 0, [image2 size].width, [image2 size].height)
-                             operation:NSCompositingOperationSourceOver fraction:1.0];
-				} else if ([controller readMode] == 0) {
-                    [image2 drawInRect:NSMakeRect(0,(int)center2,(int)widthValue2,(int)heightValue2)
-                             fromRect:NSMakeRect(0, 0, [image2 size].width, [image2 size].height)
-                            operation:NSCompositingOperationSourceOver fraction:1.0];
-                    [image drawInRect:NSMakeRect((int)widthValue2,(int)center1,(int)widthValue1,(int)heightValue1)
-                              fromRect:NSMakeRect(0, 0, [image size].width, [image size].height)
-                             operation:NSCompositingOperationSourceOver fraction:1.0];
-				}
-				[ newImage unlockFocus ];
-				[image release];
-				[image2 release];
-				
-				now++;
-				return newImage;
-			} else {
-				[image2 release];
-				return [image autorelease];
-			}
-		}
-	} else if (back) {
-		image = [[self loadImage:index] retain];
-		if (![controller isSmallImage:image page:index+1] || [controller readMode] > 1 || index == 0) {
-			return [image autorelease];
+	int otherIndex = [ViewerThumbnailMangaLayout pairIndexWithIndex:index back:back];
+	int otherSmallCheckPage = [ViewerThumbnailMangaLayout smallCheckPageWithIndex:index back:back];
+	BOOL atBoundary = [ViewerThumbnailMangaLayout isAtBoundaryWithIndex:index back:back count:(int)[pathArray count]];
 
-		} else {
-			image2 = [[self loadImage:index-1] retain];
-			if ([controller isSmallImage:image page:index+1] && [controller isSmallImage:image2 page:index]) {
-                int widthValue1 = [image size].width;
-                int heightValue1 = [image size].height;
-                int widthValue2 = [image2 size].width;
-                int heightValue2 = [image2 size].height;
-				float screenWidthValue = [matrix cellSize].width;
-				float screenHeightValue = [matrix cellSize].height;
-				screenWidthValue /= 2;
-				float rate1 = screenWidthValue/widthValue1;
-				float sRate1 = screenHeightValue/heightValue1;
-				
-				float rate2 = screenWidthValue/widthValue2;
-				float sRate2 = screenHeightValue/heightValue2;
-				
-				if (rate1 > sRate1) {
-					rate1 = sRate1;
-				}
-				if (rate2 > sRate2) {
-					rate2 = sRate2;
-				}
-				
-				widthValue1 = widthValue1*rate1;
-				heightValue1 = heightValue1*rate1;
-				
-				widthValue2 = widthValue2*rate2;
-				heightValue2 = heightValue2*rate2;
-				
-				if (widthValue1+widthValue2 < [matrix cellSize].width){
-					if (heightValue1 != screenHeightValue) {
-						rate1 = screenHeightValue/[image size].height;
-						widthValue1 = [image size].width*rate1;
-						heightValue1 = [image size].height*rate1;
-					}
-					if (heightValue2 != screenHeightValue) {
-						rate2 = screenHeightValue/[image2 size].height;
-						widthValue2 = [image2 size].width*rate2;
-						heightValue2 = [image2 size].height*rate2;
-					}
-					if (widthValue1+widthValue2 > [matrix cellSize].width){
-						float rates = [matrix cellSize].width/(widthValue1+widthValue2);
-						
-						widthValue1 = widthValue1*rates;
-						heightValue1 = heightValue1*rates;
-						widthValue2 = widthValue2*rates;
-						heightValue2 = heightValue2*rates;
-					}
-				}
-				int height;
-				if (heightValue1 > heightValue2) {
-					height = heightValue1;
-				} else {
-					height = heightValue2;
-				}
-				int center1 = (height-heightValue1)/2;
-				int center2 = (height-heightValue2)/2;
-				
-				NSImage *newImage = [[[NSImage alloc] initWithSize:NSMakeSize(widthValue1+widthValue2,height)] autorelease];
-				[ newImage lockFocus ];
-				[[NSGraphicsContext currentContext] setImageInterpolation:NSImageInterpolationLow];
-				if ([controller readMode] == 1) {
-                    [ image2 drawInRect:NSMakeRect(0,(int)center2,(int)widthValue2,(int)heightValue2)
-                               fromRect:NSMakeRect(0, 0, [image2 size].width, [image2 size].height)
-                              operation:NSCompositingOperationSourceOver fraction:1.0];
-                    [ image drawInRect:NSMakeRect((int)widthValue2,(int)center1,(int)widthValue1,(int)heightValue1)
-                              fromRect:NSMakeRect(0, 0, [image size].width, [image size].height)
-                             operation:NSCompositingOperationSourceOver fraction:1.0];
-				} else if ([controller readMode] == 0) {
-                    [image drawInRect:NSMakeRect(0,(int)center1,(int)widthValue1,(int)heightValue1)
-                             fromRect:NSMakeRect(0, 0, [image size].width, [image size].height)
-                            operation:NSCompositingOperationSourceOver fraction:1.0];
-                    [image2 drawInRect:NSMakeRect((int)widthValue1,(int)center2,(int)widthValue2,(int)heightValue2)
-                              fromRect:NSMakeRect(0, 0, [image2 size].width, [image2 size].height)
-                             operation:NSCompositingOperationSourceOver fraction:1.0];
-				}
-				[ newImage unlockFocus ];
-				[image release];
-				[image2 release];
-				
-				now--;
-				return newImage;
-			} else {
-				return [image autorelease];
+	image = [[self loadImage:index] retain];
+	if (![controller isSmallImage:image page:index+1] || [controller readMode] > 1 || atBoundary) {
+		return [image autorelease];
+	} else {
+		image2 = [[self loadImage:otherIndex] retain];
+		if ([controller isSmallImage:image page:index+1] && [controller isSmallImage:image2 page:otherSmallCheckPage]) {
+			int widthValue1 = [image size].width;
+			int heightValue1 = [image size].height;
+			int widthValue2 = [image2 size].width;
+			int heightValue2 = [image2 size].height;
+			float screenWidthValue = [matrix cellSize].width;
+			float screenHeightValue = [matrix cellSize].height;
+			screenWidthValue /= 2;
+			float rate1 = screenWidthValue/widthValue1;
+			float sRate1 = screenHeightValue/heightValue1;
+
+			float rate2 = screenWidthValue/widthValue2;
+			float sRate2 = screenHeightValue/heightValue2;
+
+			if (rate1 > sRate1) {
+				rate1 = sRate1;
 			}
+			if (rate2 > sRate2) {
+				rate2 = sRate2;
+			}
+
+			widthValue1 = widthValue1*rate1;
+			heightValue1 = heightValue1*rate1;
+
+			widthValue2 = widthValue2*rate2;
+			heightValue2 = heightValue2*rate2;
+
+			if (widthValue1+widthValue2 < [matrix cellSize].width){
+				if (heightValue1 != screenHeightValue) {
+					rate1 = screenHeightValue/[image size].height;
+					widthValue1 = [image size].width*rate1;
+					heightValue1 = [image size].height*rate1;
+				}
+				if (heightValue2 != screenHeightValue) {
+					rate2 = screenHeightValue/[image2 size].height;
+					widthValue2 = [image2 size].width*rate2;
+					heightValue2 = [image2 size].height*rate2;
+				}
+				if (widthValue1+widthValue2 > [matrix cellSize].width){
+					float rates = [matrix cellSize].width/(widthValue1+widthValue2);
+
+					widthValue1 = widthValue1*rates;
+					heightValue1 = heightValue1*rates;
+					widthValue2 = widthValue2*rates;
+					heightValue2 = heightValue2*rates;
+				}
+			}
+			int height;
+			if (heightValue1 > heightValue2) {
+				height = heightValue1;
+			} else {
+				height = heightValue2;
+			}
+			int center1 = (height-heightValue1)/2;
+			int center2 = (height-heightValue2)/2;
+
+			NSImage *newImage = [[[NSImage alloc] initWithSize:NSMakeSize(widthValue1+widthValue2,height)] autorelease];
+			[ newImage lockFocus ];
+			[[NSGraphicsContext currentContext] setImageInterpolation:NSImageInterpolationLow];
+			BOOL imageOnLeft = [ViewerThumbnailMangaLayout imageOnLeftWithReadMode:[controller readMode] back:back];
+			if (imageOnLeft) {
+				[image drawInRect:NSMakeRect(0,(int)center1,(int)widthValue1,(int)heightValue1)
+						 fromRect:NSMakeRect(0, 0, [image size].width, [image size].height)
+						operation:NSCompositingOperationSourceOver fraction:1.0];
+				[image2 drawInRect:NSMakeRect((int)widthValue1,(int)center2,(int)widthValue2,(int)heightValue2)
+						  fromRect:NSMakeRect(0, 0, [image2 size].width, [image2 size].height)
+						 operation:NSCompositingOperationSourceOver fraction:1.0];
+			} else {
+				[image2 drawInRect:NSMakeRect(0,(int)center2,(int)widthValue2,(int)heightValue2)
+						  fromRect:NSMakeRect(0, 0, [image2 size].width, [image2 size].height)
+						 operation:NSCompositingOperationSourceOver fraction:1.0];
+				[image drawInRect:NSMakeRect((int)widthValue2,(int)center1,(int)widthValue1,(int)heightValue1)
+						  fromRect:NSMakeRect(0, 0, [image size].width, [image size].height)
+						 operation:NSCompositingOperationSourceOver fraction:1.0];
+			}
+			[ newImage unlockFocus ];
+			[image release];
+			[image2 release];
+
+			if (back) {
+				now--;
+			} else {
+				now++;
+			}
+			return newImage;
+		} else {
+			[image2 release];
+			return [image autorelease];
 		}
-		
 	}
 }
 
@@ -1229,10 +1117,15 @@
 
 
 
--(void)appleRemoteAction:(NSString*)characters
+// Shared by -action:/-appleRemoteAction:: looks character+modifier up in
+// keyArray, remaps it for reading direction, and dispatches. Returns
+// whether a binding was found (callers here don't need the result - there's
+// nothing left to do either way once this returns).
+//
+// 0:nextpage 1:prevpage 4:lastpage 5:toppage 8:nextfolder 9:prevfolder
+// 35:nextSubFolder 36:prevSubFolder 18:showThumbnail 46:close
+- (BOOL)co_performThumbnailKeyAction:(unichar)character modifier:(int)cMod
 {
-    unichar character = [characters characterAtIndex:0];
-	int cMod = 100;
 	NSEnumerator *enu = [keyArray objectEnumerator];
 	id dic;
 	while (dic = [enu nextObject]) {
@@ -1295,24 +1188,31 @@
 				default:
 					break;
 			}
-			return;
+			return YES;
 		}
 	}
+	return NO;
+}
+
+-(void)appleRemoteAction:(NSString*)characters
+{
+    unichar character = [characters characterAtIndex:0];
+	[self co_performThumbnailKeyAction:character modifier:100];
 }
 
 -(void)action:(NSEvent*)event
 {
 	NSString *string = [event charactersIgnoringModifiers];
     unichar character = [string characterAtIndex: 0];
-	
+
 
 	if (character == 0x1B) {
 		/*esc*/
 		stop = YES;
-		
+
 		now -= cellCount;
 		[panel performClose:self];
-		
+
 	} else if ([[NSCharacterSet decimalDigitCharacterSet] characterIsMember:character]){
 		int page = [string intValue];
 		int all = (int)[matrix numberOfRows]*(int)[(NSMatrix*)matrix numberOfColumns];
@@ -1327,85 +1227,15 @@
 				now -= now%all;
 			}
 		}
-		
+
 		[self setImageCells:NO];
 	} else {
-		NSEnumerator *enu = [keyArray objectEnumerator];
-		id dic;
-		
 		unsigned int cMod = COKeyModifierMaskForEvent(event, character, NO);
 		if (cMod == COKeyModifierCommand && character == 'w') {
 			[panel performClose:self];
 			return;
 		}
-		
-		//0:nextpage	1:prevpage	4:lastpage	5:toppage	8:nextfolder	9:prevfolder	35:nextSubFolder 36:prevSubFolder
-		//18:showThumbnail 46:close
-
-		while (dic = [enu nextObject]) {
-			if (character == [[dic objectForKey:@"key"] characterAtIndex:0] && cMod == [[dic objectForKey:@"modifier"] intValue]){
-				int action = [[dic objectForKey:@"action"] intValue];
-				if ([[dic objectForKey:@"switchAction"] boolValue] == YES && [controller readFromLeft]) {
-					switch (action) {
-						case 0: action=1; break;
-						case 1: action=0; break;
-						case 2: action=3; break;
-						case 3: action=2; break;
-						case 4: action=5; break;
-						case 5: action=4; break;
-						case 6: action=7; break;
-						case 7: action=6; break;
-						case 8: action=9; break;
-						case 9: action=8; break;
-						case 13: action=14; break;
-						case 14: action=13; break;
-						case 26: action=27; break;
-						case 27: action=26; break;
-						case 35: action=36; break;
-						case 36: action=35; break;
-						default:
-							break;
-					}
-				}
-				switch (action) {
-					case 0:
-						[self next:self];
-						break;
-					case 1:
-						[self prev:self];
-						break;
-					case 4:
-						[controller goToLast];
-						[self showThumbnail:[controller nowPage]];
-						break;
-					case 5:
-						[controller goToFirst];
-						[self showThumbnail:[controller nowPage]];
-						break;
-					case 35:
-						[controller nextSubFolder];
-						[self showThumbnail:[controller nowPage]];
-						break;
-					case 36:
-						[controller prevSubFolder];
-						[self showThumbnail:[controller nowPage]];
-						break;
-					case 8:
-						[controller nextFolder];
-						break;
-					case 9:
-						[controller backFolder];
-						break;
-					case 18: case 46:
-						[panel performClose:self];
-						break;
-					default:
-						break;
-				}
-				return;
-			}
-		}
-		return;
+		[self co_performThumbnailKeyAction:character modifier:cMod];
 	}
 }
 
