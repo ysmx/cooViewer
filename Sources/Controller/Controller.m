@@ -1632,52 +1632,68 @@ static const int DIALOG_CANCEL	= 129;
 	return [thumController loadImage:index];
 }
 
-- (NSImage*)loadImage:(int)index
+/*
+ Searches cacheArray for an entry matching completeMutableArray[index] and,
+ if found, touches it to the end of the array (LRU) before returning its
+ cached image. Returns nil on no match or when caching is disabled.
+ */
+- (NSImage *)co_cachedImageForIndex:(int)index
 {
-	if (cacheSize != 0) {
-		int i;
-		id object;
-		for (i=0; i<[cacheArray count]; i++) {
-			object = [cacheArray objectAtIndex:i];
-			if ([[completeMutableArray objectAtIndex:index] isEqualToString:[object objectForKey:@"name"]]) {
-				[cacheArray addObject:object];
-				[cacheArray removeObjectAtIndex:i];
-				return [object objectForKey:@"image"];
-			}
+	if (cacheSize == 0) return nil;
+	NSString *name = [completeMutableArray objectAtIndex:index];
+	for (int i = 0; i < [cacheArray count]; i++) {
+		id object = [cacheArray objectAtIndex:i];
+		if ([name isEqualToString:[object objectForKey:@"name"]]) {
+			[cacheArray addObject:object];
+			[cacheArray removeObjectAtIndex:i];
+			return [object objectForKey:@"image"];
 		}
 	}
+	return nil;
+}
+
+/*
+ Stores `image` into cacheArray under completeMutableArray[index] (unless
+ caching is disabled), shared by every insertion point in -loadImage:.
+ Does not trim the array - callers that need the cacheSize+4 cap trim it
+ themselves afterward, matching the original per-call-site behavior.
+ */
+- (void)co_insertImageCacheEntryForIndex:(int)index image:(NSImage *)image
+{
+	if (cacheSize == 0) return;
+	[cacheArray addObject:[NSDictionary dictionaryWithObjectsAndKeys:
+		[completeMutableArray objectAtIndex:index],@"name",
+		image,@"image",nil]];
+}
+
+- (NSImage*)loadImage:(int)index
+{
+	NSImage *cached = [self co_cachedImageForIndex:index];
+	if (cached) return cached;
+
 	if ([imageView image]) {
 		if (secondImage) {
 			int temp = nowPage;
 			temp--;
 			if (index == temp) {
-				if (cacheSize != 0) {
-					[cacheArray addObject:[NSDictionary dictionaryWithObjectsAndKeys:[completeMutableArray objectAtIndex:index],@"name",secondImage,@"image",nil]];
-				}
-				//NSLog(@"return2 %@",[completeMutableArray objectAtIndex:index]);
+				[self co_insertImageCacheEntryForIndex:index image:secondImage];
 				return secondImage;
 			}
 			temp--;
 			if (index == temp) {
-				if (cacheSize != 0) {
-					[cacheArray addObject:[NSDictionary dictionaryWithObjectsAndKeys:[completeMutableArray objectAtIndex:index],@"name",firstImage,@"image",nil]];
-				}
-				//NSLog(@"return2 %@",[completeMutableArray objectAtIndex:index]);
+				[self co_insertImageCacheEntryForIndex:index image:firstImage];
 				return firstImage;
 			}
 		} else {
 			int temp = nowPage;
 			temp--;
 			if (index == temp) {
-				if (cacheSize != 0) {
-					[cacheArray addObject:[NSDictionary dictionaryWithObjectsAndKeys:[completeMutableArray objectAtIndex:index],@"name",firstImage,@"image",nil]];
-				}
-				//NSLog(@"return2 %@",[completeMutableArray objectAtIndex:index]);
+				[self co_insertImageCacheEntryForIndex:index image:firstImage];
 				return firstImage;
 			}
 		}
 	}
-	
+
 	if (index < 0 || index >= [completeMutableArray count]) {
 		NSLog(@"cooViewer loadImage out of range: index=%d total=%lu nowPage=%d",
 			  index,
@@ -1691,28 +1707,8 @@ static const int DIALOG_CANCEL	= 129;
 			  (unsigned long)[completeMutableArray count],
 			  (index >= 0 && index < [completeMutableArray count]) ? [completeMutableArray objectAtIndex:index] : nil);
 	}
-    int heightValue = 0,widthValue = 0,repi = 0;
-    /*
-	NSImageRep*	rep;
-	NSArray *repArray=[image representations];
-	for(repi=0;repi<[repArray count];repi++){
-		rep =[repArray objectAtIndex:repi];
-		if(rep){
-			heightValue=(int)[rep pixelsHigh];
-			widthValue=(int)[rep pixelsWide];
-			break;
-		}
-	}
-	if( (widthValue>0 && heightValue>0) && ([image size].width != widthValue || [image size].height != heightValue) ){
-		//[image setScalesWhenResized:YES];
-		[image setSize:NSMakeSize(widthValue,heightValue)];
-	}
-     */
-	if (cacheSize != 0) {
-		[cacheArray addObject:[NSDictionary dictionaryWithObjectsAndKeys:[completeMutableArray objectAtIndex:index],@"name",image,@"image",nil]];
-		//NSLog(@"load %@",[completeMutableArray objectAtIndex:index]);
-	}
-	while ([cacheArray count] > cacheSize+4) [cacheArray removeObjectAtIndex:0]; 
+	[self co_insertImageCacheEntryForIndex:index image:image];
+	while ([cacheArray count] > cacheSize+4) [cacheArray removeObjectAtIndex:0];
 	return image;
 }
 
