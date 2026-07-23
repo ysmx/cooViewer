@@ -2412,55 +2412,73 @@ static const int DIALOG_CANCEL	= 129;
 
 
 #pragma mark fontConfig
-- (IBAction)showFontPanel:(id)sender
+/*
+ The Page Number and Page Bar font-panel controls (-showFontPanel:/
+ -showPageBarFontPanel:, -changeFont:/-changePageBarFont:, and the color
+ setters below) are structurally identical, differing only in which text
+ field they target - and, for the panel-opening pair, which selector
+ NSFontManager should call back on. Shared here rather than duplicated.
+ */
+- (void)co_showFontPanelForTextField:(NSTextField *)textField changeAction:(SEL)changeAction
 {
-    NSFontPanel* fontPanel;
-    fontPanel = [[NSFontManager sharedFontManager] fontPanel:YES];
-	[[NSFontManager sharedFontManager] setSelectedFont:[fontTextField font] isMultiple:NO];
+	NSFontPanel *fontPanel = [[NSFontManager sharedFontManager] fontPanel:YES];
+	[[NSFontManager sharedFontManager] setSelectedFont:[textField font] isMultiple:NO];
 	[fontPanel setLevel:NSMainMenuWindowLevel];
 	[fontPanel setDelegate:(id)self];
-	[[NSFontManager sharedFontManager] setAction:@selector(changeFont:)];
-    [fontPanel makeKeyAndOrderFront:self];
+	[[NSFontManager sharedFontManager] setAction:changeAction];
+	[fontPanel makeKeyAndOrderFront:self];
+}
+
+- (void)co_changeFont:(id)fontManager forTextField:(NSTextField *)textField
+{
+	NSFont *oldFont = [textField font];
+	NSFont *newFont = [fontManager convertFont:oldFont];
+	[textField setFont:newFont];
+}
+
+- (void)co_setTextColor:(NSColor *)color forTextField:(NSTextField *)textField
+{
+	[textField setTextColor:color];
+}
+
+- (void)co_setBackgroundColor:(NSColor *)color forTextField:(NSTextField *)textField
+{
+	[textField setBackgroundColor:color];
+}
+
+- (IBAction)showFontPanel:(id)sender
+{
+	[self co_showFontPanelForTextField:fontTextField changeAction:@selector(changeFont:)];
 }
 - (void)changeFont:(id)fontManager
 {
-    NSFont *oldFont = [fontTextField font];
-    NSFont *newFont = [fontManager convertFont:oldFont];
-	[fontTextField setFont:newFont];
+	[self co_changeFont:fontManager forTextField:fontTextField];
 }
 - (IBAction)changeFontColor:(id)sender
 {
-	[fontTextField setTextColor:[sender currentColor]];
+	[self co_setTextColor:[sender currentColor] forTextField:fontTextField];
 }
 - (IBAction)changeFontBGColor:(id)sender
 {
-	[fontTextField setBackgroundColor:[sender currentColor]];
+	[self co_setBackgroundColor:[sender currentColor] forTextField:fontTextField];
 }
 
 
 - (IBAction)showPageBarFontPanel:(id)sender
 {
-    NSFontPanel* fontPanel;
-    fontPanel = [[NSFontManager sharedFontManager] fontPanel:YES];
-	[[NSFontManager sharedFontManager] setSelectedFont:[pageBarFontTextField font] isMultiple:NO];
-	[fontPanel setLevel:NSMainMenuWindowLevel];
-	[fontPanel setDelegate:(id)self];
-	[[NSFontManager sharedFontManager] setAction:@selector(changePageBarFont:)];
-    [fontPanel makeKeyAndOrderFront:self];
+	[self co_showFontPanelForTextField:pageBarFontTextField changeAction:@selector(changePageBarFont:)];
 }
 - (void)changePageBarFont:(id)fontManager
 {
-    NSFont *oldFont = [pageBarFontTextField font];
-    NSFont *newFont = [fontManager convertFont:oldFont];
-	[pageBarFontTextField setFont:newFont];
+	[self co_changeFont:fontManager forTextField:pageBarFontTextField];
 }
 - (IBAction)changePageBarFontColor:(id)sender
 {
-	[pageBarFontTextField setTextColor:[sender currentColor]];
+	[self co_setTextColor:[sender currentColor] forTextField:pageBarFontTextField];
 }
 - (IBAction)changePageBarBGColor:(id)sender
 {
-	[pageBarFontTextField setBackgroundColor:[sender currentColor]];
+	[self co_setBackgroundColor:[sender currentColor] forTextField:pageBarFontTextField];
 }
 
 - (IBAction)resetPageNumberAppearance:(id)sender
