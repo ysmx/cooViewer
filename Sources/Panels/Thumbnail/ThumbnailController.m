@@ -356,30 +356,22 @@
 	now--;
 	
 	[self setImageToCellAtRow:rowCount column:colCount back:NO];
-	
-	if (![controller readFromLeft]) {
-		colCount--;
-		cellCount++;
-		if (colCount < 0) {
-			rowCount++;
-			colCount = (int)[(NSMatrix*)matrix numberOfColumns]-1;
-			if (rowCount == [matrix numberOfRows]) {
-				doCount--;
-				return;
-			}
-		}
-	} else {
-		colCount++;
-		cellCount++;
-		if (colCount == [(NSMatrix*)matrix numberOfColumns]) {
-			rowCount++;
-			colCount=0;
-			if (rowCount == [matrix numberOfRows]) {
-				doCount--;
-				return;
-			}
-		}
+
+	// Same mirror-pair collapse as setImageCellWithInfo: - the
+	// readFromLeft-dependent column walk lives in ViewerThumbnailGridStep.
+	cellCount++;
+	ViewerThumbnailGridStep *step = [ViewerThumbnailGridStep stepAfterColumn:colCount
+																		 row:rowCount
+																	 columns:(int)[(NSMatrix*)matrix numberOfColumns]
+																		rows:(int)[matrix numberOfRows]
+																		back:NO
+																readFromLeft:[controller readFromLeft]];
+	if ([step done]) {
+		doCount--;
+		return;
 	}
+	colCount = [step column];
+	rowCount = [step row];
 	if (cellCount < all && [bookmarkArray count] > start+cellCount) {
 		NSDictionary *info = [NSDictionary dictionaryWithObjectsAndKeys:
 			[NSNumber numberWithInt:colCount],@"colCount",
@@ -546,142 +538,85 @@
 		return;
 	}
 	int all = [[infoDic objectForKey:@"all"] intValue];
-	int last = [[infoDic objectForKey:@"last"] intValue];	
+	int last = [[infoDic objectForKey:@"last"] intValue];
 	int colCount = [[infoDic objectForKey:@"colCount"] intValue];
 	int rowCount = [[infoDic objectForKey:@"rowCount"] intValue];
 	BOOL back = [[infoDic objectForKey:@"back"] boolValue];
+	// The forward and backward halves each used to be two mirror-image
+	// blocks (readFromLeft deciding the column direction and wrap
+	// column). The walk itself is now ViewerThumbnailGridStep, which the
+	// four original branches parameterize by (back, readFromLeft); what
+	// remains here per half is the now bookkeeping, the state-text
+	// format, and the reschedule payload.
 	if (!back) {
-		if (![controller readFromLeft]) {
-			[self setImageToCellAtRow:rowCount column:colCount back:NO];
-			colCount--;
-			now++;
-			cellCount++;
-			if (now == [pathArray count]) {
-				if (mangaMode) [stateTextField setStringValue:[NSString stringWithFormat:@"%@%i/%i",[stateTextField stringValue],now,(int)[pathArray count]]];
-				doCount--;
-				return;
-			}
-			if (colCount < 0) {
-				rowCount++;
-				colCount = (int)[(NSMatrix*)matrix numberOfColumns]-1;
-				if (rowCount == [matrix numberOfRows]) {
-					if (mangaMode) [stateTextField setStringValue:[NSString stringWithFormat:@"%@%i/%i",[stateTextField stringValue],now,(int)[pathArray count]]];
-					doCount--;
-					return;
-				}
-			}
-			if (cellCount < all) {
-				NSDictionary *info = [NSDictionary dictionaryWithObjectsAndKeys:
-					[NSNumber numberWithInt:all],@"all",
-					[NSNumber numberWithInt:last],@"last",
-					[NSNumber numberWithInt:colCount],@"colCount",
-					[NSNumber numberWithInt:rowCount],@"rowCount",
-					[NSNumber numberWithBool:back],@"back",
-					nil];
-				[self performSelector:@selector(setImageCellWithInfo:) withObject:info afterDelay:0.001];
-				return;
-			}
-		} else {
-			[self setImageToCellAtRow:rowCount column:colCount back:NO];
-			colCount++;
-			now++;
-			cellCount++;
-			if (now == [pathArray count]) {
-				if (mangaMode) [stateTextField setStringValue:[NSString stringWithFormat:@"%@%i/%i",[stateTextField stringValue],now,(int)[pathArray count]]];
-				doCount--;
-				return;
-			}
-			if (colCount == [(NSMatrix*)matrix numberOfColumns]) {
-				rowCount++;
-				colCount=0;
-				if (rowCount == [matrix numberOfRows]) {
-					if (mangaMode) [stateTextField setStringValue:[NSString stringWithFormat:@"%@%i/%i",[stateTextField stringValue],now,(int)[pathArray count]]];
-					doCount--;
-					return;
-				}
-			}
-			if (cellCount < all) {
-				NSDictionary *info = [NSDictionary dictionaryWithObjectsAndKeys:
-					[NSNumber numberWithInt:all],@"all",
-					[NSNumber numberWithInt:last],@"last",
-					[NSNumber numberWithInt:colCount],@"colCount",
-					[NSNumber numberWithInt:rowCount],@"rowCount",
-					[NSNumber numberWithBool:back],@"back",
-					nil];
-				[self performSelector:@selector(setImageCellWithInfo:) withObject:info afterDelay:0.001];
-				return;
-			}
+		[self setImageToCellAtRow:rowCount column:colCount back:NO];
+		now++;
+		cellCount++;
+		if (now == [pathArray count]) {
+			if (mangaMode) [stateTextField setStringValue:[NSString stringWithFormat:@"%@%i/%i",[stateTextField stringValue],now,(int)[pathArray count]]];
+			doCount--;
+			return;
+		}
+		ViewerThumbnailGridStep *step = [ViewerThumbnailGridStep stepAfterColumn:colCount
+																			 row:rowCount
+																		 columns:(int)[(NSMatrix*)matrix numberOfColumns]
+																			rows:(int)[matrix numberOfRows]
+																			back:NO
+																	readFromLeft:[controller readFromLeft]];
+		if ([step done]) {
+			if (mangaMode) [stateTextField setStringValue:[NSString stringWithFormat:@"%@%i/%i",[stateTextField stringValue],now,(int)[pathArray count]]];
+			doCount--;
+			return;
+		}
+		colCount = [step column];
+		rowCount = [step row];
+		if (cellCount < all) {
+			NSDictionary *info = [NSDictionary dictionaryWithObjectsAndKeys:
+				[NSNumber numberWithInt:all],@"all",
+				[NSNumber numberWithInt:last],@"last",
+				[NSNumber numberWithInt:colCount],@"colCount",
+				[NSNumber numberWithInt:rowCount],@"rowCount",
+				[NSNumber numberWithBool:back],@"back",
+				nil];
+			[self performSelector:@selector(setImageCellWithInfo:) withObject:info afterDelay:0.001];
+			return;
 		}
 	} else if (mangaMode && back) {
 		int oldNow = [[infoDic objectForKey:@"oldNow"] intValue];
-		if (![controller readFromLeft]) {
-			now--;
-			[self setImageToCellAtRow:rowCount column:colCount back:YES];
-			colCount++;
-			cellCount++;
-			if (now == 0) {
-				[stateTextField setStringValue:[NSString stringWithFormat:@"%i%@",now+1,[stateTextField stringValue]]];
-				doCount--;
-				now = oldNow;
-				return;
-			}
-			
-			if (colCount == [(NSMatrix*)matrix numberOfColumns]) {
-				rowCount--;
-				colCount = 0;
-				if (rowCount < 0) {
-					[stateTextField setStringValue:[NSString stringWithFormat:@"%i%@",now+1,[stateTextField stringValue]]];
-					doCount--;
-					now = oldNow;
-					return;
-				}
-			}
-			if (cellCount < all) {
-				NSDictionary *info = [NSDictionary dictionaryWithObjectsAndKeys:
-					[NSNumber numberWithInt:all],@"all",
-					[NSNumber numberWithInt:last],@"last",
-					[NSNumber numberWithInt:colCount],@"colCount",
-					[NSNumber numberWithInt:rowCount],@"rowCount",
-					[NSNumber numberWithInt:oldNow],@"oldNow",
-					[NSNumber numberWithBool:back],@"back",
-					nil];
-				[self performSelector:@selector(setImageCellWithInfo:) withObject:info afterDelay:0.001];
-				return;
-			}
-		} else {
-			now--;
-			[self setImageToCellAtRow:rowCount column:colCount back:YES];
-			colCount--;
-			cellCount++;
-			if (now == 0) {
-				[stateTextField setStringValue:[NSString stringWithFormat:@"%i%@",now+1,[stateTextField stringValue]]];
-				doCount--;
-				now = oldNow;
-				return;
-			}
-			
-			if (colCount < 0) {
-				rowCount--;
-				colCount = (int)[(NSMatrix*)matrix numberOfColumns]-1;
-				if (rowCount < 0) {
-					[stateTextField setStringValue:[NSString stringWithFormat:@"%i%@",now+1,[stateTextField stringValue]]];
-					doCount--;
-					now = oldNow;
-					return;
-				}
-			}
-			if (cellCount < all) {
-				NSDictionary *info = [NSDictionary dictionaryWithObjectsAndKeys:
-					[NSNumber numberWithInt:all],@"all",
-					[NSNumber numberWithInt:last],@"last",
-					[NSNumber numberWithInt:colCount],@"colCount",
-					[NSNumber numberWithInt:rowCount],@"rowCount",
-					[NSNumber numberWithInt:oldNow],@"oldNow",
-					[NSNumber numberWithBool:back],@"back",
-					nil];
-				[self performSelector:@selector(setImageCellWithInfo:) withObject:info afterDelay:0.001];
-				return;
-			}
+		now--;
+		[self setImageToCellAtRow:rowCount column:colCount back:YES];
+		cellCount++;
+		if (now == 0) {
+			[stateTextField setStringValue:[NSString stringWithFormat:@"%i%@",now+1,[stateTextField stringValue]]];
+			doCount--;
+			now = oldNow;
+			return;
+		}
+		ViewerThumbnailGridStep *step = [ViewerThumbnailGridStep stepAfterColumn:colCount
+																			 row:rowCount
+																		 columns:(int)[(NSMatrix*)matrix numberOfColumns]
+																			rows:(int)[matrix numberOfRows]
+																			back:YES
+																	readFromLeft:[controller readFromLeft]];
+		if ([step done]) {
+			[stateTextField setStringValue:[NSString stringWithFormat:@"%i%@",now+1,[stateTextField stringValue]]];
+			doCount--;
+			now = oldNow;
+			return;
+		}
+		colCount = [step column];
+		rowCount = [step row];
+		if (cellCount < all) {
+			NSDictionary *info = [NSDictionary dictionaryWithObjectsAndKeys:
+				[NSNumber numberWithInt:all],@"all",
+				[NSNumber numberWithInt:last],@"last",
+				[NSNumber numberWithInt:colCount],@"colCount",
+				[NSNumber numberWithInt:rowCount],@"rowCount",
+				[NSNumber numberWithInt:oldNow],@"oldNow",
+				[NSNumber numberWithBool:back],@"back",
+				nil];
+			[self performSelector:@selector(setImageCellWithInfo:) withObject:info afterDelay:0.001];
+			return;
 		}
 	}
 }
