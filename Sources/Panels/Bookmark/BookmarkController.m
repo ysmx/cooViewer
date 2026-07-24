@@ -565,30 +565,15 @@ static const int DIALOG_CANCEL	= 129;
 		return NO;
 	}
 
-	NSMutableArray *upperArray=[NSMutableArray arrayWithArray:[array subarrayWithRange:NSMakeRange(0,row)]];
-	NSMutableArray *lowerArray=[NSMutableArray arrayWithArray:[array subarrayWithRange:NSMakeRange(row,([array count] - row))]];
-	NSMutableArray *middleArray=[NSMutableArray arrayWithCapacity:0];
-
-	NSEnumerator *e=[[pboard propertyListForType:@"row"] objectEnumerator];
-	NSNumber *number;
-	id object;
-	while ((number=[e nextObject]) != nil) {
-		object=[array objectAtIndex:[number intValue]];
-		[middleArray addObject:object];
-		[upperArray removeObject:object];
-		[lowerArray removeObject:object];
-	}
-
-	[array removeAllObjects];
-	[array addObjectsFromArray:upperArray];
-	[array addObjectsFromArray:middleArray];
-	[array addObjectsFromArray:lowerArray];
+	NSArray<NSNumber *> *draggedIndices = [pboard propertyListForType:@"row"];
+	ViewerBookmarkMoveResult *result = [ViewerBookmarkList bookmarksByMovingBookmarks:array atIndices:draggedIndices toRow:row];
+	[array setArray:result.bookmarks];
 
 	[tv reloadData];
 	[tv deselectAll:nil];
 
-	int i;
-	for (i=(int)[upperArray count];i<([upperArray count] + [middleArray count]);i++) {
+	NSUInteger i;
+	for (i = result.selectedRange.location; i < NSMaxRange(result.selectedRange); i++) {
 		[tv selectRowIndexes:[NSIndexSet indexSetWithIndex:i] byExtendingSelection:[tv allowsMultipleSelection]];
 	}
 
