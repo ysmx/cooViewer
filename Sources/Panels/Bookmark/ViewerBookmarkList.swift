@@ -14,6 +14,16 @@
 
 import Foundation
 
+@objc final class ViewerBookmarkMoveResult: NSObject {
+	@objc let bookmarks: [NSDictionary]
+	@objc let selectedRange: NSRange
+
+	init(bookmarks: [NSDictionary], selectedRange: NSRange) {
+		self.bookmarks = bookmarks
+		self.selectedRange = selectedRange
+	}
+}
+
 @objc final class ViewerBookmarkList: NSObject {
 
 	/// Appends a new "bookmarkN" entry (N = current count + 1) for the given
@@ -58,6 +68,35 @@ import Foundation
 		var result = bookmarks
 		result.remove(at: i)
 		return result
+	}
+
+	/// Moves the entries at `indices` (given in ascending order, matching how
+	/// -tableView:writeRowsWithIndexes:toPasteboard: enumerates a drag
+	/// selection) to just before `row`, preserving their relative order and
+	/// leaving every other entry's relative order untouched. `row` counts
+	/// positions in the original array. Equivalent to
+	/// -co_reorderArray:...'s splice-by-value, but by index -- immune to
+	/// that approach silently moving the wrong entry when two bookmarks
+	/// happen to have the same name/page. Indices outside the array's
+	/// bounds are ignored. The result's selectedRange is where the moved
+	/// entries landed, for the caller to reselect after reloading.
+	@objc(bookmarksByMovingBookmarks:atIndices:toRow:)
+	static func moving(bookmarks: [NSDictionary], atIndices indices: [Int32], toRow row: Int32) -> ViewerBookmarkMoveResult {
+		let validIndices = indices.map { Int($0) }.filter { bookmarks.indices.contains($0) }
+		guard !validIndices.isEmpty else {
+			return ViewerBookmarkMoveResult(bookmarks: bookmarks, selectedRange: NSRange(location: 0, length: 0))
+		}
+		let indexSet = Set(validIndices)
+
+		let moving = validIndices.map { bookmarks[$0] }
+		let remaining = bookmarks.enumerated().filter { !indexSet.contains($0.offset) }.map { $0.element }
+
+		let movedFromAboveRow = validIndices.filter { $0 < Int(row) }.count
+		let insertAt = min(max(Int(row) - movedFromAboveRow, 0), remaining.count)
+
+		var result = remaining
+		result.insert(contentsOf: moving, at: insertAt)
+		return ViewerBookmarkMoveResult(bookmarks: result, selectedRange: NSRange(location: insertAt, length: moving.count))
 	}
 
 	private static func replacing(bookmarks: [NSDictionary], atIndex index: Int32, with transform: (NSDictionary) -> [String: Any]) -> [NSDictionary] {

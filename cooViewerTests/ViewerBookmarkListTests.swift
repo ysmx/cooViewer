@@ -84,4 +84,47 @@ final class ViewerBookmarkListTests: XCTestCase {
 		XCTAssertEqual(ViewerBookmarkList.removing(bookmarks: existing, atIndex: 5), existing)
 		XCTAssertEqual(ViewerBookmarkList.removing(bookmarks: existing, atIndex: -1), existing)
 	}
+
+	// MARK: moving
+
+	private func names(_ list: [NSDictionary]) -> [String] {
+		return list.map { $0["name"] as! String }
+	}
+
+	private let abcde: [NSDictionary] = ["a", "b", "c", "d", "e"].map { ["name": $0, "page": "1"] }
+
+	func testMovingASingleEntryDownPastLaterRows() {
+		let result = ViewerBookmarkList.moving(bookmarks: abcde, atIndices: [0], toRow: 3)
+		XCTAssertEqual(names(result.bookmarks), ["b", "c", "a", "d", "e"])
+		XCTAssertEqual(result.selectedRange, NSRange(location: 2, length: 1))
+	}
+
+	func testMovingASingleEntryUpBeforeEarlierRows() {
+		let result = ViewerBookmarkList.moving(bookmarks: abcde, atIndices: [4], toRow: 1)
+		XCTAssertEqual(names(result.bookmarks), ["a", "e", "b", "c", "d"])
+		XCTAssertEqual(result.selectedRange, NSRange(location: 1, length: 1))
+	}
+
+	func testMovingMultipleEntriesPreservesTheirAscendingOrder() {
+		let result = ViewerBookmarkList.moving(bookmarks: abcde, atIndices: [1, 3], toRow: 0)
+		XCTAssertEqual(names(result.bookmarks), ["b", "d", "a", "c", "e"])
+		XCTAssertEqual(result.selectedRange, NSRange(location: 0, length: 2))
+	}
+
+	func testMovingToItsOwnOriginalPositionIsANoOp() {
+		let result = ViewerBookmarkList.moving(bookmarks: abcde, atIndices: [2], toRow: 2)
+		XCTAssertEqual(names(result.bookmarks), ["a", "b", "c", "d", "e"])
+	}
+
+	func testMovingToTheEndRowAppendsAtTheEnd() {
+		let result = ViewerBookmarkList.moving(bookmarks: abcde, atIndices: [0], toRow: 5)
+		XCTAssertEqual(names(result.bookmarks), ["b", "c", "d", "e", "a"])
+		XCTAssertEqual(result.selectedRange, NSRange(location: 4, length: 1))
+	}
+
+	func testMovingWithNoValidIndicesIsANoOp() {
+		let result = ViewerBookmarkList.moving(bookmarks: abcde, atIndices: [99], toRow: 0)
+		XCTAssertEqual(names(result.bookmarks), ["a", "b", "c", "d", "e"])
+		XCTAssertEqual(result.selectedRange, NSRange(location: 0, length: 0))
+	}
 }
