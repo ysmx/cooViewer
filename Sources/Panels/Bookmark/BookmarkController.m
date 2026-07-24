@@ -166,10 +166,11 @@ static const int DIALOG_CANCEL	= 129;
 	
     [allBookmarkTableView setDataSource:(id)self];
     [allBookmarkTableView setDelegate:(id)self];
+    [allBookmarkTableView setMenu:contextMenuItem];
 
     [allBookNameTableView setDataSource:(id)self];
     [allBookNameTableView setDelegate:(id)self];
-	
+
 	if (![defaults dictionaryForKey:@"BookSettings"]) {
 		allBookmark = [[NSMutableDictionary dictionary] retain];
 	} else {
@@ -216,30 +217,54 @@ static const int DIALOG_CANCEL	= 129;
 
 - (void)keyDownAll:(NSEvent *)theEvent
 {
-	int selectedRow;
-	if (selectedView == allBookNameTableView) {
-		selectedRow = (int)[allBookNameTableView selectedRow];
+	// Which table has keyboard focus right now decides whether Delete
+	// removes a whole book or a single bookmark. This used to be inferred
+	// from selectedView (the table last reported by
+	// -tableViewSelectionDidChange:), which could go stale and made Delete
+	// remove the wrong thing (#106) -- asking the panel who its current
+	// first responder is reflects the actual focus at key-press time.
+	id responder = [allBookmarkPanel firstResponder];
+	if (responder == allBookNameTableView) {
+		int selectedRow = (int)[allBookNameTableView selectedRow];
 		if (selectedRow > -1) {
 			NSMutableDictionary *dic = [NSMutableDictionary dictionaryWithDictionary:[allBookmark objectForKey:[bookNameArray objectAtIndex:selectedRow]]];
 			[dic removeObjectForKey:@"bookmarks"];
-			
+
 			if ([dic count] == 1 && [dic objectForKey:@"alias"]) {
 				[allBookmark removeObjectForKey:[bookNameArray objectAtIndex:selectedRow]];
 			} else {
 				[allBookmark setObject:dic forKey:[bookNameArray objectAtIndex:selectedRow]];
 			}
 			[bookNameArray removeObjectAtIndex:selectedRow];
-			
+
 			[allBookNameTableView reloadData];
 			[allBookmarkTableView reloadData];
 		} else {
 			NSBeep();
 		}
-		
+	} else if (responder == allBookmarkTableView) {
+		if ([allBookmarkTableView selectedRow] > -1) {
+			[self deleteRow:theEvent];
+		} else {
+			NSBeep();
+		}
 	} else {
-		selectedRow = (int)[allBookmarkTableView selectedRow];
-		if (selectedRow > -1) {
+		NSBeep();
+	}
+}
 
+#pragma mark -
+- (IBAction)deleteRow:(id)sender;
+{
+	if ([bookmarkPanel isVisible]) {
+		int selectedRow = (int)[bookmarkTableView selectedRow];
+		if (0 <= selectedRow) {
+			[bookmarkArray setArray:[ViewerBookmarkList bookmarksByRemovingBookmarks:bookmarkArray atIndex:selectedRow]];
+			[bookmarkTableView reloadData];
+		}
+	} else {
+		int selectedRow = (int)[allBookmarkTableView selectedRow];
+		if (allBookmark && [allBookNameTableView selectedRow] > -1 && selectedRow > -1) {
 			id dic = [allBookmark objectForKey:[bookNameArray objectAtIndex:[allBookNameTableView selectedRow]]];
 			NSMutableDictionary *cDic = [NSMutableDictionary dictionaryWithDictionary:dic];
 			NSArray *array = [cDic objectForKey:@"bookmarks"];
@@ -248,21 +273,7 @@ static const int DIALOG_CANCEL	= 129;
 			[allBookmark setObject:cDic forKey:[bookNameArray objectAtIndex:[allBookNameTableView selectedRow]]];
 
 			[allBookmarkTableView reloadData];
-		} else {
-			NSBeep();
 		}
-	}
-}
-
-#pragma mark -
-- (IBAction)deleteRow:(id)sender;
-{
-	int selectedRow;
-	selectedRow = (int)[bookmarkTableView selectedRow];
-	if (0 <= selectedRow) {
-		[bookmarkArray setArray:[ViewerBookmarkList bookmarksByRemovingBookmarks:bookmarkArray atIndex:selectedRow]];
-		[bookmarkTableView reloadData];
-
 	}
 }
 
@@ -299,14 +310,11 @@ static const int DIALOG_CANCEL	= 129;
 
 - (BOOL)validateMenuItem:(NSMenuItem *)anItem
 {
-    int selectedRow;
-    selectedRow = (int)[bookmarkTableView selectedRow];
-	
     if( [[anItem title] isEqualToString:NSLocalizedString(@"Delete this Bookmark", @"")] == YES){
-		if (selectedRow > -1) {
-			return YES;
+		if ([bookmarkPanel isVisible]) {
+			return [bookmarkTableView selectedRow] > -1;
 		} else {
-			return NO;
+			return [allBookmarkTableView selectedRow] > -1;
 		}
     }
 	return NO;
@@ -329,13 +337,26 @@ static const int DIALOG_CANCEL	= 129;
 - (IBAction)openInSelf:(id)sender
 {
 	if ([allBookNameTableView selectedRow] > -1) {
-		NSData *alias = [[allBookmark objectForKey:[bookNameArray objectAtIndex:[allBookNameTableView selectedRow]]] objectForKey:@"alias"];
-		[controller application:NSApp openFile:[controller pathFromAliasData:alias]];
+		NSDictionary *bookDic = [allBookmark objectForKey:[bookNameArray objectAtIndex:[allBookNameTableView selectedRow]]];
+		NSString *path = [controller pathFromAliasData:[bookDic objectForKey:@"alias"]];
+
+		int selectedBookmarkRow = (int)[allBookmarkTableView selectedRow];
+		if (selectedBookmarkRow > -1) {
+			// Bookmark "page" values are the 1-based page shown to the user
+			// (same convention -goBookmark: converts with "-1" when jumping
+			// within the already-open book); -openPage:last: takes the
+			// 0-based internal page number.
+			int page = [[[[bookDic objectForKey:@"bookmarks"] objectAtIndex:selectedBookmarkRow] objectForKey:@"page"] intValue] - 1;
+			[controller setCurrentBookPathAndOldBookPath:path];
+			[controller openPage:page last:NO];
+		} else {
+			[controller application:NSApp openFile:path];
+		}
 		[allBookmarkPanel makeKeyAndOrderFront:self];
 	} else {
 		NSBeep();
 	}
-	
+
 }
 
 #pragma mark -
@@ -344,7 +365,6 @@ static const int DIALOG_CANCEL	= 129;
 	if ([aNotification object] == allBookNameTableView) {
 		[allBookmarkTableView reloadData];
 	}
-	selectedView = [aNotification object];
 }
 
 #pragma mark Table Delegate

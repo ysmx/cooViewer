@@ -37,8 +37,7 @@
 //	NSArray *paths;
 	NSString *directoryPath;
 	NSString *bookName;
-	
-	id selectedView;
+
 	NSMutableDictionary *completeAll;
 }
 
