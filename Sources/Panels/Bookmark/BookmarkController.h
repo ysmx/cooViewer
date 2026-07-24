@@ -24,6 +24,11 @@
     IBOutlet NSMenu *contextMenuItem;
 
     IBOutlet NSTextField *newBookmarkTextField;
+    IBOutlet NSButton *deleteBookmarkButton;
+    IBOutlet NSButton *deleteAllBookmarkButton;
+    IBOutlet NSButton *addAllBookmarkButton;
+    IBOutlet NSButton *openInSelfButton;
+    IBOutlet NSButton *openInFinderButton;
 
 	NSUserDefaults *defaults;
 	NSMutableArray *bookmarkArray;
@@ -49,6 +54,7 @@
 - (BOOL)validateMenuItem:(NSMenuItem *)anItem;
 
 - (IBAction)deleteRow:(id)sender;
+- (IBAction)deleteBookRow:(id)sender;
 - (IBAction)ok:(id)sender;
 - (IBAction)cancel:(id)sender;
 - (IBAction)addNewBookmark:(id)sender;

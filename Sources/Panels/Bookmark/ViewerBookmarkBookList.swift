@@ -60,12 +60,21 @@ import Foundation
 	/// -openPageLoadDidFinish:, which always stamp both onto currentBookSetting.
 	private static let alwaysPresentBookKeys: Set<String> = ["alias", "temppath"]
 
-	/// Removes the book's bookmarks. If nothing but alias/temppath is left
-	/// (the book only ever existed to hold bookmarks), the book entry is
-	/// dropped entirely -- and its name along with it, since a name whose
-	/// book entry no longer exists shouldn't stay in the list. Otherwise the
-	/// book is kept, with bookmarks cleared, so other per-book settings
-	/// (read mode, sort mode, marks, ...) survive and it stays listed.
+	/// Removes the book at `index` from the list -- always, regardless of
+	/// whether its underlying dict carries any settings beyond alias/
+	/// temppath. Explicitly deleting a book here is a deliberate, direct
+	/// action ("I don't want this book in my bookmark list"); whether it
+	/// happens to also host unrelated per-book settings (read mode, sort
+	/// mode, marks, ...) is an implementation detail this screen has no
+	/// business surfacing, so the visible result is always the same:
+	/// the row disappears. (This is different from clearing a book's
+	/// bookmarks one at a time via ViewerBookmarkList.removing, which never
+	/// touches this list -- only an explicit "delete this book" does.)
+	///
+	/// Underneath, if nothing but alias/temppath is left (the book only
+	/// ever existed to hold bookmarks), the dict entry is dropped entirely;
+	/// otherwise it's kept with bookmarks cleared, so those unrelated
+	/// settings survive in storage -- just not in this list.
 	/// Out-of-range indexes are a no-op.
 	@objc(removingBookNames:books:atIndex:)
 	static func removingBook(names: [String], books: NSDictionary, atIndex index: Int32) -> ViewerBookmarkBookListResult {
@@ -76,21 +85,19 @@ import Foundation
 		let name = names[i]
 
 		let newBooks = NSMutableDictionary(dictionary: books)
-		var newNames = names
 		if let bookDic = books[name] as? NSDictionary {
 			let remaining = NSMutableDictionary(dictionary: bookDic)
 			remaining.removeObject(forKey: "bookmarks")
 			let remainingKeys = Set(remaining.allKeys.compactMap { $0 as? String })
 			if remainingKeys.isSubset(of: alwaysPresentBookKeys) {
 				newBooks.removeObject(forKey: name)
-				newNames.remove(at: i)
 			} else {
 				newBooks[name] = remaining
 			}
-		} else {
-			newNames.remove(at: i)
 		}
 
+		var newNames = names
+		newNames.remove(at: i)
 		return ViewerBookmarkBookListResult(names: newNames, books: newBooks)
 	}
 }

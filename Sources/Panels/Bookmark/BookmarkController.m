@@ -87,8 +87,9 @@ static const int DIALOG_CANCEL	= 129;
     [bookmarkTableView setDataSource:(id)self];
     [bookmarkTableView setDelegate:(id)self];
 	[bookmarkTableView reloadData];
-	
-	
+	[deleteBookmarkButton setEnabled:NO];
+
+
 	window = [NSApp keyWindow];
     [[NSApplication sharedApplication] beginSheet:bookmarkPanel 
 								   modalForWindow:window 
@@ -189,6 +190,10 @@ static const int DIALOG_CANCEL	= 129;
 	
 	[allBookmarkTableView reloadData];
 	[allBookNameTableView reloadData];
+	[deleteAllBookmarkButton setEnabled:NO];
+	[addAllBookmarkButton setEnabled:NO];
+	[openInSelfButton setEnabled:NO];
+	[openInFinderButton setEnabled:NO];
 	int result;
 	result = (int)[[NSApplication sharedApplication] runModalForWindow:allBookmarkPanel];
 	[allBookmarkPanel orderOut:self];
@@ -217,34 +222,40 @@ static const int DIALOG_CANCEL	= 129;
 
 - (void)keyDownAll:(NSEvent *)theEvent
 {
-	// Which table has keyboard focus right now decides whether Delete
-	// removes a whole book or a single bookmark. This used to be inferred
-	// from selectedView (the table last reported by
-	// -tableViewSelectionDidChange:), which could go stale and made Delete
-	// remove the wrong thing (#106) -- asking the panel who its current
-	// first responder is reflects the actual focus at key-press time.
-	id responder = [allBookmarkPanel firstResponder];
-	if (responder == allBookNameTableView) {
-		int selectedRow = (int)[allBookNameTableView selectedRow];
-		if (selectedRow > -1) {
-			ViewerBookmarkBookListResult *result = [ViewerBookmarkBookList removingBookNames:bookNameArray books:allBookmark atIndex:selectedRow];
-			[bookNameArray setArray:result.names];
-			[allBookmark setDictionary:result.books];
-
-			[allBookNameTableView reloadData];
-			[allBookmarkTableView reloadData];
-		} else {
-			NSBeep();
-		}
-	} else if (responder == allBookmarkTableView) {
-		if ([allBookmarkTableView selectedRow] > -1) {
-			[self deleteRow:theEvent];
-		} else {
-			NSBeep();
-		}
+	// Delete only ever removes a bookmark here -- deleting a whole book is a
+	// separate, more deliberate action reachable only via the "Unregister..."
+	// context menu on allBookNameTableView (see -deleteBookRow:), never via
+	// this key/button.
+	if ([allBookmarkTableView selectedRow] > -1) {
+		[self deleteRow:theEvent];
 	} else {
 		NSBeep();
 	}
+}
+
+- (IBAction)deleteBookRow:(id)sender
+{
+	int selectedRow = (int)[allBookNameTableView selectedRow];
+	if (selectedRow == -1) {
+		NSBeep();
+		return;
+	}
+
+	int result = (int)NSRunAlertPanel(NSLocalizedString(@"Unregister Book", @""),
+									   NSLocalizedString(@"Unregistering will delete all of its bookmarks.", @""),
+									   NSLocalizedString(@"Cancel", @""),
+									   NSLocalizedString(@"Unregister", @""),
+									   nil);
+	if (result != NSAlertAlternateReturn && result != NSAlertSecondButtonReturn) {
+		return;
+	}
+
+	ViewerBookmarkBookListResult *bookListResult = [ViewerBookmarkBookList removingBookNames:bookNameArray books:allBookmark atIndex:selectedRow];
+	[bookNameArray setArray:bookListResult.names];
+	[allBookmark setDictionary:bookListResult.books];
+
+	[allBookNameTableView reloadData];
+	[allBookmarkTableView reloadData];
 }
 
 #pragma mark -
@@ -310,7 +321,9 @@ static const int DIALOG_CANCEL	= 129;
 		} else {
 			return [allBookmarkTableView selectedRow] > -1;
 		}
-    }
+    } else if ([[anItem title] isEqualToString:NSLocalizedString(@"Unregister...", @"")] == YES) {
+		return [allBookNameTableView selectedRow] > -1;
+	}
 	return NO;
 
 }
@@ -356,8 +369,21 @@ static const int DIALOG_CANCEL	= 129;
 #pragma mark -
 - (void)tableViewSelectionDidChange:(NSNotification *)aNotification
 {
-	if ([aNotification object] == allBookNameTableView) {
+	NSTableView *table = [aNotification object];
+	if (table == allBookNameTableView) {
+		[allBookmarkTableView deselectAll:nil];
 		[allBookmarkTableView reloadData];
+
+		BOOL bookSelected = ([allBookNameTableView selectedRow] > -1);
+		[addAllBookmarkButton setEnabled:bookSelected];
+		[openInSelfButton setEnabled:bookSelected];
+		[openInFinderButton setEnabled:bookSelected];
+	}
+
+	if (table == bookmarkTableView) {
+		[deleteBookmarkButton setEnabled:([bookmarkTableView selectedRow] > -1)];
+	} else if (table == allBookmarkTableView || table == allBookNameTableView) {
+		[deleteAllBookmarkButton setEnabled:([allBookmarkTableView selectedRow] > -1)];
 	}
 }
 
@@ -366,8 +392,10 @@ static const int DIALOG_CANCEL	= 129;
 - (BOOL)tableView:(NSTableView *)aTableView shouldEditTableColumn:(NSTableColumn *)aTableColumn row:(int)rowIndex
 {
 	if (aTableView == allBookNameTableView) {
-		//[self openInSelf:self];
-		return YES;
+		// A book's name here is just this dictionary's lookup key, not the
+		// underlying file's name -- renaming it from the bookmark editor is
+		// a mismatched concern for this screen, so editing is disallowed.
+		return NO;
 	}
     return YES;
 }
@@ -514,17 +542,9 @@ static const int DIALOG_CANCEL	= 129;
 			[cDic setObject:[ViewerBookmarkList bookmarksWithPageBookmarks:array atIndex:rowIndex updatedTo:[NSString stringWithFormat:@"%@",anObject]] forKey:@"bookmarks"];
 			[allBookmark setObject:cDic forKey:[bookNameArray objectAtIndex:[allBookNameTableView selectedRow]]];
 		}
-	} else if (aTableView == allBookNameTableView) {
-		if([[aTableColumn identifier] isEqualToString:@"folder"]) {
-			ViewerBookmarkBookListResult *result = [ViewerBookmarkBookList renamingBookNames:bookNameArray books:allBookmark atIndex:rowIndex to:anObject];
-			if (!result) {
-				NSBeep();
-				return;
-			}
-			[bookNameArray setArray:result.names];
-			[allBookmark setDictionary:result.books];
-		}
 	}
+	// allBookNameTableView's "folder" column is not editable (see
+	// -tableView:shouldEditTableColumn:row:), so it never reaches here.
 }
 
 

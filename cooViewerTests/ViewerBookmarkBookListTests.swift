@@ -65,21 +65,21 @@ final class ViewerBookmarkBookListTests: XCTestCase {
 		XCTAssertNotNil(result.books["bookB"])
 	}
 
-	func testRemovingBookKeepsTheEntryAndItsNameWhenOtherSettingsExist() {
-		// Reproduces the real shape reported by a user: a book with a
-		// remembered read mode (in addition to the always-present alias/
-		// temppath) disappeared from the list entirely after its last
-		// bookmark was removed, because the name was dropped from the list
-		// unconditionally instead of only when the book entry itself was
-		// dropped.
+	func testRemovingBookAlwaysDropsTheNameEvenWhenTheDictEntrySurvivesForOtherSettings() {
+		// Explicitly deleting a book from the list is a direct, deliberate
+		// action -- it always disappears from the list, regardless of
+		// whether its dict happens to also host unrelated per-book settings
+		// (read mode, sort mode, marks, ...) that survive underneath purely
+		// so that unrelated feature keeps working. This screen has no
+		// business surfacing that distinction.
 		let names = ["bookA"]
 		let books: NSDictionary = [
 			"bookA": ["alias": "aliasA", "temppath": "/tmp/a", "bookmarks": [["name": "x", "page": "1"]], "readMode": 2],
 		]
 		let result = ViewerBookmarkBookList.removingBook(names: names, books: books, atIndex: 0)
-		XCTAssertEqual(result.names, ["bookA"], "the book entry survives, so its name must stay listed")
+		XCTAssertEqual(result.names, [], "explicitly deleting a book always drops it from the list")
 		let remaining = result.books["bookA"] as? NSDictionary
-		XCTAssertNotNil(remaining, "book with settings beyond alias/temppath should survive")
+		XCTAssertNotNil(remaining, "book with settings beyond alias/temppath should survive in storage")
 		XCTAssertNil(remaining?["bookmarks"])
 		XCTAssertEqual(remaining?["alias"] as? String, "aliasA")
 		XCTAssertEqual(remaining?["readMode"] as? Int, 2)
