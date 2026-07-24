@@ -85,6 +85,45 @@ final class ViewerBookmarkListTests: XCTestCase {
 		XCTAssertEqual(ViewerBookmarkList.removing(bookmarks: existing, atIndex: -1), existing)
 	}
 
+	// MARK: removing (multi-index)
+
+	func testRemovingAtIndicesDropsAllSelectedRowsInOnePass() {
+		let existing: [NSDictionary] = [
+			["name": "a", "page": "1"],
+			["name": "b", "page": "2"],
+			["name": "c", "page": "3"],
+			["name": "d", "page": "4"],
+		]
+		// Regression test: removing indices one at a time with the single-index
+		// -removing(bookmarks:atIndex:) shifts later indices after each
+		// removal, so a naive loop over [1, 2] would actually delete "b" and
+		// "d" instead of "b" and "c".
+		let result = ViewerBookmarkList.removing(bookmarks: existing, atIndices: [1, 2])
+		XCTAssertEqual(names(result), ["a", "d"])
+	}
+
+	func testRemovingAtIndicesOrderDoesNotMatter() {
+		let existing: [NSDictionary] = [
+			["name": "a", "page": "1"],
+			["name": "b", "page": "2"],
+			["name": "c", "page": "3"],
+		]
+		let result = ViewerBookmarkList.removing(bookmarks: existing, atIndices: [2, 0])
+		XCTAssertEqual(names(result), ["b"])
+	}
+
+	func testRemovingAtIndicesIgnoresOutOfRangeAndDuplicateIndices() {
+		let existing: [NSDictionary] = [["name": "a", "page": "1"], ["name": "b", "page": "2"]]
+		let result = ViewerBookmarkList.removing(bookmarks: existing, atIndices: [0, 0, 99])
+		XCTAssertEqual(names(result), ["b"])
+	}
+
+	func testRemovingAtIndicesWithNoValidIndicesIsANoOp() {
+		let existing: [NSDictionary] = [["name": "a", "page": "1"]]
+		XCTAssertEqual(ViewerBookmarkList.removing(bookmarks: existing, atIndices: []), existing)
+		XCTAssertEqual(ViewerBookmarkList.removing(bookmarks: existing, atIndices: [42]), existing)
+	}
+
 	// MARK: moving
 
 	private func names(_ list: [NSDictionary]) -> [String] {

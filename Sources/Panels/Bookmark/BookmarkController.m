@@ -7,6 +7,18 @@
 static const int DIALOG_OK		= 128;
 static const int DIALOG_CANCEL	= 129;
 
+// -removingBookmarks:atIndices: (Swift) takes the same NSArray<NSNumber*>
+// shape -selectedRowIndexes already needs converting to for any multi-row
+// operation.
+static NSArray<NSNumber *> *co_numbersFromIndexSet(NSIndexSet *indexSet)
+{
+	NSMutableArray<NSNumber *> *numbers = [NSMutableArray arrayWithCapacity:[indexSet count]];
+	[indexSet enumerateIndexesUsingBlock:^(NSUInteger idx, BOOL *stop) {
+		[numbers addObject:@(idx)];
+	}];
+	return numbers;
+}
+
 
 -(void)awakeFromNib
 {
@@ -17,7 +29,7 @@ static const int DIALOG_CANCEL	= 129;
 	
 	
 	defaults = [NSUserDefaults standardUserDefaults];
-	
+
 	[bookmarkPanel setFrameAutosaveName:@"Bookmark"];
 	[allBookmarkPanel setFrameAutosaveName:@"AllBookmark"];
 	if ([defaults stringForKey:@"AllBookmarkSplitPotision"]) {
@@ -88,6 +100,7 @@ static const int DIALOG_CANCEL	= 129;
     [bookmarkTableView setDelegate:(id)self];
 	[bookmarkTableView reloadData];
 	[deleteBookmarkButton setEnabled:NO];
+	[moveToBookmarkButton setEnabled:NO];
 
 
 	window = [NSApp keyWindow];
@@ -148,10 +161,9 @@ static const int DIALOG_CANCEL	= 129;
 
 - (void)keyDown:(NSEvent *)theEvent
 {
-	int selectedRow;
-	selectedRow = (int)[bookmarkTableView selectedRow];
-	if (0 <= selectedRow) {
-		[bookmarkArray setArray:[ViewerBookmarkList bookmarksByRemovingBookmarks:bookmarkArray atIndex:selectedRow]];
+	NSIndexSet *selectedRows = [bookmarkTableView selectedRowIndexes];
+	if ([selectedRows count] > 0) {
+		[bookmarkArray setArray:[ViewerBookmarkList bookmarksByRemovingBookmarks:bookmarkArray atIndices:co_numbersFromIndexSet(selectedRows)]];
 		[bookmarkTableView reloadData];
 
 	} else {
@@ -193,7 +205,6 @@ static const int DIALOG_CANCEL	= 129;
 	[deleteAllBookmarkButton setEnabled:NO];
 	[addAllBookmarkButton setEnabled:NO];
 	[openInSelfButton setEnabled:NO];
-	[openInFinderButton setEnabled:NO];
 	int result;
 	result = (int)[[NSApplication sharedApplication] runModalForWindow:allBookmarkPanel];
 	[allBookmarkPanel orderOut:self];
@@ -262,19 +273,19 @@ static const int DIALOG_CANCEL	= 129;
 - (IBAction)deleteRow:(id)sender;
 {
 	if ([bookmarkPanel isVisible]) {
-		int selectedRow = (int)[bookmarkTableView selectedRow];
-		if (0 <= selectedRow) {
-			[bookmarkArray setArray:[ViewerBookmarkList bookmarksByRemovingBookmarks:bookmarkArray atIndex:selectedRow]];
+		NSIndexSet *selectedRows = [bookmarkTableView selectedRowIndexes];
+		if ([selectedRows count] > 0) {
+			[bookmarkArray setArray:[ViewerBookmarkList bookmarksByRemovingBookmarks:bookmarkArray atIndices:co_numbersFromIndexSet(selectedRows)]];
 			[bookmarkTableView reloadData];
 		}
 	} else {
-		int selectedRow = (int)[allBookmarkTableView selectedRow];
-		if (allBookmark && [allBookNameTableView selectedRow] > -1 && selectedRow > -1) {
+		NSIndexSet *selectedRows = [allBookmarkTableView selectedRowIndexes];
+		if (allBookmark && [allBookNameTableView selectedRow] > -1 && [selectedRows count] > 0) {
 			id dic = [allBookmark objectForKey:[bookNameArray objectAtIndex:[allBookNameTableView selectedRow]]];
 			NSMutableDictionary *cDic = [NSMutableDictionary dictionaryWithDictionary:dic];
 			NSArray *array = [cDic objectForKey:@"bookmarks"];
 
-			[cDic setObject:[ViewerBookmarkList bookmarksByRemovingBookmarks:array atIndex:selectedRow] forKey:@"bookmarks"];
+			[cDic setObject:[ViewerBookmarkList bookmarksByRemovingBookmarks:array atIndices:co_numbersFromIndexSet(selectedRows)] forKey:@"bookmarks"];
 			[allBookmark setObject:cDic forKey:[bookNameArray objectAtIndex:[allBookNameTableView selectedRow]]];
 
 			[allBookmarkTableView reloadData];
@@ -282,23 +293,30 @@ static const int DIALOG_CANCEL	= 129;
 	}
 }
 
+// New bookmarks no longer take a manually-entered page number up front --
+// they start at this placeholder and the newly added row is immediately put
+// into edit mode on its Page cell (see -co_beginEditingPageAtRow:tableView:),
+// so the user types the real page directly into the list rather than a
+// separate text field.
+static const int kNewBookmarkPlaceholderPage = 1;
+
 -(IBAction)addNewBookmark:(id)sender
 {
 	if ([bookmarkPanel isVisible]) {
-		NSArray<NSDictionary *> *updated = [ViewerBookmarkList appendingBookmarks:bookmarkArray page:[newBookmarkTextField intValue]];
+		NSArray<NSDictionary *> *updated = [ViewerBookmarkList appendingBookmarks:bookmarkArray page:kNewBookmarkPlaceholderPage];
 		if (!updated) {
 			NSBeep();
 			return;
 		}
 		[bookmarkArray setArray:updated];
-		[bookmarkTableView reloadData];
+		[self co_beginEditingPageAtRow:(int)[updated count] - 1 tableView:bookmarkTableView];
 	} else {
 		if (allBookmark && [allBookNameTableView selectedRow] > -1) {
 			id dic = [allBookmark objectForKey:[bookNameArray objectAtIndex:[allBookNameTableView selectedRow]]];
 			NSMutableDictionary *cDic = [NSMutableDictionary dictionaryWithDictionary:dic];
 			NSArray *array = [cDic objectForKey:@"bookmarks"];
 
-			NSArray<NSDictionary *> *updated = [ViewerBookmarkList appendingBookmarks:array page:[newBookmarkTextField intValue]];
+			NSArray<NSDictionary *> *updated = [ViewerBookmarkList appendingBookmarks:array page:kNewBookmarkPlaceholderPage];
 			if (!updated) {
 				NSBeep();
 				return;
@@ -306,11 +324,26 @@ static const int DIALOG_CANCEL	= 129;
 			[cDic setObject:updated forKey:@"bookmarks"];
 			[allBookmark setObject:cDic forKey:[bookNameArray objectAtIndex:[allBookNameTableView selectedRow]]];
 
-			[allBookmarkTableView reloadData];
+			[self co_beginEditingPageAtRow:(int)[updated count] - 1 tableView:allBookmarkTableView];
 		} else {
 			NSBeep();
 		}
 	}
+}
+
+// Selects the newly added row and puts its Page cell straight into edit
+// mode, so the user types the real page directly rather than needing a
+// separate "add" step followed by a second edit step.
+-(void)co_beginEditingPageAtRow:(int)row tableView:(NSTableView *)tableView
+{
+	[tableView reloadData];
+
+	NSInteger column = [tableView columnWithIdentifier:@"page"];
+	if (column == -1) {
+		return;
+	}
+	[tableView selectRowIndexes:[NSIndexSet indexSetWithIndex:row] byExtendingSelection:NO];
+	[tableView editColumn:column row:row withEvent:nil select:YES];
 }
 
 - (BOOL)validateMenuItem:(NSMenuItem *)anItem
@@ -322,6 +355,8 @@ static const int DIALOG_CANCEL	= 129;
 			return [allBookmarkTableView selectedRow] > -1;
 		}
     } else if ([[anItem title] isEqualToString:NSLocalizedString(@"Unregister...", @"")] == YES) {
+		return [allBookNameTableView selectedRow] > -1;
+	} else if ([[anItem title] isEqualToString:NSLocalizedString(@"Show in Finder", @"")] == YES) {
 		return [allBookNameTableView selectedRow] > -1;
 	}
 	return NO;
@@ -343,7 +378,17 @@ static const int DIALOG_CANCEL	= 129;
 
 - (IBAction)openInSelf:(id)sender
 {
-	if ([allBookNameTableView selectedRow] > -1) {
+	if ([bookmarkPanel isVisible]) {
+		int selectedBookmarkRow = (int)[bookmarkTableView selectedRow];
+		if (selectedBookmarkRow > -1) {
+			// Already viewing this book -- just jump within it, same page
+			// convention as the all-bookmarks case below.
+			int page = [[[bookmarkArray objectAtIndex:selectedBookmarkRow] objectForKey:@"page"] intValue] - 1;
+			[controller openPage:page last:NO];
+		} else {
+			NSBeep();
+		}
+	} else if ([allBookNameTableView selectedRow] > -1) {
 		NSDictionary *bookDic = [allBookmark objectForKey:[bookNameArray objectAtIndex:[allBookNameTableView selectedRow]]];
 		NSString *path = [controller pathFromAliasData:[bookDic objectForKey:@"alias"]];
 
@@ -377,13 +422,19 @@ static const int DIALOG_CANCEL	= 129;
 		BOOL bookSelected = ([allBookNameTableView selectedRow] > -1);
 		[addAllBookmarkButton setEnabled:bookSelected];
 		[openInSelfButton setEnabled:bookSelected];
-		[openInFinderButton setEnabled:bookSelected];
 	}
 
 	if (table == bookmarkTableView) {
-		[deleteBookmarkButton setEnabled:([bookmarkTableView selectedRow] > -1)];
+		BOOL bookmarkSelected = ([bookmarkTableView selectedRow] > -1);
+		[deleteBookmarkButton setEnabled:bookmarkSelected];
+		[moveToBookmarkButton setEnabled:bookmarkSelected];
 	} else if (table == allBookmarkTableView || table == allBookNameTableView) {
-		[deleteAllBookmarkButton setEnabled:([allBookmarkTableView selectedRow] > -1)];
+		BOOL bookmarkSelected = ([allBookmarkTableView selectedRow] > -1);
+		[deleteAllBookmarkButton setEnabled:bookmarkSelected];
+		// -openInSelf: jumps straight to the selected bookmark's page instead
+		// of just opening the book when one is selected -- reflect that
+		// distinction in the button's own label rather than overloading "Open".
+		[openInSelfButton setTitle:bookmarkSelected ? NSLocalizedString(@"Move to Bookmark", @"") : NSLocalizedString(@"Open", @"")];
 	}
 }
 
@@ -433,21 +484,19 @@ static const int DIALOG_CANCEL	= 129;
 {
 	[[aTableColumn dataCell] setWraps:YES];
 	static NSDictionary *info = nil;
-	static NSDictionary *pageInfo = nil;
     if (nil == info) {
         NSMutableParagraphStyle *style = [[NSParagraphStyle defaultParagraphStyle] mutableCopy];
         [style setLineBreakMode:NSLineBreakByTruncatingMiddle];
         info = [[NSDictionary alloc] initWithObjectsAndKeys:style, NSParagraphStyleAttributeName, nil];
         [style release];
     }
-    if (nil == pageInfo) {
-        NSMutableParagraphStyle *pageStyle = [[NSParagraphStyle defaultParagraphStyle] mutableCopy];
-        [pageStyle setLineBreakMode:NSLineBreakByTruncatingMiddle];
-        [pageStyle setAlignment:NSTextAlignmentRight];
-        pageInfo = [[NSDictionary alloc] initWithObjectsAndKeys:pageStyle, NSParagraphStyleAttributeName, nil];
-        [pageStyle release];
-    }
-	
+	// The "page" column's cell has its own numberFormatter and right alignment
+	// declared in MainMenu.xib -- wrapping its value in a custom NSAttributedString
+	// (as the other columns do for line-break/alignment styling) fights that
+	// formatter and renders the value permanently dimmed, no matter what color is
+	// stated explicitly. Returning the plain string lets the cell's own formatter
+	// and declared textColor render it normally.
+
 	if (aTableView == bookmarkTableView) {
 		if([[aTableColumn identifier] isEqualToString:@"name"]) {
 			if (bookmarkArray) {
@@ -458,11 +507,9 @@ static const int DIALOG_CANCEL	= 129;
 				return nil;
 			}
 		} else if([[aTableColumn identifier] isEqualToString:@"page"]) {
-			
+
 			if (bookmarkArray) {
-				//return [[bookmarkArray objectAtIndex:rowIndex] objectForKey:@"page"];
-				return [[[NSAttributedString alloc] initWithString:[[bookmarkArray objectAtIndex:rowIndex] objectForKey:@"page"]
-														attributes:pageInfo] autorelease];
+				return [[bookmarkArray objectAtIndex:rowIndex] objectForKey:@"page"];
 			} else {
 				return nil;
 			}
@@ -493,12 +540,11 @@ static const int DIALOG_CANCEL	= 129;
 				if (rowIndex >= [[dic objectForKey:@"bookmarks"] count]) {
 					return nil;
 				}
-				return [[[NSAttributedString alloc] initWithString:[[[dic objectForKey:@"bookmarks"] objectAtIndex:rowIndex] objectForKey:@"page"]
-														attributes:pageInfo] autorelease];
+				return [[[dic objectForKey:@"bookmarks"] objectAtIndex:rowIndex] objectForKey:@"page"];
 			} else {
 				return nil;
 			}
-		}		
+		}
 	} else if (aTableView == allBookNameTableView) {
 		if([[aTableColumn identifier] isEqualToString:@"folder"]) {
 			if (bookNameArray) {

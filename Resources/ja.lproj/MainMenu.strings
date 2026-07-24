@@ -130,6 +130,9 @@
 /* Class = "NSMenu"; title = "Menu"; ObjectID = "dBk-nm-mnu"; */
 "dBk-nm-mnu.title" = "Menu";
 
+/* Class = "NSMenuItem"; title = "Show in Finder"; ObjectID = "dBk-nm-fnd"; */
+"dBk-nm-fnd.title" = "Finder に表示";
+
 /* Class = "NSMenuItem"; title = "Unregister..."; ObjectID = "dBk-nm-itm"; */
 "dBk-nm-itm.title" = "登録を解除...";
 
@@ -1273,8 +1276,11 @@
 /* Class = "NSButtonCell"; title = "Add New Bookmark"; ObjectID = "4327"; */
 "4327.title" = "ブックマークを追加";
 
-/* Class = "NSTextFieldCell"; title = "1"; ObjectID = "4328"; */
-"4328.title" = "1";
+/* Class = "NSButtonCell"; title = "Delete"; ObjectID = "dB1-bk-cel"; */
+"dB1-bk-cel.title" = "削除";
+
+/* Class = "NSButtonCell"; title = "Move to Bookmark"; ObjectID = "mvb-cel-001"; */
+"mvb-cel-001.title" = "移動する";
 
 /* Class = "NSButtonCell"; title = "OK"; ObjectID = "4329"; */
 "4329.title" = "OK";
@@ -1288,17 +1294,14 @@
 /* Class = "NSButtonCell"; title = "OK"; ObjectID = "4334"; */
 "4334.title" = "OK";
 
-/* Class = "NSTextFieldCell"; title = "1"; ObjectID = "4335"; */
-"4335.title" = "1";
-
 /* Class = "NSButtonCell"; title = "Add New Bookmark"; ObjectID = "4336"; */
 "4336.title" = "ブックマークを追加";
 
+/* Class = "NSButtonCell"; title = "Delete"; ObjectID = "dB2-ab-cel"; */
+"dB2-ab-cel.title" = "削除";
+
 /* Class = "NSButtonCell"; title = "Cancel"; ObjectID = "4337"; */
 "4337.title" = "キャンセル";
-
-/* Class = "NSButtonCell"; title = "Show in Finder"; ObjectID = "4338"; */
-"4338.title" = "Finder に表示";
 
 /* Class = "NSButtonCell"; title = "Open"; ObjectID = "4339"; */
 "4339.title" = "開く";
