@@ -3055,14 +3055,11 @@ static const int DIALOG_CANCEL	= 129;
 		[timer invalidate];
 		timerSwitch=NO;
 	}
-	if ([imageView image]) {
-		NSDictionary *dic = [NSDictionary dictionaryWithObject:currentBookPath forKey:@"dirPath"];
-		
-		[bookmarkController setPathDic:dic];
-		[bookmarkController editBookmark:bookmarkArray];
-	} else {
-		[bookmarkController editAllBookmark:bookmarkArray];
-	}
+	// The all-bookmarks screen covers both cases: with no book open it starts
+	// with nothing selected, and with one open it pre-selects that book so
+	// its bookmarks show immediately -- a single-book-only editor sheet is no
+	// longer needed.
+	[bookmarkController editAllBookmark:([imageView image] ? currentBookPath : nil)];
 }
 
 

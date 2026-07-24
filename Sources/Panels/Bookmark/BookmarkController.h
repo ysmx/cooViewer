@@ -8,13 +8,6 @@
 {
 	IBOutlet Controller *controller;
 
-	// Not CustomWindow, despite the XIB wiring it to one: -editBookmark:
-	// reassigns this to whatever [NSApp keyWindow] currently is (to
-	// restore focus after the sheet closes), which is plain NSWindow.
-	IBOutlet NSWindow *window;
-    IBOutlet BookmarkPanel *bookmarkPanel;
-    IBOutlet NSTableView *bookmarkTableView;
-
     IBOutlet BookmarkPanel *allBookmarkPanel;
     IBOutlet NSTableView *allBookmarkTableView;
     IBOutlet NSTableView *allBookNameTableView;
@@ -22,33 +15,26 @@
 
     IBOutlet NSMenu *contextMenuItem;
 
-    IBOutlet NSButton *deleteBookmarkButton;
     IBOutlet NSButton *deleteAllBookmarkButton;
     IBOutlet NSButton *addAllBookmarkButton;
     IBOutlet NSButton *openInSelfButton;
-    IBOutlet NSButton *moveToBookmarkButton;
 
 	NSUserDefaults *defaults;
-	NSMutableArray *bookmarkArray;
-	NSMutableArray *sourceBookmarkArray;
 
 	NSMutableDictionary *allBookmark;
 	NSMutableArray *bookNameArray;
-	
-//	NSArray *names;
-//	NSArray *pages;
-//	NSArray *paths;
-	NSString *directoryPath;
-	NSString *bookName;
 
 	NSMutableDictionary *completeAll;
 }
 
 - (void)setSplitViewPosition:(NSSplitView *)splitView position:(NSString *)position;
 
--(void)setPathDic:(NSDictionary*)dic;
--(void)editBookmark:(NSMutableArray*)array;
--(void)editAllBookmark:(NSMutableArray*)array;
+// currentBookPath is the currently-open book's path (nil if none is open);
+// when given, that book's row is pre-selected so its bookmarks show
+// immediately -- this is the single entry point for both the "editing the
+// open book" and "browsing every book's bookmarks" cases, which used to be
+// two separate screens (see #57's design discussion for why they were merged).
+-(void)editAllBookmark:(NSString*)currentBookPath;
 - (BOOL)validateMenuItem:(NSMenuItem *)anItem;
 
 - (IBAction)deleteRow:(id)sender;

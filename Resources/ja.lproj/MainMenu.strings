@@ -115,12 +115,6 @@
 /* Class = "NSMenuItem"; title = "Edit Bookmark..."; ObjectID = "609"; */
 "609.title" = "ブックマークを編集...";
 
-/* Class = "NSTableColumn"; headerCell.title = "Name"; ObjectID = "610"; */
-"610.headerCell.title" = "ブックマーク名";
-
-/* Class = "NSTableColumn"; headerCell.title = "Page"; ObjectID = "613"; */
-"613.headerCell.title" = "ページ";
-
 /* Class = "NSMenu"; title = "Menu"; ObjectID = "638"; */
 "638.title" = "Menu";
 
@@ -1266,21 +1260,6 @@
 
 /* Class = "NSButtonCell"; title = "Switch to the reverse action in \"read from left to right\""; ObjectID = "4324"; */
 "4324.title" = "ページ方向が”左から右”のとき、逆の動作に変化させる";
-
-/* Class = "NSButtonCell"; title = "OK"; ObjectID = "4325"; */
-"4325.title" = "OK";
-
-/* Class = "NSButtonCell"; title = "Cancel"; ObjectID = "4326"; */
-"4326.title" = "キャンセル";
-
-/* Class = "NSButtonCell"; title = "Add New Bookmark"; ObjectID = "4327"; */
-"4327.title" = "ブックマークを追加";
-
-/* Class = "NSButtonCell"; title = "Delete"; ObjectID = "dB1-bk-cel"; */
-"dB1-bk-cel.title" = "削除";
-
-/* Class = "NSButtonCell"; title = "Move to Bookmark"; ObjectID = "mvb-cel-001"; */
-"mvb-cel-001.title" = "移動する";
 
 /* Class = "NSButtonCell"; title = "OK"; ObjectID = "4329"; */
 "4329.title" = "OK";
