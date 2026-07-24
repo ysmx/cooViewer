@@ -18,17 +18,15 @@
     IBOutlet BookmarkPanel *allBookmarkPanel;
     IBOutlet NSTableView *allBookmarkTableView;
     IBOutlet NSTableView *allBookNameTableView;
-    IBOutlet NSTextField *allNewBookmarkTextField;
 	IBOutlet NSSplitView *allBookmarkSplitView;
 
     IBOutlet NSMenu *contextMenuItem;
 
-    IBOutlet NSTextField *newBookmarkTextField;
     IBOutlet NSButton *deleteBookmarkButton;
     IBOutlet NSButton *deleteAllBookmarkButton;
     IBOutlet NSButton *addAllBookmarkButton;
     IBOutlet NSButton *openInSelfButton;
-    IBOutlet NSButton *openInFinderButton;
+    IBOutlet NSButton *moveToBookmarkButton;
 
 	NSUserDefaults *defaults;
 	NSMutableArray *bookmarkArray;

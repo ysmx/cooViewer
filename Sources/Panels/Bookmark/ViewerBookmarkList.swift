@@ -70,6 +70,21 @@ import Foundation
 		return result
 	}
 
+	/// Removes every entry at `indices` in one pass -- unlike calling
+	/// `removing(bookmarks:atIndex:)` once per index, which would shift every
+	/// subsequent index after each removal and silently delete the wrong rows
+	/// for a multi-selection (the bug this fixes: selecting several bookmarks
+	/// and pressing Delete only removed one). Indices outside the array's
+	/// bounds are ignored.
+	@objc(bookmarksByRemovingBookmarks:atIndices:)
+	static func removing(bookmarks: [NSDictionary], atIndices indices: [Int32]) -> [NSDictionary] {
+		let indexSet = Set(indices.map { Int($0) }.filter { bookmarks.indices.contains($0) })
+		guard !indexSet.isEmpty else {
+			return bookmarks
+		}
+		return bookmarks.enumerated().filter { !indexSet.contains($0.offset) }.map { $0.element }
+	}
+
 	/// Moves the entries at `indices` (given in ascending order, matching how
 	/// -tableView:writeRowsWithIndexes:toPasteboard: enumerates a drag
 	/// selection) to just before `row`, preserving their relative order and
