@@ -2048,164 +2048,17 @@ Gw
             </view>
             <point key="canvasLocation" x="141.5" y="1280.5"/>
         </window>
-        <window title="Bookmark" allowsToolTipsWhenApplicationIsInactive="NO" autorecalculatesKeyViewLoop="NO" hidesOnDeactivate="YES" releasedWhenClosed="NO" visibleAtLaunch="NO" animationBehavior="default" id="561" userLabel="BookmarkPanel" customClass="BookmarkPanel">
-            <windowStyleMask key="styleMask" titled="YES" resizable="YES"/>
-            <windowPositionMask key="initialPositionMask" leftStrut="YES" rightStrut="YES" topStrut="YES" bottomStrut="YES"/>
-            <rect key="contentRect" x="422" y="173" width="581" height="419"/>
-            <rect key="screenRect" x="0.0" y="0.0" width="1440" height="877"/>
-            <view key="contentView" id="562">
-                <rect key="frame" x="0.0" y="0.0" width="581" height="419"/>
-                <autoresizingMask key="autoresizingMask"/>
-                <subviews>
-                    <scrollView fixedFrame="YES" horizontalLineScroll="19" horizontalPageScroll="10" verticalLineScroll="19" verticalPageScroll="10" usesPredominantAxisScrolling="NO" translatesAutoresizingMaskIntoConstraints="NO" id="611">
-                        <rect key="frame" x="20" y="101" width="541" height="268"/>
-                        <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
-                        <clipView key="contentView" ambiguous="YES" id="Cu5-Wy-5Gx">
-                            <rect key="frame" x="1" y="0.0" width="539" height="278"/>
-                            <autoresizingMask key="autoresizingMask"/>
-                            <subviews>
-                                <tableView verticalHuggingPriority="750" allowsExpansionToolTips="YES" columnAutoresizingStyle="firstColumnOnly" alternatingRowBackgroundColors="YES" columnReordering="NO" autosaveColumns="NO" headerView="4441" id="612">
-                                    <rect key="frame" x="0.0" y="0.0" width="539" height="255"/>
-                                    <autoresizingMask key="autoresizingMask"/>
-                                    <size key="intercellSpacing" width="3" height="2"/>
-                                    <color key="backgroundColor" red="1" green="1" blue="1" alpha="1" colorSpace="calibratedRGB"/>
-                                    <color key="gridColor" name="gridColor" catalog="System" colorSpace="catalog"/>
-                                    <tableColumns>
-                                        <tableColumn identifier="name" width="490" minWidth="40" maxWidth="1000" id="610">
-                                            <tableHeaderCell key="headerCell" lineBreakMode="truncatingTail" borderStyle="border" alignment="left" title="Name">
-                                                <font key="font" metaFont="smallSystem"/>
-                                                <color key="textColor" name="headerTextColor" catalog="System" colorSpace="catalog"/>
-                                                <color key="backgroundColor" white="0.33333299" alpha="1" colorSpace="calibratedWhite"/>
-                                            </tableHeaderCell>
-                                            <textFieldCell key="dataCell" selectable="YES" editable="YES" sendsActionOnEndEditing="YES" alignment="left" id="651">
-                                                <font key="font" metaFont="cellTitle"/>
-                                                <color key="textColor" name="controlTextColor" catalog="System" colorSpace="catalog"/>
-                                                <color key="backgroundColor" name="textBackgroundColor" catalog="System" colorSpace="catalog"/>
-                                            </textFieldCell>
-                                            <tableColumnResizingMask key="resizingMask" resizeWithTable="YES" userResizable="YES"/>
-                                        </tableColumn>
-                                        <tableColumn identifier="page" width="43.141998291015625" minWidth="33.141998291015625" maxWidth="1000" id="613">
-                                            <tableHeaderCell key="headerCell" lineBreakMode="truncatingTail" borderStyle="border" alignment="left" title="Page">
-                                                <font key="font" metaFont="smallSystem"/>
-                                                <color key="textColor" name="headerTextColor" catalog="System" colorSpace="catalog"/>
-                                                <color key="backgroundColor" white="0.33333299" alpha="1" colorSpace="calibratedWhite"/>
-                                            </tableHeaderCell>
-                                            <textFieldCell key="dataCell" selectable="YES" editable="YES" sendsActionOnEndEditing="YES" alignment="right" id="652">
-                                                <font key="font" metaFont="cellTitle"/>
-                                                <color key="textColor" name="controlTextColor" catalog="System" colorSpace="catalog"/>
-                                                <color key="backgroundColor" name="textBackgroundColor" catalog="System" colorSpace="catalog"/>
-                                            </textFieldCell>
-                                            <tableColumnResizingMask key="resizingMask" resizeWithTable="YES" userResizable="YES"/>
-                                        </tableColumn>
-                                    </tableColumns>
-                                    <connections>
-                                        <outlet property="menu" destination="638" id="643"/>
-                                    </connections>
-                                </tableView>
-                            </subviews>
-                        </clipView>
-                        <scroller key="horizontalScroller" wantsLayer="YES" verticalHuggingPriority="750" controlSize="small" horizontal="YES" id="4440">
-                            <rect key="frame" x="1" y="264" width="539" height="14"/>
-                            <autoresizingMask key="autoresizingMask"/>
-                        </scroller>
-                        <scroller key="verticalScroller" wantsLayer="YES" verticalHuggingPriority="750" controlSize="small" horizontal="NO" id="4442">
-                            <rect key="frame" x="526" y="23" width="14" height="255"/>
-                            <autoresizingMask key="autoresizingMask"/>
-                        </scroller>
-                        <tableHeaderView key="headerView" id="4441">
-                            <rect key="frame" x="0.0" y="0.0" width="539" height="23"/>
-                            <autoresizingMask key="autoresizingMask"/>
-                        </tableHeaderView>
-                    </scrollView>
-                    <button verticalHuggingPriority="750" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="614">
-                        <rect key="frame" x="489" y="8" width="78" height="32"/>
-                        <autoresizingMask key="autoresizingMask" flexibleMinX="YES" flexibleMaxY="YES"/>
-                        <buttonCell key="cell" type="push" title="OK" bezelStyle="rounded" alignment="center" borderStyle="border" inset="2" id="4325">
-                            <behavior key="behavior" pushIn="YES" lightByBackground="YES" lightByGray="YES"/>
-                            <font key="font" metaFont="system"/>
-                            <string key="keyEquivalent" base64-UTF8="YES">
-DQ
-</string>
-                        </buttonCell>
-                        <connections>
-                            <action selector="ok:" target="617" id="622"/>
-                        </connections>
-                    </button>
-                    <button verticalHuggingPriority="750" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="615">
-                        <rect key="frame" x="384" y="8" width="105" height="32"/>
-                        <autoresizingMask key="autoresizingMask" flexibleMinX="YES" flexibleMaxY="YES"/>
-                        <buttonCell key="cell" type="push" title="Cancel" bezelStyle="rounded" alignment="center" borderStyle="border" inset="2" id="4326">
-                            <behavior key="behavior" pushIn="YES" lightByBackground="YES" lightByGray="YES"/>
-                            <font key="font" metaFont="system"/>
-                            <string key="keyEquivalent" base64-UTF8="YES">
-Gw
-</string>
-                        </buttonCell>
-                        <connections>
-                            <action selector="cancel:" target="617" id="623"/>
-                        </connections>
-                    </button>
-                    <button verticalHuggingPriority="750" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="703">
-                        <rect key="frame" x="20" y="61" width="140" height="32"/>
-                        <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
-                        <buttonCell key="cell" type="push" title="Add New Bookmark" bezelStyle="rounded" alignment="center" borderStyle="border" inset="2" id="4327">
-                            <behavior key="behavior" pushIn="YES" lightByBackground="YES" lightByGray="YES"/>
-                            <font key="font" metaFont="system"/>
-                        </buttonCell>
-                        <connections>
-                            <action selector="addNewBookmark:" target="617" id="716"/>
-                        </connections>
-                    </button>
-                    <button verticalHuggingPriority="750" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="dB1-bk-btn">
-                        <rect key="frame" x="160" y="61" width="90" height="32"/>
-                        <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
-                        <buttonCell key="cell" type="push" title="Delete" bezelStyle="rounded" alignment="center" borderStyle="border" inset="2" id="dB1-bk-cel">
-                            <behavior key="behavior" pushIn="YES" lightByBackground="YES" lightByGray="YES"/>
-                            <font key="font" metaFont="system"/>
-                        </buttonCell>
-                        <connections>
-                            <action selector="deleteRow:" target="617" id="dB1-bk-act"/>
-                        </connections>
-                    </button>
-                    <button verticalHuggingPriority="750" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="mvb-btn-001">
-                        <rect key="frame" x="421" y="61" width="140" height="32"/>
-                        <autoresizingMask key="autoresizingMask" flexibleMinX="YES" flexibleMaxY="YES"/>
-                        <buttonCell key="cell" type="push" title="Move to Bookmark" bezelStyle="rounded" alignment="center" borderStyle="border" inset="2" id="mvb-cel-001">
-                            <behavior key="behavior" pushIn="YES" lightByBackground="YES" lightByGray="YES"/>
-                            <font key="font" metaFont="system"/>
-                        </buttonCell>
-                        <connections>
-                            <action selector="openInSelf:" target="617" id="mvb-act-001"/>
-                        </connections>
-                    </button>
-                    <box horizontalHuggingPriority="750" verticalHuggingPriority="750" boxType="separator" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="bp-sep-001">
-                        <rect key="frame" x="20" y="48" width="541" height="5"/>
-                        <autoresizingMask key="autoresizingMask" widthSizable="YES" flexibleMaxY="YES"/>
-                    </box>
-                </subviews>
-            </view>
-            <connections>
-                <outlet property="delegate" destination="617" id="702"/>
-                <outlet property="target" destination="617" id="1018"/>
-            </connections>
-            <point key="canvasLocation" x="140.5" y="1654.5"/>
-        </window>
         <customObject id="617" userLabel="BookmarkController" customClass="BookmarkController">
             <connections>
                 <outlet property="allBookNameTableView" destination="997" id="1020"/>
                 <outlet property="allBookmarkPanel" destination="983" id="1019"/>
                 <outlet property="allBookmarkSplitView" destination="1519" id="1647"/>
                 <outlet property="allBookmarkTableView" destination="984" id="1021"/>
-                <outlet property="bookmarkPanel" destination="561" id="627"/>
-                <outlet property="bookmarkTableView" destination="612" id="628"/>
                 <outlet property="contextMenuItem" destination="638" id="650"/>
                 <outlet property="controller" destination="484" id="1516"/>
                 <outlet property="deleteAllBookmarkButton" destination="dB2-ab-btn" id="dB2-ab-out"/>
-                <outlet property="deleteBookmarkButton" destination="dB1-bk-btn" id="dB1-bk-out"/>
                 <outlet property="addAllBookmarkButton" destination="991" id="aAB-btn-out"/>
                 <outlet property="openInSelfButton" destination="1579" id="oIS-btn-out"/>
-                <outlet property="moveToBookmarkButton" destination="mvb-btn-001" id="mvb-out-001"/>
-                <outlet property="window" destination="21" id="621"/>
             </connections>
         </customObject>
         <menu title="Menu" id="638" userLabel="TableMenu">
