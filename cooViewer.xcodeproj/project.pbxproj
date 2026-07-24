@@ -46,6 +46,8 @@
 		7B519E56B0C04A40916E7489 /* ViewerMouseGesture.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7AF42708AE6E498A9C155BB3 /* ViewerMouseGesture.swift */; };
 		0BCFF2949EA3414AA38820E4 /* ViewerBookmarkList.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0B45A63C581B46C89110733B /* ViewerBookmarkList.swift */; };
 		D8358BB666EB4A2A8ABF93B8 /* ViewerBookmarkList.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0B45A63C581B46C89110733B /* ViewerBookmarkList.swift */; };
+		CCACF5128AEF41B09A727139 /* ViewerBookmarkBookList.swift in Sources */ = {isa = PBXBuildFile; fileRef = EE7509BA20C2409D9A270BD2 /* ViewerBookmarkBookList.swift */; };
+		4F63FBE1196C4AEBB9586122 /* ViewerBookmarkBookList.swift in Sources */ = {isa = PBXBuildFile; fileRef = EE7509BA20C2409D9A270BD2 /* ViewerBookmarkBookList.swift */; };
 		AE01C92364C74D13BDF66F4D /* ViewerSpreadDrawRects.swift in Sources */ = {isa = PBXBuildFile; fileRef = CBDF6FA6358E4FDB9FC325E7 /* ViewerSpreadDrawRects.swift */; };
 		A1A8245B941340018C69B9B2 /* ViewerSpreadDrawRects.swift in Sources */ = {isa = PBXBuildFile; fileRef = CBDF6FA6358E4FDB9FC325E7 /* ViewerSpreadDrawRects.swift */; };
 		221B87DFC07348D28E4674A4 /* ViewerMouseBinding.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7719E916A7B64A31AA98401D /* ViewerMouseBinding.swift */; };
@@ -296,6 +298,7 @@
 		76F0929807DBF79E00643E4F /* BookmarkController.h */ = {isa = PBXFileReference; fileEncoding = 0; lastKnownFileType = sourcecode.c.h; path = BookmarkController.h; sourceTree = "<group>"; };
 		76F0929907DBF79E00643E4F /* BookmarkController.m */ = {isa = PBXFileReference; fileEncoding = 0; lastKnownFileType = sourcecode.c.objc; path = BookmarkController.m; sourceTree = "<group>"; };
 		0B45A63C581B46C89110733B /* ViewerBookmarkList.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ViewerBookmarkList.swift; sourceTree = "<group>"; };
+		EE7509BA20C2409D9A270BD2 /* ViewerBookmarkBookList.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ViewerBookmarkBookList.swift; sourceTree = "<group>"; };
 		76F2B6420D67329C003269BB /* COTextView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = COTextView.h; sourceTree = "<group>"; };
 		76F2B6430D67329C003269BB /* COTextView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = COTextView.m; sourceTree = "<group>"; };
 		76F33A16083727A90099A43D /* broken.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = broken.png; sourceTree = "<group>"; };
@@ -519,6 +522,7 @@
 				76F0929807DBF79E00643E4F /* BookmarkController.h */,
 				76F0929907DBF79E00643E4F /* BookmarkController.m */,
 				0B45A63C581B46C89110733B /* ViewerBookmarkList.swift */,
+				EE7509BA20C2409D9A270BD2 /* ViewerBookmarkBookList.swift */,
 			);
 			name = bookmark;
 			path = Sources/Panels/Bookmark;
@@ -843,6 +847,7 @@
 				791D1850761348F5A17B9594 /* ViewerAccessoryGeometry.swift in Sources */,
 				97871B5A337F40A3AFDA7ACD /* ViewerMouseGesture.swift in Sources */,
 				0BCFF2949EA3414AA38820E4 /* ViewerBookmarkList.swift in Sources */,
+				CCACF5128AEF41B09A727139 /* ViewerBookmarkBookList.swift in Sources */,
 				AE01C92364C74D13BDF66F4D /* ViewerSpreadDrawRects.swift in Sources */,
 				221B87DFC07348D28E4674A4 /* ViewerMouseBinding.swift in Sources */,
 				984B9D1FB45A481D89DDC955 /* ViewerThumbnailMangaLayout.swift in Sources */,
@@ -904,6 +909,7 @@
 				6A15DCB5E75249A2BE1ED6C2 /* ViewerAccessoryGeometry.swift in Sources */,
 				7B519E56B0C04A40916E7489 /* ViewerMouseGesture.swift in Sources */,
 				D8358BB666EB4A2A8ABF93B8 /* ViewerBookmarkList.swift in Sources */,
+				4F63FBE1196C4AEBB9586122 /* ViewerBookmarkBookList.swift in Sources */,
 				A1A8245B941340018C69B9B2 /* ViewerSpreadDrawRects.swift in Sources */,
 				1DF4C7566A3E462980321703 /* ViewerMouseBinding.swift in Sources */,
 				BC1D2703A9AA4DFB9552F1E6 /* ViewerThumbnailMangaLayout.swift in Sources */,

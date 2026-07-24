@@ -227,15 +227,9 @@ static const int DIALOG_CANCEL	= 129;
 	if (responder == allBookNameTableView) {
 		int selectedRow = (int)[allBookNameTableView selectedRow];
 		if (selectedRow > -1) {
-			NSMutableDictionary *dic = [NSMutableDictionary dictionaryWithDictionary:[allBookmark objectForKey:[bookNameArray objectAtIndex:selectedRow]]];
-			[dic removeObjectForKey:@"bookmarks"];
-
-			if ([dic count] == 1 && [dic objectForKey:@"alias"]) {
-				[allBookmark removeObjectForKey:[bookNameArray objectAtIndex:selectedRow]];
-			} else {
-				[allBookmark setObject:dic forKey:[bookNameArray objectAtIndex:selectedRow]];
-			}
-			[bookNameArray removeObjectAtIndex:selectedRow];
+			ViewerBookmarkBookListResult *result = [ViewerBookmarkBookList removingBookNames:bookNameArray books:allBookmark atIndex:selectedRow];
+			[bookNameArray setArray:result.names];
+			[allBookmark setDictionary:result.books];
 
 			[allBookNameTableView reloadData];
 			[allBookmarkTableView reloadData];
@@ -522,24 +516,13 @@ static const int DIALOG_CANCEL	= 129;
 		}
 	} else if (aTableView == allBookNameTableView) {
 		if([[aTableColumn identifier] isEqualToString:@"folder"]) {
-			NSString *string = [bookNameArray objectAtIndex:rowIndex];
-			
-			if ([string isEqualToString:anObject]) {
-				return;
-			}
-			
-			if ([allBookmark objectForKey:anObject]) {
+			ViewerBookmarkBookListResult *result = [ViewerBookmarkBookList renamingBookNames:bookNameArray books:allBookmark atIndex:rowIndex to:anObject];
+			if (!result) {
 				NSBeep();
 				return;
 			}
-			
-			
-			id dic = [allBookmark objectForKey:string];
-			[bookNameArray insertObject:anObject atIndex:rowIndex+1];
-			[bookNameArray removeObjectAtIndex:rowIndex];
-			
-			[allBookmark removeObjectForKey:string];
-			[allBookmark setObject:dic forKey:[bookNameArray objectAtIndex:rowIndex]];
+			[bookNameArray setArray:result.names];
+			[allBookmark setDictionary:result.books];
 		}
 	}
 }
