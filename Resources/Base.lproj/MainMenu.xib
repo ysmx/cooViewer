@@ -2163,6 +2163,17 @@ Gw
                             <action selector="addNewBookmark:" target="617" id="716"/>
                         </connections>
                     </button>
+                    <button verticalHuggingPriority="750" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="dB1-bk-btn">
+                        <rect key="frame" x="273" y="12" width="100" height="32"/>
+                        <autoresizingMask key="autoresizingMask" flexibleMinX="YES" flexibleMaxX="YES" flexibleMaxY="YES"/>
+                        <buttonCell key="cell" type="push" title="Delete" bezelStyle="rounded" alignment="center" borderStyle="border" inset="2" id="dB1-bk-cel">
+                            <behavior key="behavior" pushIn="YES" lightByBackground="YES" lightByGray="YES"/>
+                            <font key="font" metaFont="system"/>
+                        </buttonCell>
+                        <connections>
+                            <action selector="deleteRow:" target="617" id="dB1-bk-act"/>
+                        </connections>
+                    </button>
                     <textField verticalHuggingPriority="750" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="713">
                         <rect key="frame" x="25" y="20" width="47" height="19"/>
                         <autoresizingMask key="autoresizingMask"/>
@@ -2198,6 +2209,11 @@ Gw
                 <outlet property="bookmarkTableView" destination="612" id="628"/>
                 <outlet property="contextMenuItem" destination="638" id="650"/>
                 <outlet property="controller" destination="484" id="1516"/>
+                <outlet property="deleteAllBookmarkButton" destination="dB2-ab-btn" id="dB2-ab-out"/>
+                <outlet property="deleteBookmarkButton" destination="dB1-bk-btn" id="dB1-bk-out"/>
+                <outlet property="addAllBookmarkButton" destination="991" id="aAB-btn-out"/>
+                <outlet property="openInSelfButton" destination="1579" id="oIS-btn-out"/>
+                <outlet property="openInFinderButton" destination="1576" id="oIF-btn-out"/>
                 <outlet property="newBookmarkTextField" destination="713" id="715"/>
                 <outlet property="window" destination="21" id="621"/>
             </connections>
@@ -2208,6 +2224,16 @@ Gw
                     <modifierMask key="keyEquivalentModifierMask"/>
                     <connections>
                         <action selector="deleteRow:" target="617" id="647"/>
+                    </connections>
+                </menuItem>
+            </items>
+        </menu>
+        <menu title="Menu" id="dBk-nm-mnu" userLabel="BookNameTableMenu">
+            <items>
+                <menuItem title="Unregister..." tag="1" id="dBk-nm-itm">
+                    <modifierMask key="keyEquivalentModifierMask"/>
+                    <connections>
+                        <action selector="deleteBookRow:" target="617" id="dBk-nm-act"/>
                     </connections>
                 </menuItem>
             </items>
@@ -2421,6 +2447,17 @@ DQ
                             <action selector="addNewBookmark:" target="617" id="1026"/>
                         </connections>
                     </button>
+                    <button verticalHuggingPriority="750" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="dB2-ab-btn">
+                        <rect key="frame" x="253" y="12" width="100" height="32"/>
+                        <autoresizingMask key="autoresizingMask" flexibleMinX="YES" flexibleMaxX="YES" flexibleMaxY="YES"/>
+                        <buttonCell key="cell" type="push" title="Delete" bezelStyle="rounded" alignment="center" borderStyle="border" inset="2" id="dB2-ab-cel">
+                            <behavior key="behavior" pushIn="YES" lightByBackground="YES" lightByGray="YES"/>
+                            <font key="font" metaFont="system"/>
+                        </buttonCell>
+                        <connections>
+                            <action selector="keyDownAll:" target="617" id="dB2-ab-act"/>
+                        </connections>
+                    </button>
                     <button verticalHuggingPriority="750" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="994">
                         <rect key="frame" x="547" y="12" width="100" height="32"/>
                         <autoresizingMask key="autoresizingMask" flexibleMinX="YES" flexibleMaxY="YES"/>
@@ -2467,6 +2504,9 @@ Gw
                                                     <tableColumnResizingMask key="resizingMask" resizeWithTable="YES" userResizable="YES"/>
                                                 </tableColumn>
                                             </tableColumns>
+                                            <connections>
+                                                <outlet property="menu" destination="dBk-nm-mnu" id="dBk-nm-out"/>
+                                            </connections>
                                         </tableView>
                                     </subviews>
                                 </clipView>

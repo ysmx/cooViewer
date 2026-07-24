@@ -127,6 +127,12 @@
 /* Class = "NSMenuItem"; title = "Delete this Bookmark"; ObjectID = "640"; */
 "640.title" = "このブックマークを削除";
 
+/* Class = "NSMenu"; title = "Menu"; ObjectID = "dBk-nm-mnu"; */
+"dBk-nm-mnu.title" = "Menu";
+
+/* Class = "NSMenuItem"; title = "Unregister..."; ObjectID = "dBk-nm-itm"; */
+"dBk-nm-itm.title" = "登録を解除...";
+
 /* Class = "NSWindow"; title = "Password"; ObjectID = "742"; */
 "742.title" = "パスワード";
 
@@ -212,7 +218,7 @@
 "993.headerCell.title" = "ブックマーク名";
 
 /* Class = "NSTableColumn"; headerCell.title = "BookName"; ObjectID = "996"; */
-"996.headerCell.title" = "本の名前";
+"996.headerCell.title" = "名前";
 
 /* Class = "NSWindow"; title = "thumbnail"; ObjectID = "1084"; */
 "1084.title" = "サムネイル";
@@ -1265,7 +1271,7 @@
 "4326.title" = "キャンセル";
 
 /* Class = "NSButtonCell"; title = "Add New Bookmark"; ObjectID = "4327"; */
-"4327.title" = "新しいブックマークを追加";
+"4327.title" = "ブックマークを追加";
 
 /* Class = "NSTextFieldCell"; title = "1"; ObjectID = "4328"; */
 "4328.title" = "1";
@@ -1286,7 +1292,7 @@
 "4335.title" = "1";
 
 /* Class = "NSButtonCell"; title = "Add New Bookmark"; ObjectID = "4336"; */
-"4336.title" = "新しいブックマークを追加";
+"4336.title" = "ブックマークを追加";
 
 /* Class = "NSButtonCell"; title = "Cancel"; ObjectID = "4337"; */
 "4337.title" = "キャンセル";

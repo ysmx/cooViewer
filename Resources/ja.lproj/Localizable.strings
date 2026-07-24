@@ -394,6 +394,18 @@
 /* No comment provided by engineer.No comment provided by engineer.No comment provided by engineer.No comment provided by engineer.No comment provided by engineer.No comment provided by engineer. */
 "unknown" = "unknown";
 
+/* No comment provided by engineer. */
+"Unregister" = "解除";
+
+/* No comment provided by engineer. */
+"Unregister Book" = "登録解除";
+
+/* No comment provided by engineer. */
+"Unregister..." = "登録を解除...";
+
+/* No comment provided by engineer. */
+"Unregistering will delete all of its bookmarks." = "解除に伴い、すべてのブックマークが削除されます。";
+
 /* No comment provided by engineer.No comment provided by engineer.No comment provided by engineer.No comment provided by engineer.No comment provided by engineer.No comment provided by engineer. */
 "View at Original Size" = "実際のサイズで表示";
 
