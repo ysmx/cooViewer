@@ -10,6 +10,7 @@
 -(BOOL)uncompressToTempDir:(NSString*)file;
 //-(BOOL)uncompressAllFileToTempDir;
 -(BOOL)co_appendFilteredPaths:(NSArray*)candidateArray toArray:(NSMutableArray*)pathArray pathPrefix:(NSString*)pathPrefix cancelContext:(NSString*)context;
+-(BOOL)co_shouldAbortContentLoad:(NSString*)context;
 @end
 static NSArray *_COImageLoader_fileTypes=nil;
 static NSArray *_COImageLoader_archiveTypes=nil;
@@ -386,6 +387,20 @@ static NSArray *_COImageLoader_archiveTypes=nil;
 	return ![controller isCurrentOpenPageLoadSequence:sequenceNumber];
 }
 
+// Shared by every enumeration loop in -content and -checkArchiveContainer: that walks a
+// (potentially large) candidate list and must bail out mid-enumeration if the load has been
+// superseded. Returns YES if the caller should abort, in which case mode has already been reset
+// to COImageLoaderModeError; context is only used for the NSLog trail.
+- (BOOL)co_shouldAbortContentLoad:(NSString*)context
+{
+	if (![self shouldCancelContentLoad]) {
+		return NO;
+	}
+	NSLog(@"cooViewer loader content cancelled in %@: path=%@", context, filePath);
+	mode = COImageLoaderModeError;
+	return YES;
+}
+
 // Shared by the directory and savedSearch branches of -content: both enumerate an
 // already-extension-filtered candidate list, checking for cancellation on every item since
 // these arrays can be large, and append the (optionally prefix-resolved) result. Returns NO if
@@ -396,9 +411,7 @@ static NSArray *_COImageLoader_archiveTypes=nil;
 	NSEnumerator *enu = [candidateArray objectEnumerator];
 	id path;
 	while (path = [enu nextObject]) {
-		if ([self shouldCancelContentLoad]) {
-			NSLog(@"cooViewer loader content cancelled in %@: path=%@", context, filePath);
-			mode = COImageLoaderModeError;
+		if ([self co_shouldAbortContentLoad:context]) {
 			return NO;
 		}
 		if (pathPrefix) {
@@ -582,9 +595,7 @@ static NSArray *_COImageLoader_archiveTypes=nil;
 	NSEnumerator *enu = [items objectEnumerator];
 	id object;
 	while (object = [enu nextObject]) {
-		if ([self shouldCancelContentLoad]) {
-			NSLog(@"cooViewer loader content cancelled in archive: path=%@", filePath);
-			mode = COImageLoaderModeError;
+		if ([self co_shouldAbortContentLoad:@"archive"]) {
 			return NO;
 		}
 		NSString *path = [object path];
