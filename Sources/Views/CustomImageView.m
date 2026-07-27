@@ -1106,72 +1106,16 @@
             heightValue1 = heightFit.heightValue1;
             widthValue2 = heightFit.widthValue2;
             heightValue2 = heightFit.heightValue2;
-            if (fitScreenMode == 1) {
-                float rates = fullscreenRect.size.width/(widthValue1+widthValue2);
-                widthValue1 = widthValue1*rates;
-                heightValue1 = heightValue1*rates;
-                widthValue2 = widthValue2*rates;
-                heightValue2 = heightValue2*rates;
-                if (maxEnlargement != 0) {
-                    if (widthValue1 > (widthValue01*maxEnlargement)) {
-                        widthValue1 = widthValue01;
-                        heightValue1 = heightValue01;
-                    }
-                    if (heightValue1 > (heightValue01*maxEnlargement)) {
-                        widthValue1 = widthValue01;
-                        heightValue1 = heightValue01;
-                    }
-                    if (widthValue2 > (widthValue02*maxEnlargement)) {
-                        widthValue2 = widthValue02;
-                        heightValue2 = heightValue02;
-                    }
-                    if (heightValue2 > (heightValue02*maxEnlargement)) {
-                        widthValue2 = widthValue02;
-                        heightValue2 = heightValue02;
-                    }
-                }
-                float highest = heightValue1;
-                if (heightValue2 > heightValue1) highest=heightValue2;
-                if (highest < screenHeightValue) {
-                    [infodic setObject:NSStringFromSize(NSMakeSize((int)fullscreenRect.size.width,(int)fullscreenRect.size.height)) forKey:@"frameSize"];
-                } else {
-                    [infodic setObject:NSStringFromSize(NSMakeSize((int)fullscreenRect.size.width,(int)highest)) forKey:@"frameSize"];
-                }
-                fullscreenRect = [self frame];
-            } else if (fitScreenMode == 3) {
-                float rates = fullscreenRect.size.width/((widthValue1+widthValue2)/2);
-                widthValue1 = widthValue1*rates;
-                heightValue1 = heightValue1*rates;
-                widthValue2 = widthValue2*rates;
-                heightValue2 = heightValue2*rates;
-                if (maxEnlargement != 0) {
-                    if (widthValue1 > (widthValue01*maxEnlargement)) {
-                        widthValue1 = widthValue01;
-                        heightValue1 = heightValue01;
-                    }
-                    if (heightValue1 > (heightValue01*maxEnlargement)) {
-                        widthValue1 = widthValue01;
-                        heightValue1 = heightValue01;
-                    }
-                    if (widthValue2 > (widthValue02*maxEnlargement)) {
-                        widthValue2 = widthValue02;
-                        heightValue2 = heightValue02;
-                    }
-                    if (heightValue2 > (heightValue02*maxEnlargement)) {
-                        widthValue2 = widthValue02;
-                        heightValue2 = heightValue02;
-                    }
-                }
-                float highest = heightValue1;
-                if (heightValue2 > heightValue1) highest=heightValue2;
-                if (highest < screenHeightValue) {
-                    [infodic setObject:NSStringFromSize(NSMakeSize((int)fullscreenRect.size.width*2,(int)fullscreenRect.size.height)) forKey:@"frameSize"];
-                } else {
-                    [infodic setObject:NSStringFromSize(NSMakeSize((int)fullscreenRect.size.width*2,(int)highest)) forKey:@"frameSize"];
-                }
+            if (fitScreenMode == 1 || fitScreenMode == 3) {
+                ViewerSpreadWidthFit *widthFit = [ViewerSpreadWidthFit assignForWidthValue01:widthValue01 heightValue01:heightValue01 widthValue02:widthValue02 heightValue02:heightValue02 currentWidthValue1:widthValue1 currentHeightValue1:heightValue1 currentWidthValue2:widthValue2 currentHeightValue2:heightValue2 fullscreenWidth:fullscreenRect.size.width fullscreenHeight:fullscreenRect.size.height screenHeight:screenHeightValue maxEnlargement:maxEnlargement isDivideMode:(fitScreenMode == 3)];
+                widthValue1 = widthFit.widthValue1;
+                heightValue1 = widthFit.heightValue1;
+                widthValue2 = widthFit.widthValue2;
+                heightValue2 = widthFit.heightValue2;
+                [infodic setObject:NSStringFromSize(widthFit.frameSize) forKey:@"frameSize"];
                 fullscreenRect = [self frame];
             }
-            
+
         }
     }
     
