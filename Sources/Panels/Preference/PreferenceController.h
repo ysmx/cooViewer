@@ -1,117 +1,122 @@
 /* PreferenceController */
 
 #import <Cocoa/Cocoa.h>
+#import "Controller.h"
+#import "COColorPopUpButton.h"
+#import "COTextView.h"
+#import "CustomWindow.h"
+#import "AccessorySettingView.h"
 
 @interface PreferenceController : NSObject
-{	
+{
 	int editedInputIndex;
 	BOOL editMode;
-	
+
 	NSMutableDictionary *lastInput;
 	NSMutableArray *currentKeyArray;
 	NSMutableArray *currentMouseArray;
-	
+
 	NSMutableArray *keyArray;
 	NSMutableArray *keyArrayMode2;
 	NSMutableArray *keyArrayMode3;
 	NSMutableArray *mouseArray;
 	NSMutableArray *mouseArrayMode2;
 	NSMutableArray *mouseArrayMode3;
-	
+
 	NSUserDefaults *defaults;
-	
-	IBOutlet id sortModePopUpButton;
+
+	IBOutlet NSPopUpButton *sortModePopUpButton;
 	NSButton *sortDescendingButton;
-	
-	
-	IBOutlet id changeOpenWithCheck;
-	IBOutlet id changeCreatorCheck;
-	
-	IBOutlet id dontHideMenubarCheck;
-	IBOutlet id showThumbnailCheck;
-	
-	IBOutlet id imageCacheTextField;
-	IBOutlet id screenCacheTextField;
-	IBOutlet id thumbnailCacheTextField;
-	
-    IBOutlet id bufferingModePopUpButton;
-    IBOutlet id canScrollActionPopUpButton;
-    IBOutlet id controller;
-    IBOutlet id enlargePopUpButton;
-    IBOutlet id fitOriginalCheck;
-    IBOutlet id inputTabView;
-    IBOutlet id inputTableView;
-    IBOutlet id interpolationPopUpButton;
-    IBOutlet id keyConfigPanel;
-    IBOutlet id keyModePopUpButton;
-    IBOutlet id keyPanelPopUpButton;
-	IBOutlet id keyPanelSwitchActionCheck;
-    IBOutlet id keyValueTextField;
-    IBOutlet id loopPopUpButton;
-    IBOutlet id loupeSizeTextField;
-    IBOutlet id loupeRateTextField;
-    IBOutlet id mouseConfigPanel;
-    IBOutlet id mouseModePopUpButton;
-    IBOutlet id mousePanelActionPopUpButton;
-    IBOutlet id mousePanelButtonPopUpButton;
-    IBOutlet id mousePanelClickPopUpButton;
-    IBOutlet id mousePanelControlCheck;
-    IBOutlet id mousePanelOptionCheck;
-    IBOutlet id mousePanelShiftCheck;
-	IBOutlet id mousePanelSwitchActionCheck;
-    IBOutlet id mouseTableView;
-    IBOutlet id mouseValueTextField;
-    IBOutlet id openLastFolderCheck;
-    IBOutlet id pageBarBGColor;
-    IBOutlet id pageBarBorderColor;
-    IBOutlet id pageBarReadedColor;
-	IBOutlet id pageBarShowThumbCheck;
-	IBOutlet id pageBarAutoHideCheck;
-    IBOutlet id pageColor;
-    IBOutlet id pageBGColor;
-    IBOutlet id pageBorderColor;
-	IBOutlet id pageNumAutoHideCheck;
-    IBOutlet id preferences;
-    IBOutlet id prevPageActionPopUpButton;
-    IBOutlet id readLeftButton;
-    IBOutlet id readRightButton;
-    IBOutlet id readSingleCheckButton;
-    IBOutlet id readSubFolderCheck;
-    IBOutlet id rememberBookSettingsCheck;
-    IBOutlet id singleSettingTextField;
-    IBOutlet id slideshowSlider;
-    IBOutlet id slideshowTextField;
-    IBOutlet id thumbnailTextFieldCol;
-    IBOutlet id thumbnailTextFieldRow;
-    IBOutlet id wheelSlider;
-    IBOutlet id window;
-    IBOutlet id viewBackGroundColor;
-    IBOutlet id alwaysRememberLastCheck;
-    IBOutlet id numberOfOpenRecentTextField;
-	
-    IBOutlet id fontTextField;
-    IBOutlet id pageBarFontTextField;
-    IBOutlet id pageBarFontColor;
-	
-    IBOutlet id showPageNumCheck;
-    IBOutlet id showPageBarCheck;
-	
-    IBOutlet id accessorySettingPanel;
-    IBOutlet id accessorySettingView;
-	
-	
-    IBOutlet id keyPanelTextView;
-	
-    IBOutlet id goToLastPopUpButton;
-	
-    IBOutlet id openLinkPopUpButton;
-	
-    IBOutlet id disposeSettingPanel;
-    IBOutlet id disposeSettingProgress;
-	
-    IBOutlet id changeCurrentFolderPopUpButton;
-    
-    IBOutlet id useCalayerCheck;
+
+
+	IBOutlet NSButton *changeOpenWithCheck;
+	IBOutlet NSButton *changeCreatorCheck;
+
+	IBOutlet NSButton *dontHideMenubarCheck;
+	IBOutlet NSButton *showThumbnailCheck;
+
+	IBOutlet NSTextField *imageCacheTextField;
+	IBOutlet NSTextField *screenCacheTextField;
+	IBOutlet NSTextField *thumbnailCacheTextField;
+
+    IBOutlet NSPopUpButton *bufferingModePopUpButton;
+    IBOutlet NSPopUpButton *canScrollActionPopUpButton;
+    IBOutlet Controller *controller;
+    IBOutlet NSPopUpButton *enlargePopUpButton;
+    IBOutlet NSButton *fitOriginalCheck;
+    IBOutlet NSTabView *inputTabView;
+    IBOutlet NSTableView *inputTableView;
+    IBOutlet NSPopUpButton *interpolationPopUpButton;
+    IBOutlet NSPanel *keyConfigPanel;
+    IBOutlet NSPopUpButton *keyModePopUpButton;
+    IBOutlet NSPopUpButton *keyPanelPopUpButton;
+	IBOutlet NSButton *keyPanelSwitchActionCheck;
+    IBOutlet NSTextField *keyValueTextField;
+    IBOutlet NSPopUpButton *loopPopUpButton;
+    IBOutlet NSTextField *loupeSizeTextField;
+    IBOutlet NSTextField *loupeRateTextField;
+    IBOutlet NSPanel *mouseConfigPanel;
+    IBOutlet NSPopUpButton *mouseModePopUpButton;
+    IBOutlet NSPopUpButton *mousePanelActionPopUpButton;
+    IBOutlet NSPopUpButton *mousePanelButtonPopUpButton;
+    IBOutlet NSPopUpButton *mousePanelClickPopUpButton;
+    IBOutlet NSButton *mousePanelControlCheck;
+    IBOutlet NSButton *mousePanelOptionCheck;
+    IBOutlet NSButton *mousePanelShiftCheck;
+	IBOutlet NSButton *mousePanelSwitchActionCheck;
+    IBOutlet NSTableView *mouseTableView;
+    IBOutlet NSTextField *mouseValueTextField;
+    IBOutlet NSButton *openLastFolderCheck;
+    IBOutlet COColorPopUpButton *pageBarBGColor;
+    IBOutlet COColorPopUpButton *pageBarBorderColor;
+    IBOutlet COColorPopUpButton *pageBarReadedColor;
+	IBOutlet NSButton *pageBarShowThumbCheck;
+	IBOutlet NSButton *pageBarAutoHideCheck;
+    IBOutlet COColorPopUpButton *pageColor;
+    IBOutlet COColorPopUpButton *pageBGColor;
+    IBOutlet COColorPopUpButton *pageBorderColor;
+	IBOutlet NSButton *pageNumAutoHideCheck;
+    IBOutlet NSPanel *preferences;
+    IBOutlet NSPopUpButton *prevPageActionPopUpButton;
+    IBOutlet NSButtonCell *readLeftButton;
+    IBOutlet NSButtonCell *readRightButton;
+    IBOutlet NSButton *readSingleCheckButton;
+    IBOutlet NSButton *readSubFolderCheck;
+    IBOutlet NSButton *rememberBookSettingsCheck;
+    IBOutlet NSTextField *singleSettingTextField;
+    IBOutlet NSSlider *slideshowSlider;
+    IBOutlet NSTextField *slideshowTextField;
+    IBOutlet NSTextField *thumbnailTextFieldCol;
+    IBOutlet NSTextField *thumbnailTextFieldRow;
+    IBOutlet NSSlider *wheelSlider;
+    IBOutlet CustomWindow *window;
+    IBOutlet COColorPopUpButton *viewBackGroundColor;
+    IBOutlet NSButton *alwaysRememberLastCheck;
+    IBOutlet NSTextField *numberOfOpenRecentTextField;
+
+    IBOutlet NSTextField *fontTextField;
+    IBOutlet NSTextField *pageBarFontTextField;
+    IBOutlet COColorPopUpButton *pageBarFontColor;
+
+    IBOutlet NSButton *showPageNumCheck;
+    IBOutlet NSButton *showPageBarCheck;
+
+    IBOutlet NSPanel *accessorySettingPanel;
+    IBOutlet AccessorySettingView *accessorySettingView;
+
+
+    IBOutlet COTextView *keyPanelTextView;
+
+    IBOutlet NSPopUpButton *goToLastPopUpButton;
+
+    IBOutlet NSPopUpButton *openLinkPopUpButton;
+
+    IBOutlet NSPanel *disposeSettingPanel;
+    IBOutlet NSProgressIndicator *disposeSettingProgress;
+
+    IBOutlet NSPopUpButton *changeCurrentFolderPopUpButton;
+
+    IBOutlet NSButton *useCalayerCheck;
 }
 + (NSArray*)defaultKeyArray;
 + (NSArray*)defaultKeyArrayMode2;

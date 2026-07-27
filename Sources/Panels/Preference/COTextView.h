@@ -14,4 +14,6 @@
 	id target;
 	SEL selector;
 }
+- (void)setTarget:(id)tar;
+- (void)setAction:(SEL)sel;
 @end
