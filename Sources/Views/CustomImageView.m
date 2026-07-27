@@ -1010,20 +1010,10 @@
     NSMutableDictionary *infodic = [NSMutableDictionary dictionary];
     
     NSRect fullscreenRect,leftRect,rightRect;
-    fullscreenRect = [[[self window] contentView] frame];
-    if (rotateMode==1||rotateMode==3) {
-        fullscreenRect = NSMakeRect(fullscreenRect.origin.x,fullscreenRect.origin.y,fullscreenRect.size.height,fullscreenRect.size.width);
-    }
-    
-    int w = fullscreenRect.size.width;
-    if (w%2) {
-        fullscreenRect = NSMakeRect(fullscreenRect.origin.x,fullscreenRect.origin.y,fullscreenRect.size.width-1,fullscreenRect.size.height);
-    }
-    int h = fullscreenRect.size.height;
-    if (h%2) {
-        fullscreenRect = NSMakeRect(fullscreenRect.origin.x,fullscreenRect.origin.y,fullscreenRect.size.width,fullscreenRect.size.height-1);
-    }
-    NSDivideRect (fullscreenRect, &leftRect, &rightRect, fullscreenRect.size.width/2, NSMinXEdge);
+    ViewerSpreadScreenSplit *screenSplit = [ViewerSpreadScreenSplit assignForContentViewFrame:[[[self window] contentView] frame] rotateMode:rotateMode];
+    fullscreenRect = screenSplit.fullscreenRect;
+    leftRect = screenSplit.leftRect;
+    rightRect = screenSplit.rightRect;
 
     
     int widthValue01 = [image1 size].width;
@@ -1230,25 +1220,16 @@
         }
     }
     
-    int height = fullscreenRect.size.height;
-    int center1,center2;
-    center1 = (height-heightValue1);
-    center2 = (height-heightValue2);
-    if (center1 >= 0) {
-        center1 = center1 / 2;
-    } else {
-        center1 = 0;
-    }
-    if (center2 >= 0) {
-        center2 = center2 / 2;
-    } else {
-        center2 = 0;
-    }
-    
-    
-    int x = fullscreenRect.size.width-widthValue1-widthValue2;
-    x = x/2;
-    
+    ViewerSpreadCenterOffsets *centerOffsets = [ViewerSpreadCenterOffsets assignForFullscreenWidth:(int)fullscreenRect.size.width
+                                                                                             height:(int)fullscreenRect.size.height
+                                                                                        widthValue1:widthValue1
+                                                                                       heightValue1:heightValue1
+                                                                                        widthValue2:widthValue2
+                                                                                       heightValue2:heightValue2];
+    int center1 = centerOffsets.center1;
+    int center2 = centerOffsets.center2;
+    int x = centerOffsets.x;
+
     ViewerSpreadDrawRects *spreadRects = [ViewerSpreadDrawRects assignForRotateMode:rotateMode
                                                                         readFromLeft:[target readFromLeft]
                                                                          widthValue1:widthValue1
