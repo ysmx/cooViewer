@@ -1067,49 +1067,23 @@
             fullscreenRect = [self frame];
         }
     } else {
-        float rate1 = screenWidthValue/widthValue01;
-        float rate2 = screenWidthValue/widthValue02;
         float sRate1 = screenHeightValue/heightValue01;
         float sRate2 = screenHeightValue/heightValue02;
-        
-        if (rate1 > sRate1) rate1 = sRate1;
-        if (rate2 > sRate2) rate2 = sRate2;
-        if (maxEnlargement != 0 && rate1 > maxEnlargement) rate1 = maxEnlargement;
-        if (maxEnlargement != 0 && rate2 > maxEnlargement) rate2 = maxEnlargement;
-        
-        widthValue1 = widthValue01*rate1;
-        heightValue1 = heightValue01*rate1;
-        widthValue2 = widthValue02*rate2;
-        heightValue2 = heightValue02*rate2;
-        //NSLog(@"%i,%f",widthValue2,widthValue02*rate2);
-            
+
+        ViewerSpreadInitialFit *initialFit = [ViewerSpreadInitialFit assignForWidthValue01:widthValue01 heightValue01:heightValue01 widthValue02:widthValue02 heightValue02:heightValue02 screenWidth:screenWidthValue screenHeight:screenHeightValue maxEnlargement:maxEnlargement];
+        widthValue1 = initialFit.widthValue1;
+        heightValue1 = initialFit.heightValue1;
+        widthValue2 = initialFit.widthValue2;
+        heightValue2 = initialFit.heightValue2;
+
         if (rotateMode==1||rotateMode==3) {
             //90,270度回転
             if (fitScreenMode == 0){
-                if (heightValue1 != screenHeightValue) {
-                    rate1 = screenHeightValue/heightValue01;
-                    if (maxEnlargement != 0 && rate1 > maxEnlargement) {
-                        rate1 = maxEnlargement;
-                    }
-                    widthValue1 = widthValue01*rate1;
-                    heightValue1 = heightValue01*rate1;
-                }
-                if (heightValue2 != screenHeightValue) {
-                    rate2 = screenHeightValue/heightValue02;
-                    if (maxEnlargement != 0 && rate2 > maxEnlargement) {
-                        rate2 = maxEnlargement;
-                    }
-                    widthValue2 = widthValue02*rate2;
-                    heightValue2 = heightValue02*rate2;
-                }
-                if (widthValue1+widthValue2 > fullscreenRect.size.width){
-                    float rates = fullscreenRect.size.width/(widthValue1+widthValue2);
-                    
-                    widthValue1 = widthValue1*rates;
-                    heightValue1 = heightValue1*rates;
-                    widthValue2 = widthValue2*rates;
-                    heightValue2 = heightValue2*rates;
-                }
+                ViewerSpreadHeightFit *heightFit = [ViewerSpreadHeightFit assignForWidthValue01:widthValue01 heightValue01:heightValue01 widthValue02:widthValue02 heightValue02:heightValue02 currentWidthValue1:widthValue1 currentHeightValue1:heightValue1 currentWidthValue2:widthValue2 currentHeightValue2:heightValue2 screenHeight:screenHeightValue maxEnlargement:maxEnlargement fullscreenWidth:fullscreenRect.size.width];
+                widthValue1 = heightFit.widthValue1;
+                heightValue1 = heightFit.heightValue1;
+                widthValue2 = heightFit.widthValue2;
+                heightValue2 = heightFit.heightValue2;
             } else if (fitScreenMode == 1 || fitScreenMode == 3) {
                 [self co_applyRotatedSpreadFitWidthLayoutWithSRate1:sRate1
                                                               sRate2:sRate2
@@ -1127,30 +1101,11 @@
             }
         } else {
             //0,180度回転
-            if (heightValue1 != screenHeightValue) {
-                rate1 = screenHeightValue/heightValue01;
-                if (maxEnlargement != 0 && rate1 > maxEnlargement) {
-                    rate1 = maxEnlargement;
-                }
-                widthValue1 = widthValue01*rate1;
-                heightValue1 = heightValue01*rate1;
-            }
-            if (heightValue2 != screenHeightValue) {
-                rate2 = screenHeightValue/heightValue02;
-                if (maxEnlargement != 0 && rate2 > maxEnlargement) {
-                    rate2 = maxEnlargement;
-                }
-                widthValue2 = widthValue02*rate2;
-                heightValue2 = heightValue02*rate2;
-            }
-            if (widthValue1+widthValue2 > fullscreenRect.size.width){
-                float rates = fullscreenRect.size.width/(widthValue1+widthValue2);
-                
-                widthValue1 = widthValue1*rates;
-                heightValue1 = heightValue1*rates;
-                widthValue2 = widthValue2*rates;
-                heightValue2 = heightValue2*rates;
-            }
+            ViewerSpreadHeightFit *heightFit = [ViewerSpreadHeightFit assignForWidthValue01:widthValue01 heightValue01:heightValue01 widthValue02:widthValue02 heightValue02:heightValue02 currentWidthValue1:widthValue1 currentHeightValue1:heightValue1 currentWidthValue2:widthValue2 currentHeightValue2:heightValue2 screenHeight:screenHeightValue maxEnlargement:maxEnlargement fullscreenWidth:fullscreenRect.size.width];
+            widthValue1 = heightFit.widthValue1;
+            heightValue1 = heightFit.heightValue1;
+            widthValue2 = heightFit.widthValue2;
+            heightValue2 = heightFit.heightValue2;
             if (fitScreenMode == 1) {
                 float rates = fullscreenRect.size.width/(widthValue1+widthValue2);
                 widthValue1 = widthValue1*rates;
