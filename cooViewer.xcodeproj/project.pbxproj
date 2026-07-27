@@ -58,6 +58,8 @@
 		6924E5248F264BE609C5A4AD /* ViewerSpreadInitialFit.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9213F793AE653F32C90F1185 /* ViewerSpreadInitialFit.swift */; };
 		2A1445B55DC5610EDF38470F /* ViewerSpreadHeightFit.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9599D8BD900F038D0DCE5257 /* ViewerSpreadHeightFit.swift */; };
 		020BBFDF8BDA19568BED93BC /* ViewerSpreadHeightFit.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9599D8BD900F038D0DCE5257 /* ViewerSpreadHeightFit.swift */; };
+		8DFA845AEF1F85C80E94DF72 /* ViewerSpreadWidthFit.swift in Sources */ = {isa = PBXBuildFile; fileRef = B8C0331FCC3F1EA0B4D70F52 /* ViewerSpreadWidthFit.swift */; };
+		337EA23220A8102B6204AF95 /* ViewerSpreadWidthFit.swift in Sources */ = {isa = PBXBuildFile; fileRef = B8C0331FCC3F1EA0B4D70F52 /* ViewerSpreadWidthFit.swift */; };
 		221B87DFC07348D28E4674A4 /* ViewerMouseBinding.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7719E916A7B64A31AA98401D /* ViewerMouseBinding.swift */; };
 		1DF4C7566A3E462980321703 /* ViewerMouseBinding.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7719E916A7B64A31AA98401D /* ViewerMouseBinding.swift */; };
 		984B9D1FB45A481D89DDC955 /* ViewerThumbnailMangaLayout.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0D6C0864AF5A480A994A1E4D /* ViewerThumbnailMangaLayout.swift */; };
@@ -224,6 +226,7 @@
 		B7246A3E94DECC55D0411A02 /* ViewerSpreadCenterOffsets.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ViewerSpreadCenterOffsets.swift; sourceTree = "<group>"; };
 		9213F793AE653F32C90F1185 /* ViewerSpreadInitialFit.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ViewerSpreadInitialFit.swift; sourceTree = "<group>"; };
 		9599D8BD900F038D0DCE5257 /* ViewerSpreadHeightFit.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ViewerSpreadHeightFit.swift; sourceTree = "<group>"; };
+		B8C0331FCC3F1EA0B4D70F52 /* ViewerSpreadWidthFit.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ViewerSpreadWidthFit.swift; sourceTree = "<group>"; };
 		7719E916A7B64A31AA98401D /* ViewerMouseBinding.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ViewerMouseBinding.swift; sourceTree = "<group>"; };
 		0D6C0864AF5A480A994A1E4D /* ViewerThumbnailMangaLayout.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ViewerThumbnailMangaLayout.swift; sourceTree = "<group>"; };
 		943E6D1FE9674B8E9DE4ACC1 /* ViewerThumbnailGridStep.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ViewerThumbnailGridStep.swift; sourceTree = "<group>"; };
@@ -597,6 +600,7 @@
 				B7246A3E94DECC55D0411A02 /* ViewerSpreadCenterOffsets.swift */,
 				9213F793AE653F32C90F1185 /* ViewerSpreadInitialFit.swift */,
 				9599D8BD900F038D0DCE5257 /* ViewerSpreadHeightFit.swift */,
+				B8C0331FCC3F1EA0B4D70F52 /* ViewerSpreadWidthFit.swift */,
 				A39D6C3223BEB590002FD912 /* LoupeView.h */,
 				A39D6C3423BEB597002FD912 /* LoupeView.m */,
 			);
@@ -869,6 +873,7 @@
 				110FB1548EDE91999A2F749F /* ViewerSpreadCenterOffsets.swift in Sources */,
 				96F738C19D7088AC00666C9C /* ViewerSpreadInitialFit.swift in Sources */,
 				2A1445B55DC5610EDF38470F /* ViewerSpreadHeightFit.swift in Sources */,
+				8DFA845AEF1F85C80E94DF72 /* ViewerSpreadWidthFit.swift in Sources */,
 				221B87DFC07348D28E4674A4 /* ViewerMouseBinding.swift in Sources */,
 				984B9D1FB45A481D89DDC955 /* ViewerThumbnailMangaLayout.swift in Sources */,
 				CB4F66341665417EB512D438 /* ViewerThumbnailGridStep.swift in Sources */,
@@ -935,6 +940,7 @@
 				50C150ADA084D9FC70E6C458 /* ViewerSpreadCenterOffsets.swift in Sources */,
 				6924E5248F264BE609C5A4AD /* ViewerSpreadInitialFit.swift in Sources */,
 				020BBFDF8BDA19568BED93BC /* ViewerSpreadHeightFit.swift in Sources */,
+				337EA23220A8102B6204AF95 /* ViewerSpreadWidthFit.swift in Sources */,
 				1DF4C7566A3E462980321703 /* ViewerMouseBinding.swift in Sources */,
 				BC1D2703A9AA4DFB9552F1E6 /* ViewerThumbnailMangaLayout.swift in Sources */,
 				777B0EC44EC24C53AC01595D /* ViewerThumbnailGridStep.swift in Sources */,
