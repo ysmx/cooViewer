@@ -210,12 +210,21 @@ static BOOL appleRemoteHoldDown = NO;
 	return (int)[imageMutableArray count];
 }
 
-- (void)cancelInFlightLoadAndClearBuffer
+// Requests the in-flight background lookahead thread to stop (if any),
+// then blocks until it has actually exited. See #78: this used to be
+// duplicated inline at every call site that needed to mutate state the
+// lookahead thread reads/writes before doing so.
+- (void)cancelInFlightLoad
 {
 	threadStop = YES;
 	[lock lock];
 	[lock unlock];
 	threadStop = NO;
+}
+
+- (void)cancelInFlightLoadAndClearBuffer
+{
+	[self cancelInFlightLoad];
 	[imageMutableArray removeAllObjects];
 }
 
@@ -404,10 +413,7 @@ static BOOL appleRemoteHoldDown = NO;
 			[imageView drawPageMover:-1];
 			return;
 		} else {
-			threadStop = YES;
-			[lock lock];
-			[lock unlock];
-			threadStop = NO;
+			[self cancelInFlightLoad];
 			[window performClose:self];
 			return;
 		}
@@ -762,10 +768,7 @@ static BOOL appleRemoteHoldDown = NO;
 					break;
 				case 46:
 					//close
-					threadStop = YES;
-					[lock lock];
-					[lock unlock];
-					threadStop = NO;
+					[self cancelInFlightLoad];
 					[window performClose:self];
 					break;
 				case 47:
@@ -1367,12 +1370,9 @@ static BOOL appleRemoteHoldDown = NO;
 					break;
 				case 57:
 					//close
-					threadStop = YES;
-					[lock lock];
-					[lock unlock];
-					threadStop = NO;
+					[self cancelInFlightLoad];
 					[window performClose:self];
-					break;	
+					break;
 				case 58:
 					//random
 					[self setSortMode:1 page:0];
@@ -1738,10 +1738,7 @@ static BOOL appleRemoteHoldDown = NO;
 - (void)setSortMode:(int)mode page:(int)p
 {
 	// Stop any background lookahead thread before mutating completeMutableArray to prevent crashes
-	threadStop = YES;
-	[lock lock];
-	[lock unlock];
-	threadStop = NO;
+	[self cancelInFlightLoad];
 
 	//if (sortMode != mode) {
 	sortMode = mode;
@@ -1808,11 +1805,7 @@ static BOOL appleRemoteHoldDown = NO;
 	if (readMode > 1) {
 		if (nowPage < 2) {
 			if (loopCheck == 0) {
-				threadStop = YES;
-				[lock lock];
-				[lock unlock];
-				threadStop = NO;
-				[imageMutableArray removeAllObjects];
+				[self cancelInFlightLoadAndClearBuffer];
 				nowPage = (int)[completeMutableArray count];
 				nowPage --;
 				[self lookahead];
@@ -1830,11 +1823,7 @@ static BOOL appleRemoteHoldDown = NO;
 				return;
 			}
 		} else {
-			threadStop = YES;
-			[lock lock];
-			[lock unlock];
-			threadStop = NO;
-			[imageMutableArray removeAllObjects];
+			[self cancelInFlightLoadAndClearBuffer];
 			nowPage -= 2;
 			[self lookahead];
 		}
@@ -1843,11 +1832,7 @@ static BOOL appleRemoteHoldDown = NO;
 		if (!secondImage) {
 			if (nowPage < 2) {
 				if (loopCheck == 0) {
-					threadStop = YES;
-					[lock lock];
-					[lock unlock];
-					threadStop = NO;
-					[imageMutableArray removeAllObjects];
+					[self cancelInFlightLoadAndClearBuffer];
 					nowPage = (int)[completeMutableArray count];
 					nowPage -= 2;
 					if (bufferingMode == 0 && screenCache>0) [self imageDisplayIfHasScreenCache];
@@ -1885,11 +1870,7 @@ static BOOL appleRemoteHoldDown = NO;
 				[imageMutableArray insertObject:[self loadImage:nowPage-1] atIndex:1];
 				nowPage -= 2;
 			} else if (nowPage > 2) {
-				threadStop = YES;
-				[lock lock];
-				[lock unlock];
-				threadStop = NO;
-				[imageMutableArray removeAllObjects];
+				[self cancelInFlightLoadAndClearBuffer];
 				nowPage -= 3;
 				if (bufferingMode == 0 && screenCache>0) [self imageDisplayIfHasScreenCache];
 				[self lookahead];
@@ -1913,11 +1894,7 @@ static BOOL appleRemoteHoldDown = NO;
 		} else {
 			if (nowPage < 3) {
 				if (loopCheck == 0) {
-					threadStop = YES;
-					[lock lock];
-					[lock unlock];
-					threadStop = NO;
-					[imageMutableArray removeAllObjects];
+					[self cancelInFlightLoadAndClearBuffer];
 					nowPage = (int)[completeMutableArray count];
 					nowPage -= 2;
 					if (bufferingMode == 0 && screenCache>0) [self imageDisplayIfHasScreenCache];
@@ -1945,11 +1922,7 @@ static BOOL appleRemoteHoldDown = NO;
 					return;
 				}
 			} else if (nowPage < 4) {
-				threadStop = YES;
-				[lock lock];
-				[lock unlock];
-				threadStop = NO;
-				[imageMutableArray removeAllObjects];
+				[self cancelInFlightLoadAndClearBuffer];
 				nowPage -= 3;
 				if (bufferingMode == 0 && screenCache>0) [self imageDisplayIfHasScreenCache];
 				[imageMutableArray addObject:[self loadImage:nowPage]];
@@ -1964,11 +1937,7 @@ static BOOL appleRemoteHoldDown = NO;
 				[self imageDisplay];
 				return;
 			} else if (nowPage > 3) {
-				threadStop = YES;
-				[lock lock];
-				[lock unlock];
-				threadStop = NO;
-				[imageMutableArray removeAllObjects];
+				[self cancelInFlightLoadAndClearBuffer];
 				nowPage -= 4;
 				if (bufferingMode == 0 && screenCache>0) [self imageDisplayIfHasScreenCache];				
 				[self lookahead];
