@@ -355,6 +355,7 @@
 - (void)setNowPage:(int)page;
 - (BOOL)hasSecondImage;
 - (int)bufferedImageCount;
+- (void)cancelInFlightLoad;
 - (void)cancelInFlightLoadAndClearBuffer;
 - (void)waitForInFlightLoad;
 - (void)clearBuffer;
