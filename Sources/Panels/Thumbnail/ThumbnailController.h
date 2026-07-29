@@ -21,8 +21,18 @@
 	COImageLoader *imageLoader;
 	
 	
+	// doCount/stop/cellCount drive the setImageCells(Method)/
+	// setImageCellWithInfo (and their setBookmarkImageCells* twins) self-
+	// rescheduling chain in ThumbnailController.m, which fills the grid one
+	// cell per run-loop tick via -performSelector:...afterDelay:0.001.
+	// See the doc comment above -setImageCellWithInfo: for the full
+	// semantics; in short: doCount is both an in-flight-chain refcount and
+	// a generation counter (a stale chain sees doCount>1 and bails without
+	// doing work once a newer chain has started), and stop is an explicit
+	// "cancel now" request set by ESC/cell-click that's consumed on the
+	// chain's next scheduled tick. See #117.
 	int doCount;
-	
+
 	int cellCount;
 	BOOL stop;
 	BOOL mangaMode;
