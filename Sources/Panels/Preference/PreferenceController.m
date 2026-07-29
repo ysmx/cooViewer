@@ -1090,13 +1090,21 @@ static const int DIALOG_CANCEL	= 129;
 		[self co_placeView:openLinkPopUpButton afterView:advancedOpenLinkLabel spacing:6.0];
 	}
 
+	// Unlike the field blocks above, these three don't go through
+	// co_placeView:/co_centerView: - the popup they anchor to sits at a
+	// fixed distance from its container's trailing edge rather than
+	// after another control, so the label/button on its other side has
+	// to grow or shrink to fill whatever room is left. See #114.
 	if (inputPrevPageActionLabel && inputRootView) {
 		NSRect popupFrame = [prevPageActionPopUpButton frame];
 
+		// Anchor the popup 17pt from the input tab's trailing edge...
 		popupFrame.origin.x = NSWidth([inputRootView bounds]) - 17.0 - popupFrame.size.width;
 		[prevPageActionPopUpButton setFrame:popupFrame];
 		[self co_centerView:inputPrevPageActionLabel onReferenceView:prevPageActionPopUpButton];
 
+		// ...then stretch the label (fixed at the tab's leading edge) to
+		// fill the remaining space up to 8pt before the popup.
 		popupFrame = [inputPrevPageActionLabel frame];
 		popupFrame.size.width = NSMinX([prevPageActionPopUpButton frame]) - 8.0 - NSMinX(popupFrame);
 		[inputPrevPageActionLabel setFrame:popupFrame];
@@ -1104,6 +1112,9 @@ static const int DIALOG_CANCEL	= 129;
 
 	if (keyResetButton) {
 		NSRect popupFrame = [keyModePopUpButton frame];
+		// Only push the popup right if the reset button (to its left, at
+		// a fixed position) would otherwise overlap it; never move it
+		// left of its XIB-authored position.
 		CGFloat minimumX = NSMaxX([keyResetButton frame]) + 8.0;
 		CGFloat maximumWidth = NSWidth([keyboardInputView bounds]) - 12.0 - minimumX;
 
@@ -1114,6 +1125,10 @@ static const int DIALOG_CANCEL	= 129;
 
 	if (mouseResetButton) {
 		NSRect popupFrame = [mouseModePopUpButton frame];
+		// Same idea as keyModePopUpButton above, but the mouse popup is
+		// always placed right after its reset button (unconditionally,
+		// not just when it would otherwise overlap) - the two controls
+		// were laid out closer together in the XIB for this tab.
 		CGFloat minimumX = NSMaxX([mouseResetButton frame]) + 8.0;
 		CGFloat maximumWidth = NSWidth([mouseInputView bounds]) - 12.0 - minimumX;
 
