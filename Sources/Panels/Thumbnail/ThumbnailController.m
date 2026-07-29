@@ -76,6 +76,9 @@
 	[sortPopUpButton selectItemAtIndex:0];
 	[sortDescendingButton setState:NSControlStateValueOff];
 	if (loader != imageLoader) {
+		// Switching books: hard-cancel any in-flight cell-fill chain
+		// outright (rather than the doCount/stop soft-cancel mechanism)
+		// and reset the bookkeeping from scratch. See #117.
 		[NSObject cancelPreviousPerformRequestsWithTarget:self];
 		doCount = 0;
 		stop = NO;
@@ -278,8 +281,11 @@
 	[self setBookmarkImageCells:NO];
 }
 
+// Bookmark-mode twin of -setImageCells:/-setImageCellsMethod:/
+// -setImageCellWithInfo: below; same doCount/stop semantics, see the doc
+// comment above -setImageCellWithInfo:.
 -(void)setBookmarkImageCells:(BOOL)back
-{	
+{
 	doCount++;
 	[self performSelector:@selector(setBookmarkImageCellsMethod:) withObject:[NSNumber numberWithBool:back] afterDelay:0.001];
 }
@@ -330,9 +336,11 @@
 	[self setBookmarkImageCellWithInfo:info];	
 }
 
+// Bookmark-mode twin of -setImageCellWithInfo:; same doCount/stop
+// semantics, see the doc comment there.
 -(void)setBookmarkImageCellWithInfo:(id)infoDic
 {
-	
+
 	if (doCount > 1) {
 		doCount--;
 		return;
@@ -389,6 +397,8 @@
 #pragma mark -
 -(void)showThumbnail:(int)nowPage
 {
+	// Opening/reopening the panel: same hard-cancel + reset as
+	// -setImageLoader:'s book-switch case. See #117.
 	[NSObject cancelPreviousPerformRequestsWithTarget:self];
 	doCount = 0;
 	stop = NO;
@@ -441,8 +451,12 @@
 }
 
 
+// Entry point for filling the grid: bumps doCount (this chain now counts as
+// "in flight") and hands off to -setImageCellsMethod: on the next run-loop
+// tick. See -setImageCellWithInfo:'s doc comment for how doCount/stop are
+// consumed once the chain is running. See #117.
 -(void)setImageCells:(BOOL)back
-{	
+{
 	doCount++;
 	[self performSelector:@selector(setImageCellsMethod:) withObject:[NSNumber numberWithBool:back] afterDelay:0.001];
 }
@@ -450,8 +464,11 @@
 -(void)setImageCellsMethod:(NSNumber*)backValue
 {
 	if (now < 0) now = 0;
+	// doCount==1 means no other chain is queued behind this one, so any
+	// stop request from before this chain started is stale - clear it so
+	// it doesn't cancel *this* fresh chain on its first tick.
 	if (doCount == 1) stop = NO;
-	
+
 	BOOL back = [backValue boolValue];
 	cellCount = 0;
 	NSArray *cells = [matrix cells];
@@ -526,6 +543,23 @@
 	}
 }
 
+// Fills one cell per call, then reschedules itself via -performSelector:
+// ...afterDelay:0.001 for the next cell until the grid (or the source
+// array) is exhausted. Called once synchronously from
+// -setImageCellsMethod: to kick off a chain, then recursively via the
+// reschedule for every subsequent cell. See #117 for the full writeup;
+// the two checks below are the chain's only two ways to stop early:
+//
+// - doCount>1: a *newer* -setImageCells: call has already bumped doCount
+//   while this chain's previous tick was still queued, meaning a fresher
+//   chain has since started. Rather than let two chains race and draw
+//   into the same cells, this stale chain just gives up its doCount unit
+//   and returns without doing any cell work - "last writer wins".
+// - stop: an explicit cancel request (ESC, or clicking a cell to jump to
+//   its page - see -imageSelected: and the ESC case in -action:). Unlike
+//   the doCount>1 case this can fire on a chain that's still the newest
+//   one; it's consumed (reset to NO) here so it doesn't also cancel the
+//   *next* chain.
 -(void)setImageCellWithInfo:(id)infoDic
 {
 	if (doCount > 1) {
@@ -949,6 +983,14 @@
 	if ([pathArray count] <= all) return;
 	
 	if (mangaMode) {
+		// Unlike non-mangaMode below, this busy-waits for the in-flight
+		// chain to fully drain (doCount==0) before computing the next
+		// page: mangaMode's `now` is mutated cell-by-cell as the chain
+		// runs (see -setImageCellWithInfo:'s back/mangaMode branch), so
+		// the next page's start index isn't known until that chain has
+		// finished. Non-mangaMode's `now` is a plain arithmetic offset
+		// that doesn't depend on chain completion, so it can rely on
+		// -setImageCellWithInfo:'s doCount>1 coalescing instead.
 		if (doCount > 0) {
 			[self performSelector:@selector(next:) withObject:sender afterDelay:0.001];
 			return;
@@ -1005,7 +1047,9 @@
 
 -(void)mangaModePrev
 {
-	if (![panel isVisible]) return; 
+	if (![panel isVisible]) return;
+	// Same doCount busy-wait as -next:'s mangaMode branch, and for the
+	// same reason: `now` needs the in-flight chain to have finished.
 	if (doCount > 0) {
 		[self performSelector:@selector(mangaModePrev) withObject:nil afterDelay:0.001];
 		return;
@@ -1039,6 +1083,8 @@
 	if (![[sender keyCell] image]) {
 		return;
 	}
+	// Request cancellation of any in-flight cell-fill chain; consumed by
+	// -setImageCellWithInfo:'s `if (stop)` check on its next tick.
 	stop = YES;
 	int temp = now;
 	temp -= cellCount;
@@ -1143,6 +1189,7 @@
 
 	if (character == 0x1B) {
 		/*esc*/
+		// Same cancellation request as -imageSelected:; see the comment there.
 		stop = YES;
 
 		now -= cellCount;
