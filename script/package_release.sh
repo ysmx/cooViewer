@@ -230,9 +230,9 @@ cask "$CASK_TOKEN" do
 
   app "$APP_NAME.app"
 
-  postflight do
-    system_command "/usr/bin/xattr",
-      args: ["-dr", "com.apple.quarantine", "#{appdir}/$APP_NAME.app"]
+  postflight_steps do
+    run "/usr/bin/xattr",
+        args: ["-dr", "com.apple.quarantine", "{{appdir}}/$APP_NAME.app"]
   end
 end
 EOF
