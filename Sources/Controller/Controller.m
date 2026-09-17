@@ -61,6 +61,13 @@ static BOOL COPathsEqualForHistoryLookup(NSString *a, NSString *b)
 static const int DIALOG_OK		= 128;
 static const int DIALOG_CANCEL	= 129;
 
++ (void)initialize
+{
+	if (self == [Controller class]) {
+		[NSWindow setAllowsAutomaticWindowTabbing:NO];
+	}
+}
+
 - (BOOL)co_syncSecondaryDisplayBackground
 {
 	if ([defaults objectForKey:@"SyncSecondaryDisplayBackground"] != nil) {
@@ -98,6 +105,9 @@ static const int DIALOG_CANCEL	= 129;
 - (BOOL)co_shouldShowSecondaryDisplayCover
 {
 	if (![self co_syncSecondaryDisplayBackground]) {
+		return NO;
+	}
+	if (![window isFullScreen]) {
 		return NO;
 	}
 	if (![NSApp isActive]) {
@@ -341,6 +351,7 @@ static const int DIALOG_CANCEL	= 129;
 	[appDefault setObject:[NSNumber numberWithBool:YES] forKey:@"PageNumAutoHide"];
 	[appDefault setObject:[NSNumber numberWithBool:YES] forKey:@"PageBarAutoHide"];
 	[appDefault setObject:[NSNumber numberWithBool:YES] forKey:@"PageBarShowThumbnail"];
+	[appDefault setObject:[NSNumber numberWithBool:NO] forKey:@"DontHideMenuBar"];
 	[appDefault setObject:[NSNumber numberWithInt:400] forKey:@"LoupeSize"];
 	[appDefault setObject:[NSNumber numberWithFloat:4.0] forKey:@"LoupeRate"];
 	
@@ -358,6 +369,11 @@ static const int DIALOG_CANCEL	= 129;
 	keyArray = [[NSMutableArray alloc] initWithArray:[defaults arrayForKey:@"KeyArray"]];
 	keyArrayMode2 = [[NSMutableArray alloc] initWithArray:[defaults arrayForKey:@"KeyArrayMode2"]];
 	keyArrayMode3 = [[NSMutableArray alloc] initWithArray:[defaults arrayForKey:@"KeyArrayMode3"]];
+	if (![defaults boolForKey:@"DidInstallFullscreenKeyBindingV160"]) {
+		[PreferenceController addDefaultFullscreenKeyBindingIfPossibleToArray:keyArray];
+		[defaults setObject:keyArray forKey:@"KeyArray"];
+		[defaults setBool:YES forKey:@"DidInstallFullscreenKeyBindingV160"];
+	}
 	
 	if (![defaults arrayForKey:@"MouseArray"]) [PreferenceController setDefaultMouseArray];
 	if (![defaults arrayForKey:@"MouseArrayMode2"]) [PreferenceController setDefaultMouseArrayMode2];
@@ -458,7 +474,7 @@ static const int DIALOG_CANCEL	= 129;
 
 	fullscreen = [defaults boolForKey:@"Fullscreen"];
 	if (!fullscreen) {
-		[[[[[NSApp mainMenu] itemWithTitle:NSLocalizedString(@"Window", @"")] submenu]  itemWithTitle:NSLocalizedString(@"Fullscreen", @"")] setState:NSControlStateValueOff];
+		[[[[[NSApp mainMenu] itemWithTitle:NSLocalizedString(@"View", @"")] submenu] itemWithTitle:NSLocalizedString(@"Fullscreen", @"")] setState:NSControlStateValueOff];
 	}
 	
 	

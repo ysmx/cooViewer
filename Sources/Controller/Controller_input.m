@@ -781,7 +781,7 @@ static BOOL appleRemoteHoldDown = NO;
 					break;
 				case 49:
 					//switchFullScreen
-					[Controller co_performMenuActionInMenu:[NSApp mainMenu] parentTitle:NSLocalizedString(@"Window", @"") itemTitle:NSLocalizedString(@"Fullscreen", @"")];
+					[Controller co_performMenuActionInMenu:[NSApp mainMenu] parentTitle:NSLocalizedString(@"View", @"") itemTitle:NSLocalizedString(@"Fullscreen", @"")];
 					break;
 				case 50:
 					//minimizeWindow
@@ -1387,7 +1387,7 @@ static BOOL appleRemoteHoldDown = NO;
 					break;
 				case 61:
 					//switchFullScreen
-					[Controller co_performMenuActionInMenu:[NSApp mainMenu] parentTitle:NSLocalizedString(@"Window", @"") itemTitle:NSLocalizedString(@"Fullscreen", @"")];
+					[Controller co_performMenuActionInMenu:[NSApp mainMenu] parentTitle:NSLocalizedString(@"View", @"") itemTitle:NSLocalizedString(@"Fullscreen", @"")];
 					break;
 				case 62:
 					//minimizeWindow

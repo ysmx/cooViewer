@@ -1,6 +1,19 @@
 #import "CustomWindow.h"
 #import "Controller.h"
 
+NSRect COFitWindowFrameToVisibleFrame(NSRect windowFrame, NSRect visibleFrame)
+{
+	if (NSIsEmptyRect(visibleFrame)) {
+		return windowFrame;
+	}
+
+	windowFrame.size.width = MIN(windowFrame.size.width, visibleFrame.size.width);
+	windowFrame.size.height = MIN(windowFrame.size.height, visibleFrame.size.height);
+	windowFrame.origin.x = MIN(MAX(windowFrame.origin.x, NSMinX(visibleFrame)), NSMaxX(visibleFrame) - windowFrame.size.width);
+	windowFrame.origin.y = MIN(MAX(windowFrame.origin.y, NSMinY(visibleFrame)), NSMaxY(visibleFrame) - windowFrame.size.height);
+	return windowFrame;
+}
+
 @implementation CustomWindow
 
 - (BOOL)shouldAutoHideCursor
@@ -69,25 +82,46 @@
 	}
 }
 
+- (NSScreen *)screenForWindowFrame:(NSRect)frame fallback:(NSScreen *)fallbackScreen
+{
+	NSScreen *targetScreen = nil;
+	CGFloat largestIntersectionArea = 0;
+	for (NSScreen *screen in [NSScreen screens]) {
+		NSRect intersection = NSIntersectionRect(frame, [screen frame]);
+		CGFloat area = intersection.size.width * intersection.size.height;
+		if (area > largestIntersectionArea) {
+			largestIntersectionArea = area;
+			targetScreen = screen;
+		}
+	}
+	return targetScreen ?: fallbackScreen;
+}
+
 -(void)awakeFromNib
 {
 	id defaults = [NSUserDefaults standardUserDefaults];
+	BOOL launchFullscreen = [defaults boolForKey:@"Fullscreen"];
 	
 	[self setLevel:NSNormalWindowLevel];
 	[self setAcceptsMouseMovedEvents:YES];
-	fullscreen = [defaults boolForKey:@"Fullscreen"];
+	[self setTabbingMode:NSWindowTabbingModeDisallowed];
 	if ([defaults boolForKey:@"DontHideMenuBar"]) {
 		hideMenuBar = NO;
 	} else {
 		hideMenuBar = YES;
 	}
-	if (![defaults objectForKey:@"NSWindow Frame NormalWindow"]) {
-		[self saveFrameUsingName:@"NormalWindow"];
-	}
 	windowedStyleMask = [self styleMask];
 	resizable = YES;
+	if (![defaults objectForKey:@"NSWindow Frame NormalWindow"]) {
+		[self saveFrameUsingName:@"NormalWindow"];
+	} else {
+		[self setFrameUsingName:@"NormalWindow"];
+	}
+	windowedFrame = [self frame];
+	hasWindowedFrame = YES;
+	fullscreen = launchFullscreen;
 	[self setFullScreen:fullscreen];
-	if (!fullscreen) [[[[[NSApp mainMenu] itemWithTitle:NSLocalizedString(@"Window", @"")] submenu] itemWithTitle:NSLocalizedString(@"Fullscreen", @"")] setState:NSControlStateValueOff];
+	if (!fullscreen) [[[[[NSApp mainMenu] itemWithTitle:NSLocalizedString(@"View", @"")] submenu] itemWithTitle:NSLocalizedString(@"Fullscreen", @"")] setState:NSControlStateValueOff];
 	[self setShowsResizeIndicator:NO];
 }
 - (void)setFrame:(NSRect)windowFrame display:(BOOL)displayViews
@@ -100,13 +134,34 @@
 	}	
 }
 - (void)setFullScreen:(BOOL)b
-{	
+{
+	BOOL wasFullscreen = fullscreen;
+	NSScreen *fallbackScreen = [self screen];
+	if (!fallbackScreen) {
+		fallbackScreen = [NSScreen mainScreen];
+	}
+	if (b && !wasFullscreen) {
+		windowedFrame = [self frame];
+		hasWindowedFrame = YES;
+		[self saveFrameUsingName:@"NormalWindow"];
+	} else if (!b && !wasFullscreen) {
+		windowedFrame = [self frame];
+		hasWindowedFrame = YES;
+	}
 	fullscreen = b;
 	if (!fullscreen) {
 		resizable = YES;
 		[self updateWindowStyleForFullscreen];
 		[NSMenu setMenuBarVisible:YES];
-		[self setFrameUsingName:@"NormalWindow"];
+		if (!hasWindowedFrame) {
+			[self setFrameUsingName:@"NormalWindow"];
+			windowedFrame = [self frame];
+			hasWindowedFrame = YES;
+		}
+		NSScreen *targetScreen = [self screenForWindowFrame:windowedFrame fallback:fallbackScreen];
+		windowedFrame = COFitWindowFrameToVisibleFrame(windowedFrame, [targetScreen visibleFrame]);
+		[self setFrame:windowedFrame display:YES];
+		[self saveFrameUsingName:@"NormalWindow"];
 		[self setHidesOnDeactivate:NO];
 	} else {
 		[self updateWindowStyleForFullscreen];
@@ -126,13 +181,10 @@
 	if (fullscreen) {
 		return [self fullscreenFrame];
 	} else {
-		NSRect result = [super constrainFrameRect:frameRect toScreen:aScreen];
-		
-		NSRect screen = [[NSScreen mainScreen] frame];
-		if (result.size.height>screen.size.height || result.size.width>screen.size.width) {
-			result = NSMakeRect(0,0,screen.size.height/4,screen.size.width/4);
-		}
-		return result;
+		NSScreen *fallbackScreen = [self screen] ?: [NSScreen mainScreen];
+		NSScreen *screen = aScreen ?: [self screenForWindowFrame:frameRect fallback:fallbackScreen];
+		NSRect result = [super constrainFrameRect:frameRect toScreen:screen];
+		return COFitWindowFrameToVisibleFrame(result, [screen visibleFrame]);
 	}
 }
 - (void)setHideMenuBar:(BOOL)b

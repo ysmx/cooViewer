@@ -32,7 +32,7 @@
 	IBOutlet NSButton *changeOpenWithCheck;
 	IBOutlet NSButton *changeCreatorCheck;
 
-	IBOutlet NSButton *dontHideMenubarCheck;
+	IBOutlet NSButton *hideMenubarCheck;
 	IBOutlet NSButton *showThumbnailCheck;
 
 	IBOutlet NSTextField *imageCacheTextField;
@@ -119,6 +119,8 @@
     IBOutlet NSButton *useCalayerCheck;
 }
 + (NSArray*)defaultKeyArray;
++ (NSDictionary *)defaultFullscreenKeyBinding;
++ (BOOL)addDefaultFullscreenKeyBindingIfPossibleToArray:(NSMutableArray *)bindings;
 + (NSArray*)defaultKeyArrayMode2;
 + (NSArray*)defaultKeyArrayMode3;
 + (NSArray*)defaultMouseArray;

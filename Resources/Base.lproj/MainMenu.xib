@@ -331,17 +331,20 @@
                                     <action selector="openFilterPanel:" target="7Ik-II-pge" id="MAU-Fs-HTe"/>
                                 </connections>
                             </menuItem>
+                            <menuItem isSeparatorItem="YES" id="0wF-5c-rEe">
+                                <modifierMask key="keyEquivalentModifierMask" command="YES"/>
+                            </menuItem>
+                            <menuItem title="Fullscreen" state="on" id="926">
+                                <connections>
+                                    <action selector="fullscreen:" target="484" id="927"/>
+                                </connections>
+                            </menuItem>
                         </items>
                     </menu>
                 </menuItem>
                 <menuItem title="Window" id="19">
                     <menu key="submenu" title="Window" systemMenu="window" id="24">
                         <items>
-                            <menuItem title="Fullscreen" state="on" keyEquivalent="f" id="926">
-                                <connections>
-                                    <action selector="fullscreen:" target="484" id="927"/>
-                                </connections>
-                            </menuItem>
                             <menuItem title="Minimize" keyEquivalent="m" id="23">
                                 <connections>
                                     <action selector="performMiniaturize:" target="-1" id="1640"/>
@@ -1201,9 +1204,9 @@ go to the last page always.</string>
                                             </view>
                                         </box>
                                         <button fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="2104">
-                                            <rect key="frame" x="18" y="18" width="200" height="18"/>
+                                            <rect key="frame" x="18" y="18" width="300" height="18"/>
                                             <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
-                                            <buttonCell key="cell" type="check" title="Don't hide menu bar" bezelStyle="regularSquare" imagePosition="left" alignment="left" inset="2" id="4316">
+                                            <buttonCell key="cell" type="check" title="Hide menu bar in fullscreen" bezelStyle="regularSquare" imagePosition="left" alignment="left" inset="2" id="4316">
                                                 <behavior key="behavior" changeContents="YES" doesNotDimImage="YES" lightByContents="YES"/>
                                                 <font key="font" metaFont="system"/>
                                             </buttonCell>
@@ -2830,7 +2833,7 @@ Gw
                 <outlet property="controller" destination="484" id="1674"/>
                 <outlet property="disposeSettingPanel" destination="3296" id="3307"/>
                 <outlet property="disposeSettingProgress" destination="3300" id="3308"/>
-                <outlet property="dontHideMenubarCheck" destination="2104" id="2106"/>
+                <outlet property="hideMenubarCheck" destination="2104" id="2106"/>
                 <outlet property="enlargePopUpButton" destination="836" id="1688"/>
                 <outlet property="fitOriginalCheck" destination="1627" id="1689"/>
                 <outlet property="fontTextField" destination="2769" id="2772"/>

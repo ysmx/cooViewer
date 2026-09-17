@@ -71,7 +71,7 @@
 "Fit to Screen Width(divide)" = "Fit to Screen Width(divide)";
 
 /* No comment provided by engineer. */
-"Fullscreen" = "Fullscreen";
+"Fullscreen" = "Toggle Fullscreen / Window";
 
 /* No comment provided by engineer. */
 "General" = "General";
@@ -356,7 +356,7 @@
 "MinimizeWindow" = "MinimizeWindow";
 
 /* No comment provided by engineer. */
-"SwitchFullscreen" = "SwitchFullscreen";
+"SwitchFullscreen" = "Toggle Fullscreen";
 
 /* No comment provided by engineer. */
 "The parent folder of current book was changed. Do you want to follow?" = "The parent folder of current book was changed. Do you want to follow?";
@@ -411,6 +411,9 @@
 
 /* No comment provided by engineer. */
 "ViewOriginal(L/R)**" = "ViewOriginal(L/R)**";
+
+/* Main menu lookup */
+"View" = "View";
 
 /* Filter panel */
 "Color Adjustments" = "Color Adjustments";
