@@ -31,6 +31,32 @@
 static const int DIALOG_OK		= 128;
 static const int DIALOG_CANCEL	= 129;
 
++ (NSDictionary *)defaultFullscreenKeyBinding
+{
+	return [NSDictionary dictionaryWithObjectsAndKeys:
+			[NSNumber numberWithInt:49], @"action",
+			@"f", @"keyname",
+			@"f", @"key",
+			[NSNumber numberWithInt:0], @"modifier",
+			nil];
+}
+
++ (BOOL)addDefaultFullscreenKeyBindingIfPossibleToArray:(NSMutableArray *)bindings
+{
+	for (NSDictionary *binding in bindings) {
+		if ([[binding objectForKey:@"action"] intValue] == 49) {
+			return NO;
+		}
+		NSString *key = [binding objectForKey:@"key"];
+		if ([[binding objectForKey:@"modifier"] intValue] == 0 &&
+			([key isEqualToString:@"f"] || [key isEqualToString:@"F"])) {
+			return NO;
+		}
+	}
+	[bindings addObject:[self defaultFullscreenKeyBinding]];
+	return YES;
+}
+
 + (NSArray*)defaultKeyArray
 {
 	unichar plus = kRemoteButtonPlus;
@@ -372,6 +398,8 @@ static const int DIALOG_CANCEL	= 129;
 				@"return",@"keyname", [NSString stringWithFormat:@"%C",(unichar)NSCarriageReturnCharacter],@"key",
 				[NSNumber numberWithInt:0],@"modifier",
 				nil],
+
+			[PreferenceController defaultFullscreenKeyBinding],
 			
 			nil];
 }
@@ -1835,11 +1863,7 @@ static const int DIALOG_CANCEL	= 129;
 		[changeCreatorCheck setState:NSControlStateValueOff];
 	}
 
-	if ([defaults boolForKey:@"DontHideMenuBar"]) {
-		[dontHideMenubarCheck setState:NSControlStateValueOn];
-	} else {
-		[dontHideMenubarCheck setState:NSControlStateValueOff];
-	}
+	[hideMenubarCheck setState:[defaults boolForKey:@"DontHideMenuBar"] ? NSControlStateValueOff : NSControlStateValueOn];
 	if ([defaults boolForKey:@"ShowThumbnailWhenOpen"]) {
 		[showThumbnailCheck setState:NSControlStateValueOn];
 	} else {
@@ -2118,11 +2142,7 @@ static const int DIALOG_CANCEL	= 129;
 		[defaults setBool:NO forKey:@"ChangeCreator"];
 	}
 
-	if ([dontHideMenubarCheck state]==NSControlStateValueOn) {
-		[defaults setBool:YES forKey:@"DontHideMenuBar"];
-	} else {
-		[defaults setBool:NO forKey:@"DontHideMenuBar"];
-	}
+	[defaults setBool:([hideMenubarCheck state] != NSControlStateValueOn) forKey:@"DontHideMenuBar"];
 	if ([showThumbnailCheck state]==NSControlStateValueOn) {
 		[defaults setBool:YES forKey:@"ShowThumbnailWhenOpen"];
 	} else {

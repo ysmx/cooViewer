@@ -95,7 +95,7 @@
 "Fit to Screen Width(divide)" = "見開き分割";
 
 /* No comment provided by engineer.No comment provided by engineer.No comment provided by engineer.No comment provided by engineer.No comment provided by engineer.No comment provided by engineer. */
-"Fullscreen" = "フルスクリーン";
+"Fullscreen" = "フルスクリーン／ウィンドウ切替";
 
 /* No comment provided by engineer.No comment provided by engineer.No comment provided by engineer.No comment provided by engineer.No comment provided by engineer.No comment provided by engineer. */
 "General" = "一般";
@@ -386,7 +386,7 @@
 "Switch Single/Bind" = "単ページ・見開きを切り替え";
 
 /* No comment provided by engineer.No comment provided by engineer.No comment provided by engineer.No comment provided by engineer. */
-"SwitchFullscreen" = "フルスクリーン";
+"SwitchFullscreen" = "フルスクリーン切替";
 
 /* No comment provided by engineer.No comment provided by engineer.No comment provided by engineer.No comment provided by engineer.No comment provided by engineer.No comment provided by engineer. */
 "SwitchSingle/Bind" = "単ページ・見開きを切り替え";
@@ -426,6 +426,9 @@
 
 /* No comment provided by engineer.No comment provided by engineer.No comment provided by engineer.No comment provided by engineer.No comment provided by engineer.No comment provided by engineer. */
 "ViewOriginal(right)" = "右の画像を実際のサイズで表示";
+
+/* Main menu lookup */
+"View" = "表示";
 
 /* No comment provided by engineer.No comment provided by engineer.No comment provided by engineer.No comment provided by engineer.No comment provided by engineer.No comment provided by engineer. */
 "Window" = "ウインドウ";

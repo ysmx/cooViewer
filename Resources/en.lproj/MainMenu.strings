@@ -195,7 +195,7 @@
 "924.title" = "OtherViews";
 
 /* Class = "NSMenuItem"; title = "Fullscreen"; ObjectID = "926"; */
-"926.title" = "Fullscreen";
+"926.title" = "Toggle Fullscreen / Window";
 
 /* Class = "NSMenuItem"; title = "Previous Folder"; ObjectID = "934"; */
 "934.title" = "Previous Folder";
@@ -1095,13 +1095,13 @@
 "3296.title" = "disposing of settings";
 
 /* Class = "NSMenuItem"; title = "SwitchFullscreen"; ObjectID = "3494"; */
-"3494.title" = "SwitchFullscreen";
+"3494.title" = "Toggle Fullscreen";
 
 /* Class = "NSMenuItem"; title = "MinimizeWindow"; ObjectID = "3495"; */
 "3495.title" = "MinimizeWindow";
 
 /* Class = "NSMenuItem"; title = "SwitchFullscreen"; ObjectID = "3497"; */
-"3497.title" = "SwitchFullscreen";
+"3497.title" = "Toggle Fullscreen";
 
 /* Class = "NSMenuItem"; title = "MinimizeWindow"; ObjectID = "3498"; */
 "3498.title" = "MinimizeWindow";
@@ -1271,8 +1271,8 @@
 /* Class = "NSButtonCell"; title = "Fit original size window to image size"; ObjectID = "4315"; */
 "4315.title" = "Fit original size window to image size";
 
-/* Class = "NSButtonCell"; title = "Don't hide menu bar"; ObjectID = "4316"; */
-"4316.title" = "Don't hide menu bar";
+/* Class = "NSButtonCell"; title = "Hide menu bar in fullscreen"; ObjectID = "4316"; */
+"4316.title" = "Hide menu bar in fullscreen";
 
 /* Class = "NSButtonCell"; title = "Show thumbnail view on open"; ObjectID = "4317"; */
 "4317.title" = "Show thumbnail view on open";

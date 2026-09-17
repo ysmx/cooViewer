@@ -24,7 +24,8 @@
 {
 	[super becomeKeyWindow];
 	
-	if ([[[NSApp windowsMenu] itemWithTitle:NSLocalizedString(@"Fullscreen", @"")] state] == NSControlStateValueOn){
+	NSMenu *viewMenu = [[[NSApp mainMenu] itemWithTitle:NSLocalizedString(@"View", @"")] submenu];
+	if ([[viewMenu itemWithTitle:NSLocalizedString(@"Fullscreen", @"")] state] == NSControlStateValueOn){
 		if ([[NSUserDefaults standardUserDefaults] boolForKey:@"DontHideMenuBar"] == NO) [NSMenu setMenuBarVisible:NO];
 	}
 	 
@@ -203,7 +204,8 @@
 {
 	//[super setLevel:NSNormalWindowLevel];
 	
-	if ([[[NSApp windowsMenu] itemWithTitle:NSLocalizedString(@"Fullscreen", @"")] state] == NSControlStateValueOff){
+	NSMenu *viewMenu = [[[NSApp mainMenu] itemWithTitle:NSLocalizedString(@"View", @"")] submenu];
+	if ([[viewMenu itemWithTitle:NSLocalizedString(@"Fullscreen", @"")] state] == NSControlStateValueOff){
 		[super setLevel:NSNormalWindowLevel];
 	} else {
 		if (level == NSPopUpMenuWindowLevel) {

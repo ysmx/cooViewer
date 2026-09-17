@@ -197,7 +197,7 @@
 "924.title" = "OtherViews";
 
 /* Class = "NSMenuItem"; title = "Fullscreen"; ObjectID = "926"; */
-"926.title" = "フルスクリーン";
+"926.title" = "フルスクリーン／ウィンドウ切替";
 
 /* Class = "NSMenuItem"; title = "Previous Folder"; ObjectID = "934"; */
 "934.title" = "前のフォルダ・アーカイブへ";
@@ -1067,13 +1067,13 @@
 "3296.title" = "設定の整理";
 
 /* Class = "NSMenuItem"; title = "SwitchFullscreen"; ObjectID = "3494"; */
-"3494.title" = "フルスクリーン";
+"3494.title" = "フルスクリーン切替";
 
 /* Class = "NSMenuItem"; title = "MinimizeWindow"; ObjectID = "3495"; */
 "3495.title" = "ウィンドウをしまう";
 
 /* Class = "NSMenuItem"; title = "SwitchFullscreen"; ObjectID = "3497"; */
-"3497.title" = "フルスクリーン";
+"3497.title" = "フルスクリーン切替";
 
 /* Class = "NSMenuItem"; title = "MinimizeWindow"; ObjectID = "3498"; */
 "3498.title" = "ウィンドウをしまう";
@@ -1237,8 +1237,8 @@
 /* Class = "NSButtonCell"; title = "Fit original size window to image size"; ObjectID = "4315"; */
 "4315.title" = "実寸表示ウィンドウのサイズを内容に合わせる";
 
-/* Class = "NSButtonCell"; title = "Don't hide menu bar"; ObjectID = "4316"; */
-"4316.title" = "メニューバーを隠さない";
+/* Class = "NSButtonCell"; title = "Hide menu bar in fullscreen"; ObjectID = "4316"; */
+"4316.title" = "フルスクリーン時にメニューバーを隠す";
 
 /* Class = "NSButtonCell"; title = "Show thumbnail view on open"; ObjectID = "4317"; */
 "4317.title" = "開いたときに一覧を表示する";

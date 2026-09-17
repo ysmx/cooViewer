@@ -18,8 +18,13 @@
 	BOOL hideMenuBar;
 	BOOL resizable;
 	NSUInteger windowedStyleMask;
+	NSRect windowedFrame;
+	BOOL hasWindowedFrame;
 	CustomImageView *view;
 }
+
+NSRect COFitWindowFrameToVisibleFrame(NSRect windowFrame, NSRect visibleFrame);
+
 - (void)setFullScreen:(BOOL)b;
 - (BOOL)isFullScreen;
 
