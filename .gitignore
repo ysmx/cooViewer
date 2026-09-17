@@ -30,6 +30,7 @@ DerivedData*/
 *.hmap
 
 ## App packaging
+dist/
 *.ipa
 *.dSYM.zip
 *.dSYM
