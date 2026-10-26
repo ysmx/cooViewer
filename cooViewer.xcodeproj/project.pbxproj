@@ -142,6 +142,17 @@
 		769762A80D657268009CFDBE /* AccessorySettingView.m in Sources */ = {isa = PBXBuildFile; fileRef = 769762A60D657268009CFDBE /* AccessorySettingView.m */; };
 		76A3AA6B085716BC0009D02F /* close.tiff in Resources */ = {isa = PBXBuildFile; fileRef = 76A3AA6A085716BC0009D02F /* close.tiff */; };
 		76A68049080A8E6E00440F6B /* icon.icns in Resources */ = {isa = PBXBuildFile; fileRef = 76A68048080A8E6E00440F6B /* icon.icns */; };
+		298D68AFAC4B3D2BB96EB435 /* doc_cbz.icns in Resources */ = {isa = PBXBuildFile; fileRef = 17868FC92424F9551C003830 /* doc_cbz.icns */; };
+		E9356294D07E855837FCCCCA /* doc_cbr.icns in Resources */ = {isa = PBXBuildFile; fileRef = A3E4AAD4831A1305C880B2D7 /* doc_cbr.icns */; };
+		FB591A08DEBCC2A191197219 /* doc_cvbdl.icns in Resources */ = {isa = PBXBuildFile; fileRef = 080DFF7579EAFC550F278506 /* doc_cvbdl.icns */; };
+		613B9A6E64E244FB3771B127 /* doc_zip.icns in Resources */ = {isa = PBXBuildFile; fileRef = EC5004F7CF442D9314898F9E /* doc_zip.icns */; };
+		8DC89DEC16AD7C46D2BF8F76 /* doc_rar.icns in Resources */ = {isa = PBXBuildFile; fileRef = ABA203D7F656EE3108C553C9 /* doc_rar.icns */; };
+		0C78F9A1254248365EB871DF /* doc_jpg.icns in Resources */ = {isa = PBXBuildFile; fileRef = 18BFC308922C132E7D0B342C /* doc_jpg.icns */; };
+		2ACDD6CB49F6B832CBE827BE /* doc_png.icns in Resources */ = {isa = PBXBuildFile; fileRef = 024B867DB81E9BF62892D5EE /* doc_png.icns */; };
+		A60E43608BD0922DA9E548E4 /* doc_gif.icns in Resources */ = {isa = PBXBuildFile; fileRef = 63A26D63BFFBC8D807D75B8F /* doc_gif.icns */; };
+		FBADA04FAD686C9F82FDD568 /* doc_tiff.icns in Resources */ = {isa = PBXBuildFile; fileRef = CBE1C9BAA4D772AB6B0E77AC /* doc_tiff.icns */; };
+		EE6CFE364C101C12245E8C06 /* doc_bmp.icns in Resources */ = {isa = PBXBuildFile; fileRef = 462376EA70789AE454547AD2 /* doc_bmp.icns */; };
+		D7DDFC75E990E0118B6C0062 /* doc_pdf.icns in Resources */ = {isa = PBXBuildFile; fileRef = 91E7644A708CC7654FBEEB92 /* doc_pdf.icns */; };
 		76B19AC307C9C15A00A6FB97 /* Controller.h in Headers */ = {isa = PBXBuildFile; fileRef = 76B19AC107C9C15A00A6FB97 /* Controller.h */; };
 		76B19AC407C9C15A00A6FB97 /* Controller.m in Sources */ = {isa = PBXBuildFile; fileRef = 76B19AC207C9C15A00A6FB97 /* Controller.m */; };
 		76B88ED1097FC1D8006DDB12 /* COPDFImage.h in Headers */ = {isa = PBXBuildFile; fileRef = 76B88ECF097FC1D8006DDB12 /* COPDFImage.h */; };
@@ -281,6 +292,17 @@
 		769762A60D657268009CFDBE /* AccessorySettingView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = AccessorySettingView.m; sourceTree = "<group>"; };
 		76A3AA6A085716BC0009D02F /* close.tiff */ = {isa = PBXFileReference; lastKnownFileType = image.tiff; path = close.tiff; sourceTree = "<group>"; };
 		76A68048080A8E6E00440F6B /* icon.icns */ = {isa = PBXFileReference; lastKnownFileType = image.icns; path = icon.icns; sourceTree = "<group>"; };
+		17868FC92424F9551C003830 /* doc_cbz.icns */ = {isa = PBXFileReference; lastKnownFileType = image.icns; path = doc_cbz.icns; sourceTree = "<group>"; };
+		A3E4AAD4831A1305C880B2D7 /* doc_cbr.icns */ = {isa = PBXFileReference; lastKnownFileType = image.icns; path = doc_cbr.icns; sourceTree = "<group>"; };
+		080DFF7579EAFC550F278506 /* doc_cvbdl.icns */ = {isa = PBXFileReference; lastKnownFileType = image.icns; path = doc_cvbdl.icns; sourceTree = "<group>"; };
+		EC5004F7CF442D9314898F9E /* doc_zip.icns */ = {isa = PBXFileReference; lastKnownFileType = image.icns; path = doc_zip.icns; sourceTree = "<group>"; };
+		ABA203D7F656EE3108C553C9 /* doc_rar.icns */ = {isa = PBXFileReference; lastKnownFileType = image.icns; path = doc_rar.icns; sourceTree = "<group>"; };
+		18BFC308922C132E7D0B342C /* doc_jpg.icns */ = {isa = PBXFileReference; lastKnownFileType = image.icns; path = doc_jpg.icns; sourceTree = "<group>"; };
+		024B867DB81E9BF62892D5EE /* doc_png.icns */ = {isa = PBXFileReference; lastKnownFileType = image.icns; path = doc_png.icns; sourceTree = "<group>"; };
+		63A26D63BFFBC8D807D75B8F /* doc_gif.icns */ = {isa = PBXFileReference; lastKnownFileType = image.icns; path = doc_gif.icns; sourceTree = "<group>"; };
+		CBE1C9BAA4D772AB6B0E77AC /* doc_tiff.icns */ = {isa = PBXFileReference; lastKnownFileType = image.icns; path = doc_tiff.icns; sourceTree = "<group>"; };
+		462376EA70789AE454547AD2 /* doc_bmp.icns */ = {isa = PBXFileReference; lastKnownFileType = image.icns; path = doc_bmp.icns; sourceTree = "<group>"; };
+		91E7644A708CC7654FBEEB92 /* doc_pdf.icns */ = {isa = PBXFileReference; lastKnownFileType = image.icns; path = doc_pdf.icns; sourceTree = "<group>"; };
 		76B19AC107C9C15A00A6FB97 /* Controller.h */ = {isa = PBXFileReference; fileEncoding = 0; lastKnownFileType = sourcecode.c.h; path = Controller.h; sourceTree = "<group>"; };
 		76B19AC207C9C15A00A6FB97 /* Controller.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = Controller.m; sourceTree = "<group>"; };
 		76B88ECF097FC1D8006DDB12 /* COPDFImage.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = COPDFImage.h; sourceTree = "<group>"; };
@@ -662,6 +684,17 @@
 				76F33A16083727A90099A43D /* broken.png */,
 				372911571316C60C0040B910 /* empty.png */,
 				76A68048080A8E6E00440F6B /* icon.icns */,
+				17868FC92424F9551C003830 /* doc_cbz.icns */,
+				A3E4AAD4831A1305C880B2D7 /* doc_cbr.icns */,
+				080DFF7579EAFC550F278506 /* doc_cvbdl.icns */,
+				EC5004F7CF442D9314898F9E /* doc_zip.icns */,
+				ABA203D7F656EE3108C553C9 /* doc_rar.icns */,
+				18BFC308922C132E7D0B342C /* doc_jpg.icns */,
+				024B867DB81E9BF62892D5EE /* doc_png.icns */,
+				63A26D63BFFBC8D807D75B8F /* doc_gif.icns */,
+				CBE1C9BAA4D772AB6B0E77AC /* doc_tiff.icns */,
+				462376EA70789AE454547AD2 /* doc_bmp.icns */,
+				91E7644A708CC7654FBEEB92 /* doc_pdf.icns */,
 				76C79A720D3CFBA30071BBF4 /* bookmark.tiff */,
 				76C79A750D3CFBA30071BBF4 /* bookmark_a.tiff */,
 				76C79A7C0D3CFD0C0071BBF4 /* comic.tiff */,
@@ -833,6 +866,17 @@
 			files = (
 				7621F56808C5719B006A9301 /* InfoPlist.strings in Resources */,
 				76A68049080A8E6E00440F6B /* icon.icns in Resources */,
+				298D68AFAC4B3D2BB96EB435 /* doc_cbz.icns in Resources */,
+				E9356294D07E855837FCCCCA /* doc_cbr.icns in Resources */,
+				FB591A08DEBCC2A191197219 /* doc_cvbdl.icns in Resources */,
+				613B9A6E64E244FB3771B127 /* doc_zip.icns in Resources */,
+				8DC89DEC16AD7C46D2BF8F76 /* doc_rar.icns in Resources */,
+				0C78F9A1254248365EB871DF /* doc_jpg.icns in Resources */,
+				2ACDD6CB49F6B832CBE827BE /* doc_png.icns in Resources */,
+				A60E43608BD0922DA9E548E4 /* doc_gif.icns in Resources */,
+				FBADA04FAD686C9F82FDD568 /* doc_tiff.icns in Resources */,
+				EE6CFE364C101C12245E8C06 /* doc_bmp.icns in Resources */,
+				D7DDFC75E990E0118B6C0062 /* doc_pdf.icns in Resources */,
 				76F33A17083727A90099A43D /* broken.png in Resources */,
 				768C80130838765500E6C5C8 /* left.tiff in Resources */,
 				768C802F0838777900E6C5C8 /* right.tiff in Resources */,
@@ -1375,7 +1419,7 @@
 				CLANG_ENABLE_OBJC_WEAK = YES;
 				CODE_SIGN_IDENTITY = "";
 				COPY_PHASE_STRIP = NO;
-				CURRENT_PROJECT_VERSION = 1.6.0;
+				CURRENT_PROJECT_VERSION = 1.6.1;
 				FRAMEWORK_SEARCH_PATHS = (
 					"$(FRAMEWORK_SEARCH_PATHS_QUOTED_1)",
 					/Library/Frameworks,
@@ -1449,7 +1493,7 @@
 				CLANG_ENABLE_OBJC_WEAK = YES;
 				CODE_SIGN_IDENTITY = "";
 				COPY_PHASE_STRIP = NO;
-				CURRENT_PROJECT_VERSION = 1.6.0;
+				CURRENT_PROJECT_VERSION = 1.6.1;
 				FRAMEWORK_SEARCH_PATHS = (
 					"$(FRAMEWORK_SEARCH_PATHS_QUOTED_1)",
 					"\"$(SRCROOT)\"",
@@ -1522,7 +1566,7 @@
 				CLANG_ENABLE_OBJC_WEAK = YES;
 				CODE_SIGN_IDENTITY = "";
 				COPY_PHASE_STRIP = NO;
-				CURRENT_PROJECT_VERSION = 1.6.0;
+				CURRENT_PROJECT_VERSION = 1.6.1;
 				FRAMEWORK_SEARCH_PATHS = (
 					"$(FRAMEWORK_SEARCH_PATHS_QUOTED_1)",
 					/Library/Frameworks,
@@ -1558,7 +1602,7 @@
 				CLANG_ENABLE_OBJC_WEAK = YES;
 				CODE_SIGN_IDENTITY = "";
 				COPY_PHASE_STRIP = NO;
-				CURRENT_PROJECT_VERSION = 1.6.0;
+				CURRENT_PROJECT_VERSION = 1.6.1;
 				FRAMEWORK_SEARCH_PATHS = (
 					"$(FRAMEWORK_SEARCH_PATHS_QUOTED_1)",
 					"\"$(SRCROOT)\"",
@@ -1591,7 +1635,7 @@
 			buildSettings = {
 				CLANG_ENABLE_OBJC_WEAK = YES;
 				CODE_SIGN_IDENTITY = "";
-				CURRENT_PROJECT_VERSION = 1.6.0;
+				CURRENT_PROJECT_VERSION = 1.6.1;
 				FRAMEWORK_SEARCH_PATHS = (
 					"$(FRAMEWORK_SEARCH_PATHS_QUOTED_1)",
 					"\"$(SRCROOT)\"",
@@ -1683,7 +1727,7 @@
 				CLANG_ENABLE_OBJC_WEAK = YES;
 				CODE_SIGN_IDENTITY = "";
 				COPY_PHASE_STRIP = NO;
-				CURRENT_PROJECT_VERSION = 1.6.0;
+				CURRENT_PROJECT_VERSION = 1.6.1;
 				FRAMEWORK_SEARCH_PATHS = (
 					"$(FRAMEWORK_SEARCH_PATHS_QUOTED_1)",
 					"\"$(SRCROOT)\"",

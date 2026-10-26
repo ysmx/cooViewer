@@ -1,5 +1,10 @@
 # cooViewer 更新履歴
 
+## 1.6.1
+
+- CBZ・CBR・CVBDL・ZIP・RAR・JPEG・PNG・GIF・TIFF・BMP・PDFの書類アイコンを追加。cooViewerを既定のアプリにしたとき、FinderでcooViewerの書類アイコンが表示されるように修正（macOSの自動生成アイコンは、システムがアイコンを持つ形式では使われないため）
+- CBZ・CBRファイルの書類宣言の重複を整理
+
 ## 1.6.0
 
 - `f` キーでフルスクリーンとウィンドウモードを切り替えられるように変更
