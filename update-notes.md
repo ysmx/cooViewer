@@ -1,5 +1,13 @@
 # cooViewer 更新履歴
 
+## 1.7.0
+
+- CBZ/CBR/ZIP/RAR用のFinderサムネイル拡張とQuick Lookプレビュー拡張を同梱
+- Quick Lookプレビューは自然順で先頭の読める画像1枚だけを大きくアスペクトフィット表示。後続ページのデコード、PDF生成、ページ一覧、前後ページUIは行わない
+- 画像なしのアーカイブはエラーとして終了。アーカイブの既存安全上限と破損先頭からの限定的なフォールバックを維持
+- 両拡張はmacOS 10.15以降、本体は10.14対応を維持。ad hoc署名・Universal Binaryで同梱
+- 先頭1枚へ訂正した修正版は製品番号・内部ビルド番号ともに1.7.0。仕様と測定結果は [docs/quicklook.md](docs/quicklook.md) を参照
+
 ## 1.6.1
 
 - CBZ・CBR・CVBDL・ZIP・RAR・JPEG・PNG・GIF・TIFF・BMP・PDFの書類アイコンを追加。cooViewerを既定のアプリにしたとき、FinderでcooViewerの書類アイコンが表示されるように修正（macOSの自動生成アイコンは、システムがアイコンを持つ形式では使われないため）

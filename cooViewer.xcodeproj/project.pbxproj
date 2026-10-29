@@ -14,6 +14,8 @@
 			remoteGlobalIDString = 8D1107260486CEB800E47090;
 			remoteInfo = cooViewer;
 		};
+		B6C734E2B72E73098FBA6905 /* cooViewerThumbnail proxy */ = {isa = PBXContainerItemProxy; containerPortal = 29B97313FDCFA39411CA2CEA; proxyType = 1; remoteGlobalIDString = F1580769E95B42BEB7788C06; remoteInfo = cooViewerThumbnail; };
+		3412F8E8AE0C7EB286436B08 /* cooViewerPreview proxy */ = {isa = PBXContainerItemProxy; containerPortal = 29B97313FDCFA39411CA2CEA; proxyType = 1; remoteGlobalIDString = FEF319E6E730C67B2B23759D; remoteInfo = cooViewerPreview; };
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXTargetDependency section */
@@ -22,6 +24,8 @@
 			target = 8D1107260486CEB800E47090 /* cooViewer */;
 			targetProxy = B5740CFECDEC490483DD3FEA /* PBXContainerItemProxy */;
 		};
+		70C02CEC2775E4225B22F867 /* cooViewerThumbnail dependency */ = {isa = PBXTargetDependency; target = F1580769E95B42BEB7788C06; targetProxy = B6C734E2B72E73098FBA6905; };
+		342AAACEAE32D27204DB8564 /* cooViewerPreview dependency */ = {isa = PBXTargetDependency; target = FEF319E6E730C67B2B23759D; targetProxy = 3412F8E8AE0C7EB286436B08; };
 /* End PBXTargetDependency section */
 
 /* Begin PBXBuildFile section */
@@ -195,6 +199,18 @@
 		A39D6C3323BEB590002FD912 /* LoupeView.h in Headers */ = {isa = PBXBuildFile; fileRef = A39D6C3223BEB590002FD912 /* LoupeView.h */; };
 		A39D6C3523BEB597002FD912 /* LoupeView.m in Sources */ = {isa = PBXBuildFile; fileRef = A39D6C3423BEB597002FD912 /* LoupeView.m */; };
 		E412D4A223BE1A7400CDEAB5 /* MainMenu.xib in Resources */ = {isa = PBXBuildFile; fileRef = E412D4A023BE1A7400CDEAB5 /* MainMenu.xib */; };
+		54D041FA6C93473F49F5A7C7 /* cooViewerThumbnail reader */ = {isa = PBXBuildFile; fileRef = B50296D4658BCD2DE0ED318B; };
+		4AE81EC6603176BA562C8503 /* cooViewerThumbnail provider */ = {isa = PBXBuildFile; fileRef = 02AD8438695171637636B8D9; };
+		A431C1E0E57A3C8A42D988F1 /* cooViewerThumbnail XADMaster */ = {isa = PBXBuildFile; fileRef = 37BB53451312C01C001710B4; };
+		DACCD2A12A471E2B4FC3625C /* cooViewerThumbnail embed */ = {isa = PBXBuildFile; fileRef = 314D5CB434A9A41E17082FB1; settings = {ATTRIBUTES = (RemoveHeadersOnCopy,);}; };
+		34A85A7484299BA175F7B6E0 /* cooViewerPreview reader */ = {isa = PBXBuildFile; fileRef = B50296D4658BCD2DE0ED318B; };
+		02E51A86E0B1E907E59D2CEC /* cooViewerPreview provider */ = {isa = PBXBuildFile; fileRef = BD467A87EF5935A3F21191B9; };
+		A1E73B67E36C1A21DAEB6C5F /* cooViewerPreview XADMaster */ = {isa = PBXBuildFile; fileRef = 37BB53451312C01C001710B4; };
+		50B1DBD25C735F5FBBAD1440 /* cooViewerPreview embed */ = {isa = PBXBuildFile; fileRef = 044FE20C19EF1E154355C16F; settings = {ATTRIBUTES = (RemoveHeadersOnCopy,);}; };
+		6FE44389B9D0F986FF90941C /* cooViewerThumbnail embed XADMaster */ = {isa = PBXBuildFile; fileRef = 37BB53451312C01C001710B4; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy,);};};
+		E88004D1FFB08D4F39E39B1B /* cooViewerThumbnail embed UniversalDetector */ = {isa = PBXBuildFile; fileRef = 37BB532B1312C017001710B4; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy,);};};
+		E6CD17BD12F8AB7755051108 /* cooViewerPreview embed XADMaster */ = {isa = PBXBuildFile; fileRef = 37BB53451312C01C001710B4; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy,);};};
+		008A31EACB48D6D112A2109C /* cooViewerPreview embed UniversalDetector */ = {isa = PBXBuildFile; fileRef = 37BB532B1312C017001710B4; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy,);};};
 /* End PBXBuildFile section */
 
 /* Begin PBXCopyFilesBuildPhase section */
@@ -209,6 +225,9 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
+		B878342E85877A4810132BBF /* Embed Quick Look Extensions */ = {isa = PBXCopyFilesBuildPhase; buildActionMask = 2147483647; dstPath = ""; dstSubfolderSpec = 13; files = (DACCD2A12A471E2B4FC3625C, 50B1DBD25C735F5FBBAD1440,); runOnlyForDeploymentPostprocessing = 0; };
+		F4E47AA0284CE7046FD47010 /* cooViewerThumbnail Frameworks */ = {isa = PBXCopyFilesBuildPhase; buildActionMask = 2147483647; dstPath = ""; dstSubfolderSpec = 10; files = (6FE44389B9D0F986FF90941C, E88004D1FFB08D4F39E39B1B,); runOnlyForDeploymentPostprocessing = 0;};
+		03A8ECEE34A05C8A0E659279 /* cooViewerPreview Frameworks */ = {isa = PBXCopyFilesBuildPhase; buildActionMask = 2147483647; dstPath = ""; dstSubfolderSpec = 10; files = (E6CD17BD12F8AB7755051108, 008A31EACB48D6D112A2109C,); runOnlyForDeploymentPostprocessing = 0;};
 /* End PBXCopyFilesBuildPhase section */
 
 /* Begin PBXFileReference section */
@@ -350,6 +369,16 @@
 		A39D6C8823BF85C4002FD912 /* ja */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.strings; name = ja; path = Resources/ja.lproj/Localizable.strings; sourceTree = "<group>"; };
 		A39D6C8923BF85D6002FD912 /* ja */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.strings; name = ja; path = Resources/ja.lproj/MainMenu.strings; sourceTree = "<group>"; };
 		A39D6C8A23BF8667002FD912 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.xib; name = Base; path = Resources/Base.lproj/MainMenu.xib; sourceTree = "<group>"; };
+		B50296D4658BCD2DE0ED318B /* Sources/QuickLook/Shared/COComicArchive.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = "Sources/QuickLook/Shared/COComicArchive.m"; sourceTree = SOURCE_ROOT; };
+		AE639B54E9ED3AC17DAA1E20 /* Sources/QuickLook/Shared/COComicArchive.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "Sources/QuickLook/Shared/COComicArchive.h"; sourceTree = SOURCE_ROOT; };
+		02AD8438695171637636B8D9 /* Sources/QuickLook/Thumbnail/ThumbnailProvider.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = "Sources/QuickLook/Thumbnail/ThumbnailProvider.m"; sourceTree = SOURCE_ROOT; };
+		C62699ADFC32BD3CAD2D9E2A /* Sources/QuickLook/Thumbnail/Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = "Sources/QuickLook/Thumbnail/Info.plist"; sourceTree = SOURCE_ROOT; };
+		CF479CD75BBCCAE3FD538E7C /* Sources/QuickLook/Thumbnail/cooViewerThumbnail.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = "Sources/QuickLook/Thumbnail/cooViewerThumbnail.entitlements"; sourceTree = SOURCE_ROOT; };
+		314D5CB434A9A41E17082FB1 /* cooViewerThumbnail.appex */ = {isa = PBXFileReference; explicitFileType = "wrapper.app-extension"; path = cooViewerThumbnail.appex; sourceTree = BUILT_PRODUCTS_DIR; };
+		BD467A87EF5935A3F21191B9 /* Sources/QuickLook/Preview/PreviewViewController.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = "Sources/QuickLook/Preview/PreviewViewController.m"; sourceTree = SOURCE_ROOT; };
+		B5E91A3525CF7812D5DFB1FE /* Sources/QuickLook/Preview/Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = "Sources/QuickLook/Preview/Info.plist"; sourceTree = SOURCE_ROOT; };
+		773D5378BA06FB57AEAE1FAB /* Sources/QuickLook/Preview/cooViewerPreview.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = "Sources/QuickLook/Preview/cooViewerPreview.entitlements"; sourceTree = SOURCE_ROOT; };
+		044FE20C19EF1E154355C16F /* cooViewerPreview.appex */ = {isa = PBXFileReference; explicitFileType = "wrapper.app-extension"; path = cooViewerPreview.appex; sourceTree = BUILT_PRODUCTS_DIR; };
 /* End PBXFileReference section */
 
 /* Begin PBXFileSystemSynchronizedRootGroup section */
@@ -380,6 +409,8 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
+		2839EC493FAB496664CD2930 /* cooViewerThumbnail frameworks */ = {isa = PBXFrameworksBuildPhase; buildActionMask = 2147483647; files = (A431C1E0E57A3C8A42D988F1,); runOnlyForDeploymentPostprocessing = 0; };
+		83EB5A619733F1C8312F1885 /* cooViewerPreview frameworks */ = {isa = PBXFrameworksBuildPhase; buildActionMask = 2147483647; files = (A1E73B67E36C1A21DAEB6C5F,); runOnlyForDeploymentPostprocessing = 0; };
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
@@ -420,6 +451,8 @@
 		19C28FACFE9D520D11CA2CBB /* Products */ = {
 			isa = PBXGroup;
 			children = (
+				314D5CB434A9A41E17082FB1,
+				044FE20C19EF1E154355C16F,
 				8D1107320486CEB800E47090 /* cooViewer.app */,
 				30DE82CA300F8D2200FEA0DE /* cooViewerTests.xctest */,
 			);
@@ -429,6 +462,7 @@
 		29B97314FDCFA39411CA2CEA /* cooViewer */ = {
 			isa = PBXGroup;
 			children = (
+				1B2CC7617789C8F81CBBE1F6,
 				080E96DDFE201D6D7F000001 /* Classes */,
 				29B97315FDCFA39411CA2CEA /* Other Sources */,
 				29B97317FDCFA39411CA2CEA /* Resources */,
@@ -732,6 +766,7 @@
 			path = Sources/Panels/Filter;
 			sourceTree = "<group>";
 		};
+		1B2CC7617789C8F81CBBE1F6 /* Quick Look */ = {isa = PBXGroup; children = (B50296D4658BCD2DE0ED318B, AE639B54E9ED3AC17DAA1E20, 02AD8438695171637636B8D9, C62699ADFC32BD3CAD2D9E2A, CF479CD75BBCCAE3FD538E7C, BD467A87EF5935A3F21191B9, B5E91A3525CF7812D5DFB1FE, 773D5378BA06FB57AEAE1FAB,); name = "Quick Look"; sourceTree = "<group>"; };
 /* End PBXGroup section */
 
 /* Begin PBXHeadersBuildPhase section */
@@ -804,6 +839,7 @@
 			isa = PBXNativeTarget;
 			buildConfigurationList = 762F248A0899B2FD00419EAA /* Build configuration list for PBXNativeTarget "cooViewer" */;
 			buildPhases = (
+				B878342E85877A4810132BBF,
 				766DEF5607E5CDD80039AAD0 /* Headers */,
 				8D11072C0486CEB800E47090 /* Sources */,
 				8D11072E0486CEB800E47090 /* Frameworks */,
@@ -813,6 +849,8 @@
 			buildRules = (
 			);
 			dependencies = (
+				70C02CEC2775E4225B22F867,
+				342AAACEAE32D27204DB8564,
 			);
 			name = cooViewer;
 			productInstallPath = "$(HOME)/Applications";
@@ -820,6 +858,8 @@
 			productReference = 8D1107320486CEB800E47090 /* cooViewer.app */;
 			productType = "com.apple.product-type.application";
 		};
+		F1580769E95B42BEB7788C06 /* cooViewerThumbnail */ = {isa = PBXNativeTarget; buildConfigurationList = 03175D10504F4B6C361BA25A; buildPhases = (4ACDFE096F3B692CCC0658A4, 2839EC493FAB496664CD2930, F4E47AA0284CE7046FD47010,); buildRules = (); dependencies = (); name = cooViewerThumbnail; productName = cooViewerThumbnail; productReference = 314D5CB434A9A41E17082FB1; productType = "com.apple.product-type.app-extension"; };
+		FEF319E6E730C67B2B23759D /* cooViewerPreview */ = {isa = PBXNativeTarget; buildConfigurationList = 1F4662C8976D1B02E40CBE84; buildPhases = (B5BB9D73521299FDFB85B103, 83EB5A619733F1C8312F1885, 03A8ECEE34A05C8A0E659279,); buildRules = (); dependencies = (); name = cooViewerPreview; productName = cooViewerPreview; productReference = 044FE20C19EF1E154355C16F; productType = "com.apple.product-type.app-extension"; };
 /* End PBXNativeTarget section */
 
 /* Begin PBXProject section */
@@ -846,6 +886,8 @@
 			projectDirPath = "";
 			projectRoot = "";
 			targets = (
+				F1580769E95B42BEB7788C06,
+				FEF319E6E730C67B2B23759D,
 				8D1107260486CEB800E47090 /* cooViewer */,
 				30DE82C9300F8D2200FEA0DE /* cooViewerTests */,
 			);
@@ -1011,6 +1053,8 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
+		4ACDFE096F3B692CCC0658A4 /* cooViewerThumbnail sources */ = {isa = PBXSourcesBuildPhase; buildActionMask = 2147483647; files = (54D041FA6C93473F49F5A7C7, 4AE81EC6603176BA562C8503,); runOnlyForDeploymentPostprocessing = 0; };
+		B5BB9D73521299FDFB85B103 /* cooViewerPreview sources */ = {isa = PBXSourcesBuildPhase; buildActionMask = 2147483647; files = (34A85A7484299BA175F7B6E0, 02E51A86E0B1E907E59D2CEC,); runOnlyForDeploymentPostprocessing = 0; };
 /* End PBXSourcesBuildPhase section */
 
 /* Begin PBXVariantGroup section */
@@ -1417,9 +1461,9 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				CLANG_ENABLE_OBJC_WEAK = YES;
-				CODE_SIGN_IDENTITY = "";
+				CODE_SIGN_IDENTITY = "-";
 				COPY_PHASE_STRIP = NO;
-				CURRENT_PROJECT_VERSION = 1.6.1;
+				CURRENT_PROJECT_VERSION = 1.7.0;
 				FRAMEWORK_SEARCH_PATHS = (
 					"$(FRAMEWORK_SEARCH_PATHS_QUOTED_1)",
 					/Library/Frameworks,
@@ -1491,9 +1535,9 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				CLANG_ENABLE_OBJC_WEAK = YES;
-				CODE_SIGN_IDENTITY = "";
+				CODE_SIGN_IDENTITY = "-";
 				COPY_PHASE_STRIP = NO;
-				CURRENT_PROJECT_VERSION = 1.6.1;
+				CURRENT_PROJECT_VERSION = 1.7.0;
 				FRAMEWORK_SEARCH_PATHS = (
 					"$(FRAMEWORK_SEARCH_PATHS_QUOTED_1)",
 					"\"$(SRCROOT)\"",
@@ -1564,9 +1608,9 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				CLANG_ENABLE_OBJC_WEAK = YES;
-				CODE_SIGN_IDENTITY = "";
+				CODE_SIGN_IDENTITY = "-";
 				COPY_PHASE_STRIP = NO;
-				CURRENT_PROJECT_VERSION = 1.6.1;
+				CURRENT_PROJECT_VERSION = 1.7.0;
 				FRAMEWORK_SEARCH_PATHS = (
 					"$(FRAMEWORK_SEARCH_PATHS_QUOTED_1)",
 					/Library/Frameworks,
@@ -1600,9 +1644,9 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				CLANG_ENABLE_OBJC_WEAK = YES;
-				CODE_SIGN_IDENTITY = "";
+				CODE_SIGN_IDENTITY = "-";
 				COPY_PHASE_STRIP = NO;
-				CURRENT_PROJECT_VERSION = 1.6.1;
+				CURRENT_PROJECT_VERSION = 1.7.0;
 				FRAMEWORK_SEARCH_PATHS = (
 					"$(FRAMEWORK_SEARCH_PATHS_QUOTED_1)",
 					"\"$(SRCROOT)\"",
@@ -1634,8 +1678,8 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				CLANG_ENABLE_OBJC_WEAK = YES;
-				CODE_SIGN_IDENTITY = "";
-				CURRENT_PROJECT_VERSION = 1.6.1;
+				CODE_SIGN_IDENTITY = "-";
+				CURRENT_PROJECT_VERSION = 1.7.0;
 				FRAMEWORK_SEARCH_PATHS = (
 					"$(FRAMEWORK_SEARCH_PATHS_QUOTED_1)",
 					"\"$(SRCROOT)\"",
@@ -1725,9 +1769,9 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				CLANG_ENABLE_OBJC_WEAK = YES;
-				CODE_SIGN_IDENTITY = "";
+				CODE_SIGN_IDENTITY = "-";
 				COPY_PHASE_STRIP = NO;
-				CURRENT_PROJECT_VERSION = 1.6.1;
+				CURRENT_PROJECT_VERSION = 1.7.0;
 				FRAMEWORK_SEARCH_PATHS = (
 					"$(FRAMEWORK_SEARCH_PATHS_QUOTED_1)",
 					"\"$(SRCROOT)\"",
@@ -1788,6 +1832,306 @@
 			};
 			name = Release;
 		};
+		C780B57D39F47941E8476C15 /* cooViewerThumbnail Development */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				PRODUCT_NAME = "cooViewerThumbnail";
+				PRODUCT_BUNDLE_IDENTIFIER = "jp.coo.cooViewer.thumbnail";
+				INFOPLIST_FILE = "Sources/QuickLook/Thumbnail/Info.plist";
+				CODE_SIGN_ENTITLEMENTS = "Sources/QuickLook/Thumbnail/cooViewerThumbnail.entitlements";
+				CODE_SIGN_IDENTITY = "-";
+				CODE_SIGN_STYLE = "Manual";
+				DEVELOPMENT_TEAM = "";
+				CLANG_ENABLE_OBJC_ARC = "YES";
+				CLANG_ENABLE_MODULES = "YES";
+				APPLICATION_EXTENSION_API_ONLY = "YES";
+				MACOSX_DEPLOYMENT_TARGET = "10.15";
+				SKIP_INSTALL = "YES";
+				GCC_PRECOMPILE_PREFIX_HEADER = "NO";
+				GCC_PREFIX_HEADER = "";
+				FRAMEWORK_SEARCH_PATHS = "$(inherited) $(SRCROOT)/Frameworks";
+				HEADER_SEARCH_PATHS = "$(SRCROOT)/Sources/QuickLook/Shared";
+				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/../../../../Frameworks";
+				OTHER_LDFLAGS = "-framework AppKit -framework ImageIO -framework QuickLookThumbnailing";
+				GCC_GENERATE_DEBUGGING_SYMBOLS = "YES";
+			};
+			name = Development;
+		};
+		4C3D70192366CB99C6F8626B /* cooViewerThumbnail Deployment */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				PRODUCT_NAME = "cooViewerThumbnail";
+				PRODUCT_BUNDLE_IDENTIFIER = "jp.coo.cooViewer.thumbnail";
+				INFOPLIST_FILE = "Sources/QuickLook/Thumbnail/Info.plist";
+				CODE_SIGN_ENTITLEMENTS = "Sources/QuickLook/Thumbnail/cooViewerThumbnail.entitlements";
+				CODE_SIGN_IDENTITY = "-";
+				CODE_SIGN_STYLE = "Manual";
+				DEVELOPMENT_TEAM = "";
+				CLANG_ENABLE_OBJC_ARC = "YES";
+				CLANG_ENABLE_MODULES = "YES";
+				APPLICATION_EXTENSION_API_ONLY = "YES";
+				MACOSX_DEPLOYMENT_TARGET = "10.15";
+				SKIP_INSTALL = "YES";
+				GCC_PRECOMPILE_PREFIX_HEADER = "NO";
+				GCC_PREFIX_HEADER = "";
+				FRAMEWORK_SEARCH_PATHS = "$(inherited) $(SRCROOT)/Frameworks";
+				HEADER_SEARCH_PATHS = "$(SRCROOT)/Sources/QuickLook/Shared";
+				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/../../../../Frameworks";
+				OTHER_LDFLAGS = "-framework AppKit -framework ImageIO -framework QuickLookThumbnailing";
+				GCC_GENERATE_DEBUGGING_SYMBOLS = "YES";
+			};
+			name = Deployment;
+		};
+		AA825433DCCF4D7825F8A4C1 /* cooViewerThumbnail Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				PRODUCT_NAME = "cooViewerThumbnail";
+				PRODUCT_BUNDLE_IDENTIFIER = "jp.coo.cooViewer.thumbnail";
+				INFOPLIST_FILE = "Sources/QuickLook/Thumbnail/Info.plist";
+				CODE_SIGN_ENTITLEMENTS = "Sources/QuickLook/Thumbnail/cooViewerThumbnail.entitlements";
+				CODE_SIGN_IDENTITY = "-";
+				CODE_SIGN_STYLE = "Manual";
+				DEVELOPMENT_TEAM = "";
+				CLANG_ENABLE_OBJC_ARC = "YES";
+				CLANG_ENABLE_MODULES = "YES";
+				APPLICATION_EXTENSION_API_ONLY = "YES";
+				MACOSX_DEPLOYMENT_TARGET = "10.15";
+				SKIP_INSTALL = "YES";
+				GCC_PRECOMPILE_PREFIX_HEADER = "NO";
+				GCC_PREFIX_HEADER = "";
+				FRAMEWORK_SEARCH_PATHS = "$(inherited) $(SRCROOT)/Frameworks";
+				HEADER_SEARCH_PATHS = "$(SRCROOT)/Sources/QuickLook/Shared";
+				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/../../../../Frameworks";
+				OTHER_LDFLAGS = "-framework AppKit -framework ImageIO -framework QuickLookThumbnailing";
+				GCC_GENERATE_DEBUGGING_SYMBOLS = "NO";
+			};
+			name = Release;
+		};
+		893A74C7CE5965A7B1DDB8E0 /* cooViewerThumbnail Development2 */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				PRODUCT_NAME = "cooViewerThumbnail";
+				PRODUCT_BUNDLE_IDENTIFIER = "jp.coo.cooViewer.thumbnail";
+				INFOPLIST_FILE = "Sources/QuickLook/Thumbnail/Info.plist";
+				CODE_SIGN_ENTITLEMENTS = "Sources/QuickLook/Thumbnail/cooViewerThumbnail.entitlements";
+				CODE_SIGN_IDENTITY = "-";
+				CODE_SIGN_STYLE = "Manual";
+				DEVELOPMENT_TEAM = "";
+				CLANG_ENABLE_OBJC_ARC = "YES";
+				CLANG_ENABLE_MODULES = "YES";
+				APPLICATION_EXTENSION_API_ONLY = "YES";
+				MACOSX_DEPLOYMENT_TARGET = "10.15";
+				SKIP_INSTALL = "YES";
+				GCC_PRECOMPILE_PREFIX_HEADER = "NO";
+				GCC_PREFIX_HEADER = "";
+				FRAMEWORK_SEARCH_PATHS = "$(inherited) $(SRCROOT)/Frameworks";
+				HEADER_SEARCH_PATHS = "$(SRCROOT)/Sources/QuickLook/Shared";
+				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/../../../../Frameworks";
+				OTHER_LDFLAGS = "-framework AppKit -framework ImageIO -framework QuickLookThumbnailing";
+				GCC_GENERATE_DEBUGGING_SYMBOLS = "YES";
+			};
+			name = Development2;
+		};
+		FB7E5CB47559E33B14582F51 /* cooViewerThumbnail Deployment2 */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				PRODUCT_NAME = "cooViewerThumbnail";
+				PRODUCT_BUNDLE_IDENTIFIER = "jp.coo.cooViewer.thumbnail";
+				INFOPLIST_FILE = "Sources/QuickLook/Thumbnail/Info.plist";
+				CODE_SIGN_ENTITLEMENTS = "Sources/QuickLook/Thumbnail/cooViewerThumbnail.entitlements";
+				CODE_SIGN_IDENTITY = "-";
+				CODE_SIGN_STYLE = "Manual";
+				DEVELOPMENT_TEAM = "";
+				CLANG_ENABLE_OBJC_ARC = "YES";
+				CLANG_ENABLE_MODULES = "YES";
+				APPLICATION_EXTENSION_API_ONLY = "YES";
+				MACOSX_DEPLOYMENT_TARGET = "10.15";
+				SKIP_INSTALL = "YES";
+				GCC_PRECOMPILE_PREFIX_HEADER = "NO";
+				GCC_PREFIX_HEADER = "";
+				FRAMEWORK_SEARCH_PATHS = "$(inherited) $(SRCROOT)/Frameworks";
+				HEADER_SEARCH_PATHS = "$(SRCROOT)/Sources/QuickLook/Shared";
+				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/../../../../Frameworks";
+				OTHER_LDFLAGS = "-framework AppKit -framework ImageIO -framework QuickLookThumbnailing";
+				GCC_GENERATE_DEBUGGING_SYMBOLS = "YES";
+			};
+			name = Deployment2;
+		};
+		9A1B922E686D3D3E95220077 /* cooViewerThumbnail Default */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				PRODUCT_NAME = "cooViewerThumbnail";
+				PRODUCT_BUNDLE_IDENTIFIER = "jp.coo.cooViewer.thumbnail";
+				INFOPLIST_FILE = "Sources/QuickLook/Thumbnail/Info.plist";
+				CODE_SIGN_ENTITLEMENTS = "Sources/QuickLook/Thumbnail/cooViewerThumbnail.entitlements";
+				CODE_SIGN_IDENTITY = "-";
+				CODE_SIGN_STYLE = "Manual";
+				DEVELOPMENT_TEAM = "";
+				CLANG_ENABLE_OBJC_ARC = "YES";
+				CLANG_ENABLE_MODULES = "YES";
+				APPLICATION_EXTENSION_API_ONLY = "YES";
+				MACOSX_DEPLOYMENT_TARGET = "10.15";
+				SKIP_INSTALL = "YES";
+				GCC_PRECOMPILE_PREFIX_HEADER = "NO";
+				GCC_PREFIX_HEADER = "";
+				FRAMEWORK_SEARCH_PATHS = "$(inherited) $(SRCROOT)/Frameworks";
+				HEADER_SEARCH_PATHS = "$(SRCROOT)/Sources/QuickLook/Shared";
+				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/../../../../Frameworks";
+				OTHER_LDFLAGS = "-framework AppKit -framework ImageIO -framework QuickLookThumbnailing";
+				GCC_GENERATE_DEBUGGING_SYMBOLS = "YES";
+			};
+			name = Default;
+		};
+		F1156842AA199D2A9D3A3314 /* cooViewerPreview Development */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				PRODUCT_NAME = "cooViewerPreview";
+				PRODUCT_BUNDLE_IDENTIFIER = "jp.coo.cooViewer.preview";
+				INFOPLIST_FILE = "Sources/QuickLook/Preview/Info.plist";
+				CODE_SIGN_ENTITLEMENTS = "Sources/QuickLook/Preview/cooViewerPreview.entitlements";
+				CODE_SIGN_IDENTITY = "-";
+				CODE_SIGN_STYLE = "Manual";
+				DEVELOPMENT_TEAM = "";
+				CLANG_ENABLE_OBJC_ARC = "YES";
+				CLANG_ENABLE_MODULES = "YES";
+				APPLICATION_EXTENSION_API_ONLY = "YES";
+				MACOSX_DEPLOYMENT_TARGET = "10.15";
+				SKIP_INSTALL = "YES";
+				GCC_PRECOMPILE_PREFIX_HEADER = "NO";
+				GCC_PREFIX_HEADER = "";
+				FRAMEWORK_SEARCH_PATHS = "$(inherited) $(SRCROOT)/Frameworks";
+				HEADER_SEARCH_PATHS = "$(SRCROOT)/Sources/QuickLook/Shared";
+				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/../../../../Frameworks";
+				OTHER_LDFLAGS = "-framework AppKit -framework ImageIO -framework Quartz";
+				GCC_GENERATE_DEBUGGING_SYMBOLS = "YES";
+			};
+			name = Development;
+		};
+		34F1D131C11C9D58663554AE /* cooViewerPreview Deployment */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				PRODUCT_NAME = "cooViewerPreview";
+				PRODUCT_BUNDLE_IDENTIFIER = "jp.coo.cooViewer.preview";
+				INFOPLIST_FILE = "Sources/QuickLook/Preview/Info.plist";
+				CODE_SIGN_ENTITLEMENTS = "Sources/QuickLook/Preview/cooViewerPreview.entitlements";
+				CODE_SIGN_IDENTITY = "-";
+				CODE_SIGN_STYLE = "Manual";
+				DEVELOPMENT_TEAM = "";
+				CLANG_ENABLE_OBJC_ARC = "YES";
+				CLANG_ENABLE_MODULES = "YES";
+				APPLICATION_EXTENSION_API_ONLY = "YES";
+				MACOSX_DEPLOYMENT_TARGET = "10.15";
+				SKIP_INSTALL = "YES";
+				GCC_PRECOMPILE_PREFIX_HEADER = "NO";
+				GCC_PREFIX_HEADER = "";
+				FRAMEWORK_SEARCH_PATHS = "$(inherited) $(SRCROOT)/Frameworks";
+				HEADER_SEARCH_PATHS = "$(SRCROOT)/Sources/QuickLook/Shared";
+				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/../../../../Frameworks";
+				OTHER_LDFLAGS = "-framework AppKit -framework ImageIO -framework Quartz";
+				GCC_GENERATE_DEBUGGING_SYMBOLS = "YES";
+			};
+			name = Deployment;
+		};
+		487D95180A62EA7B1482BDEF /* cooViewerPreview Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				PRODUCT_NAME = "cooViewerPreview";
+				PRODUCT_BUNDLE_IDENTIFIER = "jp.coo.cooViewer.preview";
+				INFOPLIST_FILE = "Sources/QuickLook/Preview/Info.plist";
+				CODE_SIGN_ENTITLEMENTS = "Sources/QuickLook/Preview/cooViewerPreview.entitlements";
+				CODE_SIGN_IDENTITY = "-";
+				CODE_SIGN_STYLE = "Manual";
+				DEVELOPMENT_TEAM = "";
+				CLANG_ENABLE_OBJC_ARC = "YES";
+				CLANG_ENABLE_MODULES = "YES";
+				APPLICATION_EXTENSION_API_ONLY = "YES";
+				MACOSX_DEPLOYMENT_TARGET = "10.15";
+				SKIP_INSTALL = "YES";
+				GCC_PRECOMPILE_PREFIX_HEADER = "NO";
+				GCC_PREFIX_HEADER = "";
+				FRAMEWORK_SEARCH_PATHS = "$(inherited) $(SRCROOT)/Frameworks";
+				HEADER_SEARCH_PATHS = "$(SRCROOT)/Sources/QuickLook/Shared";
+				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/../../../../Frameworks";
+				OTHER_LDFLAGS = "-framework AppKit -framework ImageIO -framework Quartz";
+				GCC_GENERATE_DEBUGGING_SYMBOLS = "NO";
+			};
+			name = Release;
+		};
+		D5CBC35026247C680F2210A9 /* cooViewerPreview Development2 */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				PRODUCT_NAME = "cooViewerPreview";
+				PRODUCT_BUNDLE_IDENTIFIER = "jp.coo.cooViewer.preview";
+				INFOPLIST_FILE = "Sources/QuickLook/Preview/Info.plist";
+				CODE_SIGN_ENTITLEMENTS = "Sources/QuickLook/Preview/cooViewerPreview.entitlements";
+				CODE_SIGN_IDENTITY = "-";
+				CODE_SIGN_STYLE = "Manual";
+				DEVELOPMENT_TEAM = "";
+				CLANG_ENABLE_OBJC_ARC = "YES";
+				CLANG_ENABLE_MODULES = "YES";
+				APPLICATION_EXTENSION_API_ONLY = "YES";
+				MACOSX_DEPLOYMENT_TARGET = "10.15";
+				SKIP_INSTALL = "YES";
+				GCC_PRECOMPILE_PREFIX_HEADER = "NO";
+				GCC_PREFIX_HEADER = "";
+				FRAMEWORK_SEARCH_PATHS = "$(inherited) $(SRCROOT)/Frameworks";
+				HEADER_SEARCH_PATHS = "$(SRCROOT)/Sources/QuickLook/Shared";
+				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/../../../../Frameworks";
+				OTHER_LDFLAGS = "-framework AppKit -framework ImageIO -framework Quartz";
+				GCC_GENERATE_DEBUGGING_SYMBOLS = "YES";
+			};
+			name = Development2;
+		};
+		6BCE95F9B788ACB4EE65350C /* cooViewerPreview Deployment2 */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				PRODUCT_NAME = "cooViewerPreview";
+				PRODUCT_BUNDLE_IDENTIFIER = "jp.coo.cooViewer.preview";
+				INFOPLIST_FILE = "Sources/QuickLook/Preview/Info.plist";
+				CODE_SIGN_ENTITLEMENTS = "Sources/QuickLook/Preview/cooViewerPreview.entitlements";
+				CODE_SIGN_IDENTITY = "-";
+				CODE_SIGN_STYLE = "Manual";
+				DEVELOPMENT_TEAM = "";
+				CLANG_ENABLE_OBJC_ARC = "YES";
+				CLANG_ENABLE_MODULES = "YES";
+				APPLICATION_EXTENSION_API_ONLY = "YES";
+				MACOSX_DEPLOYMENT_TARGET = "10.15";
+				SKIP_INSTALL = "YES";
+				GCC_PRECOMPILE_PREFIX_HEADER = "NO";
+				GCC_PREFIX_HEADER = "";
+				FRAMEWORK_SEARCH_PATHS = "$(inherited) $(SRCROOT)/Frameworks";
+				HEADER_SEARCH_PATHS = "$(SRCROOT)/Sources/QuickLook/Shared";
+				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/../../../../Frameworks";
+				OTHER_LDFLAGS = "-framework AppKit -framework ImageIO -framework Quartz";
+				GCC_GENERATE_DEBUGGING_SYMBOLS = "YES";
+			};
+			name = Deployment2;
+		};
+		2A6590654720DE2D64AFEEE5 /* cooViewerPreview Default */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				PRODUCT_NAME = "cooViewerPreview";
+				PRODUCT_BUNDLE_IDENTIFIER = "jp.coo.cooViewer.preview";
+				INFOPLIST_FILE = "Sources/QuickLook/Preview/Info.plist";
+				CODE_SIGN_ENTITLEMENTS = "Sources/QuickLook/Preview/cooViewerPreview.entitlements";
+				CODE_SIGN_IDENTITY = "-";
+				CODE_SIGN_STYLE = "Manual";
+				DEVELOPMENT_TEAM = "";
+				CLANG_ENABLE_OBJC_ARC = "YES";
+				CLANG_ENABLE_MODULES = "YES";
+				APPLICATION_EXTENSION_API_ONLY = "YES";
+				MACOSX_DEPLOYMENT_TARGET = "10.15";
+				SKIP_INSTALL = "YES";
+				GCC_PRECOMPILE_PREFIX_HEADER = "NO";
+				GCC_PREFIX_HEADER = "";
+				FRAMEWORK_SEARCH_PATHS = "$(inherited) $(SRCROOT)/Frameworks";
+				HEADER_SEARCH_PATHS = "$(SRCROOT)/Sources/QuickLook/Shared";
+				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/../../../../Frameworks";
+				OTHER_LDFLAGS = "-framework AppKit -framework ImageIO -framework Quartz";
+				GCC_GENERATE_DEBUGGING_SYMBOLS = "YES";
+			};
+			name = Default;
+		};
 /* End XCBuildConfiguration section */
 
 /* Begin XCConfigurationList section */
@@ -1830,6 +2174,8 @@
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Default;
 		};
+		03175D10504F4B6C361BA25A /* cooViewerThumbnail configurations */ = {isa = XCConfigurationList; buildConfigurations = (C780B57D39F47941E8476C15, 4C3D70192366CB99C6F8626B, AA825433DCCF4D7825F8A4C1, 893A74C7CE5965A7B1DDB8E0, FB7E5CB47559E33B14582F51, 9A1B922E686D3D3E95220077,); defaultConfigurationIsVisible = 0; defaultConfigurationName = Release; };
+		1F4662C8976D1B02E40CBE84 /* cooViewerPreview configurations */ = {isa = XCConfigurationList; buildConfigurations = (F1156842AA199D2A9D3A3314, 34F1D131C11C9D58663554AE, 487D95180A62EA7B1482BDEF, D5CBC35026247C680F2210A9, 6BCE95F9B788ACB4EE65350C, 2A6590654720DE2D64AFEEE5,); defaultConfigurationIsVisible = 0; defaultConfigurationName = Release; };
 /* End XCConfigurationList section */
 	};
 	rootObject = 29B97313FDCFA39411CA2CEA /* Project object */;

@@ -33,3 +33,6 @@ jobs:
             -project cooViewer.xcodeproj \
             -scheme cooViewerTests \
             test
+
+      - name: Test Quick Look providers with synthetic archives
+        run: ./script/test_quicklook.sh

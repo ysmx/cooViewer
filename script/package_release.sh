@@ -15,14 +15,15 @@ APP_NAME="cooViewer"
 PROJECT="cooViewer.xcodeproj"
 SCHEME="cooViewer"
 CONFIGURATION="Release"
-DEPLOYMENT_TARGET="10.14"
 GITHUB_REPO="ysmx/cooViewer"
 CASK_TOKEN="cooviewer"
 CASK_FILE_NAME="cooviewer.rb"
 
 ROOT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
 DERIVED_DATA_PATH="/tmp/cooViewer-release-derived"
-BUILD_APP="$ROOT_DIR/build/$CONFIGURATION/$APP_NAME.app"
+# Signed bundles must stay outside iCloud, which can attach Finder metadata.
+BUILD_ROOT="${COOVIEWER_BUILD_ROOT:-/tmp/cooViewer-release-products}"
+BUILD_APP="$BUILD_ROOT/$CONFIGURATION/$APP_NAME.app"
 INFO_PLIST="$ROOT_DIR/Info.plist"
 
 FORCE=0
@@ -44,6 +45,8 @@ If the GitHub Release does not exist yet, it is created from the existing
 remote tag and the latest release body is reused.
 
 If VERSION is omitted, CFBundleShortVersionString is read from Info.plist.
+COOVIEWER_BUILD_ROOT overrides /tmp/cooViewer-release-products.
+COOVIEWER_DIST_ROOT overrides the project dist directory.
 EOF
 }
 
@@ -91,7 +94,7 @@ if [[ -z "$VERSION" ]]; then
   VERSION="$(/usr/libexec/PlistBuddy -c 'Print :CFBundleShortVersionString' "$INFO_PLIST")"
 fi
 
-DIST_DIR_REL="dist/v$VERSION"
+DIST_DIR_REL="${COOVIEWER_DIST_ROOT:-$ROOT_DIR/dist}/v$VERSION"
 STAGING_APP_REL="$DIST_DIR_REL/$APP_NAME.app"
 ZIP_PATH_REL="$DIST_DIR_REL/$APP_NAME.zip"
 CASK_PATH_REL="$DIST_DIR_REL/$CASK_FILE_NAME"
@@ -113,9 +116,9 @@ build_app() {
     -scheme "$SCHEME" \
     -configuration "$CONFIGURATION" \
     -derivedDataPath "$DERIVED_DATA_PATH" \
+    SYMROOT="$BUILD_ROOT" \
     ARCHS="arm64 x86_64" \
     ONLY_ACTIVE_ARCH=NO \
-    MACOSX_DEPLOYMENT_TARGET="$DEPLOYMENT_TARGET" \
     build
 }
 
@@ -172,6 +175,11 @@ check_codesign_output() {
     return
   fi
 
+  if ! printf '%s\n' "$output" | grep -F 'Signature=adhoc' >/dev/null; then
+    echo "expected ad hoc signature in: $path" >&2
+    exit 1
+  fi
+
   if printf '%s\n' "$output" | grep -F 'TeamIdentifier=' | grep -vF 'TeamIdentifier=not set' >/dev/null; then
     echo "team identifier found in: $path" >&2
     exit 1
@@ -193,10 +201,26 @@ verify_artifact() {
     check_codesign_output "$framework_binary"
   done < <(find "$STAGING_APP_REL/Contents/Frameworks" -type f -perm +111 -maxdepth 4 -print)
 
-  if find "$STAGING_APP_REL" -name _CodeSignature -print -quit | grep . >/dev/null; then
-    echo "CodeSignature resources found in app bundle" >&2
-    exit 1
-  fi
+  # Ad hoc app extensions need sealed resources, unlike the old linker-only signature.
+  codesign --verify --deep --strict "$STAGING_APP_REL"
+  local expected_extension
+  for expected_extension in cooViewerThumbnail cooViewerPreview; do
+    if [[ ! -d "$STAGING_APP_REL/Contents/PlugIns/$expected_extension.appex" ]]; then
+      echo "missing Quick Look extension: $expected_extension" >&2
+      exit 1
+    fi
+  done
+  local extension
+  for extension in "$STAGING_APP_REL"/Contents/PlugIns/*.appex; do
+    [[ -d "$extension" ]] || continue
+    check_codesign_output "$extension"
+    codesign --verify --strict "$extension"
+    local embedded_framework
+    for embedded_framework in "$extension"/Contents/Frameworks/*.framework; do
+      [[ -d "$embedded_framework" ]] || continue
+      check_codesign_output "$embedded_framework"
+    done
+  done
 
   if find "$STAGING_APP_REL" -name embedded.provisionprofile -print -quit | grep . >/dev/null; then
     echo "embedded provisioning profile found in app bundle" >&2
@@ -390,7 +414,7 @@ upload_zip() {
   jq -r '.browser_download_url' "$asset_json"
 }
 
-if [[ "$FORCE" -eq 0 && ( -e "$ROOT_DIR/$STAGING_APP_REL" || -e "$ROOT_DIR/$ZIP_PATH_REL" ) ]]; then
+if [[ "$FORCE" -eq 0 && ( -e "$STAGING_APP_REL" || -e "$ZIP_PATH_REL" ) ]]; then
   echo "output already exists: $DIST_DIR_REL" >&2
   echo "use --force to overwrite" >&2
   exit 1
