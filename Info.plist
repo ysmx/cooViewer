@@ -1198,6 +1198,10 @@
 			<string>Alternate</string>
 			<key>LSTypeIsPackage</key>
 			<false/>
+			<key>LSItemContentTypes</key>
+			<array>
+				<string>public.zip-archive</string>
+			</array>
 		</dict>
 		<dict>
 			<key>CFBundleTypeExtensions</key>
@@ -1515,6 +1519,10 @@
 			<string>Alternate</string>
 			<key>LSTypeIsPackage</key>
 			<false/>
+			<key>LSItemContentTypes</key>
+			<array>
+				<string>com.rarlab.rar-archive</string>
+			</array>
 		</dict>
 		<dict>
 			<key>CFBundleTypeExtensions</key>
@@ -1709,7 +1717,7 @@
 	<key>CFBundlePackageType</key>
 	<string>APPL</string>
 	<key>CFBundleShortVersionString</key>
-	<string>1.6.1</string>
+	<string>1.7.0</string>
 	<key>CFBundleSignature</key>
 	<string>COvw</string>
 	<key>CFBundleSupportedPlatforms</key>
@@ -1717,7 +1725,7 @@
 		<string>MacOSX</string>
 	</array>
 	<key>CFBundleVersion</key>
-	<string>1.6.1</string>
+	<string>1.7.0</string>
 	<key>DTCompiler</key>
 	<string>com.apple.compilers.llvm.clang.1_0</string>
 	<key>DTPlatformBuild</key>
@@ -2600,6 +2608,67 @@
 				<array>
 					<string>jar</string>
 					<string>JAR</string>
+				</array>
+			</dict>
+		</dict>
+		<dict>
+			<key>UTTypeIdentifier</key>
+			<string>cx.c3.cbz-archive</string>
+			<key>UTTypeDescription</key>
+			<string>CBZ comic archive</string>
+			<key>UTTypeConformsTo</key>
+			<array>
+				<string>public.data</string>
+				<string>public.archive</string>
+				<string>public.zip-archive</string>
+			</array>
+			<key>UTTypeTagSpecification</key>
+			<dict>
+				<key>public.filename-extension</key>
+				<array>
+					<string>cbz</string>
+				</array>
+			</dict>
+		</dict>
+		<dict>
+			<key>UTTypeIdentifier</key>
+			<string>cx.c3.cbr-archive</string>
+			<key>UTTypeDescription</key>
+			<string>CBR comic archive</string>
+			<key>UTTypeConformsTo</key>
+			<array>
+				<string>public.data</string>
+				<string>public.archive</string>
+				<string>com.rarlab.rar-archive</string>
+			</array>
+			<key>UTTypeTagSpecification</key>
+			<dict>
+				<key>public.filename-extension</key>
+				<array>
+					<string>cbr</string>
+				</array>
+			</dict>
+		</dict>
+		<dict>
+			<key>UTTypeIdentifier</key>
+			<string>com.rarlab.rar-archive</string>
+			<key>UTTypeDescription</key>
+			<string>RAR archive</string>
+			<key>UTTypeConformsTo</key>
+			<array>
+				<string>public.data</string>
+				<string>public.archive</string>
+			</array>
+			<key>UTTypeTagSpecification</key>
+			<dict>
+				<key>public.filename-extension</key>
+				<array>
+					<string>rar</string>
+				</array>
+				<key>public.mime-type</key>
+				<array>
+					<string>application/vnd.rar</string>
+					<string>application/x-rar-compressed</string>
 				</array>
 			</dict>
 		</dict>

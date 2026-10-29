@@ -7,13 +7,14 @@ BUNDLE_ID="jp.coo.cooViewer"
 PROJECT="cooViewer.xcodeproj"
 SCHEME="cooViewer"
 CONFIGURATION="Release"
-DEPLOYMENT_TARGET="10.14"
 
 ROOT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
 DERIVED_DATA_PATH="/tmp/cooViewer-release-derived"
-APP_BUNDLE="$ROOT_DIR/build/$CONFIGURATION/$APP_NAME.app"
+# Signed bundles must stay outside iCloud, which can attach Finder metadata.
+BUILD_ROOT="${COOVIEWER_BUILD_ROOT:-/tmp/cooViewer-release-products}"
+APP_BUNDLE="$BUILD_ROOT/$CONFIGURATION/$APP_NAME.app"
 APP_BINARY="$APP_BUNDLE/Contents/MacOS/$APP_NAME"
-APP_BUNDLE_REL="build/$CONFIGURATION/$APP_NAME.app"
+APP_BUNDLE_REL="$APP_BUNDLE"
 
 build_app() {
   xcodebuild \
@@ -21,9 +22,9 @@ build_app() {
     -scheme "$SCHEME" \
     -configuration "$CONFIGURATION" \
     -derivedDataPath "$DERIVED_DATA_PATH" \
+    SYMROOT="$BUILD_ROOT" \
     ARCHS="arm64 x86_64" \
     ONLY_ACTIVE_ARCH=NO \
-    MACOSX_DEPLOYMENT_TARGET="$DEPLOYMENT_TARGET" \
     build
 }
 
