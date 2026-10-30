@@ -2,9 +2,9 @@
 #import <XADMaster/XADArchive.h>
 #import <XADMaster/CSHandle.h>
 #import <ImageIO/ImageIO.h>
+#import <limits.h>
 
 static const NSUInteger COMaxEntryBytes = 32 * 1024 * 1024;
-static const unsigned long long COMaxArchiveBytes = 256ULL * 1024 * 1024;
 static NSError *COComicError(NSString *message) {
     return [NSError errorWithDomain:@"jp.coo.cooViewer.QuickLook" code:1
                           userInfo:@{NSLocalizedDescriptionKey: message}];
@@ -28,14 +28,32 @@ static BOOL COSafeImageName(NSString *name) {
 - (XADArchive *)openArchive:(NSError **)error {
     NSDictionary *attributes = [[NSFileManager defaultManager] attributesOfItemAtPath:_url.path error:error];
     if (![_url isFileURL] || ![attributes[NSFileType] isEqual:NSFileTypeRegular] ||
-        [attributes[NSFileSize] unsignedLongLongValue] > COMaxArchiveBytes ||
         (_fileAttributes && (![attributes[NSFileSize] isEqual:_fileAttributes[NSFileSize]] ||
                             ![attributes[NSFileModificationDate] isEqual:_fileAttributes[NSFileModificationDate]]))) {
-        if (error) *error = COComicError(@"Archive is unavailable, changed, or exceeds the 256 MiB limit.");
+        if (error) *error = COComicError(@"Archive is unavailable or changed.");
         return nil;
     }
     XADError xadError = XADNoError;
     XADArchive *archive = [[XADArchive alloc] initWithFile:_url.path error:&xadError];
+    // A compressed TAR is a single compression-stream entry around a TAR.
+    // Unwrap only that known container, once, with a bounded expanded size.
+    if (archive && !archive.isEncrypted && archive.numberOfEntries == 1 &&
+        [@[@"gz", @"gzip", @"tgz", @"tar-gz", @"bz2", @"bzip2", @"bz", @"tbz", @"tbz2", @"xz", @"txz", @"z", @"taz", @"tar-z", @"lzma", @"cpgz"] containsObject:_url.pathExtension.lowercaseString] &&
+        [@[@"tar", @"cpio"] containsObject:[archive nameOfEntry:0].pathExtension.lowercaseString] &&
+        ![archive entryIsLink:0] && ![archive entryIsEncrypted:0]) {
+        CSHandle *stream = [archive handleForEntry:0];
+        NSMutableData *container = [NSMutableData data];
+        uint8_t buffer[32768];
+        NSTimeInterval deadline = NSProcessInfo.processInfo.systemUptime + 3.0;
+        BOOL complete = NO;
+        while (stream && container.length <= COMaxEntryBytes && NSProcessInfo.processInfo.systemUptime <= deadline) {
+            int count = [stream readAtMost:(int)MIN(sizeof(buffer), COMaxEntryBytes + 1 - container.length) toBuffer:buffer];
+            if (count <= 0) { complete = YES; break; }
+            [container appendBytes:buffer length:(NSUInteger)count];
+        }
+        archive = complete && container.length && container.length <= COMaxEntryBytes ?
+            [[XADArchive alloc] initWithData:container error:&xadError] : nil;
+    }
     if (!archive || archive.isEncrypted || archive.isSolid || archive.numberOfEntries > 10000 || archive.numberOfEntries < 0) {
         if (error) *error = COComicError(@"Unsupported, encrypted, solid, damaged, or oversized archive.");
         return nil;
@@ -46,8 +64,8 @@ static BOOL COSafeImageName(NSString *name) {
     if (!(self = [super init])) return nil;
     NSTimeInterval started = NSProcessInfo.processInfo.systemUptime;
     _url = [url copy];
-    if (![@[@"cbz", @"cbr", @"zip", @"rar"] containsObject:url.pathExtension.lowercaseString]) {
-        if (error) *error = COComicError(@"Only CBZ, CBR, ZIP and RAR archives are supported.");
+    if (![@[@"cbz", @"cbr", @"zip", @"rar", @"7z", @"lha", @"lzh", @"sit", @"sitx", @"hqx", @"bin", @"macbin", @"gz", @"gzip", @"tgz", @"tar-gz", @"bz2", @"bzip2", @"bz", @"tbz2", @"tbz", @"xz", @"txz", @"tar", @"gtar", @"z", @"taz", @"tar-z", @"lzma", @"xar", @"ace", @"arj", @"arc", @"pak", @"spk", @"zoo", @"lbr", @"lqr", @"lzr", @"cab", @"alz", @"dd", @"cpt", @"pit", @"now", @"sea", @"cpio", @"cpgz", @"pax", @"ha", @"nsa", @"sar", @"jar"] containsObject:url.pathExtension.lowercaseString]) {
+        if (error) *error = COComicError(@"This archive extension is not supported.");
         return nil;
     }
     @try {
@@ -57,9 +75,9 @@ static BOOL COSafeImageName(NSString *name) {
         for (int i = 0; i < archive.numberOfEntries; i++) {
             NSString *name = [archive nameOfEntry:i];
             if (!COSafeImageName(name) || [archive entryIsDirectory:i] || [archive entryIsLink:i] ||
-                [archive entryIsEncrypted:i] || ![archive entryHasSize:i]) continue;
+                [archive entryIsEncrypted:i]) continue;
             off_t size = [archive uncompressedSizeOfEntry:i];
-            if (size <= 0 || size > COMaxEntryBytes) continue;
+            if ([archive entryHasSize:i] && size != LLONG_MAX && (size <= 0 || size > COMaxEntryBytes)) continue;
             [pages addObject:@{@"name": name, @"index": @(i)}];
         }
         [pages sortUsingComparator:^NSComparisonResult(NSDictionary *a, NSDictionary *b) {
