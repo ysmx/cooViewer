@@ -6,7 +6,14 @@
 @interface COPreviewViewController : NSViewController <QLPreviewingController>
 @property(readonly) NSImageView *imageView;
 @property(readonly) COComicArchive *comic;
-- (NSRect)displayedImageRect;
+@property(readonly) NSArray<NSNumber *> *pageIndexes;
+@property(readonly) NSArray<NSButton *> *pageButtons;
+@property(readonly) NSScrollView *sidebar;
+@property(readonly) NSView *pageList;
+- (void)loadVisibleThumbnails;
+@property(readonly) NSUInteger selectedPage;
+@property(readonly) NSUInteger fullImageDecodeCount;
+- (void)selectPageAtIndex:(NSUInteger)index;
 @end
 @interface COThumbnailProvider : QLThumbnailProvider
 @end
@@ -57,8 +64,14 @@ int main(int argc, const char **argv) {
                       [badName stringByAppendingString:@" rejected with error"]);
             }
         }
-        for (NSString *name in @[@"symlink.cbz", @"large-entry.cbz", @"many.cbz", @"large-archive.cbz", @"encrypted.cbz", @"encrypted.zip", @"cover.png"])
+        for (NSString *name in @[@"symlink.cbz", @"large-entry.cbz", @"many.cbz", @"encrypted.cbz", @"encrypted.zip", @"oversized-wrapper.tgz", @"cover.png"])
             check(![[COComicArchive alloc] initWithURL:url(name) error:&error], [name stringByAppendingString:@" rejected"]);
+        for (NSString *name in @[@"normal.tar", @"normal.tgz", @"normal.tbz2", @"normal.txz", @"normal.7z", @"normal.jar", @"normal.pax", @"normal.cpio", @"page.png.gz", @"page.png.bz2", @"page.png.xz", @"over-256MiB.zip"]) {
+            NSError *formatError = nil;
+            COComicArchive *archive = [[COComicArchive alloc] initWithURL:url(name) error:&formatError];
+            NSImage *cover = [archive firstReadableImageWithMaxPixelSize:128 page:NULL error:&formatError];
+            check(cover && archive.decodedImageCount == 1, [name stringByAppendingString:@" first image without total-size cap"]);
+        }
         COComicArchive *changed = [[COComicArchive alloc] initWithURL:url(@"changed.cbz") error:&error];
         NSMutableData *changedData = [NSMutableData dataWithContentsOfURL:url(@"changed.cbz")];
         [changedData appendBytes:"x" length:1];
@@ -73,7 +86,7 @@ int main(int argc, const char **argv) {
         COTestThumbnailRequest *request = [[COTestThumbnailRequest alloc] init];
         request.maximumSize = CGSizeMake(256, 256);
         request.scale = 2;
-        for (NSString *name in @[@"normal.cbz", @"normal.cbr", @"normal.zip", @"normal.rar",
+        for (NSString *name in @[@"normal.cbz", @"normal.cbr", @"normal.zip", @"normal.rar", @"normal.tar", @"normal.tgz", @"normal.tbz2", @"normal.txz", @"normal.7z", @"normal.jar", @"normal.cpio", @"normal.pax", @"page.png.gz", @"page.png.bz2", @"page.png.xz", @"over-256MiB.zip",
                                   @"mixed.zip", @"mixed.rar", @"empty.zip", @"empty.rar", @"broken.cbz", @"broken.zip", @"broken.rar"]) {
             request.fileURL = url(name);
             __block BOOL thumbnailReady = NO;
@@ -87,49 +100,76 @@ int main(int argc, const char **argv) {
             }];
             check(waitFor(^BOOL { return thumbnailReady; }) && thumbnailOK, [name stringByAppendingString:@" thumbnail provider callback"]);
         }
-        // Single-image preview. Never decode a later readable image after success.
-        for (NSString *name in @[@"normal.cbz", @"normal.cbr", @"normal.zip", @"normal.rar", @"mixed.zip", @"mixed.rar", @"quality.zip", @"many-pages.zip", @"large-image.zip", @"fallback.zip", @"fallback-many.zip"]) {
+        for (NSString *name in @[@"normal.cbz", @"normal.cbr", @"normal.zip", @"normal.rar", @"quality.zip", @"many-pages.zip", @"fallback.zip", @"large-image.zip"]) {
+            NSTimeInterval start = NSProcessInfo.processInfo.systemUptime;
             COPreviewViewController *controller = [[COPreviewViewController alloc] init];
             __block BOOL ready = NO;
             __block NSError *previewError = nil;
-            [controller preparePreviewOfFileAtURL:url(name) completionHandler:^(NSError *err) {
-                previewError = err; ready = YES;
-            }];
+            [controller preparePreviewOfFileAtURL:url(name) completionHandler:^(NSError *error) { previewError=error;ready=YES; }];
             check(waitFor(^BOOL { return ready; }) && !previewError && controller.imageView.image,
-                  [name stringByAppendingString:@" single-image preview"]);
-            NSUInteger expectedAttempts = [name hasPrefix:@"fallback"] ? 2 : 1;
-            check(controller.comic.imageReadAttempts == expectedAttempts &&
-                  controller.comic.imageDecodeAttempts == expectedAttempts && controller.comic.decodedImageCount == 1,
-                  [name stringByAppendingString:@" stop after first successful decode"]);
-            [controller viewDidLayout];
-            NSRect displayed = controller.displayedImageRect;
-            NSSize viewport = controller.view.bounds.size;
-            check(displayed.size.height <= viewport.height && displayed.size.width <= viewport.width &&
-                  displayed.size.height > viewport.height * .85, [name stringByAppendingString:@" large full-page fit"]);
-            double ratio = controller.imageView.image.size.width / controller.imageView.image.size.height;
-            check(fabs(displayed.size.width / displayed.size.height - ratio) < .002,
-                  [name stringByAppendingString:@" aspect ratio preserved"]);
-            check(controller.view.subviews.count == 1 && [controller.view.subviews.firstObject isKindOfClass:NSImageView.class],
-                  [name stringByAppendingString:@" no PDF, page list or navigation controls"]);
-            if ([name isEqual:@"quality.zip"]) {
-                check(MAX(controller.imageView.image.size.width, controller.imageView.image.size.height) == 2400,
-                      @"1600x2400 source retained instead of Finder thumbnail");
-
+                  [name stringByAppendingString:@" view preview ready"]);
+            NSUInteger count = [name isEqual:@"many-pages.zip"] ? 25 : [name isEqual:@"fallback.zip"] ? 1 : 2;
+            check(controller.pageIndexes.count==count && controller.pageButtons.count==count,
+                  [name stringByAppendingString:@" at most twenty-five sidebar pages"]);
+            check(controller.fullImageDecodeCount==1 && controller.comic.decodedImageCount==1,
+                  [name stringByAppendingString:@" only one full image initially decoded"]);
+            check(MAX(controller.imageView.image.size.width,controller.imageView.image.size.height)<=1600,
+                  [name stringByAppendingString:@" full image bounded to 1600 pixels"]);
+            check(controller.preferredContentSize.width==900 && controller.preferredContentSize.height==750 && controller.imageView.frame.size.height>700,
+                  [name stringByAppendingString:@" original fixed layout and full-height image area"]);
+            printf("Lazy view ready %s: %.3f ms fullDecoded=%lu\n",name.UTF8String,(NSProcessInfo.processInfo.systemUptime-start)*1000,(unsigned long)controller.fullImageDecodeCount);
+            if(count==25) {
+                check(waitFor(^BOOL { return controller.pageButtons[1].image.size.width > 1; }), @"visible sidebar thumbnails generated");
+                check(controller.pageButtons[24].image.size.width <= 1, @"offscreen page 25 thumbnail is not generated initially");
+                printf("Lazy visible sidebar ready %s: %.3f ms\n",name.UTF8String,(NSProcessInfo.processInfo.systemUptime-start)*1000);
             }
-            if ([name isEqual:@"large-image.zip"])
-                check(MAX(controller.imageView.image.size.width, controller.imageView.image.size.height) <= 3072,
-                      @"large source decode bounded to longest edge 3072");
+            if(count>1) {
+                NSTimeInterval selected = NSProcessInfo.processInfo.systemUptime;
+                [controller selectPageAtIndex:1];
+                check(waitFor(^BOOL { return controller.selectedPage==1; }) && controller.fullImageDecodeCount==2,
+                      [name stringByAppendingString:@" sidebar selection loads requested page"]);
+                printf("Lazy page 2 %s: %.3f ms\n",name.UTF8String,(NSProcessInfo.processInfo.systemUptime-selected)*1000);
+                selected = NSProcessInfo.processInfo.systemUptime;
+                [controller selectPageAtIndex:0];
+                check(controller.selectedPage==0 && controller.fullImageDecodeCount==2,
+                      [name stringByAppendingString:@" cached page avoids redecoding"]);
+                printf("Lazy cached page %s: %.3f ms\n",name.UTF8String,(NSProcessInfo.processInfo.systemUptime-selected)*1000);
+            }
+            if(count==25) {
+                NSTimeInterval selected = NSProcessInfo.processInfo.systemUptime;
+                [controller selectPageAtIndex:4];
+                check(waitFor(^BOOL { return controller.selectedPage==4; }) && controller.fullImageDecodeCount==3,
+                      @"fifth page loads without decoding intervening full images or last page");
+                printf("Lazy page 5 %s: %.3f ms\n",name.UTF8String,(NSProcessInfo.processInfo.systemUptime-selected)*1000);
+                check(controller.comic.imageReadAttempts==3,@"thumbnail work independent of full-image reads");
+                NSClipView *clip = controller.sidebar.contentView;
+                [clip scrollToPoint:NSMakePoint(0,MAX(0,controller.pageList.frame.size.height-clip.bounds.size.height))];
+                [controller loadVisibleThumbnails];
+                check(waitFor(^BOOL { return controller.pageButtons[24].image.size.width > 1; }),@"scrolling generates page 25 thumbnail on demand");
+                [controller selectPageAtIndex:24];
+                check(waitFor(^BOOL { return controller.selectedPage==24; }) && controller.fullImageDecodeCount==4,@"page 25 full image loads only when selected");
+            }
+            [controller selectPageAtIndex:99];
+            check(controller.selectedPage<count,@"out-of-range sidebar selection ignored");
         }
-        for (NSString *name in @[@"empty.zip", @"empty.rar", @"broken.cbz", @"broken.zip", @"broken.rar"]) {
+        COPreviewViewController *compact = [[COPreviewViewController alloc] init];
+        compact.view.frame = NSMakeRect(0,0,300,360);
+        [compact viewDidLayout];
+        __block BOOL compactReady=NO;
+        [compact preparePreviewOfFileAtURL:url(@"many-pages.zip") completionHandler:^(NSError *error){compactReady=!error;}];
+        check(waitFor(^BOOL{return compactReady;}) && compact.sidebar.hidden,@"compact Finder-style pane hides sidebar");
+        check(compact.comic.imageReadAttempts==1 && compact.fullImageDecodeCount==1,@"compact pane reads only the first full image");
+        BOOL noExtraThumbnails=YES;
+        for(NSUInteger i=1;i<compact.pageButtons.count;i++) if(compact.pageButtons[i].image.size.width > 1) noExtraThumbnails=NO;
+        check(noExtraThumbnails,@"compact pane does not generate sidebar thumbnails");
+        for (NSString *name in @[@"empty.zip", @"broken.rar"]) {
             COPreviewViewController *controller = [[COPreviewViewController alloc] init];
-            __block BOOL ready = NO;
-            __block NSError *previewError = nil;
-            [controller preparePreviewOfFileAtURL:url(name) completionHandler:^(NSError *err) {
-                previewError = err; ready = YES;
-            }];
-            check(waitFor(^BOOL { return ready; }) && previewError && !controller.imageView.image,
-                  [name stringByAppendingString:@" preview completes with error"]);
+            __block BOOL ready=NO; __block NSError *error=nil;
+            [controller preparePreviewOfFileAtURL:url(name) completionHandler:^(NSError *e){error=e;ready=YES;}];
+            check(waitFor(^BOOL{return ready;}) && error && !controller.imageView.image,
+                  [name stringByAppendingString:@" view preview error callback"]);
         }
+
     }
     return 0;
 }

@@ -11,9 +11,9 @@
 	<key>CFBundlePackageType</key>
 	<string>XPC!</string>
 	<key>CFBundleShortVersionString</key>
-	<string>1.7.0</string>
+	<string>1.7.1</string>
 	<key>CFBundleVersion</key>
-	<string>1.7.0</string>
+	<string>1.7.1</string>
 	<key>LSMinimumSystemVersion</key>
 	<string>$(MACOSX_DEPLOYMENT_TARGET)</string>
 	<key>NSExtension</key>
@@ -42,6 +42,43 @@
 				<string>com.rarlab.rar-comic-archive</string>
 				<string>public.zip-archive</string>
 				<string>com.rarlab.rar-archive</string>
+				<string>org.7-zip.7-zip-archive</string>
+				<string>jp.coo.cooViewer.lha-archive</string>
+				<string>com.stuffit.archive.sit</string>
+				<string>com.stuffit.archive.sitx</string>
+				<string>com.apple.binhex-archive</string>
+				<string>jp.coo.cooViewer.macbinary-file</string>
+				<string>org.gnu.gnu-zip-archive</string>
+				<string>org.gnu.gnu-zip-tar-archive</string>
+				<string>public.bzip2-archive</string>
+				<string>public.tar-bzip2-archive</string>
+				<string>org.tukaani.xz-archive</string>
+				<string>org.tukaani.tar-xz-archive</string>
+				<string>public.tar-archive</string>
+				<string>org.gnu.gnu-tar-archive</string>
+				<string>public.z-archive</string>
+				<string>jp.coo.cooViewer.unix-compress-tar-archive</string>
+				<string>jp.coo.cooViewer.lzma-file</string>
+				<string>com.apple.xar-archive</string>
+				<string>jp.coo.cooViewer.ace-archive</string>
+				<string>jp.coo.cooViewer.arj-archive</string>
+				<string>jp.coo.cooViewer.arc-archive</string>
+				<string>jp.coo.cooViewer.zoo-archive</string>
+				<string>jp.coo.cooViewer.lbr-archive</string>
+				<string>com.microsoft.cab</string>
+				<string>jp.coo.cooViewer.alzip-archive</string>
+				<string>jp.coo.cooViewer.diskdoubler-archive</string>
+				<string>jp.coo.cooViewer.compact-pro-archive</string>
+				<string>jp.coo.cooViewer.packit-archive</string>
+				<string>jp.coo.cooViewer.now-compress-archive</string>
+				<string>jp.coo.cooViewer.self-extracting-archive</string>
+				<string>public.cpio-archive</string>
+				<string>com.apple.bom-compressed-cpio</string>
+				<string>jp.coo.cooViewer.pax-archive</string>
+				<string>jp.coo.cooViewer.ha-archive</string>
+				<string>jp.coo.cooViewer.nsa-archive</string>
+				<string>jp.coo.cooViewer.sar-archive</string>
+				<string>com.sun.java-archive</string>
 			</array>
 			<key>QLThumbnailMinimumDimension</key>
 			<integer>16</integer>

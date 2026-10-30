@@ -1,5 +1,10 @@
 # cooViewer 更新履歴
 
+## 1.7.1
+
+- Quick Lookの対応形式を追加（7z、LHA/LZH、TARなど）
+- 狭いプレビュー領域ではサムネイル列を非表示に変更
+
 ## 1.7.0
 
 - CBZ/CBR/ZIP/RAR用のFinderサムネイル拡張とQuick Lookプレビュー拡張を同梱

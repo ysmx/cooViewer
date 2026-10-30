@@ -3,30 +3,30 @@
 cooViewer embeds two independent macOS app extensions:
 
 - `jp.coo.cooViewer.thumbnail`: Finder thumbnail, using `QLThumbnailProvider`.
-- `jp.coo.cooViewer.preview`: view-based Quick Look preview, using `QLPreviewingController` and one large aspect-fit image. No PDF, page list or page-navigation UI is generated.
+- `jp.coo.cooViewer.preview`: view-based Quick Look preview with an NSImageView and a right-hand vertical thumbnail sidebar, limited to twenty-five pages. No PDF is generated.
 
-Both support **CBZ, CBR, ZIP and RAR** containing readable images. Archives without images return an error rather than a fabricated thumbnail. Ordinary images, PDF, CB7/7z, CBT/tar and folders are not registered by these extensions. Multipart archives are outside the supported scope. The main viewer's existing format support remains unchanged. In the corrected 1.7.0, Preview displays only the first readable image. The Finder thumbnail provider remains independent.
+Both support image-containing archives handled by the app’s existing XADMaster. The accepted extensions are **CBZ, CBR, ZIP, RAR, 7z, LHA/LZH, SIT/SITX, HQX, BIN/MACBIN, GZ/GZIP, TGZ/TAR-GZ, BZ/BZ2/BZIP2, TBZ/TBZ2, XZ/TXZ, TAR/GTAR, Z/TAZ/TAR-Z, LZMA, XAR, ACE, ARJ, ARC/PAK/SPK, ZOO, LBR/LQR/LZR, CAB, ALZ, DD, CPT, PIT, NOW, SEA, CPIO/CPGZ, PAX, HA, NSA/SAR and JAR**. Individual compression variants still depend on XADMaster and the limits below. Archives without images return an error rather than a fabricated thumbnail. Ordinary images and PDF retain their OS providers; folders/CVBDL, disk/ROM images, EXE and split volumes are not registered. CB7/CBT aliases are not claimed because the app does not declare them. Multipart archives are outside the supported scope. The main viewer's existing format support remains unchanged. The current local trial displays up to twenty-five naturally ordered candidates starting at the first readable image, with no final-page selection. The Finder thumbnail provider remains independent.
 
 ## Reader and limits
 
 Both targets compile the same UI-independent `Sources/QuickLook/Shared/COComicArchive` reader and link the project's existing XADMaster and UniversalDetector frameworks. No Simple Comic implementation or binaries are included. Each extension embeds its own framework copies because this project's framework install names use `@executable_path/../Frameworks`.
 
-Archive metadata is enumerated and naturally sorted without decoding the image entries. Both providers stop immediately after the first readable image, with the existing fallback limit of eight candidates / five seconds checked between attempts. Preview never reads or decodes later candidates after success. It displays the decoded image directly at a longest-edge limit of 3072, preserving aspect ratio and filling the window height. Eligible inner image extensions: JPEG, PNG, GIF (first frame), BMP, TIFF (first image), HEIC/HEIF, WebP and AVIF, subject to host ImageIO support.
+Archive metadata is enumerated and naturally sorted without decoding the image entries. The first readable image is decoded at a longest-edge limit of 1600 and displayed immediately. The right-hand sidebar then generates small (160-pixel) thumbnails for visible rows only on a separate reader queue. Only a selected page is decoded at full preview resolution; a cache holds at most three full images with a 32 MiB cost limit. Rapid selection is generation-guarded; stale results cannot replace the current selection. No PDF conversion or final-page scan occurs. Fixed 900×750 preferred size and the existing 8-point image inset are deliberately retained for this trial; sidebar width is 124 points. Eligible inner image extensions: JPEG, PNG, GIF (first frame), BMP, TIFF (first image), HEIC/HEIF, WebP and AVIF, subject to host ImageIO support.
 
 Limits:
 
-- 256 MiB archive file; at most 10,000 archive entries.
+- No total archive-file size cap. At most 10,000 archive entries; metadata enumeration can still cost time for large archives.
 - 32 MiB decompressed bytes per image; image dimensions at most 20,000 per side and 40 million pixels.
-- Thumbnail output at most 4096 pixels per side. Preview decodes only one successful image, with a longest-edge limit of 3072. There is no PDF/JPEG conversion, aggregate book raster budget or 64-page scan.
-- Encrypted archives and archives identified as solid by XADMaster, links, unknown-size entries, hidden/metadata paths and unsupported images are skipped or rejected. No password UI, recursion into nested archives, or extraction to disk.
+- Thumbnail output at most 4096 pixels per side; full preview images at most 1600. Sidebar images at most 160. First-readable fallback is limited to eight candidates / five seconds between attempts.
+- Encrypted archives and archives identified as solid by XADMaster, links, hidden/metadata paths and unsupported images are skipped or rejected. Unknown-size streams are read with the same strict 32 MiB streaming limit. No password UI or extraction to disk. A compression stream around TAR/CPIO may be unwrapped once in memory, limited to 32 MiB expanded container bytes and a cooperative three-second read deadline. General nested archives are not recursively opened.
 - Reads check a three-second deadline between stream reads; initial cover search also checks five seconds between candidates. These are cooperative limits, **not a hard timeout inside XADMaster parsing/decompression, ImageIO, image rendering**. The Quick Look host also controls extension lifetime. Adversarial-parser isolation/fuzzing is outside this initial validation.
 - Read operations release the archive/file handle after decoding and reject a changed file size/modification date.
 
 ## OS, identifiers, signing and packaging
 
-The containing app remains macOS **10.14+**. Both extensions have a **10.15** deployment target. Operation on 10.14 and 10.15 has not been tested; validation below ran on macOS 15.8.1 / arm64. Intel slices are built and inspected, not executed on Intel hardware.
+The containing app remains macOS **10.14+**. Both extensions are **10.15+** again. Operation on 10.14 and 10.15 has not been tested; validation below ran on macOS 15.8.1 / arm64. Intel slices are built and inspected, not executed on Intel hardware.
 
-The app imports established CBZ/CBR and RAR UTTypes; ZIP uses the system type. Both extension lists include these base types plus compatible comic UTTypes used by other viewers:
+The extensions additionally register the precise UTTypes already declared by the main app for these archive formats; they do not register the generic `public.archive` type. The app imports established CBZ/CBR and RAR UTTypes; ZIP uses the system type. Both extension lists include these base types plus compatible comic UTTypes used by other viewers:
 
 | Extension | Base UTType |
 | --- | --- |
@@ -50,21 +50,16 @@ Build products now default to `/tmp/cooViewer-release-products`, outside iCloud,
 
 For packaging, `COOVIEWER_DIST_ROOT` can select an isolated output directory. To avoid changing the sibling Homebrew tap, pass `--cask-out` explicitly during local packaging checks. Packaging does not imply permission to upload; no upload was performed.
 
-## Validation and performance
+## Validation and timing
 
-The final app and both extensions use marketing and build version **1.7.0**. Release Universal builds and strict nested ad hoc signature verification passed on macOS 15.8.1 / arm64. The synthetic test suite exercises all four formats, natural ordering, fallback after a corrupt first image, no-image/empty/broken/encrypted archives, links and unsafe paths, size limits, image dimensions, provider callbacks, single-success decode counts and image-fit geometry. Run `script/test_quicklook.sh`; use `python3 script/quicklook-tests/CheckBundle.py /path/to/cooViewer.app` to verify bundle integration. Intel and older-macOS execution remain untested.
+The final 1.7.1 synthetic suite covers four-format provider callbacks, expanded archive families, a valid ZIP above 256 MiB, safety limits, first-only full decode, on-demand page loading and cached page reuse. It also covers 25 selectable pages, initially absent offscreen thumbnails, thumbnail creation after scrolling, page-25 selection and first-image-only compact panes. Release Universal builds and strict ad hoc bundle verification passed. Earlier installed five-page UI was verified in Finder; the final 25-page/compact rules are validated by controller regression tests, not a completed post-install UI inspection.
 
-A 900×750-point preview has an 884×734 viewport; the 1600×2400 test image displays at approximately 489×734 points. Finder was inspected with synthetic ZIP, CBZ, CBR and RAR files after installation. The large ZIP grid was visually checked, with no page list or navigation buttons. The executing provider path was the installed app's `Contents/PlugIns/cooViewerPreview.appex/Contents/MacOS/cooViewerPreview`; logs identified the single-image implementation with one read, one decode attempt and one successful decode. Provider preparation for these fixtures took about 20–35 ms, excluding Finder startup and final display. Updating an already-running extension can temporarily retain the old code until its preview session exits.
+One sample of the final twenty-five-page controller on a synthetic seventy-image archive measured **44.691 ms** to the first-image callback and **67.457 ms** from the same start until the first visible sidebar thumbnail was ready. These are direct controller timings, excluding Finder startup/final compositor paint; filesystem caches may be warm. Low-resolution thumbnails still require archive entry decompression. No PDF conversion is performed. Intel/older-OS execution and all legacy compression variants remain unverified. No public release has been updated for 1.7.1.
 
-Three independent process samples per fixture compared the superseded multipage implementation with the single-image implementation. Median provider-call-to-callback times (including controller setup, excluding Finder startup and final paint):
+The sidebar is transparent, with no individual button bezels or selection fills, visible page numbers or leading-page annotation. Page numbers remain only as accessibility labels for assistive technology; unreadable pages use a disabled thumbnail and an error tooltip.
 
-| Synthetic fixture | Previous ms | Current ms | Successful decodes |
-| --- | ---: | ---: | --- |
-| Two 1600×2400 images | 230.022 | 164.079 | 2 → 1 |
-| Seventy 1600×2400 images | 3598.906 | 138.626 | 64 → 1 |
-| Large 4000×6000 first image | 358.141 | 308.265 | 2 → 1 |
-| Broken first image then two valid images | 212.412 | 135.717 | 2 → 1 |
+## Compact pane and 25-page trial
 
-For seventy pages, metadata enumeration/sorting took 2.849 ms in the corrected implementation while decoding fell from 2281.205 to 24.055 ms. The broken-first case makes two attempts, then stops at one successful decode. Large-image decode cost remains. These were direct provider measurements, not Quick Look cache timings; filesystem caches may be warm. No superseded implementation or trial binary is shipped.
+Wide previews expose up to 25 image candidates. Thumbnail rows are generated only when visible and loaded as the sidebar scrolls; full-resolution page images remain on-demand. A compact layout (width under 600 points or height under 480 points) hides the sidebar and does not schedule sidebar thumbnail generation. The content image then occupies the available width. A one-image archive also hides the sidebar. These are responsive layout rules, not reliable identification of Finder versus Spacebar: the public preview callback does not supply a presentation-source flag. A wide Finder pane may therefore show the sidebar and a small Spacebar window may hide it.
 
-Public Gatekeeper/notarization acceptance, all RAR compression variants, parser fuzzing and Intel/older-OS runtime verification remain outside this local validation. No default application, competing extension or system security preference is changed.
+Regression checks cover 25 selectable pages, no offscreen page-25 thumbnail at startup, generating that thumbnail after scrolling, full decoding only on page selection, and compact-pane first-image-only behavior. NSButton may supply a 1×1 placeholder image, so completed thumbnail indexes are tracked explicitly rather than inferred from a non-nil button image.

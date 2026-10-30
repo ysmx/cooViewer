@@ -12,18 +12,19 @@ for ext, uti in [('zip','public.zip-archive'), ('rar','com.rarlab.rar-archive')]
     assert uti in doc['LSItemContentTypes'], (ext, 'document type mismatch')
     assert doc['CFBundleTypeIconFile'] == 'doc_'+ext, (ext, 'document icon changed')
     assert doc['LSHandlerRank'] == 'Alternate', (ext, 'handler priority changed')
-required = {'cx.c3.cbz-archive','cx.c3.cbr-archive','public.zip-archive','com.rarlab.rar-archive'}
+required = {'cx.c3.cbz-archive','cx.c3.cbr-archive','public.zip-archive','com.rarlab.rar-archive','org.7-zip.7-zip-archive','jp.coo.cooViewer.lha-archive','public.tar-archive','org.gnu.gnu-zip-tar-archive','public.tar-bzip2-archive','org.tukaani.tar-xz-archive','public.cpio-archive','com.sun.java-archive'}
 for name, point in [('cooViewerThumbnail','thumbnail'),('cooViewerPreview','preview')]:
     bundle = app/'Contents/PlugIns'/(name+'.appex')
     d = info(bundle); e = d['NSExtension']
     assert d['CFBundleShortVersionString'] == main['CFBundleShortVersionString']
     assert d['CFBundleVersion'] == main['CFBundleVersion']
     assert d['LSMinimumSystemVersion'] == '10.15'
+    if point == 'preview': assert not e['NSExtensionAttributes'].get('QLIsDataBasedPreview', False)
     assert e['NSExtensionPointIdentifier'] == 'com.apple.quicklook.'+point
     types = set(e['NSExtensionAttributes']['QLSupportedContentTypes'])
     assert required <= types
     assert not types.intersection({'public.archive','public.data','public.image','com.adobe.pdf'})
-    print('PASS:', name, 'four-format UTType declarations and OS boundary')
+    print('PASS:', name, 'extended archive UTType declarations and OS boundary')
 assert main['LSMinimumSystemVersion'] == '10.14'
 for bundle in [app] + sorted((app/'Contents/PlugIns').glob('*.appex')):
     d = info(bundle)
